@@ -58,10 +58,12 @@ public class PersistentDataStore extends TransientDataStore {
     private final ReadJob _readJob;
     private volatile boolean _initialized;
     private final boolean _flat;
+    private final boolean _removeDat;
     private final int _networkID;
 
     private final static int READ_DELAY = 2*60*1000;
     private static final String PROP_FLAT = "router.networkDatabase.flat";
+    private static final String PROP_REMOVE_DAT = "router.networkDatabase.removeDat";
     static final String DIR_PREFIX = "r";
     private static final String B64 = Base64.ALPHABET_I2P;
     private static final int MAX_ROUTERS_INIT = SystemVersion.isSlow() ? 2000 : 8000;
@@ -73,6 +75,7 @@ public class PersistentDataStore extends TransientDataStore {
         super(ctx);
         _networkID = ctx.router().getNetworkID();
         _flat = ctx.getBooleanProperty(PROP_FLAT);
+        _removeDat = ctx.getBooleanProperty(PROP_REMOVE_DAT);
         _dbDir = getDbDir(dbDir);
         _facade = facade;
         _readJob = new ReadJob();
@@ -143,7 +146,7 @@ public class PersistentDataStore extends TransientDataStore {
      */
     @Override
     public DatabaseEntry remove(Hash key, boolean persist) {
-        if (persist) {
+        if (_removeDat && persist) {
             _writer.remove(key);
         }
         return super.remove(key);

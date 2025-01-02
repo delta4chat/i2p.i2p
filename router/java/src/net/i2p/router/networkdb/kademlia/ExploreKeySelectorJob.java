@@ -30,29 +30,32 @@ import net.i2p.util.Log;
 class ExploreKeySelectorJob extends JobImpl {
     private Log _log;
     private KademliaNetworkDatabaseFacade _facade;
-    
+
     private final static long RERUN_DELAY_MS = 60*1000;
     private final static long OLD_BUCKET_TIME = 15*60*1000;
-    
+
     public ExploreKeySelectorJob(RouterContext context, KademliaNetworkDatabaseFacade facade) {
         super(context);
         _log = context.logManager().getLog(ExploreKeySelectorJob.class);
         _facade = facade;
     }
-    
-    public String getName() { return "Explore Key Selector Job"; }
+
+    public String getName() {
+        return "Explore Key Selector Job";
+    }
     public void runJob() {
         if (_facade.floodfillEnabled()) {
-            requeue(30*RERUN_DELAY_MS);
+            requeue(RERUN_DELAY_MS);
             return;
         }
         Collection<Hash> toExplore = selectKeysToExplore();
         _log.info("Filling the explorer pool with: " + toExplore);
-        if (toExplore != null)
+        if (toExplore != null) {
             _facade.queueForExploration(toExplore);
+        }
         requeue(RERUN_DELAY_MS);
     }
-    
+
     /**
      * Run through all kbuckets with too few routers and generate a random key
      * for it, with a maximum number of keys limited by the exploration pool size
@@ -60,9 +63,9 @@ class ExploreKeySelectorJob extends JobImpl {
      */
     private Collection<Hash> selectKeysToExplore() {
         Set<Hash> alreadyQueued = _facade.getExploreKeys();
-        if (alreadyQueued.size() > KademliaNetworkDatabaseFacade.MAX_EXPLORE_QUEUE)
+        if (alreadyQueued.size() > KademliaNetworkDatabaseFacade.MAX_EXPLORE_QUEUE) {
             return null;
+        }
         return _facade.getKBuckets().getExploreKeys(OLD_BUCKET_TIME);
     }
-    
 }

@@ -31,19 +31,19 @@ import net.i2p.util.Log;
 class ExploreJob extends SearchJob {
     private final FloodfillPeerSelector _peerSelector;
     private final boolean _isRealExplore;
-    
+
     /** how long each exploration should run for
      *  The exploration won't "succeed" so we make it long so we query several peers */
-    private static final long MAX_EXPLORE_TIME = 30*1000;
-    
+    private static final long MAX_EXPLORE_TIME = 60*1000;
+
     /** how many peers to explore through concurrently */
-    private static final int EXPLORE_BREDTH = 1;
+    private static final int EXPLORE_BREDTH = 2;
 
     /** only send the closest "dont tell me about" refs...
      *  Override to make this bigger because we want to include both the
      *  floodfills and the previously-queried peers */
     static final int MAX_CLOSEST = 20; // LINT -- field hides another field, this isn't an override.
-    
+
     /** Override to make this shorter, since we don't sort out the
      *  unresponsive ff peers like we do in FloodOnlySearchJob */
     static final int PER_FLOODFILL_PEER_TIMEOUT = 5*1000; // LINT -- field hides another field, this isn't an override.
@@ -62,7 +62,7 @@ class ExploreJob extends SearchJob {
         _peerSelector = (FloodfillPeerSelector) (_facade.getPeerSelector());
         _isRealExplore = isRealExplore;
     }
-    
+
     /**
      * Build the database search message, but unlike the normal searches, we're more explicit in
      * what we /dont/ want.  We don't just ask them to ignore the peers we've already searched
@@ -96,7 +96,7 @@ class ExploreJob extends SearchJob {
         msg.setMessageExpiration(expiration);
         if (replyTunnelId != null)
             msg.setReplyTunnel(replyTunnelId);
-        
+
         int available = MAX_CLOSEST - dontIncludePeers.size();
         if (_isRealExplore) {
             // supported as of 0.9.16. We don't add "fake hash" any more.
@@ -129,10 +129,10 @@ class ExploreJob extends SearchJob {
             List<Hash> peers = _peerSelector.selectNearestExplicit(rkey, available, dontInclude, ks);
             dontIncludePeers.addAll(peers);
         }
-        
+
         if (_log.shouldLog(Log.DEBUG))
             _log.debug("Peers we don't want to hear about: " + dontIncludePeers);
-        
+
         msg.setDontIncludePeers(dontIncludePeers);
 
         // Now encrypt if we can
@@ -141,13 +141,13 @@ class ExploreJob extends SearchJob {
         boolean encryptElG = ctx.getProperty(IterativeSearchJob.PROP_ENCRYPT_RI, IterativeSearchJob.DEFAULT_ENCRYPT_RI);
         I2NPMessage outMsg;
         if (replyTunnelId != null &&
-            ((encryptElG && type == EncType.ELGAMAL_2048) || (type == EncType.ECIES_X25519 && DatabaseLookupMessage.USE_ECIES_FF))) {
+                ((encryptElG && type == EncType.ELGAMAL_2048) || (type == EncType.ECIES_X25519 && DatabaseLookupMessage.USE_ECIES_FF))) {
             EncType ourType = ctx.keyManager().getPublicKey().getType();
             boolean ratchet1 = ourType.equals(EncType.ECIES_X25519);
             boolean ratchet2 = DatabaseLookupMessage.supportsRatchetReplies(peer);
             // request encrypted reply?
             if (DatabaseLookupMessage.supportsEncryptedReplies(peer) &&
-                (ratchet2 || !ratchet1)) {
+                    (ratchet2 || !ratchet1)) {
                 boolean supportsRatchet = ratchet1 && ratchet2;
                 MessageWrapper.OneTimeSession sess;
                 sess = MessageWrapper.generateSession(ctx, ctx.sessionKeyManager(), MAX_EXPLORE_TIME, !supportsRatchet);
@@ -177,11 +177,13 @@ class ExploreJob extends SearchJob {
         }
         return outMsg;
     }
-    
+
     /** max # of concurrent searches */
     @Override
-    protected int getBredth() { return EXPLORE_BREDTH; }
-    
+    protected int getBredth() {
+        return EXPLORE_BREDTH;
+    }
+
 
     /**
      * We've gotten a search reply that contained the specified
@@ -194,7 +196,7 @@ class ExploreJob extends SearchJob {
         // we'll do the simplest thing that could possibly work.
         _facade.setLastExploreNewDate(getContext().clock().now());
     }
-    
+
     /*
      * We could override searchNext to see if we actually fill up a kbucket before
      * the search expires, but, c'mon, the keyspace is just too bloody massive, and
@@ -202,7 +204,9 @@ class ExploreJob extends SearchJob {
      * searchNext
      *
      */
-    
+
     @Override
-    public String getName() { return "Kademlia NetDb Explore"; }
+    public String getName() {
+        return "Kademlia NetDb Explore";
+    }
 }
