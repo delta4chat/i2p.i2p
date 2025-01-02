@@ -27,7 +27,6 @@ import net.i2p.util.SimpleTimer;
  *  the netDb/ directory, not when the console starts.
  */
 public class ReseedChecker {
-    
     private final RouterContext _context;
     private final Log _log;
     private final AtomicBoolean _inProgress = new AtomicBoolean();
@@ -36,7 +35,7 @@ public class ReseedChecker {
     private volatile boolean _networkLogged;
     private volatile boolean _alreadyRun;
 
-    public static final int MINIMUM = 50;
+    public static final int MINIMUM = 100;
     private static final long STATUS_CLEAN_TIME = 20*60*1000;
     // if down this long, reseed at startup
     private static final long RESEED_MIN_DOWNTIME = 60*24*60*60*1000L;
@@ -60,23 +59,30 @@ public class ReseedChecker {
      */
     public boolean checkReseed(int count) {
         if (_alreadyRun) {
-            if (count >= MINIMUM)
+            if (count >= MINIMUM) {
                 return false;
+            }
         } else {
             _alreadyRun = true;
-            if (count >= MINIMUM && _context.getEstimatedDowntime() < RESEED_MIN_DOWNTIME)
+            if (count >= MINIMUM && _context.getEstimatedDowntime() < RESEED_MIN_DOWNTIME) {
                 return false;
+            }
         }
 
-        if (_context.getBooleanProperty(Reseeder.PROP_DISABLE) ||
-            _context.getBooleanProperty("i2p.vmCommSystem")) {
+        if (
+            _context.getBooleanProperty(Reseeder.PROP_DISABLE)
+            ||
+            _context.getBooleanProperty("i2p.vmCommSystem")
+        )
+        {
             int x = count - 1;  // us
             // no ngettext, this is rare
             String s;
-            if (x > 0)
+            if (x > 0) {
                 s = "Only " + x + " peers remaining but reseed disabled by configuration";
-            else
+            } else {
                 s = "No peers remaining but reseed disabled by configuration";
+            }
             if (!s.equals(_lastError)) {
                 _lastError = s;
                 _log.logAlways(Log.WARN, s);
@@ -88,10 +94,11 @@ public class ReseedChecker {
             int x = count - 1;
             // no ngettext, this is rare
             String s;
-            if (x > 0)
+            if (x > 0) {
                 s = "Only " + x + " peers remaining but reseed disabled by shutdown in progress";
-            else
+            } else {
                 s = "No peers remaining but reseed disabled by shutdown in progress";
+            }
             if (!s.equals(_lastError)) {
                 _lastError = s;
                 _log.logAlways(Log.WARN, s);
@@ -99,7 +106,7 @@ public class ReseedChecker {
             return false;
         }
 
-        // we check the i2p installation directory for a flag telling us not to reseed, 
+        // we check the i2p installation directory for a flag telling us not to reseed,
         // but also check the home directory for that flag too, since new users installing i2p
         // don't have an installation directory that they can put the flag in yet.
         File noReseedFile = new File(new File(System.getProperty("user.home")), ".i2pnoreseed");
@@ -116,19 +123,21 @@ public class ReseedChecker {
                 return false;
             }
             _networkLogged = false;
-            if (count <= 1)
+            if (count <= 1) {
                 _log.logAlways(Log.INFO, "Downloading peer router information for a new I2P installation");
-            else
+            } else {
                 _log.logAlways(Log.WARN, "Very few known peers remaining - reseeding now");
+            }
             return requestReseed();
         } else {
             int x = count - 1;  // us
             // no ngettext, this is rare
             String s;
-            if (x > 0)
+            if (x > 0) {
                 s = "Only " + x + " peers remaining but reseed disabled by config file";
-            else
+            } else {
                 s = "No peers remaining but reseed disabled by config file";
+            }
             if (!s.equals(_lastError)) {
                 _lastError = s;
                 _log.logAlways(Log.WARN, s);
@@ -156,8 +165,9 @@ public class ReseedChecker {
                 return false;
             }
         } else {
-            if (_log.shouldLog(Log.WARN))
+            if (_log.shouldLog(Log.WARN)) {
                 _log.warn("Reseed already in progress");
+            }
             return false;
         }
     }
@@ -176,8 +186,9 @@ public class ReseedChecker {
                 reseeder.requestReseed(url);
                 return true;
             } catch (IllegalArgumentException iae) {
-                if (iae.getMessage() != null)
+                if (iae.getMessage() != null) {
                     setError(DataHelper.escapeHTML(iae.getMessage()));
+                }
                 done();
                 throw iae;
             } catch (Throwable t) {
@@ -186,8 +197,9 @@ public class ReseedChecker {
                 return false;
             }
         } else {
-            if (_log.shouldLog(Log.WARN))
+            if (_log.shouldLog(Log.WARN)) {
                 _log.warn("Reseed already in progress");
+            }
             return false;
         }
     }
@@ -206,8 +218,9 @@ public class ReseedChecker {
                 Reseeder reseeder = new Reseeder(_context, this);
                 return reseeder.requestReseed(in);
             } catch (IOException ioe) {
-                if (ioe.getMessage() != null)
+                if (ioe.getMessage() != null) {
                     setError(DataHelper.escapeHTML(ioe.getMessage()));
+                }
                 throw ioe;
             } finally {
                 done();
@@ -291,10 +304,12 @@ public class ReseedChecker {
         }
 
         public void timeReached() {
-            if (_status.equals(getStatus()))
+            if (_status.equals(getStatus())) {
                 setStatus("");
-            if (_error.equals(getError()))
+            }
+            if (_error.equals(getError())) {
                 setError("");
+            }
         }
     }
 }
