@@ -42,7 +42,6 @@ import net.i2p.util.VersionComparator;
  *
  */
 public class ReseedBundler {
-
     private final RouterContext _context;
     private final static String ROUTERINFO_PREFIX = "routerInfo-";
     private final static String ROUTERINFO_SUFFIX = ".dat";
@@ -53,7 +52,6 @@ public class ReseedBundler {
     public ReseedBundler(RouterContext ctx) {
         _context = ctx;
     }
-
 
     /**
      *  Create a zip file with
@@ -74,35 +72,51 @@ public class ReseedBundler {
         List<RouterInfo> toWrite = new ArrayList<RouterInfo>(count);
         Collections.shuffle(infos);
         for (RouterInfo ri : infos) {
-            if (copied >= count)
+            if (copied >= count) {
                 break;
+            }
+
             Hash key = ri.getIdentity().calculateHash();
+
             if (key.equals(me)) {
                 continue;
             }
-            if (ri.getPublished() < tooOld)
+            if (ri.getPublished() < tooOld) {
                 continue;
+            }
+
             String caps = ri.getCapabilities();
-            if (caps.contains("U"))
+
+            if (caps.contains("U")) {
                 continue;
-            if (caps.contains("K"))
+            }
+            if (caps.contains("K")) {
                 continue;
-            if (caps.contains("G"))
+            }
+            if (caps.contains("G")) {
                 continue;
-            if (VersionComparator.comp(ri.getVersion(), MIN_VERSION) < 0)
+            }
+            if (VersionComparator.comp(ri.getVersion(), MIN_VERSION) < 0) {
                 continue;
+            }
+
             Collection<RouterAddress> addrs = ri.getAddresses();
-            if (addrs.isEmpty())
+            if (addrs.isEmpty()) {
                 continue;
-            
+            }
+
             String name = getRouterInfoName(key);
             boolean hasIntro = false;
             boolean hasIPv4 = false;
             boolean dupIP = false;
             for (RouterAddress addr : addrs) {
                 String style = addr.getTransportStyle();
-                if (("SSU".equals(style) || "SSU2".equals(style)) &&
-                    addr.getOption("itag0") != null) {
+                if (
+                    ("SSU".equals(style) || "SSU2".equals(style))
+                    &&
+                    addr.getOption("itag0") != null
+                )
+                {
                     hasIntro = true;
                     break;
                 }
@@ -116,29 +130,35 @@ public class ReseedBundler {
                     }
                 }
             }
-            if (dupIP)
+            if (dupIP) {
                 continue;
-            if (hasIntro)
+            }
+            if (hasIntro) {
                 continue;
-            if (!hasIPv4)
+            }
+            if (!hasIPv4) {
                 continue;
-            if (_context.commSystem().isInStrictCountry(ri))
+            }
+            if (_context.commSystem().isInStrictCountry(ri)) {
                 continue;
+            }
 
             toWrite.add(ri);
             copied++;
         }
 
-        if (toWrite.isEmpty())
+        if (toWrite.isEmpty()) {
             throw new IOException("No router infos to include. Reseed yourself first.");
-        if (toWrite.size() < Math.min(count, MINIMUM))
+        }
+        if (toWrite.size() < Math.min(count, MINIMUM)) {
             throw new IOException("Not enough router infos to include, wanted " + count +
                                   " but only found " + toWrite.size() + ". Please try again later.");
+        }
 
         File rv = new File(_context.getTempDir(), "genreseed-" + _context.random().nextInt() + ".zip");
         ZipOutputStream zip = null;
         try {
-            zip = new ZipOutputStream(new FileOutputStream(rv) );
+            zip = new ZipOutputStream(new FileOutputStream(rv));
             for (RouterInfo ri : toWrite) {
                 String name = getRouterInfoName(ri.getIdentity().calculateHash());
                 ZipEntry entry = new ZipEntry(name);
@@ -156,7 +176,7 @@ public class ReseedBundler {
             rv.delete();
             throw ioe;
         } finally {
-            if ( zip != null) {
+            if (zip != null) {
                 try {
                     zip.finish();
                     zip.close();
@@ -166,6 +186,7 @@ public class ReseedBundler {
                 }
             }
         }
+
         return rv;
     }
 
