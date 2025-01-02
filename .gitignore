@@ -12,6 +12,12 @@
 *.zip
 *.torrent
 
+# apache-ant log output
+*.log
+
+# original backup file
+*.orig
+
 *~
 web-fragment.xml
 web-out.xml
