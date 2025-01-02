@@ -83,14 +83,14 @@ public class Reseeder {
      *         URLs are constructed, and because SSLEepGet doesn't follow redirects.
      */
     public static final String DEFAULT_SEED_URL =
-              // Disable due to misconfiguation (ticket #1466)
-              //"http://us.reseed.i2p2.no/" + "," +
+        // Disable due to misconfiguation (ticket #1466)
+        //"http://us.reseed.i2p2.no/" + "," +
 
-              // Disabling everything, use SSL
-              //"http://i2p.mooo.com/netDb/" + "," +
-              //"http://uk.reseed.i2p2.no/" + "," +
-              //"http://netdb.i2p2.no/"; // Only SU3 (v3) support
-              "";
+        // Disabling everything, use SSL
+        //"http://i2p.mooo.com/netDb/" + "," +
+        //"http://uk.reseed.i2p2.no/" + "," +
+        //"http://netdb.i2p2.no/"; // Only SU3 (v3) support
+        "";
 
     /**
      *  The I2P reseed servers are managed by backup (backup@mail.i2p).
@@ -215,12 +215,13 @@ public class Reseeder {
         try {
             DataHelper.read(in, magic);
             boolean isSU3;
-            if (DataHelper.eq(magic, 0, su3Magic, 0, su3Magic.length))
+            if (DataHelper.eq(magic, 0, su3Magic, 0, su3Magic.length)) {
                 isSU3 = true;
-            else if (DataHelper.eq(magic, 0, zipMagic, 0, zipMagic.length))
+            } else if (DataHelper.eq(magic, 0, zipMagic, 0, zipMagic.length)) {
                 isSU3 = false;
-            else
+            } else {
                 throw new IOException("Not a zip or su3 file");
+            }
             tmp =  new File(_context.getTempDir(), "manualreseeds-" + _context.random().nextInt() + (isSU3 ? ".su3" : ".zip"));
             out = new BufferedOutputStream(new SecureFileOutputStream(tmp));
             out.write(magic);
@@ -229,25 +230,36 @@ public class Reseeder {
             int[] stats;
             ReseedRunner reseedRunner = new ReseedRunner();
             // inline
-            if (isSU3)
+            if (isSU3) {
                 stats = reseedRunner.extractSU3(tmp);
-            else
+            } else {
                 stats = reseedRunner.extractZip(tmp);
+            }
             int fetched = stats[0];
             int errors = stats[1];
-            if (fetched <= 0)
+            if (fetched <= 0) {
                 throw new IOException("No seeds extracted");
-            _checker.setStatus(
-                _t("Reseeding: got router info from file ({0} successful, {1} errors).", fetched, errors));
+            }
+            _checker.setStatus(_t("Reseeding: got router info from file ({0} successful, {1} errors).", fetched, errors));
             System.err.println("Reseed got " + fetched + " router infos from file with " + errors + " errors");
-            if (fetched > 0)
+            if (fetched > 0) {
                 _context.router().eventLog().addEvent(EventLog.RESEED, fetched + " from file");
+            }
             return fetched;
         } finally {
-            try { in.close(); } catch (IOException ioe) {}
-            if (out != null)  try { out.close(); } catch (IOException ioe) {}
-            if (tmp != null)
+            try {
+                in.close();
+            }
+            catch (IOException ioe) {}
+            if (out != null) {
+                try {
+                    out.close();
+                }
+                catch (IOException ioe) {}
+            }
+            if (tmp != null) {
                 tmp.delete();
+            }
         }
     }
 
@@ -295,8 +307,9 @@ public class Reseeder {
         public ReseedRunner(URI url) throws IllegalArgumentException {
             if (url != null) {
                 String lc = url.getPath().toLowerCase(Locale.US);
-                if (!(lc.endsWith(".zip") || lc.endsWith(".su3")))
+                if (!(lc.endsWith(".zip") || lc.endsWith(".su3"))) {
                     throw new IllegalArgumentException("Reseed URL must end with .zip or .su3");
+                }
             }
             _url = url;
             _bandwidths = new ArrayList<Long>(4);
@@ -367,13 +380,15 @@ public class Reseeder {
             }
             if (total >= 20) {
                 String s = ngettext("Reseed successful, fetched {0} router info",
-                                    "Reseed successful, fetched {0} router infos", total);
+                                    "Reseed successful, fetched {0} router infos",
+                                    total);
                 System.out.println(s + getDisplayString(_url));
                 _checker.setStatus(s);
                 _checker.setError("");
             } else if (total > 0) {
                 String s = ngettext("Reseed fetched only 1 router.",
-                                    "Reseed fetched only {0} routers.", total);
+                                    "Reseed fetched only {0} routers.",
+                                    total);
                 System.out.println(s + getDisplayString(_url));
                 _checker.setError(s);
                 _checker.setStatus("");
@@ -383,45 +398,50 @@ public class Reseeder {
                     System.out.println("Ensure that nothing blocks outbound HTTP or HTTPS, check the logs, " +
                                        "and if nothing helps, read the FAQ about reseeding manually.");
                     if (_url == null || "https".equals(_url.getScheme())) {
-                        if (_sproxyHost != null && _sproxyPort > 0)
+                        if (_sproxyHost != null && _sproxyPort > 0) {
                             System.out.println("Check current proxy setting! Type: " + getDisplayString(_sproxyType) +
                                                " Host: " + _sproxyHost + " Port: " + _sproxyPort);
-                        else
+                        } else {
                             System.out.println("Consider enabling a proxy for https on the reseed configuration page");
+                        }
                     } else {
-                        if (_proxyHost != null && _proxyPort > 0)
+                        if (_proxyHost != null && _proxyPort > 0) {
                             System.out.println("Check HTTP proxy setting - host: " + _proxyHost + " port: " + _proxyPort);
-                        else
+                        } else {
                             System.out.println("Consider enabling an HTTP proxy on the reseed configuration page");
+                        }
                     }
                 } // else < 0, no valid URLs
                 String old = _checker.getError();
                 _checker.setError(_t("Reseed failed.") + ' '  +
                                   _t("See {0} for help.",
-                                    "<a target=\"_top\" href=\"/configreseed\">" + _t("reseed configuration page") + "</a>") +
+                                     "<a target=\"_top\" href=\"/configreseed\">" + _t("reseed configuration page") + "</a>") +
                                   "<br>" + old);
                 _checker.setStatus("");
             }
             _isRunning = false;
             // ReseedChecker will set timer to clean up
             //_checker.setStatus("");
-            if (total > 0)
+            if (total > 0) {
                 _context.router().eventLog().addEvent(EventLog.RESEED, Integer.toString(total));
+            }
         }
 
         /**
          *  @since 0.9.18
          */
         private void processBandwidths() {
-            if (_bandwidths.isEmpty())
+            if (_bandwidths.isEmpty()) {
                 return;
+            }
             long tot = 0;
             for (Long sample : _bandwidths) {
                 tot += sample.longValue();
             }
             long avg = tot / _bandwidths.size();
-            if (_log.shouldLog(Log.INFO))
+            if (_log.shouldLog(Log.INFO)) {
                 _log.info("Bandwidth average: " + avg + " KBps from " + _bandwidths.size() + " samples");
+            }
             // TODO _context.bandwidthLimiter().....
         }
 
@@ -430,12 +450,14 @@ public class Reseeder {
             // Since readURL() runs an EepGet with 0 retries,
             // we can report errors with attemptFailed() instead of transferFailed().
             // It has the benefit of providing cause of failure, which helps resolve issues.
-            if (_log.shouldLog(Log.WARN))
+            if (_log.shouldLog(Log.WARN)) {
                 _log.warn("EepGet failed on " + url, cause);
-            else
+            } else {
                 _log.logAlways(Log.WARN, "EepGet failed on " + url + " : " + cause);
-            if (cause != null && cause.getMessage() != null)
+            }
+            if (cause != null && cause.getMessage() != null) {
                 _checker.setError(DataHelper.escapeHTML(cause.getMessage()));
+            }
         }
 
         public void bytesTransferred(long alreadyTransferred, int currentWrite, long bytesTransferred, long bytesRemaining, String url) {}
@@ -458,19 +480,21 @@ public class Reseeder {
                     long offset = now - _context.clock().now();
                     if (_context.clock().getUpdatedSuccessfully()) {
                         // 2nd time better than the first
-                        if (_gotDate > 0)
+                        if (_gotDate > 0) {
                             _context.clock().setNow(now, RouterClock.DEFAULT_STRATUM - 2);
-                        else
+                        } else {
                             _context.clock().setNow(now, RouterClock.DEFAULT_STRATUM - 1);
-                        if (_log.shouldLog(Log.WARN))
+                        }
+                        if (_log.shouldLog(Log.WARN)) {
                             _log.warn("Reseed adjusting clock by " +
                                       DataHelper.formatDuration(Math.abs(offset)));
+                        }
                     } else {
                         // No peers or NTP yet, this is probably better than the peer average will be for a while
                         // default stratum - 1, so the peer average is a worse stratum
                         _context.clock().setNow(now, RouterClock.DEFAULT_STRATUM - 1);
                         _log.logAlways(Log.WARN, "NTP failure, Reseed adjusting clock by " +
-                                                 DataHelper.formatDuration(Math.abs(offset)));
+                                       DataHelper.formatDuration(Math.abs(offset)));
                     }
                     _gotDate++;
                 }
@@ -479,8 +503,9 @@ public class Reseeder {
 
         /** save the start time */
         public void attempting(String url) {
-            if (_gotDate < MAX_DATE_SETS)
+            if (_gotDate < MAX_DATE_SETS) {
                 _attemptStarted = System.currentTimeMillis();
+            }
         }
 
         // End of EepGet status listeners
@@ -506,15 +531,17 @@ public class Reseeder {
             boolean SSLRequired = _context.getBooleanPropertyDefaultTrue(PROP_SSL_REQUIRED);
 
             if (defaulted) {
-                if (SSLDisable)
+                if (SSLDisable) {
                     URLs = DEFAULT_SEED_URL;
-                else
+                } else {
                     URLs = DEFAULT_SSL_SEED_URL;
+                }
                 StringTokenizer tok = new StringTokenizer(URLs, " ,");
                 while (tok.hasMoreTokens()) {
                     String u = tok.nextToken().trim();
-                    if (!u.endsWith("/"))
+                    if (!u.endsWith("/")) {
                         u = u + '/';
+                    }
                     try {
                         URLList.add(new URI(u));
                     } catch (URISyntaxException mue) {}
@@ -526,8 +553,9 @@ public class Reseeder {
                     tok = new StringTokenizer(DEFAULT_SEED_URL, " ,");
                     while (tok.hasMoreTokens()) {
                         String u = tok.nextToken().trim();
-                        if (!u.endsWith("/"))
+                        if (!u.endsWith("/")) {
                             u = u + '/';
+                        }
                         try {
                             URLList2.add(new URI(u));
                         } catch (URISyntaxException mue) {}
@@ -543,8 +571,9 @@ public class Reseeder {
                 while (tok.hasMoreTokens()) {
                     // format tokens
                     String u = tok.nextToken().trim();
-                    if (!u.endsWith("/"))
+                    if (!u.endsWith("/")) {
                         u = u + '/';
+                    }
                     // check if ssl or not then add to respective list
                     if (u.startsWith("https")) {
                         try {
@@ -559,7 +588,7 @@ public class Reseeder {
                 // shuffle lists
                 // depending on preferences, add lists to URLList
                 if (!SSLDisable) {
-                    Collections.shuffle(SSLList,_context.random());
+                    Collections.shuffle(SSLList, _context.random());
                     URLList.addAll(SSLList);
                 }
                 if (SSLDisable || !SSLRequired) {
@@ -607,21 +636,24 @@ public class Reseeder {
                     } catch (URISyntaxException mue) {}
                 }
                 if (ENABLE_NON_SU3) {
-                    if (dl <= 0)
+                    if (dl <= 0) {
                         dl = reseedOne(url, echoStatus);
+                    }
                 }
                 if (dl > 0) {
                     total += dl;
                     fetched_reseed_servers++;
                     // Don't go on to the next URL if we have enough
-                    if (total >= MIN_RI_WANTED && fetched_reseed_servers >= MIN_RESEED_SERVERS)
+                    if (total >= MIN_RI_WANTED && fetched_reseed_servers >= MIN_RESEED_SERVERS) {
                         break;
+                    }
                     // remove alternate versions if we haven't tried them yet
                     for (int j = i + 1; j < URLList.size(); ) {
-                        if (url.getHost().equals(URLList.get(j).getHost()))
+                        if (url.getHost().equals(URLList.get(j).getHost())) {
                             URLList.remove(j);
-                        else
+                        } else {
                             j++;
+                        }
                     }
                 }
             }
@@ -659,8 +691,9 @@ public class Reseeder {
                 byte contentRaw[] = readURL(seedURL);
                 if (contentRaw == null) {
                     // Logging deprecated here since attemptFailed() provides better info
-                    if (_log.shouldWarn())
+                    if (_log.shouldWarn()) {
                         _log.warn("Failed reading seed " + s);
+                    }
                     System.err.println("Reseed got no router infos " + s);
                     return 0;
                 }
@@ -676,13 +709,15 @@ public class Reseeder {
                     int start = content.indexOf("href=\"" + ROUTERINFO_PREFIX, cur);
                     if (start < 0) {
                         start = content.indexOf("HREF=\"" + ROUTERINFO_PREFIX, cur);
-                        if (start < 0)
+                        if (start < 0) {
                             break;
+                        }
                     }
 
                     int end = content.indexOf(ROUTERINFO_SUFFIX + "\">", start);
-                    if (end < 0)
+                    if (end < 0) {
                         break;
+                    }
                     if (start - end > 200) {  // 17 + 3*44 for % encoding + just to be sure
                         cur = end + 1;
                         continue;
@@ -692,14 +727,16 @@ public class Reseeder {
                     if (ourB64 == null || !name.contains(ourB64)) {
                         urls.add(name);
                     } else {
-                        if (_log.shouldLog(Log.INFO))
+                        if (_log.shouldLog(Log.INFO)) {
                             _log.info("Skipping our own RI");
+                        }
                     }
                     cur = end + 1;
                 }
                 if (total <= 0) {
-                    if (_log.shouldWarn())
+                    if (_log.shouldWarn()) {
                         _log.warn("Read " + contentRaw.length + " bytes " + s + ", but found no routerInfo URLs.");
+                    }
                     System.err.println("Reseed got no router infos " + s);
                     return 0;
                 }
@@ -708,38 +745,44 @@ public class Reseeder {
                 Collections.shuffle(urlList, _context.random());
                 int fetched = 0;
                 int errors = 0;
-                // 200 max from one URL
-                for (Iterator<String> iter = urlList.iterator();
-                     iter.hasNext() && fetched < 200 && System.currentTimeMillis() < timeLimit; ) {
+                for (
+                    Iterator<String> iter = urlList.iterator();
+                    iter.hasNext() && System.currentTimeMillis() < timeLimit;
+                ) {
                     try {
-                        _checker.setStatus(
-                            _t("Reseeding: fetching router info from seed URL ({0} successful, {1} errors).", fetched, errors));
+                        _checker.setStatus(_t("Reseeding: fetching router info from seed URL ({0} successful, {1} errors).", fetched, errors));
 
-                        if (!fetchSeed(seedURL.toString(), iter.next()))
+                        if (!fetchSeed(seedURL.toString(), iter.next())) {
                             continue;
+                        }
                         fetched++;
                         if (echoStatus) {
                             System.out.print(".");
-                            if (fetched % 60 == 0)
+                            if (fetched % 60 == 0) {
                                 System.out.println();
+                            }
                         }
                     } catch (RuntimeException e) {
-                        if (_log.shouldLog(Log.INFO))
+                        if (_log.shouldLog(Log.INFO)) {
                             _log.info("Failed fetch", e);
+                        }
                         errors++;
                     }
                     // Give up on this host after lots of errors, or 10 with only 0 or 1 good
-                    if (errors >= 50 || (errors >= 10 && fetched <= 1))
+                    if (errors >= 50 || (errors >= 10 && fetched <= 1)) {
                         break;
+                    }
                 }
                 System.err.println("Reseed got " + fetched + " router infos " + s + " with " + errors + " errors");
 
-                if (fetched > 0)
+                if (fetched > 0) {
                     _context.netDb().rescan();
+                }
                 return fetched;
             } catch (Throwable t) {
-                if (_log.shouldWarn())
+                if (_log.shouldWarn()) {
                     _log.warn("Error reseeding", t);
+                }
                 System.err.println("Reseed got no router infos " + s);
                 return 0;
             }
@@ -798,8 +841,9 @@ public class Reseeder {
                 long totalTime = System.currentTimeMillis() - startTime;
                 if (contentRaw == null) {
                     // Logging deprecated here since attemptFailed() provides better info
-                    if (_log.shouldWarn())
+                    if (_log.shouldWarn()) {
                         _log.warn("Failed reading " + s);
+                    }
                     System.err.println("Reseed got no router infos " + s);
                     return 0;
                 }
@@ -807,14 +851,16 @@ public class Reseeder {
                     long sz = contentRaw.length();
                     long bw = 1000 * sz / totalTime;
                     _bandwidths.add(Long.valueOf(bw));
-                    if (_log.shouldLog(Log.DEBUG))
+                    if (_log.shouldLog(Log.DEBUG)) {
                         _log.debug("Rcvd " + sz + " bytes in " + totalTime + " ms " + getDisplayString(seedURL));
+                    }
                 }
                 int[] stats;
-                if (isSU3)
+                if (isSU3) {
                     stats = extractSU3(contentRaw);
-                else
+                } else {
                     stats = extractZip(contentRaw);
+                }
                 fetched = stats[0];
                 errors = stats[1];
                 if (fetched == 0) {
@@ -828,11 +874,11 @@ public class Reseeder {
                 _log.error("Error reseeding " + s, t);
                 errors++;
             } finally {
-                if (contentRaw != null)
+                if (contentRaw != null) {
                     contentRaw.delete();
+                }
             }
-            _checker.setStatus(
-                _t("Reseeding: fetching router info from seed URL ({0} successful, {1} errors).", fetched, errors));
+            _checker.setStatus(_t("Reseeding: fetching router info from seed URL ({0} successful, {1} errors).", fetched, errors));
             System.err.println("Reseed got " + fetched + " router infos " + getDisplayString(seedURL) + " with " + errors + " errors");
             return fetched;
         }
@@ -851,8 +897,9 @@ public class Reseeder {
                 zip = new File(_context.getTempDir(), "reseed-" + _context.random().nextInt() + ".zip");
                 su3.verifyAndMigrate(zip);
                 int type = su3.getContentType();
-                if (type != SU3File.CONTENT_RESEED)
+                if (type != SU3File.CONTENT_RESEED) {
                     throw new IOException("Bad content type " + type);
+                }
                 String version = su3.getVersionString();
                 try {
                     Long ver = Long.parseLong(version.trim());
@@ -860,8 +907,9 @@ public class Reseeder {
                         // preliminary code was using "3"
                         // new format is date +%s
                         ver *= 1000;
-                        if (ver < _context.clock().now() - MAX_FILE_AGE)
+                        if (ver < _context.clock().now() - MAX_FILE_AGE) {
                             throw new IOException("su3 file too old");
+                        }
                     }
                 } catch (NumberFormatException nfe) {}
 
@@ -874,8 +922,9 @@ public class Reseeder {
                 errors++;
             } finally {
                 contentRaw.delete();
-                if (zip != null)
+                if (zip != null) {
                     zip.delete();
+                }
             }
 
             int[] rv = new int[2];
@@ -894,35 +943,47 @@ public class Reseeder {
             File tmpDir = null;
             try {
                 tmpDir = new File(_context.getTempDir(), "reseeds-" + _context.random().nextInt());
-                if (!FileUtil.extractZip(zip, tmpDir))
+                if (!FileUtil.extractZip(zip, tmpDir)) {
                     throw new IOException("Bad zip file");
+                }
 
                 Hash ourHash = _context.routerHash();
                 String ourB64 = ourHash != null ? ROUTERINFO_PREFIX + ourHash.toBase64() + ROUTERINFO_SUFFIX : "";
 
                 File[] files = tmpDir.listFiles();
-                if (files == null || files.length == 0)
+                if (files == null || files.length == 0) {
                     throw new IOException("No files in zip");
+                }
                 List<File> fList = Arrays.asList(files);
                 Collections.shuffle(fList, _context.random());
                 long minTime = _context.clock().now() - MAX_FILE_AGE;
                 File netDbDir = new SecureDirectory(_context.getRouterDir(), "netDb");
-                if (!netDbDir.exists())
+                if (!netDbDir.exists()) {
                     netDbDir.mkdirs();
+                }
 
-                // 400 max from one URL
-                for (Iterator<File> iter = fList.iterator(); iter.hasNext() && fetched < 400; ) {
+                for (Iterator<File> iter = fList.iterator(); iter.hasNext(); ) {
                     File f = iter.next();
                     String name = f.getName();
-                    if (name.length() != ROUTERINFO_PREFIX.length() + 44 + ROUTERINFO_SUFFIX.length() ||
-                        name.equals(ourB64) ||
-                        f.length() > RouterInfo.MAX_UNCOMPRESSED_SIZE ||
-                        f.lastModified() < minTime ||
-                        !name.startsWith(ROUTERINFO_PREFIX) ||
-                        !name.endsWith(ROUTERINFO_SUFFIX) ||
-                        !f.isFile()) {
-                        if (_log.shouldLog(Log.WARN))
+                    if (
+                        name.length() != ROUTERINFO_PREFIX.length() + 44 + ROUTERINFO_SUFFIX.length()
+                        ||
+                        name.equals(ourB64)
+                        ||
+                        f.length() > RouterInfo.MAX_UNCOMPRESSED_SIZE
+                        ||
+                        f.lastModified() < minTime
+                        ||
+                        !name.startsWith(ROUTERINFO_PREFIX)
+                        ||
+                        !name.endsWith(ROUTERINFO_SUFFIX)
+                        ||
+                        !f.isFile()
+                    )
+                    {
+                        if (_log.shouldLog(Log.WARN)) {
                             _log.warn("Skipping " + f);
+                        }
                         f.delete();
                         errors++;
                         continue;
@@ -935,16 +996,19 @@ public class Reseeder {
                         errors++;
                     }
                     // Give up on this host after lots of errors
-                    if (errors >= 5)
+                    if (errors >= 50) {
                         break;
+                    }
                 }
             } finally {
-                if (tmpDir != null)
+                if (tmpDir != null) {
                     FileUtil.rmdir(tmpDir, false);
+                }
             }
 
-            if (fetched > 0)
+            if (fetched > 0) {
                 _context.netDb().rescan();
+            }
             int[] rv = new int[2];
             rv[0] = fetched;
             rv[1] = errors;
@@ -964,20 +1028,24 @@ public class Reseeder {
             // .. or / in the file name
             URI uri = new URI(peer);
             String b64 = uri.getPath();
-            if (b64 == null)
+            if (b64 == null) {
                 throw new IOException("bad hash " + peer);
+            }
             byte[] hash = Base64.decode(b64);
-            if (hash == null || hash.length != Hash.HASH_LENGTH)
+            if (hash == null || hash.length != Hash.HASH_LENGTH) {
                 throw new IOException("bad hash " + peer);
+            }
             Hash ourHash = _context.routerHash();
-            if (ourHash != null && DataHelper.eq(hash, ourHash.getData()))
+            if (ourHash != null && DataHelper.eq(hash, ourHash.getData())) {
                 return false;
+            }
 
             URI url = new URI(seedURL + (seedURL.endsWith("/") ? "" : "/") + ROUTERINFO_PREFIX + peer + ROUTERINFO_SUFFIX);
 
             byte data[] = readURL(url);
-            if (data == null || data.length <= 0)
+            if (data == null || data.length <= 0) {
                 throw new IOException("Failed fetch of " + url);
+            }
             return writeSeed(b64, data);
         }
 
@@ -989,38 +1057,66 @@ public class Reseeder {
             if (ssl) {
                 SSLEepGet sslget;
                 if (_sslState == null) {
-                    if (_shouldProxySSL)
-                        sslget = new SSLEepGet(_context, _sproxyType, _sproxyHost, _sproxyPort,
-                                               baos, url.toString());
-                    else
+                    if (_shouldProxySSL) {
+                        sslget = new SSLEepGet(
+                            _context,
+                            _sproxyType,
+                            _sproxyHost,
+                            _sproxyPort,
+                            baos,
+                            url.toString()
+                        );
+                    } else {
                         sslget = new SSLEepGet(_context, baos, url.toString());
+                    }
                     // save state for next time
                     _sslState = sslget.getSSLState();
                 } else {
-                    if (_shouldProxySSL)
-                        sslget = new SSLEepGet(_context, _sproxyType, _sproxyHost, _sproxyPort,
-                                               baos, url.toString(), _sslState);
-                    else
+                    if (_shouldProxySSL) {
+                        sslget = new SSLEepGet(
+                            _context,
+                            _sproxyType,
+                            _sproxyHost,
+                            _sproxyPort,
+                            baos,
+                            url.toString(),
+                            _sslState
+                        );
+                    } else {
                         sslget = new SSLEepGet(_context, baos, url.toString(), _sslState);
+                    }
                 }
                 get = sslget;
                 if (_shouldProxySSL && _context.getBooleanProperty(PROP_SPROXY_AUTH_ENABLE)) {
                     String user = _context.getProperty(PROP_SPROXY_USERNAME);
                     String pass = _context.getProperty(PROP_SPROXY_PASSWORD);
-                    if (user != null && user.length() > 0 &&
-                        pass != null && pass.length() > 0)
+                    if (user != null && user.length() > 0 && pass != null && pass.length() > 0) {
                         get.addAuthorization(user, pass);
+                    }
                 }
             } else {
                 // Do a (probably) non-proxied eepget into our ByteArrayOutputStream with 0 retries
-                get = new EepGet(_context, _shouldProxyHTTP, _proxyHost, _proxyPort, 0, 0, MAX_RESEED_RESPONSE_SIZE,
-                                 null, baos, url.toString(), false, null, null);
+                get = new EepGet(
+                    _context,
+                    _shouldProxyHTTP,
+                    _proxyHost,
+                    _proxyPort,
+                    0,
+                    0,
+                    MAX_RESEED_RESPONSE_SIZE,
+                    null,
+                    baos,
+                    url.toString(),
+                    false,
+                    null,
+                    null
+                );
                 if (_shouldProxyHTTP && _context.getBooleanProperty(PROP_PROXY_AUTH_ENABLE)) {
                     String user = _context.getProperty(PROP_PROXY_USERNAME);
                     String pass = _context.getProperty(PROP_PROXY_PASSWORD);
-                    if (user != null && user.length() > 0 &&
-                        pass != null && pass.length() > 0)
+                    if (user != null && user.length() > 0 && pass != null && pass.length() > 0) {
                         get.addAuthorization(user, pass);
+                    }
                 }
             }
             if (!url.toString().endsWith("/")) {
@@ -1028,8 +1124,9 @@ public class Reseeder {
                 get.addHeader("If-Modified-Since", minLastMod);
             }
             get.addStatusListener(ReseedRunner.this);
-            if (get.fetch() && get.getStatusCode() == 200)
+            if (get.fetch() && get.getStatusCode() == 200) {
                 return baos.toByteArray();
+            }
             return null;
         }
 
@@ -1040,23 +1137,37 @@ public class Reseeder {
          *  @since 0.9.14
          */
         private File fetchURL(URI url) throws IOException {
-            File out = new File(_context.getTempDir(), "reseed-" + _context.random().nextInt() + ".tmp");
+            File out = new File(_context.getTempDir(), "reseed-"+_context.random().nextInt()+".tmp");
             EepGet get;
             boolean ssl = "https".equals(url.getScheme());
             if (ssl) {
                 SSLEepGet sslget;
                 if (_sslState == null) {
-                    if (_shouldProxySSL)
-                        sslget = new SSLEepGet(_context, _sproxyType, _sproxyHost, _sproxyPort,
-                                               out.getPath(), url.toString());
-                    else
+                    if (_shouldProxySSL) {
+                        sslget = new SSLEepGet(
+                            _context,
+                            _sproxyType,
+                            _sproxyHost,
+                            _sproxyPort,
+                            out.getPath(),
+                            url.toString()
+                        );
+                    } else {
                         sslget = new SSLEepGet(_context, out.getPath(), url.toString());
+                    }
                     // save state for next time
                     _sslState = sslget.getSSLState();
                 } else {
                     if (_shouldProxySSL)
-                        sslget = new SSLEepGet(_context, _sproxyType, _sproxyHost, _sproxyPort,
-                                               out.getPath(), url.toString(), _sslState);
+                        sslget = new SSLEepGet(
+                            _context,
+                            _sproxyType,
+                            _sproxyHost,
+                            _sproxyPort,
+                            out.getPath(),
+                            url.toString(),
+                            _sslState
+                        );
                     else
                         sslget = new SSLEepGet(_context, out.getPath(), url.toString(), _sslState);
                 }
@@ -1064,20 +1175,33 @@ public class Reseeder {
                 if (_shouldProxySSL && _context.getBooleanProperty(PROP_SPROXY_AUTH_ENABLE)) {
                     String user = _context.getProperty(PROP_SPROXY_USERNAME);
                     String pass = _context.getProperty(PROP_SPROXY_PASSWORD);
-                    if (user != null && user.length() > 0 &&
-                        pass != null && pass.length() > 0)
+                    if (user != null && user.length() > 0 && pass != null && pass.length() > 0) {
                         get.addAuthorization(user, pass);
+                    }
                 }
             } else {
                 // Do a (probably) non-proxied eepget into file with 0 retries
-                get = new EepGet(_context, _shouldProxyHTTP, _proxyHost, _proxyPort, 0, 0, MAX_SU3_RESPONSE_SIZE,
-                                 out.getPath(), null, url.toString(), false, null, null);
+                get = new EepGet(
+                    _context,
+                    _shouldProxyHTTP,
+                    _proxyHost,
+                    _proxyPort,
+                    0,
+                    0,
+                    MAX_SU3_RESPONSE_SIZE,
+                    out.getPath(),
+                    null,
+                    url.toString(),
+                    false,
+                    null,
+                    null
+                );
                 if (_shouldProxyHTTP && _context.getBooleanProperty(PROP_PROXY_AUTH_ENABLE)) {
                     String user = _context.getProperty(PROP_PROXY_USERNAME);
                     String pass = _context.getProperty(PROP_PROXY_PASSWORD);
-                    if (user != null && user.length() > 0 &&
-                        pass != null && pass.length() > 0)
+                    if (user != null && user.length() > 0 && pass != null && pass.length() > 0) {
                         get.addAuthorization(user, pass);
+                    }
                 }
             }
             if (!url.toString().endsWith("/")) {
@@ -1085,8 +1209,9 @@ public class Reseeder {
                 get.addHeader("If-Modified-Since", minLastMod);
             }
             get.addStatusListener(ReseedRunner.this);
-            if (get.fetch() && get.getStatusCode() == 200)
+            if (get.fetch() && get.getStatusCode() == 200) {
                 return out;
+            }
             out.delete();
             return null;
         }
@@ -1105,20 +1230,24 @@ public class Reseeder {
             // don't overwrite recent file
             // TODO: even better would be to compare to last-mod date from eepget
             if (file.exists() && file.lastModified() > _context.clock().now() - 60*60*1000) {
-                if (_log.shouldLog(Log.INFO))
+                if (_log.shouldLog(Log.INFO)) {
                     _log.info("Skipping RI, ours is recent: " + file);
+                }
                 return false;
             }
             FileOutputStream fos = null;
             try {
                 fos = new SecureFileOutputStream(file);
                 fos.write(data);
-                if (_log.shouldLog(Log.INFO))
+                if (_log.shouldLog(Log.INFO)) {
                     _log.info("Saved RI (" + data.length + " bytes) to " + file);
+                }
             } finally {
-                try {
-                    if (fos != null) fos.close();
-                } catch (IOException ioe) {}
+                if (fos != null) {
+                    try {
+                        fos.close();
+                    } catch (IOException ioe) {}
+                }
             }
             return true;
         }
@@ -1142,8 +1271,9 @@ public class Reseeder {
          *  @since 0.9.33
          */
         private String getDisplayString(URI url) {
-            if (url == null)
+            if (url == null) {
                 return "";
+            }
             return getDisplayString(url.toString());
         }
 
@@ -1156,8 +1286,9 @@ public class Reseeder {
          *  @since 0.9.33
          */
         private String getDisplayString(String url) {
-            if (url == null)
+            if (url == null) {
                 return "";
+            }
             StringBuilder buf = new StringBuilder(64);
             buf.append("from ").append(url);
             boolean ssl = url.startsWith("https://");
@@ -1165,18 +1296,20 @@ public class Reseeder {
                 buf.append(" (using ");
                 buf.append(getDisplayString(_sproxyType));
                 buf.append(" proxy ");
-                if (_sproxyHost.contains(":"))
+                if (_sproxyHost.contains(":")) {
                     buf.append('[').append(_sproxyHost).append(']');
-                else
+                } else {
                     buf.append(_sproxyHost);
+                }
                 buf.append(':').append(_sproxyPort);
                 buf.append(')');
             } else if (!ssl && _shouldProxyHTTP) {
                 buf.append(" (using HTTP proxy ");
-                if (_proxyHost.contains(":"))
+                if (_proxyHost.contains(":")) {
                     buf.append('[').append(_proxyHost).append(']');
-                else
+                } else {
                     buf.append(_proxyHost);
+                }
                 buf.append(':').append(_proxyPort);
                 buf.append(')');
             }
@@ -1191,15 +1324,15 @@ public class Reseeder {
          */
         private String getDisplayString(SSLEepGet.ProxyType type) {
             switch(type) {
-              case HTTP:
+            case HTTP:
                 return "HTTPS";
-              case SOCKS4:
+            case SOCKS4:
                 return "SOCKS 4/4a";
-              case SOCKS5:
+            case SOCKS5:
                 return "SOCKS 5";
-              case INTERNAL:
+            case INTERNAL:
                 return "I2P Outproxy";
-              default:
+            default:
                 return type.toString();
             }
         }
@@ -1231,24 +1364,35 @@ public class Reseeder {
      *  @since 0.9.58
      */
     public static void main(String args[]) throws Exception {
-        if (args.length == 1 && args[0].equals("help")) {
+        if (args.length == 0 || (args.length == 1 && args[0].toLowerCase().startsWith("help"))) {
             System.out.println("Usage: reseeder [https://hostname/ ...]");
             System.exit(1);
+            return;
         }
+
         File f = new File("certificates");
         if (!f.exists()) {
             System.out.println("Must be run from $I2P or have symlink to $I2P/certificates in this directory");
             System.exit(1);
+            return;
         }
+
         String[] urls = (args.length > 0) ? args : DataHelper.split(DEFAULT_SSL_SEED_URL, ",");
-        int pass = 0, warn = 0, fail = 0;
+        int pass = 0;
+        int warn = 0;
+        int fail = 0;
+
         SSLEepGet.SSLState sslState = null;
         I2PAppContext ctx = I2PAppContext.getGlobalContext();
         for (String url : urls) {
-            if (!url.startsWith("https://"))
+            if (!url.toLowerCase().startsWith("https://")) {
+                System.out.println("Missing https:// prefix in URL " + url);
                 url = "https://" + url;
-            if (!url.endsWith("/"))
+            }
+            if (!url.endsWith("/")) {
+                System.out.println("URL is not a directory (ends with /): "+url);
                 url += "/";
+            }
             url += SU3_FILENAME + NETID_PARAM + '2';
             URI uri = new URI(url);
             String host = uri.getHost();
@@ -1275,26 +1419,32 @@ public class Reseeder {
                         String version = su3f.getVersionString();
                         long ver = Long.parseLong(version.trim()) * 1000;
                         long cutoff = System.currentTimeMillis() - MAX_FILE_AGE / 4;
-                        if (ver < cutoff)
+                        if (ver < cutoff) {
                             throw new IOException("su3 file too old");
+                        }
                         java.util.zip.ZipFile zipf = new java.util.zip.ZipFile(zip);
                         java.util.Enumeration<? extends java.util.zip.ZipEntry> entries = zipf.entries();
-                        int ri = 0, old = 0;
-                        int oldver = 0, unreach = 0;
+                        int ri = 0;
+                        int old = 0;
+                        int oldver = 0;
+                        int unreach = 0;
                         while (entries.hasMoreElements()) {
                             java.util.zip.ZipEntry entry = (java.util.zip.ZipEntry) entries.nextElement();
                             RouterInfo r = new RouterInfo();
                             InputStream in = zipf.getInputStream(entry);
                             r.readBytes(in);
                             in.close();
-                            if (r.getPublished() > cutoff)
+                            if (r.getPublished() > cutoff) {
                                 ri++;
-                            else
+                            } else {
                                 old++;
-                            if (VersionComparator.comp(r.getVersion(), MIN_VERSION) < 0)
+                            }
+                            if (VersionComparator.comp(r.getVersion(), MIN_VERSION) < 0) {
                                 oldver++;
-                            if (r.getCapabilities().indexOf('U') >= 0)
+                            }
+                            if (r.getCapabilities().indexOf('U') >= 0) {
                                 unreach++;
+                            }
                         }
                         zipf.close();
                         if (old > 0) {
@@ -1338,7 +1488,8 @@ public class Reseeder {
             System.out.println();
         }
         System.out.println("Passed: " + pass + "; Slow: " + warn + "; Failed: " + fail);
-        if (fail > 0)
+        if (fail > 0) {
             System.exit(1);
+        }
     }
 }
