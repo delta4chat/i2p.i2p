@@ -34,18 +34,20 @@ import net.i2p.util.SystemVersion;
 class ExpireRoutersJob extends JobImpl {
     private final Log _log;
     private final KademliaNetworkDatabaseFacade _facade;
-    
+
     /** rerun fairly often, so the fails don't queue up too many netdb searches at once */
     private final static long RERUN_DELAY_MS = 5*60*1000;
     private static final int LIMIT_ROUTERS = SystemVersion.isSlow() ? 1000 : 4000;
-    
+
     public ExpireRoutersJob(RouterContext ctx, KademliaNetworkDatabaseFacade facade) {
         super(ctx);
         _log = ctx.logManager().getLog(ExpireRoutersJob.class);
         _facade = facade;
     }
-    
-    public String getName() { return "Expire Routers Job"; }
+
+    public String getName() {
+        return "Expire Routers Job";
+    }
 
     public void runJob() {
         if (getContext().commSystem().getStatus() != Status.DISCONNECTED) {
@@ -58,8 +60,8 @@ class ExpireRoutersJob extends JobImpl {
         // TODO adjust frequency based on number removed
         requeue(RERUN_DELAY_MS);
     }
-    
-    
+
+
     /**
      * Run through all of the known peers and pick ones that have really old
      * routerInfo publish dates, excluding ones that we are connected to,
@@ -71,8 +73,9 @@ class ExpireRoutersJob extends JobImpl {
         // go through the database directly for efficiency
         Set<Map.Entry<Hash, DatabaseEntry>> entries = _facade.getDataStore().getMapEntries();
         int count = entries.size();
-        if (count < 150)
+        if (count < 3000) {
             return 0;
+        }
         RouterKeyGenerator gen = getContext().routerKeyGenerator();
         long now = getContext().clock().now();
         long cutoff = now - 30*60*1000;
@@ -104,12 +107,12 @@ class ExpireRoutersJob extends JobImpl {
                 // aggressive drop strategy
                 long pub = e.getDate();
                 if (pub < cutoff ||
-                    (pub < ucutoff && ((RouterInfo) e).getCapabilities().indexOf(Router.CAPABILITY_UNREACHABLE) >= 0)) {
+                        (pub < ucutoff && ((RouterInfo) e).getCapabilities().indexOf(Router.CAPABILITY_UNREACHABLE) >= 0)) {
                     if (isFF) {
                         // don't drop very close to us
                         byte[] rkey = gen.getRoutingKey(key).getData();
                         int distance = (((rkey[0] ^ ourRKey[0]) & 0xff) << 8) |
-                                        ((rkey[1] ^ ourRKey[1]) & 0xff);
+                                       ((rkey[1] ^ ourRKey[1]) & 0xff);
                         // they have to be within 1/256 of the keyspace
                         if (distance < 256)
                             continue;
@@ -117,7 +120,7 @@ class ExpireRoutersJob extends JobImpl {
                             // almost midnight, recheck with tomorrow's keys
                             rkey = gen.getNextRoutingKey(key).getData();
                             distance = (((rkey[0] ^ ourRKey[0]) & 0xff) << 8) |
-                                        ((rkey[1] ^ ourRKey[1]) & 0xff);
+                                       ((rkey[1] ^ ourRKey[1]) & 0xff);
                             if (distance < 256)
                                 continue;
                         }
