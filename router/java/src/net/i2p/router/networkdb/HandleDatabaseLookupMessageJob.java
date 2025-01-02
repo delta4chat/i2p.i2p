@@ -1,9 +1,9 @@
 package net.i2p.router.networkdb;
 /*
  * free (adj.): unencumbered; not under the control of others
- * Written by jrandom in 2003 and released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
- * It probably won't make your computer catch on fire, or eat 
+ * Written by jrandom in 2003 and released into the public domain
+ * with no warranty of any kind, either expressed or implied.
+ * It probably won't make your computer catch on fire, or eat
  * your children, but it might.  Use at your own risk.
  *
  */
@@ -51,13 +51,13 @@ public class HandleDatabaseLookupMessageJob extends JobImpl {
     private final static int CLOSENESS_THRESHOLD = 8; // FNDF.MAX_TO_FLOOD + 1
     private final static int REPLY_TIMEOUT = 60*1000;
     private final static int MESSAGE_PRIORITY = OutNetMessage.PRIORITY_NETDB_REPLY;
-    
+
     /**
      * If a routerInfo structure isn't this recent, don't send it out.
      * Equal to KNDF.ROUTER_INFO_EXPIRATION_FLOODFILL.
      */
     public final static long EXPIRE_DELAY = 60*60*1000;
-    
+
     public HandleDatabaseLookupMessageJob(RouterContext ctx, DatabaseLookupMessage receivedMessage, RouterIdentity from, Hash fromHash, long msgIDBloomXor) {
         super(ctx);
         _log = ctx.logManager().getLog(HandleDatabaseLookupMessageJob.class);
@@ -65,11 +65,12 @@ public class HandleDatabaseLookupMessageJob extends JobImpl {
         _us = ctx.routerHash();
         _msgIDBloomXor = msgIDBloomXor;
     }
-    
-    protected boolean answerAllQueries() { return false; }
-    
-    public void runJob() {
 
+    protected boolean answerAllQueries() {
+        return false;
+    }
+
+    public void runJob() {
         Hash fromKey = _message.getFrom();
         TunnelId toTunnel = _message.getReplyTunnel();
         Hash searchKey = _message.getSearchKey();
@@ -85,7 +86,7 @@ public class HandleDatabaseLookupMessageJob extends JobImpl {
         if (getContext().router().isHidden() && !searchKey.equals(_us)) {
             if (_log.shouldLog(Log.WARN)) {
                 _log.warn("Uninvited dbLookup received with replies going to " + fromKey
-                           + " (tunnel " + toTunnel + ")");
+                          + " (tunnel " + toTunnel + ")");
             }
             return;
         }
@@ -93,8 +94,8 @@ public class HandleDatabaseLookupMessageJob extends JobImpl {
         // i2pd bug?
         if (searchKey.equals(Hash.FAKE_HASH)) {
             if (_log.shouldWarn())
-                 _log.warn("Zero lookup", new Exception());
-             getContext().statManager().addRateData("netDb.DLMAllZeros", 1);
+                _log.warn("Zero lookup", new Exception());
+            getContext().statManager().addRateData("netDb.DLMAllZeros", 1);
             return;
         }
 
@@ -113,7 +114,7 @@ public class HandleDatabaseLookupMessageJob extends JobImpl {
         DatabaseEntry dbe = getContext().netDb().lookupLocally(searchKey);
         int type = dbe != null ? dbe.getType() : -1;
         if (DatabaseEntry.isLeaseSet(type) &&
-            (lookupType == DatabaseLookupMessage.Type.ANY || lookupType == DatabaseLookupMessage.Type.LS)) {
+                (lookupType == DatabaseLookupMessage.Type.ANY || lookupType == DatabaseLookupMessage.Type.LS)) {
             LeaseSet ls = (LeaseSet) dbe;
             // Answer any request for a LeaseSet if it has been published to us.
 
@@ -166,7 +167,7 @@ public class HandleDatabaseLookupMessageJob extends JobImpl {
                 // }
 
                 if (_log.shouldLog(Log.DEBUG))
-                    _log.debug("Expired " + searchKey + 
+                    _log.debug("Expired " + searchKey +
                                " locally.  sending back " + routerHashSet.size() + " peers to " + fromKey);
                 sendClosest(searchKey, routerHashSet, fromKey, toTunnel);
             }
@@ -174,12 +175,12 @@ public class HandleDatabaseLookupMessageJob extends JobImpl {
             // not found locally - return closest peer hashes
             Set<Hash> routerHashSet = getNearestRouters(lookupType);
             if (_log.shouldLog(Log.DEBUG))
-                _log.debug("We do not have key " + searchKey + 
+                _log.debug("We do not have key " + searchKey +
                            " locally.  sending back " + routerHashSet.size() + " peers to " + fromKey);
             sendClosest(searchKey, routerHashSet, fromKey, toTunnel);
         }
     }
-    
+
     /**
      *  Closest to the message's search key,
      *  honoring the message's dontInclude set.
@@ -205,11 +206,11 @@ public class HandleDatabaseLookupMessageJob extends JobImpl {
         // Honor flag to exclude all floodfills
         //if (dontInclude.contains(Hash.FAKE_HASH)) {
         // This is handled in FloodfillPeerSelector
-        return getContext().netDb().findNearestRouters(_message.getSearchKey(), 
-                                                       MAX_ROUTERS_RETURNED, 
-                                                       dontInclude);
+        return getContext().netDb().findNearestRouters(_message.getSearchKey(),
+                MAX_ROUTERS_RETURNED,
+                dontInclude);
     }
-    
+
     private void sendData(Hash key, DatabaseEntry data, Hash toPeer, TunnelId replyTunnel) {
         if (!key.equals(data.getHash())) {
             _log.error("Hash mismatch HDLMJ");
@@ -227,10 +228,10 @@ public class HandleDatabaseLookupMessageJob extends JobImpl {
         getContext().statManager().addRateData("netDb.lookupsHandled", 1);
         sendMessage(msg, toPeer, replyTunnel);
     }
-    
+
     protected void sendClosest(Hash key, Set<Hash> routerHashes, Hash toPeer, TunnelId replyTunnel) {
         if (_log.shouldLog(Log.DEBUG))
-            _log.debug("Sending closest routers to key " + key + ": # peers = " 
+            _log.debug("Sending closest routers to key " + key + ": # peers = "
                        + routerHashes.size() + " tunnel " + replyTunnel);
         DatabaseSearchReplyMessage msg = new DatabaseSearchReplyMessage(getContext());
         msg.setFromHash(_us);
@@ -244,7 +245,7 @@ public class HandleDatabaseLookupMessageJob extends JobImpl {
         getContext().statManager().addRateData("netDb.lookupsHandled", 1);
         sendMessage(msg, toPeer, replyTunnel); // should this go via garlic messages instead?
     }
-    
+
     protected void sendMessage(I2NPMessage message, Hash toPeer, TunnelId replyTunnel) {
         if (replyTunnel != null) {
             sendThroughTunnel(message, toPeer, replyTunnel);
@@ -256,7 +257,7 @@ public class HandleDatabaseLookupMessageJob extends JobImpl {
             //getContext().netDb().lookupRouterInfo(toPeer, send, null, REPLY_TIMEOUT);
         }
     }
-    
+
     private void sendThroughTunnel(I2NPMessage message, Hash toPeer, TunnelId replyTunnel) {
         if (_us.equals(toPeer)) {
             // if we are the gateway, act as if we received it
@@ -299,13 +300,15 @@ public class HandleDatabaseLookupMessageJob extends JobImpl {
             //getContext().jobQueue().addJob(j);
         }
     }
-    
-    public String getName() { return "Handle Database Lookup Message"; }
+
+    public String getName() {
+        return "Handle Database Lookup Message";
+    }
 
     @Override
     public void dropped() {
-        getContext().messageHistory().messageProcessingError(_message.getUniqueId(), 
-                                                         _message.getClass().getName(), 
-                                                         "Dropped due to overload");
+        getContext().messageHistory().messageProcessingError(_message.getUniqueId(),
+                _message.getClass().getName(),
+                "Dropped due to overload");
     }
 }
