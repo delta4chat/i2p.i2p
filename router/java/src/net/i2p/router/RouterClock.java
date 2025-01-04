@@ -57,7 +57,9 @@ public class RouterClock extends Clock {
 
     private final Set<ClockShiftListener> _shiftListeners;
     private volatile long _lastShiftNanos;
-    private final Log _log;
+
+    private Log _log;
+    private boolean _log_initialed;
 
     /**
      *  Does not start. Caller MUST call start()
@@ -69,7 +71,15 @@ public class RouterClock extends Clock {
         _shiftListeners = new CopyOnWriteArraySet<ClockShiftListener>();
         _lastShiftNanos = System.nanoTime();
         _timeStamper = new RouterTimestamper(context, this);
+        _log_initialed = false;
+    }
+
+    private synchronized void logInit() {
+        if (_log_initialed) {
+            return;
+        }
         _log = getLog();
+        _log_initialed = true;
     }
 
     /**
@@ -114,6 +124,7 @@ public class RouterClock extends Clock {
     private synchronized void setOffset(long offsetMs, boolean force, int stratum) {
         long delta = offsetMs - _offset;
         long systemNow = System.currentTimeMillis();
+        logInit();
         if (!force) {
             if (!_isSystemClockBad && (offsetMs > MAX_OFFSET || offsetMs < 0 - MAX_OFFSET)) {
                 if (_log.shouldLog(Log.WARN)) {
@@ -249,6 +260,7 @@ public class RouterClock extends Clock {
      */
     @Override
     public void setNow(long realTime, int stratum) {
+        logInit();
         if (realTime < BuildTime.getEarliestTime() || realTime > BuildTime.getLatestTime()) {
             String msg = "Invalid time received: " + new Date(realTime);
             if (_log.shouldWarn())
