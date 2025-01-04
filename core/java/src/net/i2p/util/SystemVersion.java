@@ -16,36 +16,51 @@ import net.i2p.I2PAppContext;
  * @since 0.9.3 consolidated from various places
  */
 public abstract class SystemVersion {
-
     /*
      *  @since 0.9.28
      */
     public static final String DAEMON_USER = "i2psvc";
+
     /*
      *  @since 0.9.29
      */
     public static final String GENTOO_USER = "i2p";
 
-    private static final boolean _isWin = System.getProperty("os.name").startsWith("Win");
-    private static final boolean _isMac = System.getProperty("os.name").startsWith("Mac");
-    private static final boolean _isArm = System.getProperty("os.arch").startsWith("arm") ||
-                                          System.getProperty("os.arch").startsWith("aarch");
-    private static final boolean _isX86 = System.getProperty("os.arch").contains("86") ||
-                                          System.getProperty("os.arch").equals("amd64");
-    private static final boolean _isGentoo = System.getProperty("os.version").contains("gentoo") ||
-                                             System.getProperty("os.version").contains("hardened");  // Funtoo
+    private static final String _userName = System.getProperty("user.name").toLowerCase();
+    private static final String _osName = System.getProperty("os.name").toLowerCase();
+    private static final String _osArch = System.getProperty("os.arch").toLowerCase();
+    private static final String _osVersion = System.getProperty("os.version").toLowerCase();
+    private static final String _javaVmName = System.getProperty("java.vm.name").toLowerCase();
+    private static final String _javaVendor = System.getProperty("java.vendor").toLowerCase();
+
+    private static final String _javaRuntimeName = ((String) System.getProperty("java.runtime.name")).toLowerCase();
+
+    private static final boolean _isWin = _osName.startsWith("win");
+    private static final boolean _isMac = _osName.startsWith("mac");
+    private static final boolean _isArm = _osArch.startsWith("arm") || _osArch.startsWith("aarch");
+    private static final boolean _isX86 = _osArch.contains("86") || _osArch.contains("amd64");
+    private static final boolean _isGentoo = _osVersion.contains("gentoo") || _osVersion.contains("hardened");  // Funtoo
+
     // Could also check for java.vm.info = "interpreted mode"
-    private static final boolean _isZero = System.getProperty("java.vm.name").contains("Zero");
-    private static final boolean _isAndroid;
-    private static final boolean _isApache;
-    private static final boolean _isGNU;
-    private static final boolean _isOpenJDK;
+    private static final boolean _isZero = _javaVmName.contains("zero");
+    private static final boolean _isAndroid = _javaVendor.contains("android");
+    private static final boolean _isApache = _javaVendor.contains("apache");
+    private static final boolean _isGNU = _javaVendor.contains("gnu classpath") // JamVM
+                                          ||
+                                          _javaVendor.contains("free software foundation"); // gij
+    private static final boolean _isOpenJDK = _javaRuntimeName.contains("openjdk");
     private static final boolean _is64;
     private static final boolean _hasWrapper = System.getProperty("wrapper.version") != null;
-    private static final boolean _isLinuxService;
+    private static final boolean _isLinuxService = !_isWin
+            &&
+            !_isMac
+            &&
+            !_isAndroid
+            &&
+            (_userName.equals(DAEMON_USER) || _userName.equals(GENTOO_USER));
     // found in Tanuki WrapperManager source so we don't need the WrapperManager class here
     private static final boolean _isWindowsService = _isWin && _hasWrapper && Boolean.parseBoolean(System.getProperty("wrapper.service"));
-    private static final boolean _isService;
+    private static final boolean _isService = _isLinuxService || _isWindowsService;
     private static final boolean _isSlow;
 
     private static final boolean _oneDotSix;
@@ -57,8 +72,7 @@ public abstract class SystemVersion {
     private static final int _androidSDK;
 
     static {
-        boolean is64 = "64".equals(System.getProperty("sun.arch.data.model")) ||
-                       System.getProperty("os.arch").contains("64");
+        boolean is64 = System.getProperty("sun.arch.data.model").equals("64") || _osArch.contains("64");
         if (_isWin && !is64) {
             // http://stackoverflow.com/questions/4748673/how-can-i-check-the-bitness-of-my-os-using-java-j2se-not-os-arch
             // http://blogs.msdn.com/b/david.wang/archive/2006/03/26/howto-detect-process-bitness.aspx
@@ -69,25 +83,39 @@ public abstract class SystemVersion {
         }
         _is64 = is64;
 
-        String vendor = System.getProperty("java.vendor");
-        _isAndroid = vendor.contains("Android");
-        _isApache = vendor.startsWith("Apache");
-        _isGNU = vendor.startsWith("GNU Classpath") ||               // JamVM
-                 vendor.startsWith("Free Software Foundation");      // gij
-        String runtime = System.getProperty("java.runtime.name");
-        _isOpenJDK = runtime != null && runtime.contains("OpenJDK");
-        _isLinuxService = !_isWin && !_isMac && !_isAndroid &&
-                          (DAEMON_USER.equals(System.getProperty("user.name")) ||
-                           (_isGentoo && GENTOO_USER.equals(System.getProperty("user.name"))));
-        _isService = _isLinuxService || _isWindowsService;
         // We assume the Apple M1 is not slow, and we do have a jbigi for it
         // Windows ARM will be still be slow because we don't have a jbigi for it, see isSlow()
         // Linux ARM we assume is fast if 5 cores or more, those are probably servers,
         // all the Raspberry Pis have 4 cores and will be classed as slow.
         // Might be nice to draw the line between slow Rasp. Pi 3 and fast Rasp. Pi 4 but hard to do here.
-        _isSlow = _isAndroid || _isApache ||
-                  (_isArm && (!_is64 || (!_isMac && getCores() < 5))) ||
-                  _isGNU || _isZero || getMaxMemory() < 96*1024*1024L;
+        boolean isSlow =
+            (! NativeBigInteger.isNative())
+            ||
+            _isAndroid
+            ||
+            _isApache
+            ||
+            (_isArm && (!_is64 || (!_isMac && getCores() < 5)))
+            ||
+            _isGNU
+            ||
+            _isZero
+            ||
+            getMaxMemory() < 96*1024*1024L;
+
+        // Handle override from env
+        String envIsSlow = System.getenv("I2P_IS_SLOW");
+        if (envIsSlow != null) {
+            envIsSlow = envIsSlow.toLowerCase();
+            if (envIsSlow.contains("true") || envIsSlow.contains("y") || envIsSlow.equals("1")) {
+                isSlow = true;
+            } else {
+                if (envIsSlow.contains("false") || envIsSlow.contains("n") || envIsSlow.equals("0")) {
+                    isSlow = false;
+                }
+            }
+        }
+        _isSlow = isSlow;
 
         int sdk = 0;
         if (_isAndroid) {
@@ -111,8 +139,9 @@ public abstract class SystemVersion {
         } else {
             String version = System.getProperty("java.version");
             // handle versions like "8-ea" or "9-internal"
-            if (!version.startsWith("1."))
+            if (!version.startsWith("1.")) {
                 version = "1." + version;
+            }
             _oneDotSix = VersionComparator.comp(version, "1.6") >= 0;
             _oneDotSeven = _oneDotSix && VersionComparator.comp(version, "1.7") >= 0;
             _oneDotEight = _oneDotSeven && VersionComparator.comp(version, "1.8") >= 0;
@@ -133,16 +162,24 @@ public abstract class SystemVersion {
      * @since 0.9.53
      */
     public static String getOS() {
-        if (isWindows())
+        if (isWindows()) {
             return "windows";
-        if (isMac())
+        }
+        if (isMac()) {
             return "mac";
-        if (isGNU())
+        }
+        if (isGNU()) {
             return "linux"; /* actually... */
-        if (isLinuxService())
-            return "linux";
-        if (isAndroid())
+        }
+        if (isLinuxService()) {
+            return "linux"; /* linux service of course linux */
+        }
+        if (isGentoo()) {
+            return "linux"; /* gentoo also linux */
+        }
+        if (isAndroid()) {
             return "android";
+        }
         /** Everybody else knows if they're on a Windows machine or a
          * Mac, so for now, assume linux here.
          */
@@ -159,17 +196,22 @@ public abstract class SystemVersion {
      * @since 0.9.53
      */
     public static String getArch() {
-        if (is64Bit()){
-            if (isARM())
+        if (is64Bit()) {
+            if (isARM()) {
                 return "arm64";
-            if (isX86())
+            }
+            if (isX86()) {
                 return "amd64";
+            }
+        } else {
+            if (isARM()) {
+                return "arm";
+            }
+            if (isX86()) {
+                return "386";
+            }
         }
-        if (isARM())
-            return "arm";
-        if (isX86())
-            return "386";
-        return "unknown";
+        return _osArch;
     }
 
 
@@ -244,7 +286,7 @@ public abstract class SystemVersion {
     public static boolean isSlow() {
         // we don't put the NBI call in the static field,
         // to prevent a circular initialization with NBI.
-        return _isSlow || !NativeBigInteger.isNative();
+        return _isSlow;
     }
 
     /**

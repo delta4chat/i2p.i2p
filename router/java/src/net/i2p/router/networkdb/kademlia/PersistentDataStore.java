@@ -639,7 +639,7 @@ public class PersistentDataStore extends TransientDataStore {
                         _log.warn("Skipping since netdb newer than " + _routerFile);
                     }
                 } else if (getContext().blocklist().isBlocklisted(ri)) {
-                    corrupt = true;
+                    //corrupt = true;
                     if (_log.shouldLog(Log.WARN)) {
                         _log.warn(h + " is blocklisted");
                     }
@@ -677,10 +677,11 @@ public class PersistentDataStore extends TransientDataStore {
                 }
                 corrupt = true;
             } finally {
-                if (fis != null) try {
+                if (fis != null) {
+                    try {
                         fis.close();
-                    }
-                    catch (IOException ioe) {}
+                    } catch (IOException ioe) {}
+                }
             }
             if (corrupt) {
                 _routerFile.delete();

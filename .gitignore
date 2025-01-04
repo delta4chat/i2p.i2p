@@ -18,6 +18,9 @@
 # original backup file
 *.orig
 
+# vim temp file
+*.swp
+
 *~
 web-fragment.xml
 web-out.xml
