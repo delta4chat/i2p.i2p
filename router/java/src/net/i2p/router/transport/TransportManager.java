@@ -1,9 +1,9 @@
 package net.i2p.router.transport;
 /*
  * free (adj.): unencumbered; not under the control of others
- * Written by jrandom in 2003 and released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
- * It probably won't make your computer catch on fire, or eat 
+ * Written by jrandom in 2003 and released into the public domain
+ * with no warranty of any kind, either expressed or implied.
+ * It probably won't make your computer catch on fire, or eat
  * your children, but it might.  Use at your own risk.
  *
  */
@@ -95,7 +95,7 @@ public class TransportManager implements TransportEventListener {
     private static final String PROP_JAVA_PROXY4 = "https.proxyHost";
 
     private static final String PROP_ADVANCED = "routerconsole.advanced";
-    
+
     /** not forever, since they may update */
     private static final long SIGTYPE_BANLIST_DURATION = 36*60*60*1000L;
 
@@ -146,7 +146,11 @@ public class TransportManager implements TransportEventListener {
             System.out.println(msg);
             _log.logAlways(Log.WARN, msg);
             rv = true;
-        } else if (!SystemVersion.isMac() && Boolean.parseBoolean(System.getProperty(PROP_JAVA_PROXY2))) {
+        } else if (
+            (!SystemVersion.isMac())
+            &&
+            Boolean.parseBoolean(System.getProperty(PROP_JAVA_PROXY2))
+        ) {
             try {
                 // Use ProxySelector to see if we would be proxied
                 // using a dummy address.
@@ -190,10 +194,12 @@ public class TransportManager implements TransportEventListener {
      */
     synchronized void registerAndStart(Transport t) {
         String style = t.getStyle();
-        if (style.equals(NTCPTransport.STYLE) || style.equals(UDPTransport.STYLE))
+        if (style.equals(NTCPTransport.STYLE) || style.equals(UDPTransport.STYLE)) {
             throw new IllegalArgumentException("Builtin transport");
-        if (_transports.containsKey(style) || _pluggableTransports.containsKey(style))
+        }
+        if (_transports.containsKey(style) || _pluggableTransports.containsKey(style)) {
             throw new IllegalStateException("Dup transport");
+        }
         boolean shouldStart = !_transports.isEmpty();
         _pluggableTransports.put(style, t);
         addTransport(t);
@@ -212,8 +218,9 @@ public class TransportManager implements TransportEventListener {
      */
     synchronized void stopAndUnregister(Transport t) {
         String style = t.getStyle();
-        if (style.equals(NTCPTransport.STYLE) || style.equals(UDPTransport.STYLE))
+        if (style.equals(NTCPTransport.STYLE) || style.equals(UDPTransport.STYLE)) {
             throw new IllegalArgumentException("Builtin transport");
+        }
         t.setListener(null);
         _pluggableTransports.remove(style);
         removeTransport(t);
@@ -238,21 +245,27 @@ public class TransportManager implements TransportEventListener {
     X25519KeyFactory getXDHFactory() {
         return _xdhThread;
     }
-    
+
     private void addTransport(Transport transport) {
-        if (transport == null) return;
+        if (transport == null) {
+            return;
+        }
         Transport old = _transports.put(transport.getStyle(), transport);
-        if (old != null && old != transport && _log.shouldLog(Log.WARN))
+        if (old != null && old != transport && _log.shouldLog(Log.WARN)) {
             _log.warn("Replacing transport " + transport.getStyle());
+        }
         transport.setListener(this);
     }
-    
+
     private void removeTransport(Transport transport) {
-        if (transport == null) return;
+        if (transport == null) {
+            return;
+        }
         transport.setListener(null);
         Transport old = _transports.remove(transport.getStyle());
-        if (old != null && _log.shouldLog(Log.WARN))
+        if (old != null && _log.shouldLog(Log.WARN)) {
             _log.warn("Removing transport " + transport.getStyle());
+        }
     }
 
     private void configTransports() {
@@ -270,23 +283,26 @@ public class TransportManager implements TransportEventListener {
                 // pass along the port SSU is probably going to use
                 // so that NTCP may bind early
                 int port = udp.getRequestedPort();
-                if (port > 0)
+                if (port > 0) {
                     ntcp.externalAddressReceived(SOURCE_CONFIG, (byte[]) null, port);
+                }
             } else {
                 // SSU disabled
                 int port = ntcp.getRequestedPort();
-                if (port > 0)
+                if (port > 0) {
                     ntcp.externalAddressReceived(SOURCE_CONFIG, (byte[]) null, port);
+                }
             }
         }
-        if (_transports.isEmpty())
+        if (_transports.isEmpty()) {
             _log.log(Log.CRIT, "No transports are enabled");
+        }
     }
-    
+
     public static boolean isNTCPEnabled(RouterContext ctx) {
         return ctx.getBooleanPropertyDefaultTrue(PROP_ENABLE_NTCP);
     }
-    
+
     /**
      *  Notify transport of ALL routable interface addresses, including IPv6.
      *  It's the transport's job to ignore what it can't handle.
@@ -294,7 +310,7 @@ public class TransportManager implements TransportEventListener {
     private void initializeAddress(Transport t) {
         initializeAddress(Collections.singleton(t));
     }
-    
+
     /**
      *  Notify all transports of ALL routable interface addresses, including IPv6.
      *  It's the transport's job to ignore what it can't handle.
@@ -303,15 +319,16 @@ public class TransportManager implements TransportEventListener {
     void initializeAddress() {
         initializeAddress(_transports.values());
     }
-    
+
     /**
      *  Notify transports of ALL routable interface addresses, including IPv6.
      *  It's the transport's job to ignore what it can't handle.
      *  @since 0.9.34
      */
     private void initializeAddress(Collection<Transport> ts) {
-        if (ts.isEmpty())
+        if (ts.isEmpty()) {
             return;
+        }
         // non-local (unless test mode), don't include loopback, include IPv6
         Set<String> ipset = Addresses.getAddresses(_context.getBooleanProperty("i2np.allowLocal"), false, true);
         String lastv4 = _context.getProperty(UDPTransport.PROP_IP);
@@ -339,7 +356,7 @@ public class TransportManager implements TransportEventListener {
                             continue;
                         }
                     } else {
-                        if (isTemp && !ips.equals(lastv6)) {
+                        if (isTemp && (!ips.equals(lastv6))) {
                             // Save temporary addresses
                             // we only use these if we don't have a permanent address,
                             // unless it's the last IP we used
@@ -350,12 +367,13 @@ public class TransportManager implements TransportEventListener {
                     hasPreferredV6Address = true;
                 }
                 // put previously used addresses at the front of the list
-                if (ips.equals(lastv4) || ips.equals(lastv6))
+                if (ips.equals(lastv4) || ips.equals(lastv6)) {
                     addresses.add(0, addr);
-                else
+                } else {
                     addresses.add(addr);
-            } catch (UnknownHostException e) {
-                _log.error("UDP failed to bind to local address", e);
+                }
+            } catch (UnknownHostException uhe) {
+                _log.error("UDP failed to bind to local address", uhe);
             }
         }
         // we only use these if we don't have a preferred adress
@@ -382,13 +400,20 @@ public class TransportManager implements TransportEventListener {
             for (InetAddress ia : addresses) {
                 byte[] ip = ia.getAddress();
                 if (ip.length == 4) {
-                    if (hasv4)
+                    if (hasv4) {
                         continue;
+                    }
                     hasv4 = true;
-                } else {
-                    if (hasv6)
+                } else if (ip.length == 16) {
+                    if (hasv6) {
                         continue;
+                    }
                     hasv6 = true;
+                } else {
+                    if (_log.shouldWarn()) {
+                        _log.warn("received invaild ip length " + ip.length + "from interface");
+                    }
+                    continue;
                 }
                 t.externalAddressReceived(SOURCE_INTERFACE, ip, 0);
             }
@@ -404,8 +429,10 @@ public class TransportManager implements TransportEventListener {
     void externalAddressReceived(Transport.AddressSource source, byte[] ip, int port) {
         for (Transport t : _transports.values()) {
             // don't loop
-            if (!(source == SOURCE_SSU && t.getStyle().equals(UDPTransport.STYLE)))
-                t.externalAddressReceived(source, ip, port);
+            if (source == SOURCE_SSU && t.getStyle().equals(UDPTransport.STYLE)) {
+                continue;
+            }
+            t.externalAddressReceived(source, ip, port);
         }
     }
 
@@ -419,8 +446,10 @@ public class TransportManager implements TransportEventListener {
     void externalAddressRemoved(Transport.AddressSource source, boolean ipv6) {
         for (Transport t : _transports.values()) {
             // don't loop
-            if (!(source == SOURCE_SSU && t.getStyle().equals(UDPTransport.STYLE)))
-                t.externalAddressRemoved(source, ipv6);
+            if (source == SOURCE_SSU && t.getStyle().equals(UDPTransport.STYLE)) {
+                continue;
+            }
+            t.externalAddressRemoved(source, ipv6);
         }
     }
 
@@ -430,15 +459,18 @@ public class TransportManager implements TransportEventListener {
      */
     void forwardPortStatus(String style, byte[] ip, int port, int externalPort, boolean success, String reason) {
         Transport t = getTransport(style);
-        if (t != null)
+        if (t != null) {
             t.forwardPortStatus(ip, port, externalPort, success, reason);
+        }
     }
 
     synchronized void startListening() {
-        if (_dhThread != null && _dhThread.getState() == Thread.State.NEW)
+        if (_dhThread != null && _dhThread.getState() == Thread.State.NEW) {
             _dhThread.start();
-        if (_xdhThread != null && _xdhThread.getState() == Thread.State.NEW)
+        }
+        if (_xdhThread != null && _xdhThread.getState() == Thread.State.NEW) {
             _xdhThread.start();
+        }
         // For now, only start UPnP if we have no publicly-routable addresses
         // so we don't open the listener ports to the world.
         // Maybe we need a config option to force on? Probably not.
@@ -457,32 +489,38 @@ public class TransportManager implements TransportEventListener {
         // Start NTCP first so it can get notified from SSU
         List<Transport> tps = new ArrayList<Transport>();
         Transport tp = getTransport(NTCPTransport.STYLE);
-        if (tp != null)
+        if (tp != null) {
             tps.add(tp);
+        }
         tp = getTransport(UDPTransport.STYLE);
-        if (tp != null)
+        if (tp != null) {
             tps.add(tp);
+        }
         // now add any others (pluggable)
         for (Transport t : _pluggableTransports.values()) {
-             tps.add(t);
+            tps.add(t);
         }
         for (Transport t : tps) {
             t.startListening();
-            if (_log.shouldLog(Log.DEBUG))
+            if (_log.shouldLog(Log.DEBUG)) {
                 _log.debug("Transport " + t.getStyle() + " started");
+            }
         }
         // kick UPnP - Do this to get the ports opened even before UDP registers an address
         transportAddressChanged();
         _log.debug("Done start listening on transports");
         _context.router().rebuildRouterInfo();
     }
-    
+
     synchronized void restart() {
         stopListening();
-        try { Thread.sleep(5*1000); } catch (InterruptedException ie) {}
+        try {
+            Thread.sleep(5*1000);
+        }
+        catch (InterruptedException ie) {}
         startListening();
     }
-    
+
     /**
      *  Can be restarted.
      */
@@ -496,28 +534,32 @@ public class TransportManager implements TransportEventListener {
         }
         _transports.clear();
     }
-    
-    
+
+
     /**
      *  Cannot be restarted.
      *  @since 0.9
      */
     synchronized void shutdown() {
         stopListening();
-        if (_dhThread != null)
+        if (_dhThread != null) {
             _dhThread.shutdown();
-        if (_xdhThread != null)
+        }
+        if (_xdhThread != null) {
             _xdhThread.shutdown();
+        }
         Addresses.clearCaches();
         TransportImpl.clearCaches();
     }
-    
+
     Transport getTransport(String style) {
         return _transports.get(style);
     }
-    
-    int getTransportCount() { return _transports.size(); }
-    
+
+    int getTransportCount() {
+        return _transports.size();
+    }
+
     /**
      *  @return SortedMap of style to Transport (a copy)
      *  @since 0.9.31
@@ -534,70 +576,74 @@ public class TransportManager implements TransportEventListener {
      *  How many peers are we currently connected to, that we have
      *  sent a message to or received a message from in the last five minutes.
      */
-    int countActivePeers() { 
+    int countActivePeers() {
         int peers = 0;
         for (Transport t : _transports.values()) {
             peers += t.countActivePeers();
         }
         return peers;
     }
-    
+
     /**
      *  How many peers are we currently connected to, that we have
      *  sent a message to in the last minute.
      *  Unused for anything, to be removed.
      */
-    int countActiveSendPeers() { 
+    int countActiveSendPeers() {
         int peers = 0;
         for (Transport t : _transports.values()) {
             peers += t.countActiveSendPeers();
         }
         return peers;
     }
-    
+
     /**
       * Is at least one transport below its outbound connection limit + some margin
       * Use for throttling in the router.
       *
       * @param pct percent of limit 0-100
       */
-    boolean haveOutboundCapacity(int pct) { 
+    boolean haveOutboundCapacity(int pct) {
         for (Transport t : _transports.values()) {
-            if (t.haveCapacity(pct))
+            if (t.haveCapacity(pct)) {
                 return true;
+            }
         }
         return false;
     }
-    
+
     private static final int HIGH_CAPACITY_PCT = 50;
     /**
       * Are all transports well below their outbound connection limit
       * Use for throttling in the router.
       */
-    boolean haveHighOutboundCapacity() { 
-        if (_transports.isEmpty())
+    boolean haveHighOutboundCapacity() {
+        if (_transports.isEmpty()) {
             return false;
+        }
         for (Transport t : _transports.values()) {
-            if (!t.haveCapacity(HIGH_CAPACITY_PCT))
+            if (!t.haveCapacity(HIGH_CAPACITY_PCT)) {
                 return false;
+            }
         }
         return true;
     }
-    
+
     /**
       * Is at least one transport below its inbound connection limit + some margin
       * Use for throttling in the router.
       *
       * @param pct percent of limit 0-100
       */
-    boolean haveInboundCapacity(int pct) { 
+    boolean haveInboundCapacity(int pct) {
         for (Transport t : _transports.values()) {
-            if (t.hasCurrentAddress() && t.haveCapacity(pct))
+            if (t.hasCurrentAddress() && t.haveCapacity(pct)) {
                 return true;
+            }
         }
         return false;
     }
-    
+
     /**
      * Return our peer clock skews on all transports.
      * List composed of Long, each element representing a peer skew in seconds.
@@ -608,24 +654,28 @@ public class TransportManager implements TransportEventListener {
         List<Long> skews = new ArrayList<Long>();
         for (Transport t : _transports.values()) {
             List<Long> tempSkews = t.getClockSkews();
-            if ((tempSkews == null) || (tempSkews.isEmpty())) continue;
+            if (tempSkews == null || tempSkews.isEmpty()) {
+                continue;
+            }
             skews.addAll(tempSkews);
         }
-        //if (_log.shouldLog(Log.DEBUG))
-        //    _log.debug("Transport manager returning " + skews.size() + " peer clock skews.");
+        if (_log.shouldLog(Log.DEBUG)) {
+            _log.debug("Transport manager returning " + skews.size() + " peer clock skews.");
+        }
         return skews;
     }
-    
+
     /**
      *  Previously returned short, now enum as of 0.9.20
      *  @return the best status of any transport
      */
-    Status getReachabilityStatus() { 
+    Status getReachabilityStatus() {
         Status rv = Status.UNKNOWN;
         for (Transport t : _transports.values()) {
             Status s = t.getReachabilityStatus();
-            if (s.getCode() < rv.getCode())
+            if (s.getCode() < rv.getCode()) {
                 rv = s;
+            }
         }
         return rv;
     }
@@ -634,27 +684,30 @@ public class TransportManager implements TransportEventListener {
      * @deprecated unused
      */
     @Deprecated
-    void recheckReachability() { 
-        for (Transport t : _transports.values())
+    void recheckReachability() {
+        for (Transport t : _transports.values()) {
             t.recheckReachability();
+        }
     }
 
     boolean isBacklogged(Hash peer) {
         for (Transport t : _transports.values()) {
-            if (t.isBacklogged(peer))
+            if (t.isBacklogged(peer)) {
                 return true;
+            }
         }
         return false;
-    }    
-    
+    }
+
     boolean isEstablished(Hash peer) {
         for (Transport t : _transports.values()) {
-            if (t.isEstablished(peer))
+            if (t.isEstablished(peer)) {
                 return true;
+            }
         }
         return false;
-    }    
-    
+    }
+
     /**
      *  @return a new list, may be modified
      *  @since 0.9.34
@@ -663,20 +716,22 @@ public class TransportManager implements TransportEventListener {
         // for efficiency
         Transport t = _transports.get("NTCP");
         List<Hash> rv = null;
-        if (t != null)
+        if (t != null) {
             rv = t.getEstablished();
+        }
         t = _transports.get("SSU");
         if (t != null) {
-            if (rv != null)
+            if (rv != null) {
                 rv.addAll(t.getEstablished());
-            else
+            } else {
                 rv = t.getEstablished();
+            }
         } else if (rv == null) {
             rv = new ArrayList<Hash>(0);
         }
         return rv;
     }
-    
+
     /**
      * Tell the transports that we may disconnect from this peer.
      * This is advisory only.
@@ -685,10 +740,10 @@ public class TransportManager implements TransportEventListener {
      */
     void mayDisconnect(Hash peer) {
         for (Transport t : _transports.values()) {
-             t.mayDisconnect(peer);
+            t.mayDisconnect(peer);
         }
     }
-    
+
     /**
      * Tell the transports to disconnect from this peer.
      *
@@ -696,10 +751,10 @@ public class TransportManager implements TransportEventListener {
      */
     void forceDisconnect(Hash peer) {
         for (Transport t : _transports.values()) {
-             t.forceDisconnect(peer);
+            t.forceDisconnect(peer);
         }
     }
-    
+
     /**
      * Was the peer UNreachable (outbound only) on any transport,
      * based on the last time we tried it for each transport?
@@ -707,12 +762,13 @@ public class TransportManager implements TransportEventListener {
      */
     boolean wasUnreachable(Hash peer) {
         for (Transport t : _transports.values()) {
-            if (!t.wasUnreachable(peer))
+            if (!t.wasUnreachable(peer)) {
                 return false;
+            }
         }
         return true;
-    }    
-    
+    }
+
     /**
      * IP of the peer from the last connection (in or out, any transport).
      * This may be different from that advertised in the netDb,
@@ -726,22 +782,23 @@ public class TransportManager implements TransportEventListener {
      */
     byte[] getIP(Hash peer) {
         return TransportImpl.getIP(peer);
-    }    
-    
+    }
+
     /**
      *  This forces a rebuild
      */
     List<RouterAddress> getAddresses() {
         List<RouterAddress> rv = new ArrayList<RouterAddress>(4);
         // do this first since SSU may force a NTCP change
-        for (Transport t : _transports.values())
+        for (Transport t : _transports.values()) {
             t.updateAddress();
+        }
         for (Transport t : _transports.values()) {
             rv.addAll(t.getCurrentAddresses());
         }
         return rv;
     }
-    
+
     /**
      *  @since IPv6
      */
@@ -779,10 +836,12 @@ public class TransportManager implements TransportEventListener {
 
         @Override
         public boolean equals(Object o) {
-            if (o == this)
+            if (o == this) {
                 return true;
-            if (! (o instanceof Port))
+            }
+            if (! (o instanceof Port)) {
                 return false;
+            }
             Port p = (Port) o;
             return port == p.port && style.equals(p.style) && DataHelper.eq(ip, p.ip);
         }
@@ -794,28 +853,45 @@ public class TransportManager implements TransportEventListener {
      */
     private Set<Port> getPorts() {
         Set<Port> rv = new HashSet<Port>(4);
-        if (_context.router().isHidden())
+        if (_context.router().isHidden()) {
             return rv;
+        }
         for (Transport t : _transports.values()) {
             int port = t.getRequestedPort();
             // Use UDP port for NTCP too - see comment in NTCPTransport.getRequestedPort() for why this is here
-            if (t.getStyle().equals(NTCPTransport.STYLE) && port <= 0 &&
-                _context.getBooleanProperty(NTCPTransport.PROP_I2NP_NTCP_AUTO_PORT)) {
+            if (
+                t.getStyle().equals(NTCPTransport.STYLE)
+                &&
+                port <= 0
+                &&
+                _context.getBooleanProperty(NTCPTransport.PROP_I2NP_NTCP_AUTO_PORT)
+            )
+            {
                 Transport udp = getTransport(UDPTransport.STYLE);
-                if (udp != null)
+                if (udp != null) {
                     port = udp.getRequestedPort();
+                }
             }
             if (port > 0) {
                 TransportUtil.IPv6Config config = t.getIPv6Config();
                 // ipv4
-                if (config != TransportUtil.IPv6Config.IPV6_ONLY &&
-                    !t.isIPv4Firewalled()) {
+                if (
+                    config != TransportUtil.IPv6Config.IPV6_ONLY
+                    &&
+                    (! t.isIPv4Firewalled())
+                )
+                {
                     rv.add(new Port(t.getStyle(), port));
                 }
                 // ipv6
-                if (_context.getProperty(PROP_ENABLE_UPNP_IPV6, DEFAULT_ENABLE_UPNP_IPV6) &&
-                    config != TransportUtil.IPv6Config.IPV6_DISABLED &&
-                    !t.isIPv6Firewalled()) {
+                if (
+                    _context.getProperty(PROP_ENABLE_UPNP_IPV6, DEFAULT_ENABLE_UPNP_IPV6)
+                    &&
+                    config != TransportUtil.IPv6Config.IPV6_DISABLED
+                    &&
+                    (! t.isIPv6Firewalled())
+                )
+                {
                     RouterAddress ra = t.getCurrentAddress(true);
                     if (ra == null || ra.getHost() == null) {
                         if (t.getStyle().equals(UDPTransport.STYLE)) {
@@ -825,35 +901,40 @@ public class TransportManager implements TransportEventListener {
                     }
                     if (ra != null) {
                         String host = ra.getHost();
-                        if (host != null)
+                        if (host != null) {
                             rv.add(new Port(t.getStyle(), host, port));
+                        }
                     }
                 }
             }
         }
         return rv;
     }
-    
+
     TransportBid getBid(OutNetMessage msg) {
         List<TransportBid> bids = getBids(msg);
-        if ( (bids == null) || (bids.isEmpty()) )
+        if (bids == null || bids.isEmpty()) {
             return null;
-        else
+        } else {
             return bids.get(0);
+        }
     }
 
     List<TransportBid> getBids(OutNetMessage msg) {
-        if (msg == null)
+        if (msg == null) {
             throw new IllegalArgumentException("Null message?  no bidding on a null outNetMessage!");
-        if (_context.router().getRouterInfo().equals(msg.getTarget()))
+        }
+        if (_context.router().getRouterInfo().equals(msg.getTarget())) {
             throw new IllegalArgumentException("Bids for a message bound to ourselves?");
+        }
 
         List<TransportBid> rv = new ArrayList<TransportBid>(_transports.size());
         List<String> failedTransports = msg.getFailedTransports();
         for (Transport t : _transports.values()) {
             if (failedTransports.contains(t.getStyle())) {
-                if (_log.shouldLog(Log.DEBUG))
+                if (_log.shouldLog(Log.DEBUG)) {
                     _log.debug("Skipping transport " + t.getStyle() + " as it already failed");
+                }
                 continue;
             }
             // we always want to try all transports, in case there is a faster bidirectional one
@@ -861,17 +942,19 @@ public class TransportManager implements TransportEventListener {
             // to us via TCP, send via TCP)
             TransportBid bid = t.bid(msg.getTarget(), msg.getMessageSize());
             if (bid != null) {
-                if (_log.shouldLog(Log.DEBUG))
+                if (_log.shouldLog(Log.DEBUG)) {
                     _log.debug("Transport " + t.getStyle() + " bid: " + bid);
+                }
                 rv.add(bid);
             } else {
-                if (_log.shouldLog(Log.DEBUG))
+                if (_log.shouldLog(Log.DEBUG)) {
                     _log.debug("Transport " + t.getStyle() + " did not produce a bid");
+                }
             }
         }
         return rv;
     }
-    
+
     TransportBid getNextBid(OutNetMessage msg) {
         int unreachableTransports = 0;
         Hash peer = msg.getTarget().getIdentity().calculateHash();
@@ -886,8 +969,9 @@ public class TransportManager implements TransportEventListener {
                 continue;
             }
             if (failedTransports.contains(t.getStyle())) {
-                if (_log.shouldLog(Log.DEBUG))
+                if (_log.shouldLog(Log.DEBUG)) {
                     _log.debug("Skipping transport " + t.getStyle() + " as it already failed");
+                }
                 continue;
             }
             // we always want to try all transports, in case there is a faster bidirectional one
@@ -895,19 +979,23 @@ public class TransportManager implements TransportEventListener {
             // to us via TCP, send via TCP)
             TransportBid bid = t.bid(msg.getTarget(), msg.getMessageSize());
             if (bid != null) {
-                if (bid.getLatencyMs() == TransportBid.TRANSIENT_FAIL)
+                if (bid.getLatencyMs() == TransportBid.TRANSIENT_FAIL) {
                     // this keeps GetBids() from banlisting for "no common transports"
                     msg.transportFailed(t.getStyle());
-                else if ( (rv == null) || (rv.getLatencyMs() > bid.getLatencyMs()) )
-                    rv = bid;    
-                if (_log.shouldLog(Log.DEBUG))
-                    _log.debug("Transport " + t.getStyle() + " bid: " + bid + " currently winning? " + (rv == bid) 
+                } else if (rv == null || rv.getLatencyMs() > bid.getLatencyMs()) {
+                    rv = bid;
+                }
+                if (_log.shouldLog(Log.DEBUG)) {
+                    _log.debug("Transport " + t.getStyle() + " bid: " + bid + " currently winning? " + (rv == bid)
                                + " (winning latency: " + rv.getLatencyMs() + " / " + rv + ")");
+                }
             } else {
-                if (_log.shouldLog(Log.DEBUG))
+                if (_log.shouldLog(Log.DEBUG)) {
                     _log.debug("Transport " + t.getStyle() + " did not produce a bid");
-                if (t.isUnreachable(peer))
+                }
+                if (t.isUnreachable(peer)) {
                     unreachableTransports++;
+                }
             }
         }
         if (unreachableTransports >= _transports.size()) {
@@ -925,8 +1013,9 @@ public class TransportManager implements TransportEventListener {
                     if (id.getSigType() != SigType.DSA_SHA1) {
                         String v = msg.getTarget().getVersion();
                         // NTCP is earlier than SSU, use that one
-                        if (VersionComparator.comp(v, NTCPTransport.MIN_SIGTYPE_VERSION) < 0)
+                        if (VersionComparator.comp(v, NTCPTransport.MIN_SIGTYPE_VERSION) < 0) {
                             incompat = true;
+                        }
                     }
                 }
                 if (incompat) {
@@ -944,7 +1033,7 @@ public class TransportManager implements TransportEventListener {
         }
         return rv;
     }
-    
+
     /**
      * Message received
      *
@@ -953,15 +1042,17 @@ public class TransportManager implements TransportEventListener {
      * @param fromRouterHash may be null, calculated from fromRouter if null
      */
     public void messageReceived(I2NPMessage message, RouterIdentity fromRouter, Hash fromRouterHash) {
-        if (_log.shouldLog(Log.DEBUG))
+        if (_log.shouldLog(Log.DEBUG)) {
             _log.debug("I2NPMessage received: " + message.getClass().getSimpleName() /*, new Exception("Where did I come from again?") */ );
+        }
         try {
             _context.inNetMessagePool().add(message, fromRouter, fromRouterHash, _msgIDBloomXor);
             //if (_log.shouldLog(Log.DEBUG))
             //    _log.debug("Added to in pool");
         } catch (IllegalArgumentException iae) {
-            if (_log.shouldLog(Log.WARN))
+            if (_log.shouldLog(Log.WARN)) {
                 _log.warn("Error receiving message", iae);
+            }
         }
     }
 
@@ -970,8 +1061,8 @@ public class TransportManager implements TransportEventListener {
      *  calls UPnPManager rescan() and update()
      */
     public void transportAddressChanged() {
-        if (_upnpManager != null) {
-            synchronized (_upnpManager) {
+        synchronized (_upnpManager) {
+            if (_upnpManager != null) {
                 if (!_upnpUpdateQueued) {
                     boolean shouldWait = _upnpManager.rescan();
                     if (shouldWait) {
@@ -1013,7 +1104,9 @@ public class TransportManager implements TransportEventListener {
      * @since 0.9.50
      */
     private class UPnPRefresher extends SimpleTimer2.TimedEvent {
-        public UPnPRefresher() { super(_context.simpleTimer2()); }
+        public UPnPRefresher() {
+            super(_context.simpleTimer2());
+        }
 
         public void timeReached() {
             transportAddressChanged();
@@ -1021,14 +1114,14 @@ public class TransportManager implements TransportEventListener {
         }
     }
 
-    List<String> getMostRecentErrorMessages() { 
+    List<String> getMostRecentErrorMessages() {
         List<String> rv = new ArrayList<String>(16);
         for (Transport t : _transports.values()) {
             rv.addAll(t.getMostRecentErrorMessages());
         }
         return rv;
     }
-    
+
     /**
      *  As of 0.9.31, only outputs UPnP status
      *
@@ -1044,7 +1137,7 @@ public class TransportManager implements TransportEventListener {
             out.write("<h3 id=\"upnpstatus\"><a name=\"upnp\"></a>" + _t("UPnP is not enabled") + "</h3>\n");
         }
     }
-    
+
     /**
      *  Mark a string for extraction by xgettext and translation.
      *  Use this only in static initializers.

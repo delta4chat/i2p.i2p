@@ -20,12 +20,12 @@ import net.i2p.util.Log;
 public class ProfileManagerImpl implements ProfileManager {
     private final Log _log;
     private final RouterContext _context;
-    
+
     public ProfileManagerImpl(RouterContext context) {
         _context = context;
         _log = _context.logManager().getLog(ProfileManagerImpl.class);
     }
-    
+
     /**
      * Note that it took msToSend to send a message of size bytesSent to the peer over the transport.
      * This should only be called if the transport considered the send successful.
@@ -33,11 +33,13 @@ public class ProfileManagerImpl implements ProfileManager {
      */
     public void messageSent(Hash peer, String transport, long msToSend, long bytesSent) {
         PeerProfile data = getProfileNonblocking(peer);
-        if (data == null) return;
+        if (data == null) {
+            return;
+        }
         data.setLastSendSuccessful(_context.clock().now());
         //data.getSendSuccessSize().addData(bytesSent, msToSend);
     }
-    
+
     /**
      * Note that the router failed to send a message to the peer over the transport specified.
      * Non-blocking. Will not update the profile if we can't get the lock.
@@ -45,10 +47,12 @@ public class ProfileManagerImpl implements ProfileManager {
     public void messageFailed(Hash peer, String transport) {
         // do not create profile if it didn't exist
         PeerProfile data = _context.profileOrganizer().getProfileNonblocking(peer);
-        if (data == null) return;
+        if (data == null) {
+            return;
+        }
         data.setLastSendFailed(_context.clock().now());
     }
-    
+
     /**
      * Note that the router failed to send a message to the peer over any transport.
      * Non-blocking. Will not update the profile if we can't get the lock.
@@ -56,10 +60,12 @@ public class ProfileManagerImpl implements ProfileManager {
     public void messageFailed(Hash peer) {
         // do not create profile if it didn't exist
         PeerProfile data = _context.profileOrganizer().getProfileNonblocking(peer);
-        if (data == null) return;
+        if (data == null) {
+            return;
+        }
         data.setLastSendFailed(_context.clock().now());
     }
-    
+
     /**
      * Note that there was some sort of communication error talking with the peer
      *
@@ -67,51 +73,60 @@ public class ProfileManagerImpl implements ProfileManager {
      */
     @Deprecated
     public void commErrorOccurred(Hash peer) {
-        if (_log.shouldLog(Log.INFO))
+        if (_log.shouldLog(Log.INFO)) {
             _log.info("Comm error occurred for peer " + peer.toBase64(), new Exception("Comm error"));
+        }
         PeerProfile data = getProfile(peer);
-        //if (data == null) return;
+        if (data == null) {
+            return;
+        }
         data.setLastSendFailed(_context.clock().now());
     }
-    
+
     /**
      * Note that the router agreed to participate in a tunnel
      *
      */
     public void tunnelJoined(Hash peer, long responseTimeMs) {
         PeerProfile data = getProfile(peer);
-        //if (data == null) return;
+        if (data == null) {
+            return;
+        }
         data.getTunnelCreateResponseTime().addData(responseTimeMs, responseTimeMs);
         data.setLastHeardFrom(_context.clock().now());
         data.getTunnelHistory().incrementAgreedTo();
     }
-    
+
     /**
-     * Note that a router explicitly rejected joining a tunnel.  
+     * Note that a router explicitly rejected joining a tunnel.
      *
      * @param responseTimeMs ignored
-     * @param severity how much the peer doesnt want to participate in the 
+     * @param severity how much the peer doesnt want to participate in the
      *                 tunnel (large == more severe)
      */
     public void tunnelRejected(Hash peer, long responseTimeMs, int severity) {
         PeerProfile data = getProfile(peer);
-        //if (data == null) return;
+        if (data == null) {
+            return;
+        }
         data.setLastHeardFrom(_context.clock().now());
         data.getTunnelHistory().incrementRejected(severity);
     }
-    
+
     /**
-     * Note that a router did not respond to a tunnel join. 
+     * Note that a router did not respond to a tunnel join.
      *
      * Since TunnelHistory doesn't have a timeout stat, pretend we were
      * rejected for bandwidth reasons.
      */
     public void tunnelTimedOut(Hash peer) {
         PeerProfile data = getProfile(peer);
-        //if (data == null) return;
+        if (data == null) {
+            return;
+        }
         data.getTunnelHistory().incrementRejected(TunnelHistory.TUNNEL_REJECT_BANDWIDTH);
     }
-    
+
     /**
      * Note that a tunnel that the router is participating in
      * was successfully tested with the given round trip latency
@@ -125,47 +140,55 @@ public class ProfileManagerImpl implements ProfileManager {
     public void tunnelTestSucceeded(Hash peer, long responseTimeMs) {
         if (PeerProfile.ENABLE_TUNNEL_TEST_RESPONSE_TIME) {
             PeerProfile data = getProfileNonblocking(peer);
-            if (data == null) return;
+            if (data == null) {
+                return;
+            }
             data.updateTunnelTestTimeAverage(responseTimeMs);
             data.getTunnelTestResponseTime().addData(responseTimeMs, responseTimeMs);
         }
     }
-    
+
     /**
      * Non-blocking. Will not update the profile if we can't get the lock.
      */
     public void tunnelDataPushed(Hash peer, long rtt, int size) {
-        if (_context.routerHash().equals(peer))
+        if (_context.routerHash().equals(peer)) {
             return;
+        }
         PeerProfile data = getProfileNonblocking(peer);
-        if (data != null)
+        if (data != null) {
             data.dataPushed(size); // ignore rtt, as we are averaging over a minute
+        }
     }
 
     /**
      * Non-blocking. Will not update the profile if we can't get the lock.
      */
     public void tunnelDataPushed1m(Hash peer, int size) {
-        if (_context.routerHash().equals(peer))
+        if (_context.routerHash().equals(peer)) {
             return;
+        }
         PeerProfile data = getProfileNonblocking(peer);
-        if (data != null)
+        if (data != null) {
             data.dataPushed1m(size);
+        }
     }
 
-    
+
     /**
      * Non-blocking. Will not update the profile if we can't get the lock.
      */
     public void tunnelLifetimePushed(Hash peer, long lifetime, long size) {
-        if (_context.routerHash().equals(peer))
+        if (_context.routerHash().equals(peer)) {
             return;
+        }
         PeerProfile data = getProfileNonblocking(peer);
-        if (data != null)
+        if (data != null) {
             data.tunnelDataTransferred(size);
+        }
     }
-    
-    
+
+
     /**
      * Note that the peer participated in a tunnel that failed.  Its failure may not have
      * been the peer's fault however.
@@ -174,10 +197,12 @@ public class ProfileManagerImpl implements ProfileManager {
      */
     public void tunnelFailed(Hash peer, int pct) {
         PeerProfile data = getProfile(peer);
-        //if (data == null) return;
+        if (data == null) {
+            return;
+        }
         data.getTunnelHistory().incrementFailed(pct);
     }
-    
+
     /**
      * Note that the peer was able to return the valid data for a db lookup
      *
@@ -186,15 +211,18 @@ public class ProfileManagerImpl implements ProfileManager {
      */
     public void dbLookupSuccessful(Hash peer, long responseTimeMs) {
         PeerProfile data = getProfileNonblocking(peer);
-        if (data == null) return;
+        if (data == null) {
+            return;
+        }
         data.setLastHeardFrom(_context.clock().now());
-        if (!data.getIsExpandedDB())
+        if (!data.getIsExpandedDB()) {
             data.expandDBProfile();
+        }
         data.getDbResponseTime().addData(responseTimeMs, responseTimeMs);
         DBHistory hist = data.getDBHistory();
         hist.lookupSuccessful();
     }
-    
+
     /**
      * Note that the peer was unable to reply to a db lookup - either with data or with
      * a lookupReply redirecting the user elsewhere
@@ -205,13 +233,16 @@ public class ProfileManagerImpl implements ProfileManager {
     public void dbLookupFailed(Hash peer) {
         // do not create profile if it didn't exist
         PeerProfile data = _context.profileOrganizer().getProfileNonblocking(peer);
-        if (data == null) return;
-        if (!data.getIsExpandedDB())
+        if (data == null) {
+            return;
+        }
+        if (!data.getIsExpandedDB()) {
             data.expandDBProfile();
+        }
         DBHistory hist = data.getDBHistory();
         hist.lookupFailed();
     }
-    
+
     /**
      * Note that the peer replied to a db lookup with a redirect to other routers, where
      * the list of redirected users included newPeers routers that the local router didn't
@@ -223,16 +254,19 @@ public class ProfileManagerImpl implements ProfileManager {
      */
     public void dbLookupReply(Hash peer, int newPeers, int oldPeers, int invalid, int duplicate, long responseTimeMs) {
         PeerProfile data = getProfileNonblocking(peer);
-        if (data == null) return;
-        data.setLastHeardFrom(_context.clock().now());
-        if (!data.getIsExpandedDB())
+        if (data == null) {
             return;
+        }
+        data.setLastHeardFrom(_context.clock().now());
+        if (!data.getIsExpandedDB()) {
+            return;
+        }
         data.getDbResponseTime().addData(responseTimeMs, responseTimeMs);
         data.getDbIntroduction().addData(newPeers, responseTimeMs);
         DBHistory hist = data.getDBHistory();
         hist.lookupReply(newPeers, oldPeers, invalid, duplicate);
     }
-    
+
     /**
      * Note that the local router received a db lookup from the given peer
      *
@@ -240,14 +274,17 @@ public class ProfileManagerImpl implements ProfileManager {
      */
     public void dbLookupReceived(Hash peer) {
         PeerProfile data = getProfileNonblocking(peer);
-        if (data == null) return;
-        data.setLastHeardFrom(_context.clock().now());
-        if (!data.getIsExpandedDB())
+        if (data == null) {
             return;
+        }
+        data.setLastHeardFrom(_context.clock().now());
+        if (!data.getIsExpandedDB()) {
+            return;
+        }
         //DBHistory hist = data.getDBHistory();
         //hist.lookupReceived();
     }
-    
+
     /**
      * Note that the local router received an unprompted db store from the given peer
      *
@@ -255,14 +292,17 @@ public class ProfileManagerImpl implements ProfileManager {
      */
     public void dbStoreReceived(Hash peer, boolean wasNewKey) {
         PeerProfile data = getProfileNonblocking(peer);
-        if (data == null) return;
-        data.setLastHeardFrom(_context.clock().now());
-        if (!data.getIsExpandedDB())
+        if (data == null) {
             return;
+        }
+        data.setLastHeardFrom(_context.clock().now());
+        if (!data.getIsExpandedDB()) {
+            return;
+        }
         DBHistory hist = data.getDBHistory();
         hist.unpromptedStoreReceived(wasNewKey);
     }
-    
+
     /**
      * Note that we've confirmed a successful send of db data to the peer (though we haven't
      * necessarily requested it again from them, so they /might/ be lying)
@@ -275,15 +315,18 @@ public class ProfileManagerImpl implements ProfileManager {
      */
     public void dbStoreSent(Hash peer, long responseTimeMs) {
         PeerProfile data = getProfile(peer);
-        //if (data == null) return;
+        if (data == null) {
+            return;
+        }
         long now = _context.clock().now();
         data.setLastHeardFrom(now);
         data.setLastSendSuccessful(now);
-        if (!data.getIsExpandedDB())
+        if (!data.getIsExpandedDB()) {
             data.expandDBProfile();
+        }
         data.getDbResponseTime().addData(responseTimeMs, responseTimeMs);
     }
-    
+
     /**
      * Note that we've verified a successful send of db data to the floodfill peer
      * by querying another floodfill.
@@ -292,16 +335,19 @@ public class ProfileManagerImpl implements ProfileManager {
      */
     public void dbStoreSuccessful(Hash peer) {
         PeerProfile data = getProfile(peer);
-        //if (data == null) return;
+        if (data == null) {
+            return;
+        }
         long now = _context.clock().now();
         data.setLastHeardFrom(now);
         data.setLastSendSuccessful(now);
-        if (!data.getIsExpandedDB())
+        if (!data.getIsExpandedDB()) {
             data.expandDBProfile();
+        }
         DBHistory hist = data.getDBHistory();
         hist.storeSuccessful();
     }
-    
+
     /**
      * Note that we were unable to confirm a successful send of db data to
      * the peer, at least not within our timeout period
@@ -310,15 +356,18 @@ public class ProfileManagerImpl implements ProfileManager {
      */
     public void dbStoreFailed(Hash peer) {
         PeerProfile data = getProfile(peer);
-        //if (data == null) return;
-        if (!data.getIsExpandedDB())
+        if (data == null) {
+            return;
+        }
+        if (!data.getIsExpandedDB()) {
             data.expandDBProfile();
+        }
         DBHistory hist = data.getDBHistory();
         hist.storeFailed();
         // we could do things like update some sort of "how many successful stores we've
         // failed to send them"...
     }
-    
+
     /**
      * Note that the local router received a reference to the given peer, either
      * through an explicit dbStore or in a dbLookupReply
@@ -326,7 +375,9 @@ public class ProfileManagerImpl implements ProfileManager {
      */
     public void heardAbout(Hash peer) {
         PeerProfile data = getProfileNonblocking(peer);
-        if (data == null) return;
+        if (data == null) {
+            return;
+        }
         data.setLastHeardAbout(_context.clock().now());
     }
 
@@ -337,10 +388,12 @@ public class ProfileManagerImpl implements ProfileManager {
      */
     public void heardAbout(Hash peer, long when) {
         PeerProfile data = getProfileNonblocking(peer);
-        if (data == null) return;
+        if (data == null) {
+            return;
+        }
         data.setLastHeardAbout(when);
     }
-    
+
     /**
      * Note that the router received a message from the given peer on the specified
      * transport.  Messages received without any "from" information aren't recorded
@@ -350,11 +403,13 @@ public class ProfileManagerImpl implements ProfileManager {
      */
     public void messageReceived(Hash peer, String style, long msToReceive, int bytesRead) {
         PeerProfile data = getProfileNonblocking(peer);
-        if (data == null) return;
+        if (data == null) {
+            return;
+        }
         data.setLastHeardFrom(_context.clock().now());
         //data.getReceiveSize().addData(bytesRead, msToReceive);
     }
-    
+
     /**
      *   Blocking.
      *   Creates a new profile if it didn't exist.
@@ -369,7 +424,7 @@ public class ProfileManagerImpl implements ProfileManager {
         }
         return prof;
     }
-    
+
     /**
      *  Non-blocking.
      *  Creates a new profile if it didn't exist.

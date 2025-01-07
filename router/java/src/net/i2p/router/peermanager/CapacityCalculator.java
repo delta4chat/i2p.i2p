@@ -13,12 +13,11 @@ import net.i2p.stat.RateStat;
  * Estimate how many of our tunnels the peer can join per hour.
  */
 class CapacityCalculator {
-    
     public static final String PROP_COUNTRY_BONUS = "profileOrganizer.sameCountryBonus";
 
     /** used to adjust each period so that we keep trying to expand the peer's capacity */
     static final long GROWTH_FACTOR = 5;
-    
+
     /** the calculator estimates over a 1 hour period */
     private static long ESTIMATE_PERIOD = 60*60*1000;
 
@@ -45,8 +44,8 @@ class CapacityCalculator {
     private static final double BONUS_RECENT_SEND_SUCCESS = 1;
     // we make this a bonus for non-ff, not a penalty for ff, so we
     // don't drive the ffs below the default
-    private static final double BONUS_NON_FLOODFILL = 1.0;
-    
+    private static final double BONUS_NON_FLOODFILL = 2.0;
+
     public static double calc(PeerProfile profile) {
         double capacity;
         RouterContext context = profile.getContext();
@@ -61,7 +60,7 @@ class CapacityCalculator {
             RateStat acceptStat = profile.getTunnelCreateResponseTime();
             RateStat rejectStat = history.getRejectionRate();
             RateStat failedStat = history.getFailedRate();
-        
+
             double capacity10m = estimateCapacity(acceptStat, rejectStat, failedStat, 10*60*1000);
             // if we actively know they're bad, who cares if they used to be good?
             if (capacity10m <= 0) {
@@ -79,8 +78,8 @@ class CapacityCalculator {
                     capacity10m /= 4;
                 }
 
-                capacity = capacity10m * 0.4 + 
-                           capacity60m * 0.5 + 
+                capacity = capacity10m * 0.4 +
+                           capacity60m * 0.5 +
                            capacity1d  * 0.1;
             }
         }
@@ -89,30 +88,33 @@ class CapacityCalculator {
         if (enableAgeChecks) {
             long firstHeard = profile.getFirstHeardAbout();
             long ago = now - firstHeard;
-            if (ago < 2*60*60*1000)
+            if (ago < 2*60*60*1000) {
                 capacity -= PENALTY_NEW * (2*60*60*1000 - ago) / 2*60*60*1000;
+            }
         }
         // boost connected peers
-        if (profile.isEstablished())
+        if (profile.isEstablished()) {
             capacity += BONUS_ESTABLISHED;
-
-/*
-        // boost same country
-        if (profile.isSameCountry()) {
-            double bonus = BONUS_SAME_COUNTRY;
-            String b = context.getProperty(PROP_COUNTRY_BONUS);
-            if (b != null) {
-                try {
-                    bonus = Double.parseDouble(b);
-                } catch (NumberFormatException nfe) {}
-            }
-            capacity += bonus;
         }
-*/
+
+        /*
+                // boost same country
+                if (profile.isSameCountry()) {
+                    double bonus = BONUS_SAME_COUNTRY;
+                    String b = context.getProperty(PROP_COUNTRY_BONUS);
+                    if (b != null) {
+                        try {
+                            bonus = Double.parseDouble(b);
+                        } catch (NumberFormatException nfe) {}
+                    }
+                    capacity += bonus;
+                }
+        */
 
         // penalize unreachable peers
-        if (profile.wasUnreachable())
+        if (profile.wasUnreachable()) {
             capacity -= PENALTY_UNREACHABLE;
+        }
 
         // credit non-floodfill to reduce conn limit issues at floodfills
         // TODO only if we aren't floodfill ourselves?
@@ -121,15 +123,19 @@ class CapacityCalculator {
         if (ndb != null) {
             RouterInfo ri = (RouterInfo) ndb.lookupLocallyWithoutValidation(profile.getPeer());
             if (ri != null) {
-                if (!FloodfillNetworkDatabaseFacade.isFloodfill(ri))
+                if (!FloodfillNetworkDatabaseFacade.isFloodfill(ri)) {
                     capacity += BONUS_NON_FLOODFILL;
+                }
                 String caps = ri.getCapabilities();
-                if (caps.indexOf(Router.CAPABILITY_REACHABLE) < 0)
+                if (caps.indexOf(Router.CAPABILITY_REACHABLE) < 0) {
                     capacity -= PENALTY_NO_R_CAP;
-                if (caps.indexOf(Router.CAPABILITY_UNREACHABLE) >= 0)
+                }
+                if (caps.indexOf(Router.CAPABILITY_UNREACHABLE) >= 0) {
                     capacity -= PENALTY_U_CAP;
-                if (caps.indexOf(Router.CAPABILITY_BW32) >= 0)
+                }
+                if (caps.indexOf(Router.CAPABILITY_BW32) >= 0) {
                     capacity -= PENALTY_L_CAP;
+                }
                 if (caps.indexOf(Router.CAPABILITY_CONGESTION_MODERATE) >= 0) {
                     String dcapPenalty = context.getProperty(PROP_D_CAP);
                     if (dcapPenalty != null) {
@@ -142,7 +148,7 @@ class CapacityCalculator {
                     } else {
                         capacity -= PENALTY_CAP_D;
                     }
-                } else if (caps.indexOf(Router.CAPABILITY_CONGESTION_SEVERE) >= 0){
+                } else if (caps.indexOf(Router.CAPABILITY_CONGESTION_SEVERE) >= 0) {
                     String ecapPenalty = context.getProperty(PROP_E_CAP);
                     if (ecapPenalty != null) {
                         try {
@@ -154,10 +160,11 @@ class CapacityCalculator {
                     } else {
                         // treat older than a few minutes as D, as recommended in proposal 162
                         long age = context.clock().now() - ri.getPublished();
-                        if (age < 30*60*1000)
+                        if (age < 30*60*1000) {
                             capacity -= PENALTY_CAP_E;
-                        else
+                        } else {
                             capacity -= PENALTY_CAP_D;
+                        }
                     }
                 } else if (caps.indexOf(Router.CAPABILITY_NO_TUNNELS) >= 0) {
                     capacity = 0;
@@ -171,24 +178,27 @@ class CapacityCalculator {
         long lastBad = profile.getLastSendFailed();
         if (lastBad > lastGood) {
             capacity -= PENALTY_LAST_SEND_FAIL;
-            if (lastGood > now - 30*60*1000)
+            if (lastGood > now - 30*60*1000) {
                 capacity += PENALTY_RECENT_SEND_FAIL;
+            }
         } else if (lastGood > 0) {
             capacity += BONUS_LAST_SEND_SUCCESS;
-            if (lastGood > now - 30*60*1000)
+            if (lastGood > now - 30*60*1000) {
                 capacity += BONUS_RECENT_SEND_SUCCESS;
+            }
         }
 
         // a tiny tweak to break ties and encourage closeness, -.25 to +.25
         capacity -= profile.getXORDistance() * (BONUS_XOR / 128);
 
         capacity += profile.getCapacityBonus();
-        if (capacity < 0)
+        if (capacity < 0) {
             capacity = 0;
-        
+        }
+
         return capacity;
     }
-    
+
     /**
      * If we haven't heard from them in an hour, they aren't too useful.
      *
@@ -196,7 +206,7 @@ class CapacityCalculator {
     private static boolean tooOld(PeerProfile profile, long now) {
         return !profile.getIsActive(60*60*1000, now);
     }
-    
+
     /**
      * Compute a tunnel accept capacity-per-hour for the given period
      * This is perhaps the most critical part of the peer ranking and selection
@@ -228,8 +238,9 @@ class CapacityCalculator {
             // and we don't want everybody to be at zero during times of congestion.
             if (eventCount > 0 && curRejected != null) {
                 long rejected = curRejected.computeAverages(ra,false).getTotalEventCount();
-                if (rejected > 0)
+                if (rejected > 0) {
                     eventCount *= eventCount / (eventCount + (2 * rejected));
+                }
             }
         }
 
@@ -250,13 +261,13 @@ class CapacityCalculator {
                 val -= 0.04 * failed * stretch;
             }
         }
-        
+
         val += GROWTH_FACTOR;
-        
-        if (val >= 0) {
-            return val;
-        } else {
-            return 0.0d;
+
+        if (val < 0) {
+            val = 0;
         }
+
+        return val;
     }
 }

@@ -6,7 +6,6 @@ package net.i2p.router.peermanager;
  *
  */
 class IntegrationCalculator {
-    
     public static double calc(PeerProfile profile) {
         long val = 0;
         if (profile.getIsExpandedDB()) {

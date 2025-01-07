@@ -37,9 +37,9 @@ class StartExplorersJob extends JobImpl {
     /** don't explore more than 1 bucket at a time */
     private static final int MAX_PER_RUN = 1;
     /** dont explore the network more often than this */
-    private static final int MIN_RERUN_DELAY_MS = 55*1000;
+    private static final int MIN_RERUN_DELAY_MS = 30*1000;
     /** explore the network at least this often */
-    private static final int MAX_RERUN_DELAY_MS = 5*60*1000;
+    private static final int MAX_RERUN_DELAY_MS = 2*60*1000;
     /** aggressively explore during this time - same as KNDF expiration grace period */
     private static final int STARTUP_TIME = 60*60*1000;
     /** super-aggressively explore if we have less than this many routers.
@@ -75,8 +75,9 @@ class StartExplorersJob extends JobImpl {
     public void runJob() {
         int count = _facade.getDataStore().size();
         if (
-            _facade.floodfillEnabled()
+            /*_facade.floodfillEnabled()
             ||
+            */
             _facade.isClientDb()
             ||
             count > LIMIT_ROUTERS
@@ -89,7 +90,7 @@ class StartExplorersJob extends JobImpl {
         )
         {
             if (_log.shouldLog(Log.INFO)) {
-                _log.info("Not to run StartExplorersJob: in case of we are floodfill, or this is client db, or current router count more than LIMIT_ROUTERS, or MAX_LAG reached, or MAX_MSG_DELAY reached, or graceful shutdown in progress.");
+                _log.info("Not to run StartExplorersJob: in case of <del>we are floodfill</del>, or this is client db, or current router count more than LIMIT_ROUTERS, or MAX_LAG reached, or MAX_MSG_DELAY reached, or graceful shutdown in progress.");
             }
         } else {
             int num = MAX_PER_RUN;

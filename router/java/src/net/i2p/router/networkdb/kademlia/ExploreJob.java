@@ -94,8 +94,9 @@ class ExploreJob extends SearchJob {
         //msg.setDontIncludePeers(getState().getClosestAttempted(MAX_CLOSEST));
         Set<Hash> dontIncludePeers = getState().getClosestAttempted(MAX_CLOSEST);
         msg.setMessageExpiration(expiration);
-        if (replyTunnelId != null)
+        if (replyTunnelId != null) {
             msg.setReplyTunnel(replyTunnelId);
+        }
 
         int available = MAX_CLOSEST - dontIncludePeers.size();
         if (_isRealExplore) {

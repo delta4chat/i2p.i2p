@@ -11,7 +11,6 @@ import java.util.Set;
  *  @since 0.8.13
  */
 public abstract class StrictCountries {
-
     private static final Set<String> _countries;
 
     // List updated using the Freedom in the World Index 2020
@@ -31,7 +30,7 @@ public abstract class StrictCountries {
             /* Cameroon */ "CM",
             /* Central African Republic */ "CF",
             /* Chad */ "TD",
-            /* China */ "CN",
+            /* China, Hongkong, Marco */ "CN", "HK", "MO",
             /* Cuba */ "CU",
             /* Democratic Republic of the Congo */ "CD",
             /* Egypt */ "EG",

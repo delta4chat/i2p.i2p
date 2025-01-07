@@ -492,9 +492,9 @@ public class PersistentDataStore extends TransientDataStore {
                 int i = 0;
                 for (File file : toRead) {
                     // Take the first 2000/8000 good ones, do not delete the rest
-                    if (i >= MAX_ROUTERS_INIT && !_initialized) {
+                    /*if (i >= MAX_ROUTERS_INIT && !_initialized) {
                         continue;
-                    }
+                    }*/
                     Hash key = getRouterInfoHash(file.getName());
                     if (key != null) {
                         ReadRouterJob rrj = new ReadRouterJob(file, key);
