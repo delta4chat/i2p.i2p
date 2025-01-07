@@ -91,21 +91,25 @@ class IntroductionManager {
         ctx.statManager().createRateStat("udp.receiveRelayRequestBadTag", "Received relay requests with bad/expired tag", "udp", UDPTransport.RATES);
         ctx.statManager().createRateStat("udp.relayBadIP", "Received IP or port was bad", "udp", UDPTransport.RATES);
     }
-    
+
     public void reset() {
         _inbound.clear();
         _outbound.clear();
     }
-    
+
     public void add(PeerState peer) {
-        if (peer == null) return;
-        // let's not use an introducer on a privileged port, sounds like trouble
-        if (!TransportUtil.isValidPort(peer.getRemotePort()))
+        if (peer == null) {
             return;
+        }
+        // let's not use an introducer on a privileged port, sounds like trouble
+        if (!TransportUtil.isValidPort(peer.getRemotePort())) {
+            return;
+        }
         long id = peer.getWeRelayToThemAs();
         boolean added = id > 0;
-        if (added)
+        if (added) {
             _outbound.put(Long.valueOf(id), peer);
+        }
         long id2 = peer.getTheyRelayToUsAs();
         if (id2 > 0 && _inbound.size() < MAX_INBOUND) {
             added = true;
@@ -114,12 +118,15 @@ class IntroductionManager {
         //if (added &&_log.shouldLog(Log.DEBUG))
         //    _log.debug("adding peer " + peer);
     }
-    
+
     public void remove(PeerState peer) {
-        if (peer == null) return;
-        long id = peer.getWeRelayToThemAs(); 
-        if (id > 0) 
+        if (peer == null) {
+            return;
+        }
+        long id = peer.getWeRelayToThemAs();
+        if (id > 0) {
             _outbound.remove(Long.valueOf(id));
+        }
         long id2 = peer.getTheyRelayToUsAs();
         if (id2 > 0) {
             _inbound.remove(Long.valueOf(id2));
@@ -127,7 +134,7 @@ class IntroductionManager {
         //if ((id > 0 || id2 > 0) &&_log.shouldLog(Log.DEBUG))
         //    _log.debug("removing peer " + peer);
     }
-    
+
     /**
      *  Is this inbound tag currently valid,
      *  i.e. is the peer still connected?
@@ -141,7 +148,7 @@ class IntroductionManager {
     private PeerState get(long id) {
         return _outbound.get(Long.valueOf(id));
     }
-    
+
     /**
      * Grab a bunch of peers who are willing to be introducers for us that
      * are locally known (duh) and have published their own SSU address (duh^2).
@@ -160,9 +167,12 @@ class IntroductionManager {
      * @return number of introducers added
      */
     public int pickInbound(RouterAddress current, boolean ipv6, Properties ssuOptions, int howMany) {
-        if (_log.shouldLog(Log.DEBUG))
+        if (_log.shouldLog(Log.DEBUG)) {
             _log.debug("Picking inbound out of " + _inbound.size());
-        if (_inbound.isEmpty()) return 0;
+        }
+        if (_inbound.isEmpty()) {
+            return 0;
+        }
         List<PeerState> peers = new ArrayList<PeerState>(_inbound.values());
         int sz = peers.size();
         Collections.sort(peers, new PeerStateComparator());
@@ -170,8 +180,9 @@ class IntroductionManager {
         long now = _context.clock().now();
         long inactivityCutoff = now - (UDPTransport.EXPIRE_TIMEOUT / 2);    // 15 min
         // if not too many to choose from, be less picky
-        if (sz <= howMany + 2)
+        if (sz <= howMany + 2) {
             inactivityCutoff -= UDPTransport.EXPIRE_TIMEOUT / 4;
+        }
         List<Introducer> introducers = new ArrayList<Introducer>(howMany);
         String exp = Long.toString((now + INTRODUCER_EXPIRATION) / 1000);
 
@@ -181,16 +192,19 @@ class IntroductionManager {
             UDPAddress ua = new UDPAddress(current);
             for (int i = 0; i < ua.getIntroducerCount(); i++) {
                 long lexp = ua.getIntroducerExpiration(i);
-                if (lexp > 0 && lexp < now + UDPTransport.INTRODUCER_EXPIRATION_MARGIN)
+                if (lexp > 0 && lexp < now + UDPTransport.INTRODUCER_EXPIRATION_MARGIN) {
                     continue;
+                }
                 long tag = ua.getIntroducerTag(i);
-                if (!isInboundTagValid(tag))
+                if (!isInboundTagValid(tag)) {
                     continue;
+                }
                 String sexp = Long.toString(ua.getIntroducerExpiration(i) / 1000);
                 Introducer intro = new Introducer(ua.getIntroducerHash(i), tag, sexp);
                 ssu2count++;
-                if (_log.shouldInfo())
+                if (_log.shouldInfo()) {
                     _log.info("Reusing introducer: " + ua.getIntroducerHash(i));
+                }
                 introducers.add(intro);
                 found++;
             }
@@ -199,19 +213,22 @@ class IntroductionManager {
         outerloop:
         for (int i = 0; i < sz && found < howMany; i++) {
             PeerState cur = peers.get(i);
-            if (cur.isIPv6() != ipv6)
+            if (cur.isIPv6() != ipv6) {
                 continue;
+            }
             Hash hash = cur.getRemotePeer();
             // dup check of reused SSU2 introducers
             String b64 = hash.toBase64();
             for (Introducer intro : introducers) {
-                if (b64.equals(intro.shash))
+                if (b64.equals(intro.shash)) {
                     continue outerloop;
+                }
             }
             RouterInfo ri = _context.netDb().lookupRouterInfoLocally(hash);
             if (ri == null) {
-                if (_log.shouldLog(Log.INFO))
+                if (_log.shouldLog(Log.INFO)) {
                     _log.info("Picked peer has no local routerInfo: " + cur);
+                }
                 // ask him for it so we have it for next time
                 DatabaseLookupMessage dlm = new DatabaseLookupMessage(_context);
                 dlm.setSearchKey(hash);
@@ -226,44 +243,60 @@ class IntroductionManager {
             // but requires RelayRequest support, see below
             List<RouterAddress> ras = _transport.getTargetAddresses(ri);
             if (ras.isEmpty()) {
-                if (_log.shouldLog(Log.INFO))
+                if (_log.shouldLog(Log.INFO)) {
                     _log.info("Picked peer has no SSU address: " + ri);
+                }
                 continue;
             }
             if ( /* _context.profileOrganizer().isFailing(cur.getRemotePeer()) || */
-                _context.banlist().isBanlisted(hash) ||
-                _transport.wasUnreachable(hash)) {
-                if (_log.shouldLog(Log.INFO))
+                _context.banlist().isBanlisted(hash)
+                ||
+                _transport.wasUnreachable(hash)
+            )
+            {
+                if (_log.shouldLog(Log.INFO)) {
                     _log.info("Peer is failing, blocklisted or was unreachable: " + cur);
+                }
                 continue;
             }
             // Try to pick active peers,
             // but give it min of 20 minutes
-            if (cur.getLastReceiveTime() < inactivityCutoff &&
-                cur.getLastSendTime() < inactivityCutoff &&
-                cur.getIntroducerTime() + (INTRODUCER_EXPIRATION / 4) < now) {
-                if (_log.shouldLog(Log.INFO))
+            if (
+                cur.getLastReceiveTime() < inactivityCutoff
+                &&
+                cur.getLastSendTime() < inactivityCutoff
+                &&
+                cur.getIntroducerTime() + (INTRODUCER_EXPIRATION / 4) < now
+            )
+            {
+                if (_log.shouldLog(Log.INFO)) {
                     _log.info("Peer is idle too long: " + cur);
+                }
                 continue;
             }
             int oldFound = found;
             for (RouterAddress ra : ras) {
                 byte[] ip = ra.getIP();
-                if (ip == null)
+                if (ip == null) {
                     continue;
+                }
                 // we must canonicalize IPv6 addresses
                 String host = ip.length == 4 ? ra.getHost() : Addresses.toString(ip);
-                if (host == null)
+                if (host == null) {
                     continue;
+                }
                 int port = ra.getPort();
-                if (!isValid(ip, port, true))
+                if (!isValid(ip, port, true)) {
                     continue;
+                }
                 // IPv6/IPv4 and vice versa allowed as of 0.9.50
-                if (((!ipv6 && ip.length == 16) || (ipv6 && ip.length == 4)) &&
-                    VersionComparator.comp(ri.getVersion(), MIN_IPV6_INTRODUCER_VERSION) < 0) {
-                    if (_log.shouldLog(Log.INFO))
-                        _log.info("IPv6 intro. for IPv4 or IPv4 intro for IPv6 but he doesn't support it: " + cur);
-                    continue;
+                if ((!ipv6 && ip.length == 16) || (ipv6 && ip.length == 4)) {
+                    if (VersionComparator.comp(ri.getVersion(), MIN_IPV6_INTRODUCER_VERSION) < 0) {
+                        if (_log.shouldLog(Log.INFO)) {
+                            _log.info("IPv6 intro. for IPv4 or IPv4 intro for IPv6 but he doesn't support it: " + cur);
+                        }
+                        continue;
+                    }
                 }
                 cur.setIntroducerTime();
                 Introducer intro = new Introducer(hash, cur.getTheyRelayToUsAs(), exp);
@@ -272,8 +305,9 @@ class IntroductionManager {
                 found++;
                 break;
             }
-            if (oldFound != found && _log.shouldLog(Log.INFO))
+            if (oldFound != found && _log.shouldLog(Log.INFO)) {
                 _log.info("Picking introducer: " + cur);
+            }
         }
 
         // we sort them so a change in order only won't happen, and won't cause a republish
@@ -289,7 +323,7 @@ class IntroductionManager {
                 for (int j = 0; j < UDPTransport.PUBLIC_RELAY_COUNT; j++) {
                     String oexp = null;
                     if (in.shash.equals(current.getOption(UDPAddress.PROP_INTRO_HASH_PREFIX + j)) &&
-                        in.stag.equals(current.getOption(UDPAddress.PROP_INTRO_TAG_PREFIX + j))) {
+                            in.stag.equals(current.getOption(UDPAddress.PROP_INTRO_TAG_PREFIX + j))) {
                         // found old one
                         oexp = current.getOption(UDPAddress.PROP_INTRO_EXP_PREFIX + j);
                     }
@@ -322,13 +356,14 @@ class IntroductionManager {
      *  @since 0.9.55
      */
     private static class PeerStateComparator implements Comparator<PeerState> {
-
         public int compare(PeerState l, PeerState r) {
             long d = r.getKeyEstablishedTime() - l.getKeyEstablishedTime();
-            if (d < 0)
+            if (d < 0) {
                 return -1;
-            if (d > 0)
+            }
+            if (d > 0) {
                 return 1;
+            }
             return 0;
         }
     }
@@ -354,20 +389,20 @@ class IntroductionManager {
         public int compareTo(Introducer i) {
             return stag.compareTo(i.stag);
         }
-        
+
         @Override
         public boolean equals(Object o) {
-        	if (o == null) {
-        		return false;
-        	}
-        	if (!(o instanceof Introducer)) {
-        		return false;
-        	}
-        	
-        	Introducer i = (Introducer) o;
-        	return this.compareTo(i) == 0;
+            if (o == null) {
+                return false;
+            }
+            if (! (o instanceof Introducer)) {
+                return false;
+            }
+
+            Introducer i = (Introducer) o;
+            return this.compareTo(i) == 0;
         }
-        
+
         @Override
         public int hashCode() {
             return stag.hashCode();
@@ -383,12 +418,13 @@ class IntroductionManager {
         long now = _context.clock().now();
         long pingCutoff = now - (105 * 60 * 1000);
         long inactivityCutoff = now - (UDPTransport.MIN_EXPIRE_TIMEOUT / 2);
-        for (Iterator<PeerState> iter = _inbound.values().iterator(); iter.hasNext(); ) {
+        for (Iterator<PeerState> iter = _inbound.values().iterator(); iter.hasNext();) {
             PeerState cur = iter.next();
-            if (cur.getIntroducerTime() > pingCutoff &&
-                cur.getLastSendOrPingTime() < inactivityCutoff) {
-                if (_log.shouldDebug())
+            if (cur.getIntroducerTime() > pingCutoff && cur.getLastSendOrPingTime() < inactivityCutoff)
+            {
+                if (_log.shouldDebug()) {
                     _log.debug("Pinging introducer: " + cur);
+                }
                 cur.setLastPingTime(now);
                 UDPPacket ping;
                 try {
@@ -400,7 +436,7 @@ class IntroductionManager {
             }
         }
     }
-    
+
     /**
      * Not as elaborate as pickInbound() above.
      * Just a quick check to see how many volunteers we know,
@@ -412,12 +448,13 @@ class IntroductionManager {
     int introducerCount(boolean ipv6) {
         int rv = 0;
         for (PeerState ps : _inbound.values()) {
-            if (ps.isIPv6() == ipv6)
+            if (ps.isIPv6() == ipv6) {
                 rv++;
+            }
         }
         return rv;
     }
-    
+
     /**
      *  Combined IPv4 and IPv6
      *
@@ -425,7 +462,7 @@ class IntroductionManager {
      *  @since 0.9.3
      */
     int introducedCount() {
-            return _outbound.size();
+        return _outbound.size();
     }
 
     /**
@@ -442,15 +479,17 @@ class IntroductionManager {
         long now = _context.clock().now();
         alice.setLastReceiveTime(now);
         long skew = time - now;
-        if (skew > MAX_SKEW || skew < 0 - MAX_SKEW) {
-            if (_log.shouldWarn())
+        if (skew > MAX_SKEW || skew < (0 - MAX_SKEW)) {
+            if (_log.shouldWarn()) {
                 _log.warn("Too skewed for relay req from " + alice);
+            }
             return;
         }
         int ver = data[12] & 0xff;
         if (ver != 2) {
-            if (_log.shouldWarn())
+            if (_log.shouldWarn()) {
                 _log.warn("Bad relay req version " + ver + " from " + alice);
+            }
             return;
         }
         long nonce = DataHelper.fromLong(data, 0, 4);
@@ -459,12 +498,14 @@ class IntroductionManager {
         RouterInfo aliceRI = null;
         int rcode;
         if (charlie == null) {
-            if (_log.shouldDebug())
+            if (_log.shouldDebug()) {
                 _log.debug("Relay tag not found " + tag + " from " + alice);
+            }
             rcode = SSU2Util.RELAY_REJECT_BOB_NO_TAG;
         } else if (charlie.getVersion() != 2) {
-            if (_log.shouldWarn())
+            if (_log.shouldWarn()) {
                 _log.warn("Receive SSU2 relay request from " + alice  + " for SSU1 " + charlie);
+            }
             // add a code for this?
             rcode = SSU2Util.RELAY_REJECT_BOB_NO_TAG;
         } else {
@@ -475,12 +516,13 @@ class IntroductionManager {
             }
             if (isDup) {
                 // fairly common from i2pd
-                if (_log.shouldInfo())
-                    _log.info("Dropping dup relay request from " + alice 
-                          + " for tag " + tag
-                          + " nonce " + nonce
-                          + " time " + time
-                          + " and relaying with " + charlie);
+                if (_log.shouldInfo()) {
+                    _log.info("Dropping dup relay request from " + alice
+                              + " for tag " + tag
+                              + " nonce " + nonce
+                              + " time " + time
+                              + " and relaying with " + charlie);
+                }
                 return;
             }
             aliceRI = _context.netDb().lookupRouterInfoLocally(alice.getRemotePeer());
@@ -499,27 +541,30 @@ class IntroductionManager {
                     }
                     // _nonceToAlice entries will be expired by cleanup()
                 } else {
-                    if (_log.shouldWarn())
+                    if (_log.shouldWarn()) {
                         _log.warn("Signature failed relay request\n" + aliceRI);
+                    }
                     rcode = SSU2Util.RELAY_REJECT_BOB_SIGFAIL;
                 }
             } else {
                 // we do not set a timer to wait for alice's RI to come in.
                 // we should have already had it.
                 // Java I2P does not send her RI before the relay request.
-                if (_log.shouldWarn())
+                if (_log.shouldWarn()) {
                     _log.warn("Alice RI not found " + alice);
+                }
                 rcode = SSU2Util.RELAY_REJECT_BOB_UNKNOWN_ALICE;
             }
         }
         if (rcode == SSU2Util.RELAY_ACCEPT) {
             // Send Alice RI and forward data in a Relay Intro to Charlie
-            if (_log.shouldInfo())
-                _log.info("Receive relay request from " + alice 
-                      + " for tag " + tag
-                      + " nonce " + nonce
-                      + " time " + time
-                      + " and relaying with " + charlie);
+            if (_log.shouldInfo()) {
+                _log.info("Receive relay request from " + alice
+                          + " for tag " + tag
+                          + " nonce " + nonce
+                          + " time " + time
+                          + " and relaying with " + charlie);
+            }
 
             // put alice hash in intro data
             byte[] idata = new byte[1 + Hash.HASH_LENGTH + data.length];
@@ -530,21 +575,31 @@ class IntroductionManager {
             // See if our RI will compress enough to fit in the relay intro packet,
             // as this makes everything go smoother and faster.
             // Overhead total is 185 IPv4, 217 IPv6
-            int avail = charlie.getMTU() -
-                        ((charlie.isIPv6() ? PacketBuilder2.MIN_IPV6_DATA_PACKET_OVERHEAD : PacketBuilder2.MIN_DATA_PACKET_OVERHEAD) +
-                         SSU2Payload.BLOCK_HEADER_SIZE +     // relay intro block header
-                         idata.length +                      // relay intro block payload
-                         SSU2Payload.BLOCK_HEADER_SIZE +     // RI block header
-                         2                                   // RI block flag/frag bytes
+            int avail = (
+                            charlie.getMTU()
+                            -
+                            (
+                                charlie.isIPv6()
+                                ?
+                                PacketBuilder2.MIN_IPV6_DATA_PACKET_OVERHEAD
+                                :
+                                PacketBuilder2.MIN_DATA_PACKET_OVERHEAD
+                            )
+                            - SSU2Payload.BLOCK_HEADER_SIZE     // relay intro block header
+                            - idata.length                      // relay intro block payload
+                            - SSU2Payload.BLOCK_HEADER_SIZE     // RI block header
+                            - 2                                   // RI block flag/frag bytes
                         );
             byte[] info = aliceRI.toByteArray();
             byte[] gzipped = DataHelper.compress(info, 0, info.length, DataHelper.MAX_COMPRESSION);
-            if (_log.shouldDebug())
+            if (_log.shouldDebug()) {
                 _log.debug("Alice RI: " + info.length + " bytes uncompressed, " + gzipped.length +
                            " compressed, charlie MTU " + charlie.getMTU() + ", available " + avail);
+            }
             boolean gzip = gzipped.length < info.length;
-            if (gzip)
+            if (gzip) {
                 info = gzipped;
+            }
 
             try {
                 if (info.length <= avail) {
@@ -574,12 +629,14 @@ class IntroductionManager {
             data = SSU2Util.createRelayResponseData(_context, _context.routerHash(), rcode,
                                                     nonce, null, 0, spk, 0);
             if (data == null) {
-                if (_log.shouldWarn())
+                if (_log.shouldWarn()) {
                     _log.warn("sig fail");
-                 return;
+                }
+                return;
             }
-            if (_log.shouldInfo())
+            if (_log.shouldInfo()) {
                 _log.info("Send relay response rejection as bob, reason: " + rcode + " to alice " + alice);
+            }
             UDPPacket packet = _builder2.buildRelayResponse(data, alice);
             alice.setLastSendTime(now);
             _transport.send(packet);
@@ -598,10 +655,11 @@ class IntroductionManager {
      */
     RelayIntroResult receiveRelayIntro(PeerState2 bob, Hash alice, byte[] data) {
         RelayIntroResult rv = receiveRelayIntro(bob, alice, data, 0);
-        if (_log.shouldInfo())
-            _log.info("Receive relay intro from bob " + bob 
+        if (_log.shouldInfo()) {
+            _log.info("Receive relay intro from bob " + bob
                       + " for alice " + alice.toBase64()
                       + " result " + rv);
+        }
         return rv;
     }
 
@@ -617,7 +675,12 @@ class IntroductionManager {
      *  @return DELAYED if should retry (no RI), DROPPED on fatal error, or REPLIED if we replied to Bob with a RelayResponse
      *  @since 0.9.55
      */
-    private RelayIntroResult receiveRelayIntro(PeerState2 bob, Hash alice, byte[] data, int retryCount) {
+    private RelayIntroResult receiveRelayIntro(
+        PeerState2 bob,
+        Hash alice,
+        byte[] data,
+        int retryCount
+    ) {
         RouterInfo aliceRI = null;
         if (retryCount >= 5) {
             // last chance
@@ -625,10 +688,12 @@ class IntroductionManager {
         } else if (!_context.banlist().isBanlisted(alice)) {
             aliceRI = _context.netDb().lookupRouterInfoLocally(alice);
             if (aliceRI == null) {
-                if (_log.shouldInfo())
+                if (_log.shouldInfo()) {
                     _log.info("Delay after " + retryCount + " retries, no RI for " + alice.toBase64());
-                if (retryCount == 0)
+                }
+                if (retryCount == 0) {
                     new DelayIntro(bob, alice, data);
+                }
                 return RelayIntroResult.DELAYED;
             }
         }
@@ -636,7 +701,7 @@ class IntroductionManager {
         return rv ? RelayIntroResult.REPLIED : RelayIntroResult.DROPPED;
     }
 
-    /** 
+    /**
      * Wait for RI.
      * @since 0.9.55
      */
@@ -657,12 +722,13 @@ class IntroductionManager {
 
         public void timeReached() {
             RelayIntroResult result = receiveRelayIntro(bob, alice, data, ++count);
-            if (result == RelayIntroResult.DELAYED)
+            if (result == RelayIntroResult.DELAYED) {
                 reschedule(DELAY << count);
+            }
         }
     }
 
-    /** 
+    /**
      * Simple fix for RI DSM getting there before RelayIntro.
      * Most times not needed as the compressed RI will fit in the packet with the RelayIntro.
      * SSU2 only.
@@ -678,7 +744,7 @@ class IntroductionManager {
         }
 
         public void timeReached() {
-           _transport.send(pkt);
+            _transport.send(pkt);
         }
     }
 
@@ -699,24 +765,27 @@ class IntroductionManager {
         long time = DataHelper.fromLong(data, 8, 4) * 1000;
         long now = _context.clock().now();
         long skew = time - now;
-        if (skew > MAX_SKEW || skew < 0 - MAX_SKEW) {
-            if (_log.shouldWarn())
+        if (skew > MAX_SKEW || skew < (0 - MAX_SKEW)) {
+            if (_log.shouldWarn()) {
                 _log.warn("Too skewed for relay intro from " + bob);
+            }
             return false;
         }
         int ver = data[12] & 0xff;
         if (ver != 2) {
-            if (_log.shouldWarn())
+            if (_log.shouldWarn()) {
                 _log.warn("Bad relay intro version " + ver + " from " + bob);
+            }
             return false;
         }
         int iplen = data[13] & 0xff;
         if (iplen != 6 && iplen != 18) {
-            if (_log.shouldWarn())
+            if (_log.shouldWarn()) {
                 _log.warn("Bad IP length " + iplen + " from " + bob);
+            }
             return false;
         }
-        boolean isIPv6 = iplen == 18;
+        boolean isIPv6 = (iplen == 18);
         int testPort = (int) DataHelper.fromLong(data, 14, 2);
         byte[] testIP = new byte[iplen - 2];
         System.arraycopy(data, 16, testIP, 0, iplen - 2);
@@ -734,12 +803,21 @@ class IntroductionManager {
             rcode = SSU2Util.RELAY_REJECT_CHARLIE_ADDRESS;
         } else if (aps != null && aps.isIPv6() == isIPv6) {
             rcode = SSU2Util.RELAY_REJECT_CHARLIE_CONNECTED;
-        } else if (_context.banlist().isBanlisted(alice) ||
-                   _context.blocklist().isBlocklisted(testIP)) {
+        } else if (
+            _context.banlist().isBanlisted(alice)
+            ||
+            _context.blocklist().isBlocklisted(testIP)
+        )
+        {
             rcode = SSU2Util.RELAY_REJECT_CHARLIE_BANNED;
-        } else if (!TransportUtil.isValidPort(testPort) ||
-                  !_transport.isValid(testIP) ||
-                 _transport.isTooClose(testIP)) {
+        } else if (
+            (!TransportUtil.isValidPort(testPort))
+            ||
+            (!_transport.isValid(testIP))
+            ||
+            _transport.isTooClose(testIP)
+        )
+        {
             rcode = SSU2Util.RELAY_REJECT_CHARLIE_ADDRESS;
         } else {
             // bob should have sent it to us. Don't bother to lookup
@@ -748,20 +826,24 @@ class IntroductionManager {
                 // validate signed data
                 SigningPublicKey spk = aliceRI.getIdentity().getSigningPublicKey();
                 if (SSU2Util.validateSig(_context, SSU2Util.RELAY_REQUEST_PROLOGUE,
-                                         bob.getRemotePeer(), _context.routerHash(), data, spk)) {
+                                         bob.getRemotePeer(), _context.routerHash(), data, spk))
+                {
                     aliceIntroKey = PeerTestManager.getIntroKey(getAddress(aliceRI, isIPv6));
-                    if (aliceIntroKey != null)
+                    if (aliceIntroKey != null) {
                         rcode = SSU2Util.RELAY_ACCEPT;
-                    else
+                    } else {
                         rcode = SSU2Util.RELAY_REJECT_CHARLIE_ADDRESS;
+                    }
                 } else {
-                    if (_log.shouldWarn())
+                    if (_log.shouldWarn()) {
                         _log.warn("Signature failed relay intro\n" + aliceRI);
+                    }
                     rcode = SSU2Util.RELAY_REJECT_CHARLIE_SIGFAIL;
                 }
             } else {
-                if (_log.shouldWarn())
+                if (_log.shouldWarn()) {
                     _log.warn("Alice RI not found " + alice + " for relay intro from " + bob);
+                }
                 rcode = SSU2Util.RELAY_REJECT_CHARLIE_UNKNOWN_ALICE;
             }
         }
@@ -770,13 +852,15 @@ class IntroductionManager {
         if (ourra != null) {
             ourIP = ourra.getIP();
             if (ourIP == null) {
-                if (_log.shouldWarn())
+                if (_log.shouldWarn()) {
                     _log.warn("No IP to send in relay response");
+                }
                 rcode = SSU2Util.RELAY_REJECT_CHARLIE_ADDRESS;
             }
         } else {
-            if (_log.shouldWarn())
+            if (_log.shouldWarn()) {
                 _log.warn("No address to send in relay response");
+            }
             rcode = SSU2Util.RELAY_REJECT_CHARLIE_ADDRESS;
         }
         int ourPort = _transport.getRequestedPort();
@@ -795,16 +879,18 @@ class IntroductionManager {
         data = SSU2Util.createRelayResponseData(_context, bob.getRemotePeer(), rcode,
                                                 nonce, ourIP, ourPort, spk, token);
         if (data == null) {
-            if (_log.shouldWarn())
+            if (_log.shouldWarn()) {
                 _log.warn("sig fail");
-             return false;
+            }
+            return false;
         }
         try {
             UDPPacket packet = _builder2.buildRelayResponse(data, bob);
-            if (_log.shouldInfo())
+            if (_log.shouldInfo()) {
                 _log.info("Send relay response " + rcode + " as charlie " + " nonce " + nonce + " to bob " + bob +
                           " with token " + token +
                           " for alice " + Addresses.toString(testIP, testPort) + ' ' + aliceRI);
+            }
             _transport.send(packet);
             bob.setLastSendTime(now);
         } catch (IOException ioe) {
@@ -812,8 +898,9 @@ class IntroductionManager {
         }
         if (rcode == SSU2Util.RELAY_ACCEPT) {
             // send hole punch with the same data we sent to Bob
-            if (_log.shouldDebug())
+            if (_log.shouldDebug()) {
                 _log.debug("Send hole punch to " + Addresses.toString(testIP, testPort));
+            }
             long sendId = (nonce << 32) | nonce;
             long rcvId = ~sendId;
             UDPPacket packet = _builder2.buildHolePunch(aliceIP, testPort, aliceIntroKey, sendId, rcvId, data);
@@ -840,15 +927,17 @@ class IntroductionManager {
         long now = _context.clock().now();
         peer.setLastReceiveTime(now);
         long skew = time - now;
-        if (skew > MAX_SKEW || skew < 0 - MAX_SKEW) {
-            if (_log.shouldWarn())
+        if (skew > MAX_SKEW || skew < (0 - MAX_SKEW)) {
+            if (_log.shouldWarn()) {
                 _log.warn("Too skewed for relay resp from " + peer);
+            }
             return;
         }
         int ver = data[8] & 0xff;
         if (ver != 2) {
-            if (_log.shouldWarn())
+            if (_log.shouldWarn()) {
                 _log.warn("Bad relay intro version " + ver + " from " + peer);
+            }
             return;
         }
         // Look up nonce to determine if we are Alice or Bob
@@ -861,20 +950,23 @@ class IntroductionManager {
                 RouterInfo charlie = _context.netDb().lookupRouterInfoLocally(peer.getRemotePeer());
                 if (charlie != null) {
                     byte[] signedData;
-                    if (status == 0)
+                    if (status == 0) {
                         signedData = Arrays.copyOfRange(data, 0, data.length - 8);  // token
-                    else
+                    } else {
                         signedData = data;
+                    }
                     SigningPublicKey spk = charlie.getIdentity().getSigningPublicKey();
                     if (SSU2Util.validateSig(_context, SSU2Util.RELAY_RESPONSE_PROLOGUE,
                                              _context.routerHash(), null, signedData, spk)) {
                     } else {
-                        if (_log.shouldWarn())
+                        if (_log.shouldWarn()) {
                             _log.warn("Signature failed relay response as bob from charlie:\n" + charlie);
+                        }
                     }
                 } else {
-                    if (_log.shouldWarn())
+                    if (_log.shouldWarn()) {
                         _log.warn("Signer RI not found " + peer);
+                    }
                 }
             }
             byte[] idata = new byte[2 + data.length];
@@ -883,8 +975,9 @@ class IntroductionManager {
             System.arraycopy(data, 0, idata, 2, data.length);
             try {
                 UDPPacket packet = _builder2.buildRelayResponse(idata, alice);
-                if (_log.shouldInfo())
+                if (_log.shouldInfo()) {
                     _log.info("Got relay response " + status + " as bob, forward " + " nonce " + nonce + " to " + alice);
+                }
                 _transport.send(packet);
                 alice.setLastSendTime(now);
             } catch (IOException ioe) {}
@@ -895,14 +988,16 @@ class IntroductionManager {
             }
             if (isDup) {
                 // very rare
-                if (_log.shouldInfo())
+                if (_log.shouldInfo()) {
                     _log.info("Dropping dup relay response as bob from charlie " + peer.getRemotePeer()
-                          + " for nonce " + nonce);
+                              + " for nonce " + nonce);
+                }
                 return;
             }
             // We are Alice, give to EstablishmentManager to check sig and process
-            if (_log.shouldInfo())
+            if (_log.shouldInfo()) {
                 _log.info("Got relay response " + status + " as alice " + " nonce " + nonce + " from " + peer);
+            }
             _transport.getEstablisher().receiveRelayResponse(peer, nonce, status, data);
         }
     }
@@ -935,38 +1030,46 @@ class IntroductionManager {
      *  Refuse anybody in the same /16
      *  @since 0.9.3
      */
-/*
-    private boolean isValid(byte[] ip, int port) {
-        return isValid(ip, port, false);
-    }
-*/
+    /*
+        private boolean isValid(byte[] ip, int port) {
+            return isValid(ip, port, false);
+        }
+    */
 
     /**
      *  Are IP and port valid?
      *  @since 0.9.50
      */
     private boolean isValid(byte[] ip, int port, boolean allowIPv6) {
-        return TransportUtil.isValidPort(port) &&
-               ip != null &&
-               (ip.length == 4 || (allowIPv6 && ip.length == 16)) &&
-               _transport.isValid(ip) &&
-               (!_transport.isTooClose(ip)) &&
-               (!_context.blocklist().isBlocklisted(ip));
+        return (
+                   TransportUtil.isValidPort(port)
+                   &&
+                   ip != null
+                   &&
+                   (ip.length == 4 || (allowIPv6 && ip.length == 16))
+                   &&
+                   _transport.isValid(ip)
+                   &&
+                   (!_transport.isTooClose(ip))
+                   &&
+                   (!_context.blocklist().isBlocklisted(ip))
+               );
     }
 
-    /** 
+    /**
      * Loop and cleanup _nonceToAlice
      * Called from EstablishmentManager doFailSafe() so we don't need a cleaner timer here.
      * @since 0.9.57
      */
     public void cleanup() {
-        if (_nonceToAlice == null || _nonceToAlice.isEmpty())
+        if (_nonceToAlice == null || _nonceToAlice.isEmpty()) {
             return;
-        for (Iterator<PeerState2> iter = _nonceToAlice.values().iterator(); iter.hasNext(); ) {
+        }
+        for (Iterator<PeerState2> iter = _nonceToAlice.values().iterator(); iter.hasNext();) {
             PeerState2 state = iter.next();
-            if (state.isDead())
+            if (state.isDead()) {
                 iter.remove();
+            }
         }
     }
-
 }
