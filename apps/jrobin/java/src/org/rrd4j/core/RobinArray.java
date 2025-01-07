@@ -94,7 +94,7 @@ class RobinArray implements Robin {
     public void setValues(double... newValues) throws IOException {
         if (rows != newValues.length) {
             throw new IllegalArgumentException("Invalid number of robin values supplied (" + newValues.length +
-                    "), exactly " + rows + " needed");
+                                               "), exactly " + rows + " needed");
         }
         update(newValues);
     }

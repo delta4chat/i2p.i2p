@@ -22,32 +22,32 @@ public class SSLHelper {
         for (int j = 0; j < args.length(); j++) {
             char c = args.charAt(j);
             switch (c) {
-                case '\'':
-                case '"':
-                    if (isQuoted) {
-                        String str = buf.toString().trim();
-                        if (str.length() > 0)
-                            argList.add(str);
-                        buf.setLength(0);
-                    }
-                    isQuoted = !isQuoted;
-                    break;
-                case ' ':
-                case '\t':
-                    // whitespace - if we're in a quoted section, keep this as part of the quote,
-                    // otherwise use it as a delim
-                    if (isQuoted) {
-                        buf.append(c);
-                    } else {
-                        String str = buf.toString().trim();
-                        if (str.length() > 0)
-                            argList.add(str);
-                        buf.setLength(0);
-                    }
-                    break;
-                default:
+            case '\'':
+            case '"':
+                if (isQuoted) {
+                    String str = buf.toString().trim();
+                    if (str.length() > 0)
+                        argList.add(str);
+                    buf.setLength(0);
+                }
+                isQuoted = !isQuoted;
+                break;
+            case ' ':
+            case '\t':
+                // whitespace - if we're in a quoted section, keep this as part of the quote,
+                // otherwise use it as a delim
+                if (isQuoted) {
                     buf.append(c);
-                    break;
+                } else {
+                    String str = buf.toString().trim();
+                    if (str.length() > 0)
+                        argList.add(str);
+                    buf.setLength(0);
+                }
+                break;
+            default:
+                buf.append(c);
+                break;
             }
         }
         if (buf.length() > 0) {

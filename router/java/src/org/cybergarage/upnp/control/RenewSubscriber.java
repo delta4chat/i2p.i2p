@@ -10,7 +10,7 @@
 *
 *	07/07/04
 *		- first revision.
-*	
+*
 ******************************************************************/
 
 package org.cybergarage.upnp.control;
@@ -20,46 +20,46 @@ import org.cybergarage.upnp.*;
 
 public class RenewSubscriber extends ThreadCore
 {
-	public final static long INTERVAL = 120;
-	
-	////////////////////////////////////////////////
-	//	Constructor
-	////////////////////////////////////////////////
+    public final static long INTERVAL = 120;
 
-	public RenewSubscriber(ControlPoint ctrlp)
-	{
-		setControlPoint(ctrlp);
-	}
-	
-	////////////////////////////////////////////////
-	//	Member
-	////////////////////////////////////////////////
+    ////////////////////////////////////////////////
+    //	Constructor
+    ////////////////////////////////////////////////
 
-	private ControlPoint ctrlPoint;
+    public RenewSubscriber(ControlPoint ctrlp)
+    {
+        setControlPoint(ctrlp);
+    }
 
-	public void setControlPoint(ControlPoint ctrlp)
-	{
-		ctrlPoint = ctrlp;
-	}
-	
-	public ControlPoint getControlPoint()
-	{
-		return ctrlPoint;
-	}
+    ////////////////////////////////////////////////
+    //	Member
+    ////////////////////////////////////////////////
 
-	////////////////////////////////////////////////
-	//	Thread
-	////////////////////////////////////////////////
-	
-	public void run() 
-	{
-		ControlPoint ctrlp = getControlPoint();
-		long renewInterval = INTERVAL * 1000;
-		while (isRunnable() == true) {
-			try {
-				Thread.sleep(renewInterval);
-			} catch (InterruptedException e) {}
-			ctrlp.renewSubscriberService();
-		}
-	}
+    private ControlPoint ctrlPoint;
+
+    public void setControlPoint(ControlPoint ctrlp)
+    {
+        ctrlPoint = ctrlp;
+    }
+
+    public ControlPoint getControlPoint()
+    {
+        return ctrlPoint;
+    }
+
+    ////////////////////////////////////////////////
+    //	Thread
+    ////////////////////////////////////////////////
+
+    public void run()
+    {
+        ControlPoint ctrlp = getControlPoint();
+        long renewInterval = INTERVAL * 1000;
+        while (isRunnable() == true) {
+            try {
+                Thread.sleep(renewInterval);
+            } catch (InterruptedException e) {}
+            ctrlp.renewSubscriberService();
+        }
+    }
 }

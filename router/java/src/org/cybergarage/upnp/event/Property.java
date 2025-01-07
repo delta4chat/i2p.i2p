@@ -16,50 +16,50 @@
 *		- Error : the method contains a bug:
 *	06/18/03
 *		- Fixed a bug when a null value is received to the name and the value of property.
-*	
+*
 ******************************************************************/
 
 package org.cybergarage.upnp.event;
 
 public class Property
 {
-	////////////////////////////////////////////////
-	//	Constructor
-	////////////////////////////////////////////////
-	
-	public Property()
-	{
-	}
+    ////////////////////////////////////////////////
+    //	Constructor
+    ////////////////////////////////////////////////
 
-	////////////////////////////////////////////////
-	//	name
-	////////////////////////////////////////////////
+    public Property()
+    {
+    }
 
-	private String name = "";
+    ////////////////////////////////////////////////
+    //	name
+    ////////////////////////////////////////////////
 
-	public String getName() {
-		return name;
-	}
+    private String name = "";
 
-	public void setName(String val) {
-		if (val == null)
-			val = "";
-		name = val;
-	}
+    public String getName() {
+        return name;
+    }
 
-	////////////////////////////////////////////////
-	//	value
-	////////////////////////////////////////////////
+    public void setName(String val) {
+        if (val == null)
+            val = "";
+        name = val;
+    }
 
-	private String value = "";
+    ////////////////////////////////////////////////
+    //	value
+    ////////////////////////////////////////////////
 
-	public String getValue() {
-		return value;
-	}
+    private String value = "";
 
-	public void setValue(String val) {
-		if (val == null)
-			val = "";
-		value = val;
-	}
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String val) {
+        if (val == null)
+            val = "";
+        value = val;
+    }
 }

@@ -80,7 +80,7 @@ public class NSEC extends Data {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder()
-                .append(next).append('.');
+        .append(next).append('.');
         for (TYPE type : types) {
             sb.append(' ').append(type);
         }

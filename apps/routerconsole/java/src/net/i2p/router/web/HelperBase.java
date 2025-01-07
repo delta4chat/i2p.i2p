@@ -46,7 +46,9 @@ public abstract class HelperBase {
      *  Prevent jsp.error.beans.property.conversion 500 error for ?writer=foo
      *  @since 0.8.2
      */
-    public void storeWriter(Writer out) { _out = out; }
+    public void storeWriter(Writer out) {
+        _out = out;
+    }
 
     /**
      *  Is a boolean property set to true?

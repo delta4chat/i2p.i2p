@@ -1,6 +1,6 @@
 /*
- * Released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
+ * Released into the public domain
+ * with no warranty of any kind, either expressed or implied.
  */
 package org.klomp.snark.comments;
 
@@ -86,7 +86,10 @@ public class CommentSet extends AbstractSet<Comment> {
                     add(c);
             }
         } finally {
-            if (br != null) try { br.close(); } catch (IOException ioe) {}
+            if (br != null) try {
+                    br.close();
+                }
+                catch (IOException ioe) {}
         }
         modified = false;
     }
@@ -270,22 +273,30 @@ public class CommentSet extends AbstractSet<Comment> {
      *  Is not adjusted if the latest comment wasn't hidden but is then hidden.
      *  @return the timestamp of the most recent non-hidden comment
      */
-    public long getLatestCommentTime() { return latestCommentTime; }
+    public long getLatestCommentTime() {
+        return latestCommentTime;
+    }
 
     /**
      *  @return true if modified since instantiation
      */
-    public boolean isModified() { return modified; }
+    public boolean isModified() {
+        return modified;
+    }
 
     /**
      *  @return 0 if none, or 1-5
      */
-    public int getMyRating() { return myRating; }
+    public int getMyRating() {
+        return myRating;
+    }
 
     /**
      *  @return Number of ratings making up the average rating
      */
-    public int getRatingCount() { return ratingSize; }
+    public int getRatingCount() {
+        return ratingSize;
+    }
 
     /**
      *  @return 0 if none, or 1-5

@@ -3,7 +3,7 @@
 // ------------------------------------------------------------------------
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at 
+// You may obtain a copy of the License at
 // http://www.apache.org/licenses/LICENSE-2.0
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -65,37 +65,37 @@ import org.klomp.snark.URIUtil;
  * Directories return 403.
  * Jar resources are sent with a long cache directive.
  *
- * ------------------------------------------------------------ 
+ * ------------------------------------------------------------
  *
- * The default servlet.                                                 
- * This servlet, normally mapped to /, provides the handling for static 
- * content, OPTION and TRACE methods for the context.                   
+ * The default servlet.
+ * This servlet, normally mapped to /, provides the handling for static
+ * content, OPTION and TRACE methods for the context.
  * The following initParameters are supported, these can be set
  * on the servlet itself:
- * <PRE>                                                                      
+ * <PRE>
  *
  *  resourceBase      Set to replace the context resource base
 
  *  warBase      Path allowed for resource in war
- * 
+ *
  * </PRE>
- *                                                                    
+ *
  *
  * @author Greg Wilkins (gregw)
  * @author Nigel Canonizado
- *                                                                    
+ *
  * @since Jetty 7
  */
 class BasicServlet extends HttpServlet
-{   
+{
     private static final long serialVersionUID = 1L;
     protected transient final I2PAppContext _context;
     protected transient final Log _log;
     protected File _resourceBase;
     private String _warBase;
-    
+
     private transient final MimeTypes _mimeTypes;
-    
+
     /** same as PeerState.PARTSIZE */
     private static final int BUFSIZE = 16*1024;
     private transient ByteCache _cache = ByteCache.getInstance(16, BUFSIZE);
@@ -109,7 +109,7 @@ class BasicServlet extends HttpServlet
         _log = _context.logManager().getLog(getClass());
         _mimeTypes = new MimeTypes();
     }
-    
+
     /* ------------------------------------------------------------ */
     public void init(ServletConfig cfg) throws ServletException {
         super.init(cfg);
@@ -161,7 +161,7 @@ class BasicServlet extends HttpServlet
     {
         File r = null;
         if (!pathInContext.contains("..") &&
-                   !pathInContext.endsWith("/")) {
+                !pathInContext.endsWith("/")) {
             File f;
             synchronized (this) {
                 if (_resourceBase==null)
@@ -198,16 +198,16 @@ class BasicServlet extends HttpServlet
         }
         return r;
     }
-    
+
     /* ------------------------------------------------------------ */
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-    	throws ServletException, IOException
+    throws ServletException, IOException
     {
         // always starts with a '/'
         String servletpath = request.getServletPath();
         String pathInfo=request.getPathInfo();
         // ??? right??
-        String pathInContext = addPaths(servletpath, pathInfo);        
+        String pathInContext = addPaths(servletpath, pathInfo);
         long limit = 0;
         String slimit = request.getParameter("limit");
         if (slimit != null) {
@@ -219,7 +219,7 @@ class BasicServlet extends HttpServlet
         // Find the resource and content
         try {
             HttpContent content = getContent(pathInContext, limit);
-            
+
             // Handle resource
             if (content == null) {
                 if (_log.shouldLog(Log.WARN))
@@ -229,7 +229,7 @@ class BasicServlet extends HttpServlet
                 if (passConditionalHeaders(request, response, content)) {
                     if (_log.shouldLog(Log.INFO))
                         _log.info("Sending: " + content);
-                    sendData(request, response, content);  
+                    sendData(request, response, content);
                 } else {
                     if (_log.shouldLog(Log.INFO))
                         _log.info("Not modified: " + content);
@@ -252,36 +252,36 @@ class BasicServlet extends HttpServlet
             throw e;
         }
     }
-    
+
     /* ------------------------------------------------------------ */
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException
+    throws ServletException, IOException
     {
         response.sendError(405);
     }
-    
+
     /* ------------------------------------------------------------ */
     /* (non-Javadoc)
      * @see javax.servlet.http.HttpServlet#doTrace(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     protected void doTrace(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException
+    throws ServletException, IOException
     {
         response.sendError(405);
     }
 
     protected void doOptions(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException
+    throws ServletException, IOException
     {
         response.sendError(405);
     }
-    
+
     protected void doDelete(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException
+    throws ServletException, IOException
     {
         response.sendError(405);
     }
-    
+
 
     /* ------------------------------------------------------------ */
     /** Check modification date headers.
@@ -319,8 +319,8 @@ class BasicServlet extends HttpServlet
         }
         return true;
     }
-    
-    
+
+
     /* ------------------------------------------------------------ */
     protected void sendData(HttpServletRequest request,
                             HttpServletResponse response,
@@ -387,11 +387,11 @@ class BasicServlet extends HttpServlet
         response.setHeader("Content-Range", singleSatisfiableRange.toHeaderRangeString(content_length));
         copy(in, singleSatisfiableRange.getFirst(content_length), out, singleLength);
     }
-    
+
     /* ------------------------------------------------------------ */
     protected void writeHeaders(HttpServletResponse response,HttpContent content,long count)
-        throws IOException
-    {   
+    throws IOException
+    {
         String rtype = response.getContentType();
         String ctype = content.getContentType();
         if (rtype != null) {
@@ -410,7 +410,7 @@ class BasicServlet extends HttpServlet
         if (count != -1) {
             if (count <= Integer.MAX_VALUE)
                 response.setContentLength((int)count);
-            else 
+            else
                 response.setHeader("Content-Length", Long.toString(count));
             response.setHeader("Accept-Ranges", "bytes");
         } else {
@@ -441,12 +441,12 @@ class BasicServlet extends HttpServlet
     private class FileContent implements HttpContent
     {
         private final File _file;
-        
+
         public FileContent(File file)
         {
             _file = file;
         }
-        
+
         /* ------------------------------------------------------------ */
         public String getContentType()
         {
@@ -480,7 +480,9 @@ class BasicServlet extends HttpServlet
         }
 
         @Override
-        public String toString() { return "File \"" + _file + '"'; }
+        public String toString() {
+            return "File \"" + _file + '"';
+        }
     }
 
     /**
@@ -509,12 +511,12 @@ class BasicServlet extends HttpServlet
     private class JarContent implements HttpContent
     {
         private final String _path;
-        
+
         public JarContent(String path)
         {
             _path = path;
         }
-        
+
         /* ------------------------------------------------------------ */
         public String getContentType()
         {
@@ -551,7 +553,9 @@ class BasicServlet extends HttpServlet
         }
 
         @Override
-        public String toString() { return "Jar resource \"" + _path + '"'; }
+        public String toString() {
+            return "Jar resource \"" + _path + '"';
+        }
     }
 
 
@@ -621,7 +625,7 @@ class BasicServlet extends HttpServlet
     /**
      *  Simple version of URIUtil.encodePath()
      */
-    protected static String encodePath(String path) /* throws MalformedURLException */ {
+    protected static String encodePath(String path) { /* throws MalformedURLException */
         // Does NOT handle a ':' correctly, throws MUE.
         // Can't convert to %3a before hand or the % gets escaped
         //try {
@@ -665,10 +669,16 @@ class BasicServlet extends HttpServlet
             }
         } finally {
             _cache.release(ba, false);
-            if (in != null) 
-                try { in.close(); } catch (IOException ioe) {}
-            if (out != null) 
-                try { out.close(); } catch (IOException ioe) {}
+            if (in != null)
+                try {
+                    in.close();
+                }
+                catch (IOException ioe) {}
+            if (out != null)
+                try {
+                    out.close();
+                }
+                catch (IOException ioe) {}
         }
     }
 }

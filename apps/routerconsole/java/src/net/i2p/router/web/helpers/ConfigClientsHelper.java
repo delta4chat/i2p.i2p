@@ -77,8 +77,8 @@ public class ConfigClientsHelper extends HelperBase {
         boolean disabled =  _context.getBooleanProperty(PROP_DISABLE_EXTERNAL);
         boolean ssl =  _context.getBooleanProperty(PROP_ENABLE_SSL);
         if ((mode == 0 && disabled) ||
-            (mode == 1 && (!disabled) && (!ssl)) ||
-            (mode == 2 && (!disabled) && ssl))
+                (mode == 1 && (!disabled) && (!ssl)) ||
+                (mode == 2 && (!disabled) && ssl))
             return CHECKED;
         return "";
     }
@@ -103,17 +103,17 @@ public class ConfigClientsHelper extends HelperBase {
         boolean bindAll = _context.getBooleanProperty(BIND_ALL_INTERFACES);
         if (bindAll && addr.equals("0.0.0.0") || addr.equals("::"))
             return true;
-        String host = _context.getProperty(ClientManagerFacadeImpl.PROP_CLIENT_HOST, 
+        String host = _context.getProperty(ClientManagerFacadeImpl.PROP_CLIENT_HOST,
                                            ClientManagerFacadeImpl.DEFAULT_HOST);
         return (host.equals(addr));
     }
 
     public void setEdit(String edit) {
-         if (edit == null)
-             return;
+        if (edit == null)
+            return;
         String xStart = _t("Edit");
         if (edit.startsWith(xStart + "<span class=hide> ") &&
-            edit.endsWith("</span>")) {
+                edit.endsWith("</span>")) {
             // IE sucks
             _edit = edit.substring(xStart.length() + 18, edit.length() - 7);
         } else if (edit.startsWith("Edit ")) {
@@ -130,10 +130,10 @@ public class ConfigClientsHelper extends HelperBase {
         StringBuilder buf = new StringBuilder(1024);
         buf.append("<table id=\"clientconfig\">\n" +
                    "<tr><th align=\"right\">").append(_t("Client")).append("</th><th>")
-           .append(_t("Run at Startup?")).append("</th><th>")
-           .append(_t("Control")).append("</th><th align=\"left\">")
-           .append(_t("Class and arguments")).append("</th></tr>\n");
-        
+        .append(_t("Run at Startup?")).append("</th><th>")
+        .append(_t("Control")).append("</th><th align=\"left\">")
+        .append(_t("Class and arguments")).append("</th></tr>\n");
+
         boolean allowEdit = isClientChangeEnabled();
         List<ClientAppConfig> clients = ClientAppConfig.getClientApps(_context);
         List<CAC> cacs = new ArrayList<CAC>(clients.size());
@@ -181,13 +181,13 @@ public class ConfigClientsHelper extends HelperBase {
                        // show edit button, show update button
                        // Don't allow edit if it's running or starting, or else we would lose the "handle" to the ClientApp to stop it.
                        allowEdit && showEdit,
-                       false, 
+                       false,
                        // show stop button
                        showStop,
                        // show delete button, show start button
                        allowEdit && !isConsole, showStart);
         }
-        
+
         if (allowEdit && "new".equals(_edit))
             renderForm(buf, Integer.toString(clients.size()), "", false, false, false, false, "", true, false, false, false, false, false);
         buf.append("</table>\n");
@@ -201,22 +201,24 @@ public class ConfigClientsHelper extends HelperBase {
         public final String xname;
 
         public CAC(int idx, ClientAppConfig cfg, String xn) {
-            index = idx; config = cfg; xname = xn;
+            index = idx;
+            config = cfg;
+            xname = xn;
         }
     }
 
     /** @since 0.9.20 */
     private class CACComparator implements Comparator<CAC> {
-         private static final long serialVersionUID = 1L;
-         private final Collator coll;
+        private static final long serialVersionUID = 1L;
+        private final Collator coll;
 
-         public CACComparator() {
-             super();
-             coll = Collator.getInstance(new Locale(Messages.getLanguage(_context)));
-         }
+        public CACComparator() {
+            super();
+            coll = Collator.getInstance(new Locale(Messages.getLanguage(_context)));
+        }
 
-         public int compare(CAC l, CAC r) {
-             return coll.compare(l.xname, r.xname);
+        public int compare(CAC l, CAC r) {
+            return coll.compare(l.xname, r.xname);
         }
     }
 
@@ -225,9 +227,9 @@ public class ConfigClientsHelper extends HelperBase {
         StringBuilder buf = new StringBuilder(1024);
         buf.append("<table id=\"webappconfig\">\n" +
                    "<tr><th align=\"right\">").append(_t("WebApp")).append("</th><th>")
-           .append(_t("Run at Startup?")).append("</th><th>")
-           .append(_t("Control")).append("</th><th align=\"left\">")
-           .append(_t("Description")).append("</th></tr>\n");
+        .append(_t("Run at Startup?")).append("</th><th>")
+        .append(_t("Control")).append("</th><th align=\"left\">")
+        .append(_t("Description")).append("</th></tr>\n");
         Properties props = RouterConsoleRunner.webAppProperties(_context);
         Set<String> keys = new TreeSet<String>(props.stringPropertyNames());
         for (String name : keys) {
@@ -272,9 +274,9 @@ public class ConfigClientsHelper extends HelperBase {
         StringBuilder buf = new StringBuilder(1024);
         buf.append("<table id=\"pluginconfig\">\n" +
                    "<tr><th align=\"right\">").append(_t("Plugin")).append("</th><th>")
-           .append(_t("Run at Startup?")).append("</th><th>")
-           .append(_t("Control")).append("</th><th align=\"left\">")
-           .append(_t("Description")).append("</th></tr>\n");
+        .append(_t("Run at Startup?")).append("</th><th>")
+        .append(_t("Control")).append("</th><th align=\"left\">")
+        .append(_t("Description")).append("</th></tr>\n");
         Properties props = PluginStarter.pluginProperties();
         Set<String> keys = new TreeSet<String>(Collator.getInstance());
         keys.addAll(props.stringPropertyNames());
@@ -289,9 +291,9 @@ public class ConfigClientsHelper extends HelperBase {
                     continue;
                 StringBuilder desc = new StringBuilder(256);
                 desc.append("<table border=\"0\">")
-                    .append("<tr><td><b>").append(_t("Version")).append("</b></td><td>").append(stripHTML(appProps, "version"))
-                    .append("<tr><td><b>")
-                    .append(_t("Signed by")).append("</b></td><td>");
+                .append("<tr><td><b>").append(_t("Version")).append("</b></td><td>").append(stripHTML(appProps, "version"))
+                .append("<tr><td><b>")
+                .append(_t("Signed by")).append("</b></td><td>");
                 String s = stripHTML(appProps, "signer");
                 if (s != null) {
                     if (s.indexOf('@') > 0)
@@ -308,7 +310,7 @@ public class ConfigClientsHelper extends HelperBase {
                     if (ms > 0) {
                         String date = DataHelper.formatTime(ms);
                         desc.append("<tr><td><b>")
-                            .append(_t("Date")).append("</b></td><td>").append(date);
+                        .append(_t("Date")).append("</b></td><td>").append(date);
                     }
                 }
                 s = stripHTML(appProps, "author");
@@ -317,7 +319,7 @@ public class ConfigClientsHelper extends HelperBase {
                     Matcher m = VALID_EMAIL_ADDRESS_REGEX.matcher(s);
                     String author = m.find() ? m.group() : null;
                     desc.append("<tr><td><b>")
-                        .append(_t("Author")).append("</b></td><td>");
+                    .append(_t("Author")).append("</b></td><td>");
                     if (author != null)
                         desc.append("<a href=\"mailto:").append(author).append("\">").append(s).append("</a>");
                     else
@@ -328,26 +330,26 @@ public class ConfigClientsHelper extends HelperBase {
                     s = stripHTML(appProps, "description");
                 if (s != null) {
                     desc.append("<tr><td><b>")
-                        .append(_t("Description")).append("</b></td><td>").append(s);
+                    .append(_t("Description")).append("</b></td><td>").append(s);
                 }
                 s = stripHTML(appProps, "license");
                 if (s != null) {
                     desc.append("<tr><td><b>")
-                        .append(_t("License")).append("</b></td><td>").append(s);
+                    .append(_t("License")).append("</b></td><td>").append(s);
                 }
                 s = stripHTML(appProps, "websiteURL");
                 if (s != null) {
                     desc.append("<tr><td><b>")
-                        .append(_t("Website")).append("</b></td><td><a href=\"")
-                        .append(s).append("\" target=\"_blank\">").append(s).append("</a>");
+                    .append(_t("Website")).append("</b></td><td><a href=\"")
+                    .append(s).append("\" target=\"_blank\">").append(s).append("</a>");
                 }
                 String updateURL = stripHTML(appProps, "updateURL.su3");
                 if (updateURL == null)
                     updateURL = stripHTML(appProps, "updateURL");
                 if (updateURL != null) {
                     desc.append("<tr><td><b>")
-                        .append(_t("Update link")).append("</b></td><td><a href=\"")
-                        .append(updateURL).append("\">").append(updateURL).append("</a>");
+                    .append(_t("Update link")).append("</b></td><td><a href=\"")
+                    .append(updateURL).append("\">").append(updateURL).append("</a>");
                 }
                 desc.append("</table>");
                 boolean isRunning = PluginStarter.isPluginRunning(app, _context);
@@ -399,24 +401,24 @@ public class ConfigClientsHelper extends HelperBase {
 
         if (showStartButton && (!ro) && !edit) {
             buf.append("<button type=\"submit\" title=\"").append(_t("Start")).append("\" class=\"control accept\" name=\"action\" value=\"Start ").append(index).append("\" >")
-               .append(_t("Start")).append("<span class=hide> ").append(index).append("</span></button>");
+            .append(_t("Start")).append("<span class=hide> ").append(index).append("</span></button>");
         }
         if (showStopButton && (!edit))
             buf.append("<button type=\"submit\" title=\"").append(_t("Stop")).append("\" class=\"control stop\" name=\"action\" value=\"Stop ").append(index).append("\" >")
-               .append(_t("Stop")).append("<span class=hide> ").append(index).append("</span></button>");
+            .append(_t("Stop")).append("<span class=hide> ").append(index).append("</span></button>");
         if (isClientChangeEnabled() && showEditButton && (!edit) && !ro)
             buf.append("<button type=\"submit\" title=\"").append(_t("Edit")).append("\" class=\"control add\" name=\"edit\" value=\"Edit ").append(index).append("\" >")
-               .append(_t("Edit")).append("<span class=hide> ").append(index).append("</span></button>");
+            .append(_t("Edit")).append("<span class=hide> ").append(index).append("</span></button>");
         if (showUpdateButton && (!edit) && !ro) {
             buf.append("<button type=\"submit\" title=\"").append(_t("Check for updates")).append("\" class=\"control check\" name=\"action\" value=\"Check ").append(index).append("\" >")
-               .append(_t("Check for updates")).append("<span class=hide> ").append(index).append("</span></button>");
+            .append(_t("Check for updates")).append("<span class=hide> ").append(index).append("</span></button>");
             buf.append("<button type=\"submit\" title=\"").append(_t("Update")).append("\" class=\"control download\" name=\"action\" value=\"Update ").append(index).append("\" >")
-                .append(_t("Update")).append("<span class=hide> ").append(index).append("</span></button>");
+            .append(_t("Update")).append("<span class=hide> ").append(index).append("</span></button>");
         }
         if (showDeleteButton && (!edit) && !ro) {
             buf.append("<button type=\"submit\" title=\"").append(_t("Delete")).append("\" class=\"control delete\" name=\"action\" value=\"Delete ").append(index)
-               .append("\" client=\"").append(_t(escapedName)).append("\">")
-               .append(_t("Delete")).append("<span class=hide> ").append(index).append("</span></button>");
+            .append("\" client=\"").append(_t(escapedName)).append("\">")
+            .append(_t("Delete")).append("<span class=hide> ").append(index).append("</span></button>");
         }
         buf.append("</td><td align=\"left\">");
         if (edit && !ro) {

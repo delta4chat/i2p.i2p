@@ -52,11 +52,11 @@ public class CryptoChecker {
                 if (log != null)
                     log.logAlways(Log.WARN, s);
                 System.out.println(s);
-            //} else if (SystemVersion.isJava9()) {
-            //    s = "Java 9 support is beta, check for Java updates";
-            //    if (log != null)
-            //        log.logAlways(Log.WARN, s);
-            //    System.out.println("Warning: " + s);
+                //} else if (SystemVersion.isJava9()) {
+                //    s = "Java 9 support is beta, check for Java updates";
+                //    if (log != null)
+                //        log.logAlways(Log.WARN, s);
+                //    System.out.println("Warning: " + s);
             }
             if (!CryptoCheck.isUnlimited() && !SystemVersion.isJava9()) {
                 s = "Please consider installing the Java Cryptography Unlimited Strength Jurisdiction Policy Files from ";
@@ -65,7 +65,7 @@ public class CryptoChecker {
                 //else if (SystemVersion.isJava7())
                 //    s  += JRE7;
                 //else
-                    s  += JRE6;
+                s  += JRE6;
                 if (log != null)
                     log.logAlways(Log.WARN, s);
                 System.out.println(s);

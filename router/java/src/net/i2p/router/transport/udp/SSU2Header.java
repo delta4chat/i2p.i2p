@@ -13,14 +13,14 @@ import static net.i2p.router.transport.udp.SSU2Util.*;
  *  @since 0.9.54
  */
 final class SSU2Header {
-    
+
     /** 8 bytes of zeros */
     public static final byte[] HEADER_PROT_DATA = new byte[HEADER_PROT_DATA_LEN];
     /** 12 bytes of zeros */
     public static final byte[] CHACHA_IV_0 = new byte[CHACHA_IV_LEN];
 
     private SSU2Header() {}
-    
+
     /**
      *  Session Request and Session Created only. 64 bytes.
      *  Packet is unmodified.
@@ -156,28 +156,48 @@ final class SSU2Header {
     public static class Header {
         public final byte[] data;
 
-        public Header(int len) { data = new byte[len]; }
+        public Header(int len) {
+            data = new byte[len];
+        }
 
         /** all headers */
-        public long getDestConnID() { return DataHelper.fromLong8(data, 0); }
+        public long getDestConnID() {
+            return DataHelper.fromLong8(data, 0);
+        }
         /** all headers */
-        public long getPacketNumber() { return DataHelper.fromLong(data, PKT_NUM_OFFSET, PKT_NUM_LEN); }
+        public long getPacketNumber() {
+            return DataHelper.fromLong(data, PKT_NUM_OFFSET, PKT_NUM_LEN);
+        }
         /** all headers */
-        public int getType() { return data[TYPE_OFFSET] & 0xff; }
+        public int getType() {
+            return data[TYPE_OFFSET] & 0xff;
+        }
 
         /** short headers only */
-        public int getShortHeaderFlags() { return (int) DataHelper.fromLong(data, SHORT_HEADER_FLAGS_OFFSET, SHORT_HEADER_FLAGS_LEN); }
+        public int getShortHeaderFlags() {
+            return (int) DataHelper.fromLong(data, SHORT_HEADER_FLAGS_OFFSET, SHORT_HEADER_FLAGS_LEN);
+        }
 
         /** long headers only */
-        public int getVersion() { return data[VERSION_OFFSET] & 0xff; }
+        public int getVersion() {
+            return data[VERSION_OFFSET] & 0xff;
+        }
         /** long headers only */
-        public int getNetID() { return data[NETID_OFFSET] & 0xff; }
+        public int getNetID() {
+            return data[NETID_OFFSET] & 0xff;
+        }
         /** long headers only */
-        public int getHandshakeHeaderFlags() { return data[LONG_HEADER_FLAGS_OFFSET] & 0xff; }
+        public int getHandshakeHeaderFlags() {
+            return data[LONG_HEADER_FLAGS_OFFSET] & 0xff;
+        }
         /** long headers only */
-        public long getSrcConnID() { return DataHelper.fromLong8(data, SRC_CONN_ID_OFFSET); }
+        public long getSrcConnID() {
+            return DataHelper.fromLong8(data, SRC_CONN_ID_OFFSET);
+        }
         /** long headers only */
-        public long getToken() { return DataHelper.fromLong8(data, TOKEN_OFFSET); }
+        public long getToken() {
+            return DataHelper.fromLong8(data, TOKEN_OFFSET);
+        }
 
         /** handshake headers only */
         public byte[] getEphemeralKey() {

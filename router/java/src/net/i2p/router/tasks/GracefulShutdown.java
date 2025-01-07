@@ -25,7 +25,7 @@ public class GracefulShutdown implements Runnable {
             if (shutdown) {
                 int gracefulExitCode = _context.router().scheduledGracefulExitCode();
                 if (gracefulExitCode == Router.EXIT_HARD || gracefulExitCode == Router.EXIT_HARD_RESTART ||
-                    _context.tunnelManager().getParticipatingCount() <= 0) {
+                        _context.tunnelManager().getParticipatingCount() <= 0) {
                     if (log.shouldWarn()) {
                         if (gracefulExitCode == Router.EXIT_HARD)
                             log.warn("Shutting down after a brief delay");

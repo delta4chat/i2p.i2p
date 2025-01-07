@@ -178,7 +178,9 @@ class BlindCache {
         if (bd.getSecret() != null || bd.getAuthPrivKey() != null) {
             store();
         } else {
-            synchronized(this) { _changed = true; }
+            synchronized(this) {
+                _changed = true;
+            }
         }
     }
 
@@ -216,7 +218,7 @@ class BlindCache {
     public BlindData getData(SigningPublicKey spk) {
         SigType type = spk.getType();
         if (type != SigType.EdDSA_SHA512_Ed25519 &&
-            type != SigType.RedDSA_SHA512_Ed25519)
+                type != SigType.RedDSA_SHA512_Ed25519)
             return null;
         return _cache.get(spk);
     }
@@ -295,7 +297,7 @@ class BlindCache {
         BufferedReader br = null;
         try {
             br = new BufferedReader(new InputStreamReader(
-            		new FileInputStream(file), "ISO-8859-1"));
+                                        new FileInputStream(file), "ISO-8859-1"));
             String line = null;
             while ( (line = br.readLine()) != null) {
                 if (line.startsWith("#"))
@@ -323,7 +325,10 @@ class BlindCache {
             if (log.shouldLog(Log.WARN) && file.exists())
                 log.warn("Error reading the blinding cache file", ioe);
         } finally {
-            if (br != null) try { br.close(); } catch (IOException ioe) {}
+            if (br != null) try {
+                    br.close();
+                }
+                catch (IOException ioe) {}
         }
         if (log.shouldLog(Log.INFO))
             log.info("Loaded " + count + " entries from " + file);
@@ -340,8 +345,8 @@ class BlindCache {
             out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new SecureFileOutputStream(file), "ISO-8859-1")));
             out.println("# Blinding cache entries. Format is: sigtype,bsigtype,authtype,time,key,[secret],[privkey],[dest]");
             for (BlindData bd : _cache.values()) {
-                 out.println(toPersistentString(bd));
-                 count++;
+                out.println(toPersistentString(bd));
+                count++;
             }
             if (out.checkError())
                 throw new IOException("Failed write to " + file);

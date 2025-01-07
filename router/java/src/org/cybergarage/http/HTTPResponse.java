@@ -14,7 +14,7 @@
 *		- Changed to initialize a content length header.
 *	10/22/04
 *		- Added isSuccessful().
-*	
+*
 ******************************************************************/
 
 package org.cybergarage.http;
@@ -24,94 +24,94 @@ import org.cybergarage.util.Debug;
 
 public class HTTPResponse extends HTTPPacket
 {
-	////////////////////////////////////////////////
-	//	Constructor
-	////////////////////////////////////////////////
-	
-	public HTTPResponse()
-	{
-		setVersion(HTTP.VERSION_11);
-		setContentType(HTML.CONTENT_TYPE);
-		setServer(HTTPServer.getName());
-		setContent("");
-	}
+    ////////////////////////////////////////////////
+    //	Constructor
+    ////////////////////////////////////////////////
 
-	public HTTPResponse(HTTPResponse httpRes)
-	{
-		set(httpRes);
-	}
+    public HTTPResponse()
+    {
+        setVersion(HTTP.VERSION_11);
+        setContentType(HTML.CONTENT_TYPE);
+        setServer(HTTPServer.getName());
+        setContent("");
+    }
 
-	public HTTPResponse(InputStream in)
-	{
-		super(in);
-	}
+    public HTTPResponse(HTTPResponse httpRes)
+    {
+        set(httpRes);
+    }
 
-	public HTTPResponse(HTTPSocket httpSock)
-	{
-		this(httpSock.getInputStream());
-	}
+    public HTTPResponse(InputStream in)
+    {
+        super(in);
+    }
 
-	////////////////////////////////////////////////
-	//	Status Line
-	////////////////////////////////////////////////
+    public HTTPResponse(HTTPSocket httpSock)
+    {
+        this(httpSock.getInputStream());
+    }
 
-	private int statusCode = 0;
-	
-	public void setStatusCode(int code)
-	{
-		statusCode = code;
-	}
+    ////////////////////////////////////////////////
+    //	Status Line
+    ////////////////////////////////////////////////
 
-	public int getStatusCode()
-	{
-		if (statusCode != 0)
-			return statusCode;
-		HTTPStatus httpStatus = new HTTPStatus(getFirstLine());
-		return httpStatus.getStatusCode();
-	}
+    private int statusCode = 0;
 
-	public boolean isSuccessful()
-	{
-		return HTTPStatus.isSuccessful(getStatusCode());
-	}
-	
-	public String getStatusLineString()
-	{
-		return "HTTP/" + getVersion() + " " + getStatusCode() + " " + HTTPStatus.code2String(statusCode) + HTTP.CRLF;
-	}
-	
-	////////////////////////////////////////////////
-	//	getHeader
-	////////////////////////////////////////////////
-	
-	public String getHeader()
-	{
-		StringBuffer str = new StringBuffer();
-	
-		str.append(getStatusLineString());
-		str.append(getHeaderString());
-		
-		return str.toString();
-	}
+    public void setStatusCode(int code)
+    {
+        statusCode = code;
+    }
 
-	////////////////////////////////////////////////
-	//	toString
-	////////////////////////////////////////////////
-	
-	public String toString()
-	{
-		StringBuffer str = new StringBuffer();
+    public int getStatusCode()
+    {
+        if (statusCode != 0)
+            return statusCode;
+        HTTPStatus httpStatus = new HTTPStatus(getFirstLine());
+        return httpStatus.getStatusCode();
+    }
 
-		str.append(getStatusLineString());
-		str.append(getHeaderString());
-		str.append(HTTP.CRLF);
-		str.append(getContentString());
-		
-		return str.toString();
-	}
+    public boolean isSuccessful()
+    {
+        return HTTPStatus.isSuccessful(getStatusCode());
+    }
 
-	public void print()
-	{
-		Debug.message(toString());
-	}
+    public String getStatusLineString()
+    {
+        return "HTTP/" + getVersion() + " " + getStatusCode() + " " + HTTPStatus.code2String(statusCode) + HTTP.CRLF;
+    }
+
+    ////////////////////////////////////////////////
+    //	getHeader
+    ////////////////////////////////////////////////
+
+    public String getHeader()
+    {
+        StringBuffer str = new StringBuffer();
+
+        str.append(getStatusLineString());
+        str.append(getHeaderString());
+
+        return str.toString();
+    }
+
+    ////////////////////////////////////////////////
+    //	toString
+    ////////////////////////////////////////////////
+
+    public String toString()
+    {
+        StringBuffer str = new StringBuffer();
+
+        str.append(getStatusLineString());
+        str.append(getHeaderString());
+        str.append(HTTP.CRLF);
+        str.append(getContentString());
+
+        return str.toString();
+    }
+
+    public void print()
+    {
+        Debug.message(toString());
+    }
 }

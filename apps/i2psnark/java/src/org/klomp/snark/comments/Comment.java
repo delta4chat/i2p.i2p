@@ -1,6 +1,6 @@
 /*
- * Released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
+ * Released into the public domain
+ * with no warranty of any kind, either expressed or implied.
  */
 package org.klomp.snark.comments;
 
@@ -91,26 +91,42 @@ public class Comment implements Comparable<Comment> {
         this.byMe = isMine;
     }
 
-    public String getText() { return text; }
+    public String getText() {
+        return text;
+    }
 
-    public String getName() { return name; }
+    public String getName() {
+        return name;
+    }
 
-    public int getRating() { return rating; }
+    public int getRating() {
+        return rating;
+    }
 
     /** java time (ms) */
-    public long getTime() { return (time * TIME_SHRINK) + TIME_OFFSET; }
+    public long getTime() {
+        return (time * TIME_SHRINK) + TIME_OFFSET;
+    }
 
-    public boolean isMine() { return byMe; }
+    public boolean isMine() {
+        return byMe;
+    }
 
-    public boolean isHidden() { return hidden; }
+    public boolean isHidden() {
+        return hidden;
+    }
 
-    void setHidden() { hidden = true; }
+    void setHidden() {
+        hidden = true;
+    }
 
     /**
      *  A unique ID that may be used to delete this comment from
      *  the CommentSet via remove(int). NOT persisted across restarts.
      */
-    public int getID() { return id; }
+    public int getID() {
+        return id;
+    }
 
     /**
      *  reverse

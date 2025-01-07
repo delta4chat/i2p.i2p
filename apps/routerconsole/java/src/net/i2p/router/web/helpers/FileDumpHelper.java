@@ -51,7 +51,7 @@ public class FileDumpHelper extends HelperBase {
                 if (p.startsWith("file:") && p.endsWith(".jar")) {
                     p = p.substring(5);
                     if (!(p.startsWith(_context.getBaseDir().getAbsolutePath()) ||
-                          p.startsWith(_context.getConfigDir().getAbsolutePath()))) {
+                            p.startsWith(_context.getConfigDir().getAbsolutePath()))) {
                         flist.add(new File(p));
                     }
                 }
@@ -111,8 +111,8 @@ public class FileDumpHelper extends HelperBase {
 
     private static void dumpFile(StringBuilder buf, File f, boolean linkrev) {
         buf.append("<tr><td><b title=\"").append(f.getAbsolutePath()).append("\">").append(f.getName()).append("</b></td>" +
-                   "<td align=\"right\">").append(f.length()).append("</td>" +
-                   "<td>");
+                "<td align=\"right\">").append(f.length()).append("</td>" +
+                        "<td>");
         long mod = f.lastModified();
         if (mod > 0)
             buf.append(DataHelper.formatTime(mod));
@@ -148,8 +148,8 @@ public class FileDumpHelper extends HelperBase {
             if (linkrev)
                 buf.append("<a href=\"").append(LINK).append(s).append("\">");
             buf.append("<span class=\"revision\"><tt>").append(s, 0, 20).append("</tt>" +
-                       "<br>" +
-                       "<tt>").append(s.substring(20)).append("</tt></span>");
+                    "<br>" +
+                    "<tt>").append(s.substring(20)).append("</tt></span>");
             if (linkrev)
                 buf.append("</a>");
         }
@@ -170,8 +170,8 @@ public class FileDumpHelper extends HelperBase {
         if (s != null) {
             // Encase each mod in a span so we can single click select individual mods
             buf.append("<font color=\"red\"><span class=\"unsignedmod\">")
-               .append(s.replace(",", "</span></font><hr><font color=\"red\"><span class=\"unsignedmod\">"))
-               .append("</span></font>");
+            .append(s.replace(",", "</span></font><hr><font color=\"red\"><span class=\"unsignedmod\">"))
+            .append("</span></font>");
         }
         buf.append("</td></tr>\n");
     }
@@ -191,7 +191,10 @@ public class FileDumpHelper extends HelperBase {
             //ioe.printStackTrace();
             return null;
         } finally {
-            if (in != null) try { in.close(); } catch (IOException e) {}
+            if (in != null) try {
+                    in.close();
+                }
+                catch (IOException e) {}
         }
     }
 
@@ -209,7 +212,10 @@ public class FileDumpHelper extends HelperBase {
             //ioe.printStackTrace();
             return null;
         } finally {
-            if (in != null) try { in.close(); } catch (IOException e) {}
+            if (in != null) try {
+                    in.close();
+                }
+                catch (IOException e) {}
         }
     }
 

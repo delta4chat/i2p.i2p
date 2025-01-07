@@ -40,7 +40,7 @@ abstract class PersistDHT {
         BufferedReader br = null;
         try {
             br = new BufferedReader(new InputStreamReader(
-            		new FileInputStream(file), "ISO-8859-1"));
+                                        new FileInputStream(file), "ISO-8859-1"));
             String line = null;
             while ( (line = br.readLine()) != null) {
                 if (line.startsWith("#"))
@@ -61,7 +61,10 @@ abstract class PersistDHT {
             if (log.shouldLog(Log.WARN) && file.exists())
                 log.warn("Error reading the DHT File", ioe);
         } finally {
-            if (br != null) try { br.close(); } catch (IOException ioe) {}
+            if (br != null) try {
+                    br.close();
+                }
+                catch (IOException ioe) {}
         }
         if (log.shouldLog(Log.INFO))
             log.info("Loaded " + count + " nodes from " + file);
@@ -81,11 +84,11 @@ abstract class PersistDHT {
             out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new SecureFileOutputStream(file), "ISO-8859-1")));
             out.println("# DHT nodes, format is NID:Hash:Destination:port");
             for (NodeInfo ni : nodes.values()) {
-                 if (ni.lastSeen() < maxAge)
-                     continue;
-                 // DHTNodes shouldn't contain us, if that changes check here
-                 out.println(ni.toPersistentString());
-                 count++;
+                if (ni.lastSeen() < maxAge)
+                    continue;
+                // DHTNodes shouldn't contain us, if that changes check here
+                out.println(ni.toPersistentString());
+                count++;
             }
             if (out.checkError())
                 throw new IOException("Failed write to " + file);

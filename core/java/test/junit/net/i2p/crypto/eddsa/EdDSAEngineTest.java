@@ -55,7 +55,7 @@ public class EdDSAEngineTest {
             sgr.update(testCase.message);
 
             assertThat("Test case " + testCase.caseNum + " failed",
-                    sgr.sign(), is(equalTo(testCase.sig)));
+                       sgr.sign(), is(equalTo(testCase.sig)));
         }
     }
 
@@ -72,7 +72,7 @@ public class EdDSAEngineTest {
             sgr.update(testCase.message);
 
             assertThat("Test case " + testCase.caseNum + " failed",
-                    sgr.verify(testCase.sig), is(true));
+                       sgr.verify(testCase.sig), is(true));
         }
     }
 
@@ -91,7 +91,7 @@ public class EdDSAEngineTest {
         sgr.update(TEST_MSG);
 
         try {
-            sgr.verify(new byte[]{0});
+            sgr.verify(new byte[] {0});
         } catch (SignatureException expected) {
             assertEquals("signature length is wrong", expected.getMessage());
         }

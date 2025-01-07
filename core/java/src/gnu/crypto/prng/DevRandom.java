@@ -18,7 +18,9 @@ class DevRandom implements IRandomStandalone {
     private static final String F = "/dev/random";
     private final File file = new File(F);
 
-    public String name() { return F; }
+    public String name() {
+        return F;
+    }
 
     public void init(Map<String, byte[]> attributes) {
         if (!file.canRead())
@@ -44,7 +46,10 @@ class DevRandom implements IRandomStandalone {
         } catch (IOException ioe) {
             throw new IllegalStateException("Read failed " + F, ioe);
         } finally {
-             if (in != null) try { in.close(); } catch (IOException ioe2) {}
+            if (in != null) try {
+                    in.close();
+                }
+                catch (IOException ioe2) {}
         }
     }
 
@@ -53,5 +58,7 @@ class DevRandom implements IRandomStandalone {
     public void addRandomBytes(byte[] in, int offset, int length) {}
 
     @Override
-    public Object clone() throws CloneNotSupportedException { return super.clone(); }
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
 }

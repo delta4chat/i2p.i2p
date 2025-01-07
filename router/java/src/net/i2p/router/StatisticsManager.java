@@ -1,9 +1,9 @@
 package net.i2p.router;
 /*
  * free (adj.): unencumbered; not under the control of others
- * Written by jrandom in 2003 and released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
- * It probably won't make your computer catch on fire, or eat 
+ * Written by jrandom in 2003 and released into the public domain
+ * with no warranty of any kind, either expressed or implied.
+ * It probably won't make your computer catch on fire, or eat
  * your children, but it might.  Use at your own risk.
  *
  */
@@ -33,7 +33,7 @@ public class StatisticsManager {
     private final Log _log;
     private final RouterContext _context;
     private final String _networkID;
-    
+
     public final static String PROP_PUBLISH_RANKINGS = "router.publishPeerRankings";
     //private static final String PROP_CONTACT_NAME = "netdb.contact";
     /** enhance anonymity by only including build stats one out of this many times */
@@ -47,24 +47,24 @@ public class StatisticsManager {
     public StatisticsManager(RouterContext context) {
         _context = context;
         _fmt = SIMPLE_STATS ? new DecimalFormat("0.00", new DecimalFormatSymbols(Locale.UK)) :
-                              new DecimalFormat("###,##0.00", new DecimalFormatSymbols(Locale.UK));
+               new DecimalFormat("###,##0.00", new DecimalFormatSymbols(Locale.UK));
         _pct = new DecimalFormat("#0.00%", new DecimalFormatSymbols(Locale.UK));
         _log = context.logManager().getLog(StatisticsManager.class);
         // null for some tests
         Router r = context.router();
         _networkID = r != null ? Integer.toString(r.getNetworkID()) : "2";
     }
-        
+
     /**
      *  Retrieve a snapshot of the statistics that should be published.
      *
      *  This includes all standard options (as of 0.9.24, network ID and caps)
      */
-    public Properties publishStatistics() { 
+    public Properties publishStatistics() {
         // if hash is null, will be caught in fkc.sign()
         return publishStatistics(_context.routerHash());
     }
-    
+
     /**
      *  Retrieve a snapshot of the statistics that should be published.
      *
@@ -73,7 +73,7 @@ public class StatisticsManager {
      *  @param h current router hash, non-null
      *  @since 0.9.24
      */
-    public Properties publishStatistics(Hash h) { 
+    public Properties publishStatistics(Hash h) {
         Properties stats = new Properties();
         stats.setProperty("router.version", CoreVersion.PUBLISHED_VERSION);
         stats.setProperty(RouterInfo.PROP_NETWORK_ID, _networkID);
@@ -81,8 +81,8 @@ public class StatisticsManager {
         stats.setProperty(RouterInfo.PROP_CAPABILITIES, caps);
 
         if (_context.getBooleanPropertyDefaultTrue(PROP_PUBLISH_RANKINGS) &&
-            _context.random().nextInt(RANDOM_INCLUDE_STATS) == 0 &&
-            _context.router().getUptime() > 62*60*1000) {
+                _context.random().nextInt(RANDOM_INCLUDE_STATS) == 0 &&
+                _context.router().getUptime() > 62*60*1000) {
 
             // Disabled in 0.9
             //if (publishedUptime > 62*60*1000)
@@ -94,17 +94,17 @@ public class StatisticsManager {
             //includeRate("tunnel.fullFragments", stats, new long[] { 10*60*1000, 3*60*60*1000 });
             //includeRate("tunnel.smallFragments", stats, new long[] { 10*60*1000, 3*60*60*1000 });
             //includeRate("tunnel.testFailedTime", stats, new long[] { 10*60*1000 });
-            
+
             //includeRate("tunnel.batchDelaySent", stats, new long[] { 10*60*1000, 60*60*1000 });
             //includeRate("tunnel.batchMultipleCount", stats, new long[] { 10*60*1000, 60*60*1000 });
             //includeRate("tunnel.corruptMessage", stats, new long[] { 60*60*1000l, 3*60*60*1000l });
-            
+
             //includeRate("router.throttleTunnelProbTestSlow", stats, new long[] { 60*60*1000 });
             //includeRate("router.throttleTunnelProbTooFast", stats, new long[] { 60*60*1000 });
             //includeRate("router.throttleTunnelProcessingTime1m", stats, new long[] { 60*60*1000 });
 
             //includeRate("router.fastPeers", stats, new long[] { 60*60*1000 });
-            
+
             //includeRate("udp.statusOK", stats, new long[] { 20*60*1000 });
             //includeRate("udp.statusDifferent", stats, new long[] { 20*60*1000 });
             //includeRate("udp.statusReject", stats, new long[] { 20*60*1000 });
@@ -114,7 +114,7 @@ public class StatisticsManager {
             //includeRate("udp.addressTestInsteadOfUpdate", stats, new long[] { 1*60*1000 });
 
             //includeRate("clock.skew", stats, new long[] { 10*60*1000, 3*60*60*1000, 24*60*60*1000 });
-            
+
             //includeRate("transport.sendProcessingTime", stats, new long[] { 60*60*1000 });
             //includeRate("jobQueue.jobRunSlow", stats, new long[] { 10*60*1000l, 60*60*1000l });
             //includeRate("crypto.elGamal.encrypt", stats, new long[] { 60*60*1000 });
@@ -130,11 +130,11 @@ public class StatisticsManager {
             //includeRate("stream.con.receiveDuplicateSize", stats, new long[] { 60*60*1000 });
 
             //stats.setProperty("stat__rateKey", "avg;maxAvg;pctLifetime;[sat;satLim;maxSat;maxSatLim;][num;lifetimeFreq;maxFreq]");
-            
+
             //includeRate("tunnel.decryptRequestTime", stats, new long[] { 60*1000, 10*60*1000 });
             //includeRate("udp.packetDequeueTime", stats, new long[] { 60*1000 });
             //includeRate("udp.packetVerifyTime", stats, new long[] { 60*1000 });
-            
+
             //includeRate("tunnel.buildRequestTime", stats, new long[] { 10*60*1000 });
             long rate = 60*60*1000;
             //includeTunnelRates("Client", stats, rate);
@@ -157,11 +157,11 @@ public class StatisticsManager {
             stats.setProperty("netdb.knownLeaseSets", String.valueOf(ls));
         }
 
-/*
-        String contact = _context.getProperty(PROP_CONTACT_NAME);
-        if (contact != null)
-            stats.setProperty("contact", contact);
-*/
+        /*
+                String contact = _context.getProperty(PROP_CONTACT_NAME);
+                if (contact != null)
+                    stats.setProperty("contact", contact);
+        */
 
         String family = _context.getProperty(FamilyKeyCrypto.PROP_FAMILY_NAME);
         if (family != null) {
@@ -204,19 +204,19 @@ public class StatisticsManager {
 
         return stats;
     }
-    
-/*****
-    private void includeRate(String rateName, Properties stats, long selectedPeriods[]) {
-        includeRate(rateName, stats, selectedPeriods, false);
-    }
-*****/
+
+    /*****
+        private void includeRate(String rateName, Properties stats, long selectedPeriods[]) {
+            includeRate(rateName, stats, selectedPeriods, false);
+        }
+    *****/
 
     /**
      * @param fudgeQuantity the data being published in this stat is too sensitive to, uh
      *                      publish, so we're kludge the quantity (allowing the fairly safe
      *                      publication of the average values
      */
-    private void includeRate(String rateName, Properties stats, long selectedPeriods[], 
+    private void includeRate(String rateName, Properties stats, long selectedPeriods[],
                              boolean fudgeQuantity) {
         RateStat rate = _context.statManager().getRate(rateName);
         if (rate == null) return;
@@ -240,7 +240,7 @@ public class StatisticsManager {
             stats.setProperty("stat_" + rateName + '.' + getPeriod(curRate), renderRate(curRate, fudgeQuantity));
         }
     }
-    
+
     /**
      *  Simple format, only what stats.i2p needs:
      *<pre>
@@ -316,7 +316,7 @@ public class StatisticsManager {
             stats.setProperty("stat_" + rateName + '.' + getPeriod(curRate), renderRate(curRate, fudgeQuantity));
         }
     }
-    
+
     /**
      *  Simple format, only what stats.i2p needs:
      *<pre>
@@ -341,35 +341,41 @@ public class StatisticsManager {
     }
 
     /* report the same data for tx and rx, for enhanced anonymity */
-/*
-    private void includeAverageThroughput(Properties stats) {
-        RateStat sendRate = _context.statManager().getRate("bw.sendRate");
-        RateStat recvRate = _context.statManager().getRate("bw.recvRate");
-        if (sendRate == null || recvRate == null)
-            return;
-        Rate s = sendRate.getRate(60*60*1000);
-        Rate r = recvRate.getRate(60*60*1000);
-        if (s == null || r == null)
-            return;
-        double speed = (s.getAverageValue() + r.getAverageValue()) / 2;
-        double max = Math.max(s.getExtremeAverageValue(), r.getExtremeAverageValue());
-        String str = num(speed) + ';' + num(max) + ";0;0;";
-        stats.setProperty("stat_bandwidthSendBps.60m", str);
-        stats.setProperty("stat_bandwidthReceiveBps.60m", str);
+    /*
+        private void includeAverageThroughput(Properties stats) {
+            RateStat sendRate = _context.statManager().getRate("bw.sendRate");
+            RateStat recvRate = _context.statManager().getRate("bw.recvRate");
+            if (sendRate == null || recvRate == null)
+                return;
+            Rate s = sendRate.getRate(60*60*1000);
+            Rate r = recvRate.getRate(60*60*1000);
+            if (s == null || r == null)
+                return;
+            double speed = (s.getAverageValue() + r.getAverageValue()) / 2;
+            double max = Math.max(s.getExtremeAverageValue(), r.getExtremeAverageValue());
+            String str = num(speed) + ';' + num(max) + ";0;0;";
+            stats.setProperty("stat_bandwidthSendBps.60m", str);
+            stats.setProperty("stat_bandwidthReceiveBps.60m", str);
+        }
+    */
+
+    private static String getPeriod(Rate rate) {
+        return DataHelper.formatDuration(rate.getPeriod());
     }
-*/
 
-    private static String getPeriod(Rate rate) { return DataHelper.formatDuration(rate.getPeriod()); }
-
-    private final String num(double num) { 
+    private final String num(double num) {
         if (num < 0) num = 0;
-        synchronized (_fmt) { return _fmt.format(num); } 
+        synchronized (_fmt) {
+            return _fmt.format(num);
+        }
     }
 
-    private final String pct(double num) { 
+    private final String pct(double num) {
         if (num < 0) num = 0;
-        synchronized (_pct) { return _pct.format(num); } 
+        synchronized (_pct) {
+            return _pct.format(num);
+        }
     }
-   
+
     public void renderStatusHTML(Writer out) { }
 }

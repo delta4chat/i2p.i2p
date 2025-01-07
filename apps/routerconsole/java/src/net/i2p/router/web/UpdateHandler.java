@@ -26,7 +26,7 @@ public class UpdateHandler {
     protected Log _log;
     private String _action;
     private String _nonce;
-    
+
     public UpdateHandler() {
         this(ContextHelper.getContext(null));
     }
@@ -46,7 +46,7 @@ public class UpdateHandler {
             return null;
         return (ConsoleUpdateManager) cmgr.getRegisteredApp(UpdateManager.APP_NAME);
     }
-    
+
     /**
      * Configure this bean to query a particular router context
      *
@@ -61,22 +61,22 @@ public class UpdateHandler {
             t.printStackTrace();
         }
     }
-    
+
     /** these two can be set in either order, so call checkUpdateAction() twice */
     public void setUpdateAction(String val) {
         _action = val;
         checkUpdateAction();
     }
-    
-    public void setUpdateNonce(String nonce) { 
+
+    public void setUpdateNonce(String nonce) {
         _nonce = nonce;
         checkUpdateAction();
     }
 
-    private void checkUpdateAction() { 
+    private void checkUpdateAction() {
         if (_nonce == null || _action == null) return;
         if (_nonce.equals(System.getProperty("net.i2p.router.web.UpdateHandler.nonce")) ||
-            _nonce.equals(System.getProperty("net.i2p.router.web.UpdateHandler.noncePrev"))) {
+                _nonce.equals(System.getProperty("net.i2p.router.web.UpdateHandler.noncePrev"))) {
             if (_action.contains("Unsigned")) {
                 update(ROUTER_UNSIGNED);
             } else if (_action.contains("DevSU3")) {
@@ -95,7 +95,7 @@ public class UpdateHandler {
         if (mgr == null)
             return;
         if (mgr.isUpdateInProgress(ROUTER_SIGNED) || mgr.isUpdateInProgress(ROUTER_UNSIGNED) ||
-            mgr.isUpdateInProgress(ROUTER_SIGNED_SU3) || mgr.isUpdateInProgress(ROUTER_DEV_SU3)) {
+                mgr.isUpdateInProgress(ROUTER_SIGNED_SU3) || mgr.isUpdateInProgress(ROUTER_DEV_SU3)) {
             _log.error("Update already running");
             return;
         }

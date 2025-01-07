@@ -31,13 +31,21 @@ public class ConfigUIHandler extends FormHandler {
         } // else lang change, handled in CSSHelper
     }
 
-    public void setShouldsave(String moo) { _shouldSave = true; }
+    public void setShouldsave(String moo) {
+        _shouldSave = true;
+    }
 
-    public void setUniversalTheming(String baa) { _universalTheming = true; }
+    public void setUniversalTheming(String baa) {
+        _universalTheming = true;
+    }
 
-    public void setForceMobileConsole(String baa) { _forceMobileConsole = true; }
+    public void setForceMobileConsole(String baa) {
+        _forceMobileConsole = true;
+    }
 
-    public void setEmbedApps(String baa) { _embedApps = true; }
+    public void setEmbedApps(String baa) {
+        _embedApps = true;
+    }
 
     public void setTheme(String val) {
         _config = val;
@@ -81,9 +89,9 @@ public class ConfigUIHandler extends FormHandler {
                 addFormNotice(_t("Theme change saved."));
             if (oldForceMobileConsole != _forceMobileConsole)
                 addFormNoticeNoEscape(_t("Mobile console option saved.") +
-                              " <a href=\"configui\">" +
-                              _t("Refresh the page to view.") +
-                              "</a>");
+                                      " <a href=\"configui\">" +
+                                      _t("Refresh the page to view.") +
+                                      "</a>");
         } else {
             addFormError(_t("Error saving the configuration (applied but not saved) - please see the error logs."));
         }

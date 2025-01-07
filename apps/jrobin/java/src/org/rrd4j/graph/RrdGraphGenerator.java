@@ -13,14 +13,14 @@ import org.rrd4j.data.DataProcessor;
 class RrdGraphGenerator {
 
     private static final double[] SENSIBLE_VALUES = {
-            1000.0, 900.0, 800.0, 750.0, 700.0,
-            600.0, 500.0, 400.0, 300.0, 250.0,
-            200.0, 125.0, 100.0, 90.0, 80.0,
-            75.0, 70.0, 60.0, 50.0, 40.0, 30.0,
-            25.0, 20.0, 10.0, 9.0, 8.0,
-            7.0, 6.0, 5.0, 4.0, 3.5, 3.0,
-            2.5, 2.0, 1.8, 1.5, 1.2, 1.0,
-            0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0.0, -1
+        1000.0, 900.0, 800.0, 750.0, 700.0,
+        600.0, 500.0, 400.0, 300.0, 250.0,
+        200.0, 125.0, 100.0, 90.0, 80.0,
+        75.0, 70.0, 60.0, 50.0, 40.0, 30.0,
+        25.0, 20.0, 10.0, 9.0, 8.0,
+        7.0, 6.0, 5.0, 4.0, 3.5, 3.0,
+        2.5, 2.0, 1.8, 1.5, 1.2, 1.0,
+        0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0.0, -1
     };
     private static final int SYMBOLS_CENTER = 8;
     private static final char[] SYMBOLS = {'y', 'z', 'a', 'f', 'p', 'n', 'µ', 'm', ' ', 'K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y'};
@@ -199,8 +199,8 @@ class RrdGraphGenerator {
                 int ascent = (int) worker.getFontAscent(gdef.getFont(RrdGraphConstants.FONTTAG_UNIT));
                 worker.transform(RrdGraphConstants.PADDING_LEFT, y, -Math.PI / 2);
                 worker.drawString(gdef.verticalLabel, 0, ascent,
-                        gdef.getFont(RrdGraphConstants.FONTTAG_UNIT),
-                        gdef.getColor(ElementsNames.font));
+                                  gdef.getFont(RrdGraphConstants.FONTTAG_UNIT),
+                                  gdef.getColor(ElementsNames.font));
                 worker.reset();
             }
             worker.setTextAntiAliasing(false);
@@ -236,9 +236,9 @@ class RrdGraphGenerator {
                 if (!ok) {
                     String msg = "No Data Found";
                     worker.drawString(msg, im.xgif / 2 - (int) worker.getStringWidth(msg,
-                                    gdef.getFont(RrdGraphConstants.FONTTAG_TITLE)) / 2,
-                            (2 * im.yorigin - im.ysize) / 2,
-                            gdef.getFont(RrdGraphConstants.FONTTAG_TITLE), gdef.getColor(ElementsNames.font));
+                                      gdef.getFont(RrdGraphConstants.FONTTAG_TITLE)) / 2,
+                                      (2 * im.yorigin - im.ysize) / 2,
+                                      gdef.getFont(RrdGraphConstants.FONTTAG_TITLE), gdef.getColor(ElementsNames.font));
                 }
             }
             worker.setTextAntiAliasing(false);
@@ -248,7 +248,7 @@ class RrdGraphGenerator {
     private void drawData() {
         worker.setAntiAliasing(gdef.antiAliasing);
         worker.clip(im.xorigin, im.yorigin - gdef.height - 1, gdef.width,
-                gdef.height + 2);
+                    gdef.height + 2);
         double areaZero = mapper.ytr((im.minval > 0.0) ? im.minval : Math.min(im.maxval, 0.0));
         double[] x = gdef.downsampler == null ? xtr(dproc.getTimestamps()) : null;
         double[] lastY = null;
@@ -259,7 +259,7 @@ class RrdGraphGenerator {
                 double[] y;
                 if (gdef.downsampler != null) {
                     DownSampler.DataSet set = gdef.downsampler.downsize(dproc.getTimestamps(),
-                            source.getValues());
+                                              source.getValues());
                     x = xtr(set.timestamps);
                     y = ytr(set.values);
                 } else {
@@ -304,15 +304,15 @@ class RrdGraphGenerator {
             Paint arrowColor = gdef.getColor(ElementsNames.arrow);
             Stroke stroke = new BasicStroke(1);
             worker.drawLine(im.xorigin + im.xsize, im.yorigin,
-                    im.xorigin + im.xsize, im.yorigin - im.ysize, gridColor,
-                    stroke);
+                            im.xorigin + im.xsize, im.yorigin - im.ysize, gridColor,
+                            stroke);
             worker.drawLine(im.xorigin, im.yorigin - im.ysize,
-                    im.xorigin + im.xsize, im.yorigin - im.ysize, gridColor,
-                    stroke);
+                            im.xorigin + im.xsize, im.yorigin - im.ysize, gridColor,
+                            stroke);
             worker.drawLine(im.xorigin - 4, im.yorigin, im.xorigin + im.xsize + 4,
-                    im.yorigin, xaxisColor, stroke);
+                            im.yorigin, xaxisColor, stroke);
             worker.drawLine(im.xorigin, im.yorigin + 4, im.xorigin,
-                    im.yorigin - im.ysize - 4, yaxisColor, stroke);
+                            im.yorigin - im.ysize - 4, yaxisColor, stroke);
 
             // I2P skip arrowheads if transparent
             if (((Color)arrowColor).getAlpha() == 0)
@@ -320,14 +320,16 @@ class RrdGraphGenerator {
 
             //Do X axis arrow
             double[] xArrowX = { im.xorigin + im.xsize + 4,
-                    im.xorigin + im.xsize + 9, im.xorigin + im.xsize + 4, };
+                                 im.xorigin + im.xsize + 9, im.xorigin + im.xsize + 4,
+                               };
             double[] xArrowY = { im.yorigin - 3, im.yorigin, im.yorigin + 3, };
             worker.fillPolygon(xArrowX, im.yorigin + 3.0, xArrowY, arrowColor);
 
             //Do y axis arrow
             double[] yArrowX = { im.xorigin - 3, im.xorigin, im.xorigin + 3, };
             double[] yArrowY = { im.yorigin - im.ysize - 4,
-                    im.yorigin - im.ysize - 9, im.yorigin - im.ysize - 4, };
+                                 im.yorigin - im.ysize - 9, im.yorigin - im.ysize - 4,
+                               };
             worker.fillPolygon(yArrowX, im.yorigin - im.ysize - 4.0, yArrowY, arrowColor);
         }
     }
@@ -364,7 +366,7 @@ class RrdGraphGenerator {
             im.xorigin = 0;
         } else {
             im.xorigin = (int) (RrdGraphConstants.PADDING_LEFT + im.unitslength * getFontCharWidth(
-                    RrdGraphConstants.FONTTAG_AXIS));
+                                    RrdGraphConstants.FONTTAG_AXIS));
         }
 
         if (!gdef.onlyGraph && gdef.verticalLabel != null) {
@@ -387,7 +389,7 @@ class RrdGraphGenerator {
         } else {
             im.xgif = RrdGraphConstants.PADDING_RIGHT + im.xsize + im.xorigin;
             im.ygif = im.yorigin + (int) (RrdGraphConstants.PADDING_PLOT * getFontHeight(
-                    RrdGraphConstants.FONTTAG_AXIS));
+                                              RrdGraphConstants.FONTTAG_AXIS));
         }
     }
 
@@ -413,11 +415,11 @@ class RrdGraphGenerator {
 
     private void expandValueRange() {
         im.ygridstep = (gdef.valueAxisSetting != null) ?
-                                        gdef.valueAxisSetting.gridStep :
-                                        Double.NaN;
+                       gdef.valueAxisSetting.gridStep :
+                       Double.NaN;
         im.ylabfact = (gdef.valueAxisSetting != null) ?
-                                       gdef.valueAxisSetting.labelFactor :
-                                       0;
+                      gdef.valueAxisSetting.labelFactor :
+                      0;
         if (!gdef.rigid && !gdef.logarithmic) {
             double scaledMin;
             double scaledMax;
@@ -425,7 +427,7 @@ class RrdGraphGenerator {
             if (Double.isNaN(im.ygridstep)) {
                 if (gdef.altYMrtg) { /* mrtg */
                     im.decimals = Math.ceil(
-                            Math.log10(Math.max(Math.abs(im.maxval), Math.abs(im.minval))));
+                                      Math.log10(Math.max(Math.abs(im.maxval), Math.abs(im.minval))));
                     im.quadrant = 0;
                     if (im.minval < 0) {
                         im.quadrant = 2;
@@ -436,22 +438,22 @@ class RrdGraphGenerator {
                     switch (im.quadrant) {
                     case 2:
                         im.scaledstep = Math.ceil(
-                                50 * Math.pow(10, -(im.decimals)) * Math.max(Math.abs(im.maxval),
-                                        Math.abs(im.minval))) * Math.pow(10, im.decimals - 2);
+                                            50 * Math.pow(10, -(im.decimals)) * Math.max(Math.abs(im.maxval),
+                                                    Math.abs(im.minval))) * Math.pow(10, im.decimals - 2);
                         scaledMin = -2 * im.scaledstep;
                         scaledMax = 2 * im.scaledstep;
                         break;
                     case 4:
                         im.scaledstep = Math.ceil(
-                                25 * Math.pow(10, -(im.decimals)) * Math.abs(im.minval)) * Math.pow(
-                                10, im.decimals - 2);
+                                            25 * Math.pow(10, -(im.decimals)) * Math.abs(im.minval)) * Math.pow(
+                                            10, im.decimals - 2);
                         scaledMin = -4 * im.scaledstep;
                         scaledMax = 0;
                         break;
                     default: /* quadrant 0 */
                         im.scaledstep = Math.ceil(
-                                25 * Math.pow(10, -(im.decimals)) * im.maxval) * Math.pow(10,
-                                im.decimals - 2);
+                                            25 * Math.pow(10, -(im.decimals)) * im.maxval) * Math.pow(10,
+                                                    im.decimals - 2);
                         scaledMin = 0;
                         scaledMax = 4 * im.scaledstep;
                         break;
@@ -468,7 +470,7 @@ class RrdGraphGenerator {
                     delt = im.maxval - im.minval;
                     adj = delt * 0.1;
                     fact = 2.0 * Math.pow(10.0, Math.floor(
-                            Math.log10(Math.max(Math.abs(im.minval), Math.abs(im.maxval)))) - 2);
+                                              Math.log10(Math.max(Math.abs(im.minval), Math.abs(im.maxval)))) - 2);
                     if (delt < fact) {
                         adj = (fact - delt) * 0.55;
                     }
@@ -506,9 +508,9 @@ class RrdGraphGenerator {
                 }
             } else {
                 im.minval = im.ylabfact * im.ygridstep * Math.floor(
-                        im.minval / (im.ylabfact * im.ygridstep));
+                                im.minval / (im.ylabfact * im.ygridstep));
                 im.maxval = im.ylabfact * im.ygridstep * Math.ceil(
-                        im.maxval / (im.ylabfact * im.ygridstep));
+                                im.maxval / (im.ylabfact * im.ygridstep));
             }
 
         }
@@ -523,8 +525,8 @@ class RrdGraphGenerator {
                 digits = Math.floor(im.unitsexponent / 3.0);
             } else {
                 digits = Math.floor(
-                        Math.log(Math.max(Math.abs(im.minval), Math.abs(im.maxval))) / Math.log(
-                                im.base));
+                             Math.log(Math.max(Math.abs(im.minval), Math.abs(im.maxval))) / Math.log(
+                                 im.base));
             }
             im.magfact = Math.pow(im.base, digits);
             if (((digits + SYMBOLS_CENTER) < SYMBOLS.length) && ((digits + SYMBOLS_CENTER) >= 0)) {
@@ -554,7 +556,7 @@ class RrdGraphGenerator {
         im.maxval = gdef.maxValue;
         /* adjust min and max values */
         if (Double.isNaN(
-                im.minval) || ((!gdef.logarithmic && !gdef.rigid) && im.minval > minval)) {
+                    im.minval) || ((!gdef.logarithmic && !gdef.rigid) && im.minval > minval)) {
             im.minval = minval;
         }
         if (Double.isNaN(im.maxval) || (!gdef.rigid && im.maxval < maxval)) {
@@ -654,11 +656,11 @@ class RrdGraphGenerator {
                             worker.fillRect(x + 1, y - box + 1, box - 2, box - 2, bc);
                         worker.fillRect(x + 1, y - box + 1, box - 2, box - 2, lc);
                         worker.drawString(c.resolvedText, x + boxSpace, y,
-                                gdef.getFont(RrdGraphConstants.FONTTAG_LEGEND),
-                                gdef.getColor(ElementsNames.font));
+                                          gdef.getFont(RrdGraphConstants.FONTTAG_LEGEND),
+                                          gdef.getColor(ElementsNames.font));
                     } else {
                         worker.drawString(c.resolvedText, x, y, gdef.getFont(RrdGraphConstants.FONTTAG_LEGEND),
-                                gdef.getColor(ElementsNames.font));
+                                          gdef.getColor(ElementsNames.font));
                     }
                 }
             }

@@ -2,9 +2,9 @@ package net.i2p.router.transport.crypto;
 
 /*
  * free (adj.): unencumbered; not under the control of others
- * Written by jrandom in 2003 and released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
- * It probably won't  make your computer catch on fire, or eat 
+ * Written by jrandom in 2003 and released into the public domain
+ * with no warranty of any kind, either expressed or implied.
+ * It probably won't  make your computer catch on fire, or eat
  * your children, but it might.  Use at your own risk.
  *
  */
@@ -18,7 +18,7 @@ import net.i2p.data.SessionKey;
 import net.i2p.util.RandomSource;
 
 public class DHSessionKeyBuilderTest extends TestCase {
-    public void testDHSessionKeyBuilder(){
+    public void testDHSessionKeyBuilder() {
         I2PAppContext ctx = new I2PAppContext();
         for (int i = 0; i < 5; i++) {
             DHSessionKeyBuilder builder1 = new DHSessionKeyBuilder();

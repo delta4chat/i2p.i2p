@@ -92,7 +92,7 @@ public class Sample {
             return this;
         }
         throw new IllegalArgumentException("Invalid number of values specified (found " +
-                values.length + ", only " + dsNames.length + " allowed)");
+                                           values.length + ", only " + dsNames.length + " allowed)");
     }
 
     /**
@@ -159,7 +159,7 @@ public class Sample {
         int n = tokenizer.countTokens();
         if (n > values.length + 1) {
             throw new IllegalArgumentException("Invalid number of values specified (found " +
-                    values.length + ", " + dsNames.length + " allowed)");
+                                               values.length + ", " + dsNames.length + " allowed)");
         }
         String timeToken = tokenizer.nextToken();
         try {

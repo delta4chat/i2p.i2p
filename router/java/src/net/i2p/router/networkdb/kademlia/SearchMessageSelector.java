@@ -25,7 +25,7 @@ class SearchMessageSelector implements MessageSelector {
     private final int _id;
     private final long _exp;
     private final SearchState _state;
-    
+
     public SearchMessageSelector(RouterContext context, RouterInfo peer, long expiration, SearchState state) {
         _context = context;
         _log = context.logManager().getLog(SearchMessageSelector.class);
@@ -36,25 +36,25 @@ class SearchMessageSelector implements MessageSelector {
         if (_log.shouldLog(Log.DEBUG))
             _log.debug("[" + _id + "] Created: " + toString());
     }
-    
+
     @Override
-    public String toString() { 
+    public String toString() {
         return "Search selector [" + _id + "] looking for a reply from " + _peer
-               + " with regards to " + _state.getTarget(); 
+               + " with regards to " + _state.getTarget();
     }
-    
+
     public boolean continueMatching() {
         boolean expired = _context.clock().now() > _exp;
         if (expired) return false;
-        
+
         // so we dont drop outstanding replies after receiving the value
         // > 1 to account for the 'current' match
-        if (_state.getPending().size() > 1) 
+        if (_state.getPending().size() > 1)
             return true;
-        
+
         if (_found) {
             if (_log.shouldLog(Log.DEBUG))
-                _log.debug("[" + _id + "] Dont continue matching! looking for a reply from " 
+                _log.debug("[" + _id + "] Dont continue matching! looking for a reply from "
                            + _peer + " with regards to " + _state.getTarget());
             return false;
         } else {
@@ -62,7 +62,9 @@ class SearchMessageSelector implements MessageSelector {
         }
     }
 
-    public long getExpiration() { return _exp; }
+    public long getExpiration() {
+        return _exp;
+    }
 
     public boolean isMatch(I2NPMessage message) {
         int type = message.getType();
@@ -70,7 +72,7 @@ class SearchMessageSelector implements MessageSelector {
             DatabaseStoreMessage msg = (DatabaseStoreMessage)message;
             if (msg.getKey().equals(_state.getTarget())) {
                 if (_log.shouldLog(Log.DEBUG))
-                    _log.debug("[" + _id + "] Was a DBStore of the key we're looking for.  " 
+                    _log.debug("[" + _id + "] Was a DBStore of the key we're looking for.  "
                                + "May not have been from who we're checking against though, "
                                + "but DBStore doesn't include that info");
                 _found = true;

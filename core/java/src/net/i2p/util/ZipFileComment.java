@@ -80,7 +80,10 @@ public abstract class ZipFileComment {
             DataHelper.read(in, buffer);
             return getComment(buffer);
         } finally {
-           if (in != null) try { in.close(); } catch (IOException ioe) {}
+            if (in != null) try {
+                    in.close();
+                }
+                catch (IOException ioe) {}
         }
     }
 

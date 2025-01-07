@@ -33,62 +33,62 @@ class UDPSorters {
     static final int FLAG_DUP = 15;
     static final int FLAG_UPTIME = 16;
     static final int FLAG_DEBUG = 99;
-    
+
     static Comparator<PeerState> getComparator(int sortFlags) {
         Comparator<PeerState> rv;
         switch (Math.abs(sortFlags)) {
-            case FLAG_IDLE_IN:
-                rv = new IdleInComparator();
-                break;
-            case FLAG_IDLE_OUT:
-                rv = new IdleOutComparator();
-                break;
-            case FLAG_RATE_IN:
-                rv = new RateInComparator();
-                break;
-            case FLAG_RATE_OUT:
-                rv = new RateOutComparator();
-                break;
-            case FLAG_UPTIME:
-                rv = new UptimeComparator();
-                break;
-            case FLAG_SKEW:
-                rv = new SkewComparator();
-                break;
-            case FLAG_CWND:
-                rv = new CwndComparator();
-                break;
-            case FLAG_SSTHRESH:
-                rv = new SsthreshComparator();
-                break;
-            case FLAG_RTT:
-                rv = new RTTComparator();
-                break;
-            //case FLAG_DEV:
-            //    rv = new DevComparator();
-            //    break;
-            case FLAG_RTO:
-                rv = new RTOComparator();
-                break;
-            case FLAG_MTU:
-                rv = new MTUComparator();
-                break;
-            case FLAG_SEND:
-                rv = new SendCountComparator();
-                break;
-            case FLAG_RECV:
-                rv = new RecvCountComparator();
-                break;
-            case FLAG_RESEND:
-                rv = new ResendComparator();
-                break;
-            case FLAG_DUP:
-                rv = new DupComparator();
-                break;
-            case FLAG_ALPHA:
-            default:
-                rv = new AlphaComparator();
-                break;
+        case FLAG_IDLE_IN:
+            rv = new IdleInComparator();
+            break;
+        case FLAG_IDLE_OUT:
+            rv = new IdleOutComparator();
+            break;
+        case FLAG_RATE_IN:
+            rv = new RateInComparator();
+            break;
+        case FLAG_RATE_OUT:
+            rv = new RateOutComparator();
+            break;
+        case FLAG_UPTIME:
+            rv = new UptimeComparator();
+            break;
+        case FLAG_SKEW:
+            rv = new SkewComparator();
+            break;
+        case FLAG_CWND:
+            rv = new CwndComparator();
+            break;
+        case FLAG_SSTHRESH:
+            rv = new SsthreshComparator();
+            break;
+        case FLAG_RTT:
+            rv = new RTTComparator();
+            break;
+        //case FLAG_DEV:
+        //    rv = new DevComparator();
+        //    break;
+        case FLAG_RTO:
+            rv = new RTOComparator();
+            break;
+        case FLAG_MTU:
+            rv = new MTUComparator();
+            break;
+        case FLAG_SEND:
+            rv = new SendCountComparator();
+            break;
+        case FLAG_RECV:
+            rv = new RecvCountComparator();
+            break;
+        case FLAG_RESEND:
+            rv = new ResendComparator();
+            break;
+        case FLAG_DUP:
+            rv = new DupComparator();
+            break;
+        case FLAG_ALPHA:
+        default:
+            rv = new AlphaComparator();
+            break;
         }
         if (sortFlags < 0)
             rv = Collections.reverseOrder(rv);
@@ -201,20 +201,20 @@ class UDPSorters {
         }
     }
 
- /***
-    static class DevComparator extends PeerComparator {
-        static final DevComparator _instance = new DevComparator();
-        public static final DevComparator instance() { return _instance; }
-        @Override
-        public int compare(PeerState l, PeerState r) {
-            long rv = l.getRTTDeviation() - r.getRTTDeviation();
-            if (rv == 0) // fallback on alpha
-                return super.compare(l, r);
-            else
-                return (int)rv;
-        }
-    }
-  ****/
+    /***
+       static class DevComparator extends PeerComparator {
+           static final DevComparator _instance = new DevComparator();
+           public static final DevComparator instance() { return _instance; }
+           @Override
+           public int compare(PeerState l, PeerState r) {
+               long rv = l.getRTTDeviation() - r.getRTTDeviation();
+               if (rv == 0) // fallback on alpha
+                   return super.compare(l, r);
+               else
+                   return (int)rv;
+           }
+       }
+     ****/
 
     /** */
     static class RTOComparator extends PeerComparator {
@@ -284,7 +284,7 @@ class UDPSorters {
                 return (int)rv;
         }
     }
-    
+
     static class PeerComparator implements Comparator<PeerState>, Serializable {
         public int compare(PeerState l, PeerState r) {
             return HashComparator.comp(l.getRemotePeer(), r.getRemotePeer());
@@ -294,19 +294,19 @@ class UDPSorters {
     static void appendSortLinks(StringBuilder buf, String urlBase, int sortFlags, String descr, int ascending) {
         if (ascending == FLAG_ALPHA) {  // 0
             buf.append("<span class=\"sortdown\"><a href=\"").append(urlBase).append("?tx=ssu&amp;sort=0" +
-                       "\" title=\"").append(descr).append("\"><img src=\"/themes/console/images/inbound.png\" alt=\"V\"></a></span>");
+                    "\" title=\"").append(descr).append("\"><img src=\"/themes/console/images/inbound.png\" alt=\"V\"></a></span>");
         } else if (sortFlags == ascending) {
             buf.append(" <span class=\"sortdown\"><a href=\"").append(urlBase).append("?tx=ssu&amp;sort=").append(0-ascending);
             buf.append("\" title=\"").append(descr).append("\"><img src=\"/themes/console/images/inbound.png\" alt=\"V\"></a></span>" +
-                       "<span class=\"sortupactive\"><b><img src=\"/themes/console/images/outbound.png\" alt=\"^\"></b></span>");
+                    "<span class=\"sortupactive\"><b><img src=\"/themes/console/images/outbound.png\" alt=\"^\"></b></span>");
         } else if (sortFlags == 0 - ascending) {
             buf.append(" <span class=\"sortdownactive\"><b><img src=\"/themes/console/images/inbound.png\" alt=\"V\"></b></span><span class=\"sortup\"><a href=\"")
-               .append(urlBase).append("?tx=ssu&amp;sort=").append(ascending);
+            .append(urlBase).append("?tx=ssu&amp;sort=").append(ascending);
             buf.append("\" title=\"").append(descr).append("\"><img src=\"/themes/console/images/outbound.png\" alt=\"^\"></a></span>");
         } else {
             buf.append(" <span class=\"sortdown\"><a href=\"").append(urlBase).append("?tx=ssu&amp;sort=").append(0-ascending);
             buf.append("\" title=\"").append(descr).append("\"><img src=\"/themes/console/images/inbound.png\" alt=\"V\"></a></span>" +
-                       "<span class=\"sortup\"><a href=\"").append(urlBase).append("?tx=ssu&amp;sort=").append(ascending);
+                    "<span class=\"sortup\"><a href=\"").append(urlBase).append("?tx=ssu&amp;sort=").append(ascending);
             buf.append("\" title=\"").append(descr).append("\"><img src=\"/themes/console/images/outbound.png\" alt=\"^\"></a></span>");
         }
     }

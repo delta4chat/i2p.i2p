@@ -43,8 +43,8 @@ import net.i2p.util.VersionComparator;
 public abstract class TunnelPeerSelector extends ConnectChecker {
 
     private static final String DEFAULT_EXCLUDE_CAPS = String.valueOf(Router.CAPABILITY_BW12) +
-                                                       String.valueOf(Router.CAPABILITY_CONGESTION_SEVERE) +
-                                                       String.valueOf(Router.CAPABILITY_NO_TUNNELS);
+            String.valueOf(Router.CAPABILITY_CONGESTION_SEVERE) +
+            String.valueOf(Router.CAPABILITY_NO_TUNNELS);
 
     protected TunnelPeerSelector(RouterContext context) {
         super(context);
@@ -242,7 +242,7 @@ public abstract class TunnelPeerSelector extends ConnectChecker {
         if (isFF && caps.indexOf(Router.CAPABILITY_UNREACHABLE) >= 0)
             return true;
         if (isExploratory && isFF &&
-            ctx.random().nextInt(4) != 0)
+                ctx.random().nextInt(4) != 0)
             return true;
 
         if (filterUnreachable(isInbound, isExploratory)) {
@@ -420,27 +420,27 @@ public abstract class TunnelPeerSelector extends ConnectChecker {
             return true;
         // give them some cover without killing our success rate
         return ctx.random().nextInt(4) != 0;
-/*
-        if (SystemVersion.isSlow() || ctx.router().getUptime() < 65*60*1000)
-            return true;
-        if (isExploratory) {
-            if (isInbound) {
-                if (ctx.router().isHidden())
+        /*
+                if (SystemVersion.isSlow() || ctx.router().getUptime() < 65*60*1000)
                     return true;
-                return ctx.getProperty(PROP_INBOUND_EXPLORATORY_EXCLUDE_UNREACHABLE, DEFAULT_INBOUND_EXPLORATORY_EXCLUDE_UNREACHABLE);
-            } else {
-                return ctx.getProperty(PROP_OUTBOUND_EXPLORATORY_EXCLUDE_UNREACHABLE, DEFAULT_OUTBOUND_EXPLORATORY_EXCLUDE_UNREACHABLE);
-            }
-        } else {
-            if (isInbound) {
-                if (ctx.router().isHidden())
-                    return true;
-                return ctx.getProperty(PROP_INBOUND_CLIENT_EXCLUDE_UNREACHABLE, DEFAULT_INBOUND_CLIENT_EXCLUDE_UNREACHABLE);
-            } else {
-                return ctx.getProperty(PROP_OUTBOUND_CLIENT_EXCLUDE_UNREACHABLE, DEFAULT_OUTBOUND_CLIENT_EXCLUDE_UNREACHABLE);
-            }
-        }
-*/
+                if (isExploratory) {
+                    if (isInbound) {
+                        if (ctx.router().isHidden())
+                            return true;
+                        return ctx.getProperty(PROP_INBOUND_EXPLORATORY_EXCLUDE_UNREACHABLE, DEFAULT_INBOUND_EXPLORATORY_EXCLUDE_UNREACHABLE);
+                    } else {
+                        return ctx.getProperty(PROP_OUTBOUND_EXPLORATORY_EXCLUDE_UNREACHABLE, DEFAULT_OUTBOUND_EXPLORATORY_EXCLUDE_UNREACHABLE);
+                    }
+                } else {
+                    if (isInbound) {
+                        if (ctx.router().isHidden())
+                            return true;
+                        return ctx.getProperty(PROP_INBOUND_CLIENT_EXCLUDE_UNREACHABLE, DEFAULT_INBOUND_CLIENT_EXCLUDE_UNREACHABLE);
+                    } else {
+                        return ctx.getProperty(PROP_OUTBOUND_CLIENT_EXCLUDE_UNREACHABLE, DEFAULT_OUTBOUND_CLIENT_EXCLUDE_UNREACHABLE);
+                    }
+                }
+        */
     }
 
 
@@ -455,19 +455,19 @@ public abstract class TunnelPeerSelector extends ConnectChecker {
      */
     protected boolean filterSlow(boolean isInbound, boolean isExploratory) {
         return true;
-/*
-        if (isExploratory) {
-            if (isInbound)
-                return ctx.getProperty(PROP_INBOUND_EXPLORATORY_EXCLUDE_SLOW, true);
-            else
-                return ctx.getProperty(PROP_OUTBOUND_EXPLORATORY_EXCLUDE_SLOW, true);
-        } else {
-            if (isInbound)
-                return ctx.getProperty(PROP_INBOUND_CLIENT_EXCLUDE_SLOW, true);
-            else
-                return ctx.getProperty(PROP_OUTBOUND_CLIENT_EXCLUDE_SLOW, true);
-        }
-*/
+        /*
+                if (isExploratory) {
+                    if (isInbound)
+                        return ctx.getProperty(PROP_INBOUND_EXPLORATORY_EXCLUDE_SLOW, true);
+                    else
+                        return ctx.getProperty(PROP_OUTBOUND_EXPLORATORY_EXCLUDE_SLOW, true);
+                } else {
+                    if (isInbound)
+                        return ctx.getProperty(PROP_INBOUND_CLIENT_EXCLUDE_SLOW, true);
+                    else
+                        return ctx.getProperty(PROP_OUTBOUND_CLIENT_EXCLUDE_SLOW, true);
+                }
+        */
     }
 
     /** see HashComparator */
@@ -610,7 +610,7 @@ public abstract class TunnelPeerSelector extends ConnectChecker {
          */
         public Excluder(boolean isInbound, boolean isExploratory) {
             super(ctx.getBooleanProperty("i2np.allowLocal") ? new HashSet<Hash>()
-                                                            : ctx.tunnelManager().selectPeersInTooManyTunnels());
+                  : ctx.tunnelManager().selectPeersInTooManyTunnels());
             _isIn = isInbound;
             _isExpl = isExploratory;
         }

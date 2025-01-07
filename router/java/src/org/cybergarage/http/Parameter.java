@@ -15,47 +15,47 @@
 
 package org.cybergarage.http;
 
-public class Parameter 
+public class Parameter
 {
-	private String name = new String(); 
-	private String value = new String(); 
+    private String name = new String();
+    private String value = new String();
 
-	public Parameter() 
-	{
-	}
+    public Parameter()
+    {
+    }
 
-	public Parameter(String name, String value) 
-	{
-		setName(name);
-		setValue(value);
-	}
+    public Parameter(String name, String value)
+    {
+        setName(name);
+        setValue(value);
+    }
 
-	////////////////////////////////////////////////
-	//	name
-	////////////////////////////////////////////////
+    ////////////////////////////////////////////////
+    //	name
+    ////////////////////////////////////////////////
 
-	public void setName(String name) 
-	{
-		this.name = name;
-	}
+    public void setName(String name)
+    {
+        this.name = name;
+    }
 
-	public String getName() 
-	{
-		return name;
-	}
+    public String getName()
+    {
+        return name;
+    }
 
-	////////////////////////////////////////////////
-	//	value
-	////////////////////////////////////////////////
+    ////////////////////////////////////////////////
+    //	value
+    ////////////////////////////////////////////////
 
-	public void setValue(String value) 
-	{
-		this.value = value;
-	}
+    public void setValue(String value)
+    {
+        this.value = value;
+    }
 
-	public String getValue() 
-	{
-		return value;
-	}
+    public String getValue()
+    {
+        return value;
+    }
 }
 

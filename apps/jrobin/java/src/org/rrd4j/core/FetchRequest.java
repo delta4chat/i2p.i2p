@@ -36,7 +36,7 @@ public class FetchRequest {
         }
         if (fetchStart > fetchEnd) {
             throw new IllegalArgumentException("Invalid start/end time in fetch request: " + fetchStart +
-                    " > " + fetchEnd);
+                                               " > " + fetchEnd);
         }
         if (resolution <= 0) {
             throw new IllegalArgumentException("Invalid resolution in fetch request: " + resolution);
@@ -88,7 +88,7 @@ public class FetchRequest {
      * @param filter A single datasource (datasource name) to fetch data from.
      */
     public void setFilter(String filter) {
-        this.filter = (filter == null) ? null : (new String[]{filter});
+        this.filter = (filter == null) ? null : (new String[] {filter});
     }
 
     /**
@@ -144,8 +144,8 @@ public class FetchRequest {
      */
     public String dump() {
         return "fetch \"" + parentDb.getRrdBackend().getPath() +
-                "\" " + consolFun + " --start " + fetchStart + " --end " + fetchEnd +
-                (resolution > 1 ? " --resolution " + resolution : "");
+               "\" " + consolFun + " --start " + fetchStart + " --end " + fetchEnd +
+               (resolution > 1 ? " --resolution " + resolution : "");
     }
 
     String getRrdToolCommand() {

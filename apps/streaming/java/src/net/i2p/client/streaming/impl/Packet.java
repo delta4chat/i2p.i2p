@@ -27,7 +27,7 @@ import net.i2p.util.Log;
  *
  * <p>
  *
- * Contain a single packet transferred as part of a streaming connection.  
+ * Contain a single packet transferred as part of a streaming connection.
  * The data format is as follows:<ul>
  * <li>{@link #getSendStreamId sendStreamId} [4 byte value]</li>
  * <li>{@link #getReceiveStreamId receiveStreamId} [4 byte value]</li>
@@ -59,11 +59,11 @@ import net.i2p.util.Log;
  * <li>{@link #FLAG_NO_ACK}: no option data - this appears to be unused, we always ack, even for the first packet</li>
  * </ol>
  *
- * <p>If the signature is included, it uses the Destination's DSA key 
- * to sign the entire header and payload with the space in the options 
+ * <p>If the signature is included, it uses the Destination's DSA key
+ * to sign the entire header and payload with the space in the options
  * for the signature being set to all zeroes.</p>
  *
- * <p>If the sequenceNum is 0 and the SYN is not set, this is a plain ACK 
+ * <p>If the sequenceNum is 0 and the SYN is not set, this is a plain ACK
  * packet that should not be ACKed</p>
  *
  * NOTE: All setters unsynchronized.
@@ -88,24 +88,24 @@ class Packet {
     // following 3 for ofline sigs
     protected long _transientExpires;
     protected Signature _offlineSignature;
-    protected SigningPublicKey _transientSigningPublicKey; 
+    protected SigningPublicKey _transientSigningPublicKey;
     // ports
     private int _localPort;
     private int _remotePort;
-    
-    /** 
-     * The receiveStreamId will be set to this when the packet doesn't know 
+
+    /**
+     * The receiveStreamId will be set to this when the packet doesn't know
      * what ID will be assigned by the remote peer (aka this is the initial
      * synchronize packet)
      *
      */
     public static final long STREAM_ID_UNKNOWN = 0l;
-    
+
     public static final long MAX_STREAM_ID = 0xffffffffl;
-    
+
     /**
      * This packet is creating a new socket connection (if the receiveStreamId
-     * is STREAM_ID_UNKNOWN) or it is acknowledging a request to 
+     * is STREAM_ID_UNKNOWN) or it is acknowledging a request to
      * create a connection and in turn is accepting the socket.
      *
      */
@@ -115,14 +115,14 @@ class Packet {
      */
     public static final int FLAG_CLOSE = (1 << 1);
     /**
-     * This packet is being sent to signify that the socket does not exist 
-     * (or, if in response to an initial synchronize packet, that the 
+     * This packet is being sent to signify that the socket does not exist
+     * (or, if in response to an initial synchronize packet, that the
      * connection was refused).
      *
      */
     public static final int FLAG_RESET = (1 << 2);
     /**
-     * This packet contains a DSA signature from the packet's sender.  This 
+     * This packet contains a DSA signature from the packet's sender.  This
      * signature is within the packet options.  All synchronize packets must
      * have this flag set.
      *
@@ -145,9 +145,9 @@ class Packet {
      */
     public static final int FLAG_DELAY_REQUESTED = (1 << 6);
     /**
-     * This packet includes a request that the recipient not send any 
+     * This packet includes a request that the recipient not send any
      * subsequent packets with payloads greater than a specific size.
-     * If not set and no prior value was delivered, the maximum value 
+     * If not set and no prior value was delivered, the maximum value
      * will be assumed (approximately 32KB).
      *
      */
@@ -160,17 +160,17 @@ class Packet {
      */
     public static final int FLAG_PROFILE_INTERACTIVE = (1 << 8);
     /**
-     * If set, this packet is a ping (if sendStreamId is set) or a 
+     * If set, this packet is a ping (if sendStreamId is set) or a
      * ping reply (if receiveStreamId is set).
      */
     public static final int FLAG_ECHO = (1 << 9);
-    
-    /** 
+
+    /**
      * If set, this packet doesn't really want to ack anything
      */
     public static final int FLAG_NO_ACK = (1 << 10);
-    
-    /** 
+
+    /**
      * If set, an offline signing block is in the options.
      * @since 0.9.39
      */
@@ -188,7 +188,7 @@ class Packet {
     public Packet(I2PSession session) {
         _session = session;
     }
-    
+
     /** @since 0.9.21 */
     public I2PSession getSession() {
         return _session;
@@ -199,40 +199,48 @@ class Packet {
     /** what stream do we send data to the peer on?
      * @return stream ID we use to send data
      */
-    public long getSendStreamId() { return _sendStreamId; }
+    public long getSendStreamId() {
+        return _sendStreamId;
+    }
 
-    public void setSendStreamId(long id) { 
+    public void setSendStreamId(long id) {
         // allow resetting to the same id (race)
         if ( (_sendStreamIdSet) && (_sendStreamId > 0) && _sendStreamId != id)
             throw new RuntimeException("Send stream ID already set [" + _sendStreamId + ", " + id + "]");
         _sendStreamIdSet = true;
-        _sendStreamId = id; 
+        _sendStreamId = id;
     }
-    
+
     private boolean _receiveStreamIdSet = false;
 
-    /** 
+    /**
      * stream the replies should be sent on.  this should be 0 if the
      * connection is still being built.
      * @return stream ID we use to get data, zero if the connection is still being built.
      */
-    public long getReceiveStreamId() { return _receiveStreamId; }
+    public long getReceiveStreamId() {
+        return _receiveStreamId;
+    }
 
-    public void setReceiveStreamId(long id) { 
+    public void setReceiveStreamId(long id) {
         // allow resetting to the same id (race)
-        if ( (_receiveStreamIdSet) && (_receiveStreamId > 0) && _receiveStreamId != id) 
+        if ( (_receiveStreamIdSet) && (_receiveStreamId > 0) && _receiveStreamId != id)
             throw new RuntimeException("Receive stream ID already set [" + _receiveStreamId + ", " + id + "]");
         _receiveStreamIdSet = true;
-        _receiveStreamId = id; 
+        _receiveStreamId = id;
     }
-    
+
     /** 0-indexed sequence number for this Packet in the sendStream
      * @return 0-indexed sequence number for current Packet in current sendStream
      */
-    public long getSequenceNum() { return _sequenceNum; }
-    public void setSequenceNum(long num) { _sequenceNum = num; }
-    
-    /** 
+    public long getSequenceNum() {
+        return _sequenceNum;
+    }
+    public void setSequenceNum(long num) {
+        _sequenceNum = num;
+    }
+
+    /**
      * The highest packet sequence number that received
      * on the receiveStreamId.  This field is ignored on the initial
      * connection packet (where receiveStreamId is the unknown id) or
@@ -240,22 +248,22 @@ class Packet {
      *
      * @return The highest packet sequence number received on receiveStreamId, or -1 if FLAG_NO_ACK
      */
-    public long getAckThrough() { 
+    public long getAckThrough() {
         if (isFlagSet(FLAG_NO_ACK))
             return -1;
         else
-            return _ackThrough; 
+            return _ackThrough;
     }
 
-    /** 
+    /**
      * @param id if &lt; 0, sets FLAG_NO_ACK
      */
-    public void setAckThrough(long id) { 
+    public void setAckThrough(long id) {
         if (id < 0)
             setFlag(FLAG_NO_ACK);
-        _ackThrough = id; 
+        _ackThrough = id;
     }
-    
+
     /**
      * List of packet sequence numbers below the getAckThrough() value
      * have not been received.  this may be null.
@@ -264,12 +272,16 @@ class Packet {
      *
      * @return List of packet sequence numbers not ACKed, or null if there are none.
      */
-    public long[] getNacks() { return _nacks; }
-    public void setNacks(long nacks[]) { _nacks = nacks; }
-    
+    public long[] getNacks() {
+        return _nacks;
+    }
+    public void setNacks(long nacks[]) {
+        _nacks = nacks;
+    }
+
     /**
      * How long is the creator of this packet going to wait before
-     * resending this packet (if it hasn't yet been ACKed).  The 
+     * resending this packet (if it hasn't yet been ACKed).  The
      * value is seconds since the packet was created.
      *
      * Unused.
@@ -281,24 +293,30 @@ class Packet {
      *
      * @return Delay before resending a packet in seconds.
      */
-    public int getResendDelay() { return _resendDelay; }
+    public int getResendDelay() {
+        return _resendDelay;
+    }
 
     /**
      *  Unused.
      *  Broken before release 0.7.8
      *  See above
      */
-    public void setResendDelay(int numSeconds) { _resendDelay = numSeconds; }
-    
+    public void setResendDelay(int numSeconds) {
+        _resendDelay = numSeconds;
+    }
+
     public static final int MAX_PAYLOAD_SIZE = 32*1024;
-    
+
     /** get the actual payload of the message.  may be null
      * @return the payload of the message, null if none.
      */
-    public ByteArray getPayload() { return _payload; }
+    public ByteArray getPayload() {
+        return _payload;
+    }
 
-    public void setPayload(ByteArray payload) { 
-        _payload = payload; 
+    public void setPayload(ByteArray payload) {
+        _payload = payload;
         if ( (payload != null) && (payload.getValid() > MAX_PAYLOAD_SIZE) )
             throw new IllegalArgumentException("Too large payload: " + payload.getValid());
     }
@@ -321,25 +339,31 @@ class Packet {
      * @param flag bitmask of any flag(s)
      * @return true if set, false if not.
      */
-    public boolean isFlagSet(int flag) { return 0 != (_flags & flag); }
+    public boolean isFlagSet(int flag) {
+        return 0 != (_flags & flag);
+    }
 
     /**
      *  @param flag bitmask of any flag(s)
      */
-    public void setFlag(int flag) { _flags |= flag; }
+    public void setFlag(int flag) {
+        _flags |= flag;
+    }
 
     /**
      *  @param flag bitmask of any flag(s)
      *  @param set true to set, false to clear
      */
-    public void setFlag(int flag, boolean set) { 
+    public void setFlag(int flag, boolean set) {
         if (set)
-            _flags |= flag; 
+            _flags |= flag;
         else
             _flags &= ~flag;
     }
 
-    private void setFlags(int flags) { _flags = flags; } 
+    private void setFlags(int flags) {
+        _flags = flags;
+    }
 
     /**
      * The signature on the packet (only included if the flag for it is set)
@@ -349,37 +373,45 @@ class Packet {
      *
      * @return signature on the packet if the flag for signatures is set
      */
-    public Signature getOptionalSignature() { return _optionSignature; }
+    public Signature getOptionalSignature() {
+        return _optionSignature;
+    }
 
-    /** 
+    /**
      * This also sets flag FLAG_SIGNATURE_INCLUDED
      */
-    public void setOptionalSignature(Signature sig) { 
+    public void setOptionalSignature(Signature sig) {
         setFlag(FLAG_SIGNATURE_INCLUDED, sig != null);
-        _optionSignature = sig; 
+        _optionSignature = sig;
     }
 
     /** the sender of the packet (only included if the flag for it is set)
      * @return the sending Destination
      */
-    public Destination getOptionalFrom() { return _optionFrom; }
+    public Destination getOptionalFrom() {
+        return _optionFrom;
+    }
 
     /**
      *  Only if an offline signing block was included, else null
      *
      *  @since 0.9.39
      */
-    public SigningPublicKey getTransientSPK() { return _transientSigningPublicKey; }
-    
-    /** 
+    public SigningPublicKey getTransientSPK() {
+        return _transientSigningPublicKey;
+    }
+
+    /**
      * How many milliseconds the sender of this packet wants the recipient
      * to wait before sending any more data (only valid if the flag for it is
-     * set) 
+     * set)
      * @return How long the sender wants the recipient to wait before sending any more data in ms.
      */
-    public int getOptionalDelay() { return _optionDelay; }
+    public int getOptionalDelay() {
+        return _optionDelay;
+    }
 
-    /** 
+    /**
      * Caller must also call setFlag(FLAG_DELAY_REQUESTED)
      */
     public void setOptionalDelay(int delayMs) {
@@ -388,24 +420,26 @@ class Packet {
         else if (delayMs < 0)
             _optionDelay = 0;
         else
-            _optionDelay = delayMs; 
+            _optionDelay = delayMs;
     }
-    
+
     /**
      * What is the largest payload the sender of this packet wants to receive?
      *
      * @return Maximum payload size sender can receive (MRU) or zero if unset
      */
-    public int getOptionalMaxSize() { return _optionMaxSize; }
+    public int getOptionalMaxSize() {
+        return _optionMaxSize;
+    }
 
-    /** 
+    /**
      * This also sets flag FLAG_MAX_PACKET_SIZE_INCLUDED
      */
-    public void setOptionalMaxSize(int numBytes) { 
+    public void setOptionalMaxSize(int numBytes) {
         setFlag(FLAG_MAX_PACKET_SIZE_INCLUDED, numBytes > 0);
-        _optionMaxSize = numBytes; 
+        _optionMaxSize = numBytes;
     }
-    
+
     /**
      *  @return Default I2PSession.PORT_UNSPECIFIED (0) or PORT_ANY (0)
      *  @since 0.8.9
@@ -422,7 +456,7 @@ class Packet {
     public void setLocalPort(int port) {
         _localPort = port;
     }
-    
+
     /**
      *  @return Default I2PSession.PORT_UNSPECIFIED (0) or PORT_ANY (0)
      *  @since 0.8.9
@@ -501,10 +535,10 @@ class Packet {
             else
                 throw new IllegalStateException();
         }
-        
+
         DataHelper.toLong(buffer, cur, 2, optionSize);
         cur += 2;
-        
+
         if (isFlagSet(FLAG_DELAY_REQUESTED)) {
             DataHelper.toLong(buffer, cur, 2, _optionDelay > 0 ? _optionDelay : 0);
             cur += 2;
@@ -517,17 +551,17 @@ class Packet {
             cur += 2;
         }
         if (isFlagSet(FLAG_SIGNATURE_OFFLINE)) {
-                DataHelper.toLong(buffer, cur, 4, _transientExpires / 1000);
-                cur += 4;
-                DataHelper.toLong(buffer, cur, 2, _transientSigningPublicKey.getType().getCode());
-                cur += 2;
-                int len = _transientSigningPublicKey.length();
-                System.arraycopy(_transientSigningPublicKey.getData(), 0, buffer, cur, len);
-                cur += len;
-                len = _offlineSignature.length();
-                System.arraycopy(_offlineSignature.getData(), 0, buffer, cur, len);
-                cur += len;
-            }
+            DataHelper.toLong(buffer, cur, 4, _transientExpires / 1000);
+            cur += 4;
+            DataHelper.toLong(buffer, cur, 2, _transientSigningPublicKey.getType().getCode());
+            cur += 2;
+            int len = _transientSigningPublicKey.length();
+            System.arraycopy(_transientSigningPublicKey.getData(), 0, buffer, cur, len);
+            cur += len;
+            len = _offlineSignature.length();
+            System.arraycopy(_offlineSignature.getData(), 0, buffer, cur, len);
+            cur += len;
+        }
         if (isFlagSet(FLAG_SIGNATURE_INCLUDED)) {
             if (fakeSigLen == 0) {
                 // we're signing (or validating)
@@ -538,7 +572,7 @@ class Packet {
                 cur += fakeSigLen;
             }
         }
-        
+
         if (_payload != null) {
             try {
                 System.arraycopy(_payload.getData(), _payload.getOffset(), buffer, cur, _payload.getValid());
@@ -556,10 +590,10 @@ class Packet {
             }
             cur += _payload.getValid();
         }
-                
+
         return cur - offset;
     }
-    
+
     /**
      * how large would this packet be if we wrote it
      *
@@ -595,14 +629,14 @@ class Packet {
             size += _transientSigningPublicKey.length();
             size += _offlineSignature.length();
         }
-        
+
         if (_payload != null) {
             size += _payload.getValid();
         }
-        
+
         return size;
     }
-    
+
 
     /**
      * Read the packet from the buffer (starting at the offset) and return
@@ -610,14 +644,14 @@ class Packet {
      *
      * @param buffer packet buffer containing the data
      * @param offset index into the buffer to start readign
-     * @param length how many bytes within the buffer past the offset are 
+     * @param length how many bytes within the buffer past the offset are
      *               part of the packet?
      *
      * @throws IllegalArgumentException if the data is b0rked
      * @throws IndexOutOfBoundsException if the data is b0rked
      */
     public void readPacket(byte buffer[], int offset, int length) throws IllegalArgumentException {
-        if (buffer.length - offset < length) 
+        if (buffer.length - offset < length)
             throw new IllegalArgumentException("len=" + buffer.length + " off=" + offset + " length=" + length);
         if (length < 22) // min header size
             throw new IllegalArgumentException("Too small: len=" + buffer.length);
@@ -648,26 +682,26 @@ class Packet {
         cur++;
         setFlags((int)DataHelper.fromLong(buffer, cur, 2));
         cur += 2;
-        
+
         int optionSize = (int)DataHelper.fromLong(buffer, cur, 2);
         cur += 2;
-        
+
         if (length < 22 + numNacks*4 + optionSize)
             throw new IllegalArgumentException("Too small with " + numNacks + " nacks and "
                                                + optionSize + " options: " + length);
-        
+
         int payloadBegin = cur + optionSize;
         int payloadSize = length - payloadBegin;
-        if ( (payloadSize < 0) || (payloadSize > MAX_PAYLOAD_SIZE) ) 
+        if ( (payloadSize < 0) || (payloadSize > MAX_PAYLOAD_SIZE) )
             throw new IllegalArgumentException("length: " + length + " offset: " + offset + " begin: " + payloadBegin);
-        
+
         // skip ahead to the payload
         //_payload = new ByteArray(new byte[payloadSize]);
         _payload = new ByteArray(buffer, payloadBegin, payloadSize);
         //System.arraycopy(buffer, payloadBegin, _payload.getData(), 0, payloadSize);
         //_payload.setValid(payloadSize);
         //_payload.setOffset(0);
-        
+
         // ok now lets go back and deal with the options
         if (isFlagSet(FLAG_DELAY_REQUESTED)) {
             setOptionalDelay((int)DataHelper.fromLong(buffer, cur, 2));
@@ -756,7 +790,7 @@ class Packet {
     }
 
     /**
-     * Determine whether the signature on the data is valid.  
+     * Determine whether the signature on the data is valid.
      * Packet MUST have a FROM option or will return false.
      *
      * @param ctx Application context
@@ -766,11 +800,11 @@ class Packet {
      * @since 0.9.39
      */
     public boolean verifySignature(I2PAppContext ctx, byte buffer[]) {
-        return verifySignature(ctx, null, buffer);    
+        return verifySignature(ctx, null, buffer);
     }
 
     /**
-     * Determine whether the signature on the data is valid.  
+     * Determine whether the signature on the data is valid.
      *
      * @param ctx Application context
      * @param altSPK Signing key to verify with, ONLY if there is no FROM field in this packet.
@@ -789,9 +823,9 @@ class Packet {
         SigningPublicKey spk = _optionFrom != null ? _optionFrom.getSigningPublicKey() : altSPK;
         // prevent receiveNewSyn() ... !active ... sendReset() ... verifySignature ... NPE
         if (spk == null) return false;
-        
+
         int size = writtenSize();
-        
+
         if (buffer == null)
             buffer = new byte[size];
         if (isFlagSet(FLAG_SIGNATURE_OFFLINE)) {
@@ -837,7 +871,7 @@ class Packet {
         // Fixup of signature if we guessed wrong on the type in readPacket(), which could happen
         // on a close or reset packet where we have a signature without a FROM
         if (type != _optionSignature.getType() &&
-            type.getSigLen() == _optionSignature.length()) {
+                type.getSigLen() == _optionSignature.length()) {
             //Log l = ctx.logManager().getLog(Packet.class);
             //if (l.shouldDebug())
             //    l.debug("Fixing up sig type from " + _optionSignature.getType() + " to " + type);
@@ -863,13 +897,13 @@ class Packet {
         }
         return ok;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder str = formatAsString();
         return str.toString();
     }
-    
+
     protected StringBuilder formatAsString() {
         StringBuilder buf = new StringBuilder(64);
         buf.append(toId(_sendStreamId));
@@ -878,7 +912,7 @@ class Packet {
         if (_sequenceNum != 0 || isFlagSet(FLAG_SYNCHRONIZE))
             buf.append(" #").append(_sequenceNum);
         // else an ack-only packet
-        //if (_sequenceNum < 10) 
+        //if (_sequenceNum < 10)
         //    buf.append(" \t"); // so the tab lines up right
         //else
         //    buf.append('\t');
@@ -887,11 +921,11 @@ class Packet {
             buf.append(" data: ").append(_payload.getValid());
         return buf;
     }
-    
+
     static final String toId(long id) {
         return Base64.encode(DataHelper.toLong(4, id)).replace("==", "");
     }
-    
+
     private final void toFlagString(StringBuilder buf) {
         if (isFlagSet(FLAG_SYNCHRONIZE)) buf.append(" SYN");
         if (isFlagSet(FLAG_CLOSE)) buf.append(" CLOSE");
@@ -938,9 +972,9 @@ class Packet {
      *  so we can use standard debugging tools.
      */
     public void logTCPDump(Connection con) {
-            try {
-                I2PSocketManagerFull.pcapWriter.write(this, con);
-            } catch (IOException ioe) {
-            }
+        try {
+            I2PSocketManagerFull.pcapWriter.write(this, con);
+        } catch (IOException ioe) {
+        }
     }
 }

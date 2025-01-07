@@ -16,7 +16,7 @@ public class SizeMeasure {
         long used = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
         long usedPer = used / num;
         System.out
-                  .println(num + ": create array - Used: " + used + " bytes (or " + usedPer + " bytes per array entry)");
+        .println(num + ": create array - Used: " + used + " bytes (or " + usedPer + " bytes per array entry)");
 
         int i = 0;
         try {
@@ -43,7 +43,7 @@ public class SizeMeasure {
         long used = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
         long usedPer = used / num;
         System.out
-                  .println(num + ": create array - Used: " + used + " bytes (or " + usedPer + " bytes per array entry)");
+        .println(num + ": create array - Used: " + used + " bytes (or " + usedPer + " bytes per array entry)");
 
         for (int i = 0; i < num; i++)
             freq[i] = new Frequency(1234);

@@ -250,8 +250,8 @@ public class NewsManager implements ClientApp {
             // 16 - gets rid of the date as well (assuming form "<h3>yyyy-mm-dd: Foobarbaz...")
             // Don't truncate the "congratulations" in initial news
             if (newsContent.length() > start + 16 &&
-                newsContent.substring(start + 4, start + 6).equals("20") &&
-                newsContent.substring(start + 14, start + 16).equals(": ")) {
+                    newsContent.substring(start + 4, start + 6).equals("20") &&
+                    newsContent.substring(start + 14, start + 16).equals(": ")) {
                 // initialNews.xml, or old news.xml from server
                 entry.updated = RFC3339Date.parse3339Date(newsContent.substring(start + 4, start + 14));
                 newsContent = newsContent.substring(start+16);
@@ -306,22 +306,22 @@ public class NewsManager implements ClientApp {
         return rv;
     }
 
-/****
-    public static void main(String[] args) {
-        if (args.length != 0) {
-            System.err.println("Usage: NewsManager");
-            System.exit(1);
+    /****
+        public static void main(String[] args) {
+            if (args.length != 0) {
+                System.err.println("Usage: NewsManager");
+                System.exit(1);
+            }
+            I2PAppContext ctx = new I2PAppContext();
+            NewsManager mgr = new NewsManager(ctx, null, null);
+            mgr.startup();
+            List<NewsEntry> entries = mgr.getEntries();
+            System.out.println("Loaded " + entries.size() + " news entries");
+            for (int i = 0; i < entries.size(); i++) {
+                NewsEntry e = entries.get(i);
+                System.out.println("\n****** News #" + (i+1) + ": " + e.title + ' ' + new Date(e.updated) +
+                                   "\nLink: " + e.link + '\n' + e.content);
+            }
         }
-        I2PAppContext ctx = new I2PAppContext();
-        NewsManager mgr = new NewsManager(ctx, null, null);
-        mgr.startup();
-        List<NewsEntry> entries = mgr.getEntries();
-        System.out.println("Loaded " + entries.size() + " news entries");
-        for (int i = 0; i < entries.size(); i++) {
-            NewsEntry e = entries.get(i);
-            System.out.println("\n****** News #" + (i+1) + ": " + e.title + ' ' + new Date(e.updated) +
-                               "\nLink: " + e.link + '\n' + e.content);
-        }
-    }
-****/
+    ****/
 }

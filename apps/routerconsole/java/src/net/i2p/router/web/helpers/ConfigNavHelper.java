@@ -21,38 +21,41 @@ public class ConfigNavHelper extends HelperBase {
 
     /** configX.jsp */
     private static final String pages[] =
-                                          {"", "net", "ui", "sidebar", "home", "service", "update", "tunnels",
-                                           "clients", "peer", "keyring", "logging", "stats",
-                                           "i2cp", "plugins", "webapps",
-                                           "reseed", "advanced", "family" };
+    {   "", "net", "ui", "sidebar", "home", "service", "update", "tunnels",
+        "clients", "peer", "keyring", "logging", "stats",
+        "i2cp", "plugins", "webapps",
+        "reseed", "advanced", "family"
+    };
 
     private static final String titles[] =
-                                          {_x("Bandwidth"), _x("Network"), _x("UI"), _x("Sidebar"), _x("Home Page"),
-                                           _x("Service"), _x("Update"), _x("Tunnels"),
-                                           _x("Clients"), _x("Peers"), _x("Keyring"), _x("Logging"), _x("Stats"),
-                                           _x("I2CP"), _x("Plugins"), _x("Web Apps"),
-                                           _x("Reseeding"), _x("Advanced"), _x("Router Family") };
+    {   _x("Bandwidth"), _x("Network"), _x("UI"), _x("Sidebar"), _x("Home Page"),
+        _x("Service"), _x("Update"), _x("Tunnels"),
+        _x("Clients"), _x("Peers"), _x("Keyring"), _x("Logging"), _x("Stats"),
+        _x("I2CP"), _x("Plugins"), _x("Web Apps"),
+        _x("Reseeding"), _x("Advanced"), _x("Router Family")
+    };
 
     /** @since 0.9.19 */
     private static class Tab {
         public final String page, title;
         public Tab(String p, String t) {
-            page = p; title = t;
+            page = p;
+            title = t;
         }
     }
 
     /** @since 0.9.19 */
     private class TabComparator implements Comparator<Tab> {
-         private static final long serialVersionUID = 1L;
-         private final Collator coll;
+        private static final long serialVersionUID = 1L;
+        private final Collator coll;
 
-         public TabComparator() {
-             super();
-             coll = Collator.getInstance(new Locale(Messages.getLanguage(_context)));
-         }
+        public TabComparator() {
+            super();
+            coll = Collator.getInstance(new Locale(Messages.getLanguage(_context)));
+        }
 
-         public int compare(Tab l, Tab r) {
-             return coll.compare(l.title, r.title);
+        public int compare(Tab l, Tab r) {
+            return coll.compare(l.title, r.title);
         }
     }
 

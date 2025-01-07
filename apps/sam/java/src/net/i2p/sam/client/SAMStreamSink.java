@@ -56,7 +56,7 @@ public class SAMStreamSink {
     /** Connection id (Integer) to peer (Flooder) */
     private final Map<String, Sink> _remotePeers;
     private static I2PSSLSocketFactory _sslSocketFactory;
-    
+
     private static final int STREAM=0, DG=1, V1DG=2, RAW=3, V1RAW=4, RAWHDR = 5, FORWARD = 6, FORWARDSSL=7;
     private static final int PRIMARY=8;
     private static final String USAGE = "Usage: SAMStreamSink [-s] [-m mode] [-v version] [-b samHost] [-p samPort]\n" +
@@ -84,7 +84,7 @@ public class SAMStreamSink {
         String opts = "inbound.length=0 outbound.length=0";
         int c;
         while ((c = g.getopt()) != -1) {
-          switch (c) {
+            switch (c) {
             case 's':
                 isSSL = true;
                 break;
@@ -131,7 +131,7 @@ public class SAMStreamSink {
             default:
                 System.err.println(USAGE);
                 return;
-          }  // switch
+            }  // switch
         } // while
 
         int startArgs = g.getOptind();
@@ -144,7 +144,7 @@ public class SAMStreamSink {
             version = "3.3";
         }
         if ((user == null && password != null) ||
-            (user != null && password == null)) {
+                (user != null && password == null)) {
             System.err.println("both user and password or neither");
             return;
         }
@@ -154,10 +154,10 @@ public class SAMStreamSink {
         }
         I2PAppContext ctx = I2PAppContext.getGlobalContext();
         SAMStreamSink sink = new SAMStreamSink(ctx, host, port,
-                                                    args[startArgs], args[startArgs + 1]);
+                                               args[startArgs], args[startArgs + 1]);
         sink.startup(version, isSSL, mode, user, password, opts);
     }
-    
+
     public SAMStreamSink(I2PAppContext ctx, String samHost, String samPort, String destFile, String sinkDir) {
         _context = ctx;
         _log = ctx.logManager().getLog(SAMStreamSink.class);
@@ -168,7 +168,7 @@ public class SAMStreamSink {
         _conOptions = "";
         _remotePeers = new HashMap<String, Sink>();
     }
-    
+
     public void startup(String version, boolean isSSL, int mode, String user, String password, String sessionOpts) {
         if (_log.shouldLog(Log.DEBUG))
             _log.debug("Starting up");
@@ -388,7 +388,7 @@ public class SAMStreamSink {
             }
         }
     }
-    
+
     private class SinkEventHandler extends SAMEventHandler {
 
         protected final OutputStream _out;
@@ -427,7 +427,7 @@ public class SAMStreamSink {
         }
 
         @Override
-        public void streamConnectedReceived(String dest, String id) {  
+        public void streamConnectedReceived(String dest, String id) {
             if (_log.shouldLog(Log.DEBUG))
                 _log.debug("Connection " + id + " received from " + dest);
 
@@ -507,7 +507,10 @@ public class SAMStreamSink {
                 }
             } catch (IOException ioe) {
                 _log.error("Error creating a new sink", ioe);
-                try { _in.close(); } catch (IOException ioe2) {}
+                try {
+                    _in.close();
+                }
+                catch (IOException ioe2) {}
                 if (sink != null)
                     sink.closed();
                 return;
@@ -553,11 +556,14 @@ public class SAMStreamSink {
             } catch (IOException ioe) {
                 _log.error("Error reading", ioe);
             } finally {
-                try { _in.close(); } catch (IOException ioe) {}
+                try {
+                    _in.close();
+                }
+                catch (IOException ioe) {}
             }
         }
     }
-    
+
     private Socket connect(boolean isSSL) throws IOException {
         int port = Integer.parseInt(_samPort);
         if (!isSSL)
@@ -576,7 +582,7 @@ public class SAMStreamSink {
         I2PSSLSocketFactory.verifyHostname(_context, sock, _samHost);
         return sock;
     }
-    
+
     /**
      * @param isPrimary is this the control socket
      * @return our b64 dest or null
@@ -596,7 +602,7 @@ public class SAMStreamSink {
                 String hisVersion = eventHandler.waitForHelloReply();
                 if (_log.shouldLog(Log.DEBUG))
                     _log.debug("Hello reply found: " + hisVersion);
-                if (hisVersion == null) 
+                if (hisVersion == null)
                     throw new IOException("Hello failed");
                 if (!isPrimary) {
                     // only for v3
@@ -618,7 +624,7 @@ public class SAMStreamSink {
                     if (mode == FORWARD || mode == FORWARDSSL) {
                         // docs were wrong, we do not get a STREAM STATUS if SILENT=true for ACCEPT
                         boolean ok = eventHandler.waitForStreamStatusReply();
-                        if (!ok) 
+                        if (!ok)
                             throw new IOException("Stream status failed");
                         if (_log.shouldLog(Log.DEBUG))
                             _log.debug("got STREAM STATUS, awaiting connection");
@@ -694,7 +700,7 @@ public class SAMStreamSink {
                     if (_log.shouldLog(Log.DEBUG))
                         _log.debug("SESSION CREATE STYLE=PRIMARY sent");
                     boolean ok = eventHandler.waitForSessionCreateReply();
-                    if (!ok) 
+                    if (!ok)
                         throw new IOException("SESSION CREATE STYLE=PRIMARY failed");
                     if (_log.shouldLog(Log.DEBUG))
                         _log.debug("SESSION CREATE STYLE=PRIMARY reply found: " + ok);
@@ -706,15 +712,15 @@ public class SAMStreamSink {
                 if (_log.shouldLog(Log.DEBUG))
                     _log.debug("SESSION " + command + " sent");
                 //if (mode == STREAM) {
-                    boolean ok;
-                    if (primaryMode)
-                        ok = eventHandler.waitForSessionAddReply();
-                    else
-                        ok = eventHandler.waitForSessionCreateReply();
-                    if (!ok) 
-                        throw new IOException("SESSION " + command + " failed");
-                    if (_log.shouldLog(Log.DEBUG))
-                        _log.debug("SESSION " + command + " reply found: " + ok);
+                boolean ok;
+                if (primaryMode)
+                    ok = eventHandler.waitForSessionAddReply();
+                else
+                    ok = eventHandler.waitForSessionCreateReply();
+                if (!ok)
+                    throw new IOException("SESSION " + command + " failed");
+                if (_log.shouldLog(Log.DEBUG))
+                    _log.debug("SESSION " + command + " reply found: " + ok);
                 //}
                 if (primaryMode) {
                     // do a bunch more
@@ -765,16 +771,16 @@ public class SAMStreamSink {
             }
         }
     }
-    
+
     private boolean writeDest(String dest) {
         File f = new File(_destFile);
-/*
-        if (f.exists()) {
-            if (_log.shouldLog(Log.DEBUG))
-                _log.debug("Destination file exists, not overwriting: " + _destFile);
-            return false;
-        }
-*/
+        /*
+                if (f.exists()) {
+                    if (_log.shouldLog(Log.DEBUG))
+                        _log.debug("Destination file exists, not overwriting: " + _destFile);
+                    return false;
+                }
+        */
         FileOutputStream fos = null;
         try {
             fos = new FileOutputStream(f);
@@ -785,19 +791,22 @@ public class SAMStreamSink {
             _log.error("Error writing to " + _destFile, e);
             return false;
         } finally {
-            if(fos != null) try { fos.close(); } catch(IOException ioe) {}
+            if(fos != null) try {
+                    fos.close();
+                }
+                catch(IOException ioe) {}
         }
         return true;
     }
-    
+
     private class Sink {
-        private final String _connectionId; 
+        private final String _connectionId;
         private final String _remoteDestination;
         private volatile boolean _closed;
         private final long _started;
         private long _lastReceivedOn;
         private final OutputStream _out;
-        
+
         public Sink(String conId, String remDest) throws IOException {
             _connectionId = conId;
             _remoteDestination = remDest;
@@ -806,27 +815,31 @@ public class SAMStreamSink {
             _context.statManager().createRateStat("sink." + conId + ".totalReceived", "Data size received", "swarm", new long[] { 30*1000, 60*1000, 5*60*1000 });
             _context.statManager().createRateStat("sink." + conId + ".started", "When we start", "swarm", new long[] { 5*60*1000 });
             _context.statManager().createRateStat("sink." + conId + ".lifetime", "How long we talk to a peer", "swarm", new long[] { 5*60*1000 });
-            
+
             File sinkDir = new File(_sinkDir);
             if (!sinkDir.exists())
                 sinkDir.mkdirs();
-            
+
             File out = File.createTempFile("sink", ".dat", sinkDir);
             if (_log.shouldWarn())
                 _log.warn("outputting to " + out);
             _out = new FileOutputStream(out);
             _started = _context.clock().now();
         }
-        
-        public String getConnectionId() { return _connectionId; }
-        public String getDestination() { return _remoteDestination; }
-        
+
+        public String getConnectionId() {
+            return _connectionId;
+        }
+        public String getDestination() {
+            return _remoteDestination;
+        }
+
         public void closed() {
             if (_closed) return;
             _closed = true;
             long lifetime = _context.clock().now() - _started;
             _context.statManager().addRateData("sink." + _connectionId + ".lifetime", lifetime, lifetime);
-            try { 
+            try {
                 _out.close();
             } catch (IOException ioe) {
                 _log.info("Error closing", ioe);
@@ -843,8 +856,8 @@ public class SAMStreamSink {
             }
             if (_log.shouldLog(Log.DEBUG))
                 _log.debug("Received " + len + " on " + _connectionId + " after " + (_context.clock().now()-_lastReceivedOn)
-                       + "ms with " + _remoteDestination.substring(0,6));
-            
+                           + "ms with " + _remoteDestination.substring(0,6));
+
             _lastReceivedOn = _context.clock().now();
         }
     }

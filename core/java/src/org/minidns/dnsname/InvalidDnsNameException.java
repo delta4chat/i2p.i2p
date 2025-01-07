@@ -24,7 +24,7 @@ public abstract class InvalidDnsNameException extends IllegalStateException {
 
     public static class LabelTooLongException extends InvalidDnsNameException {
         /**
-         * 
+         *
          */
         private static final long serialVersionUID = 1L;
 
@@ -38,14 +38,14 @@ public abstract class InvalidDnsNameException extends IllegalStateException {
         @Override
         public String getMessage() {
             return "The DNS name '" + ace + "' contains the label '" + label
-                    + "' which exceeds the maximum label length of " + DnsLabel.MAX_LABEL_LENGTH_IN_OCTETS + " octets by "
-                    + (label.length() - DnsLabel.MAX_LABEL_LENGTH_IN_OCTETS) + " octets.";
+                   + "' which exceeds the maximum label length of " + DnsLabel.MAX_LABEL_LENGTH_IN_OCTETS + " octets by "
+                   + (label.length() - DnsLabel.MAX_LABEL_LENGTH_IN_OCTETS) + " octets.";
         }
     }
 
     public static class DNSNameTooLongException extends InvalidDnsNameException {
         /**
-         * 
+         *
          */
         private static final long serialVersionUID = 1L;
 
@@ -59,8 +59,8 @@ public abstract class InvalidDnsNameException extends IllegalStateException {
         @Override
         public String getMessage() {
             return "The DNS name '" + ace + "' exceeds the maximum name length of "
-                    + DnsName.MAX_DNSNAME_LENGTH_IN_OCTETS + " octets by "
-                    + (bytes.length - DnsName.MAX_DNSNAME_LENGTH_IN_OCTETS) + " octets.";
+                   + DnsName.MAX_DNSNAME_LENGTH_IN_OCTETS + " octets by "
+                   + (bytes.length - DnsName.MAX_DNSNAME_LENGTH_IN_OCTETS) + " octets.";
         }
     }
 }

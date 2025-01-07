@@ -141,8 +141,8 @@ class DHTTracker {
      */
     public void renderStatusHTML(StringBuilder buf) {
         buf.append("<b>DHT tracker:</b> ").append(_torrentCount).append(" torrents ")
-           .append(_peerCount).append(" peers ")
-           .append(DataHelper.formatDuration(_expireTime)).append(" expiration<br>");
+        .append(_peerCount).append(" peers ")
+        .append(DataHelper.formatDuration(_expireTime)).append(" expiration<br>");
     }
 
     private class Cleaner extends SimpleTimer2.TimedEvent {
@@ -162,22 +162,22 @@ class DHTTracker {
                 Peers p = iter.next();
                 int recent = 0;
                 for (Iterator<Peer> iterp = p.values().iterator(); iterp.hasNext(); ) {
-                     Peer peer = iterp.next();
-                     if (peer.lastSeen() < now - _expireTime)
-                         iterp.remove();
-                     else {
-                         recent++;
-                         peerCount++;
-                     }
+                    Peer peer = iterp.next();
+                    if (peer.lastSeen() < now - _expireTime)
+                        iterp.remove();
+                    else {
+                        recent++;
+                        peerCount++;
+                    }
                 }
                 if (recent > MAX_PEERS_PER_TORRENT) {
                     // too many, delete at random
                     // TODO sort and remove oldest?
                     // TODO per-torrent adjustable expiration?
                     for (Iterator<Peer> iterp = p.values().iterator(); iterp.hasNext() && p.size() > MAX_PEERS_PER_TORRENT; ) {
-                         iterp.next();
-                         iterp.remove();
-                         peerCount--;
+                        iterp.next();
+                        iterp.remove();
+                        peerCount--;
                     }
                     torrentCount++;
                     tooMany = true;
@@ -197,9 +197,9 @@ class DHTTracker {
 
             if (_log.shouldLog(Log.DEBUG))
                 _log.debug("DHT tracker cleaner done, now with " +
-                         torrentCount + " torrents, " +
-                         peerCount + " peers, " +
-                         DataHelper.formatDuration(_expireTime) + " expiration");
+                           torrentCount + " torrents, " +
+                           peerCount + " peers, " +
+                           DataHelper.formatDuration(_expireTime) + " expiration");
             _peerCount = peerCount;
             _torrentCount = torrentCount;
             schedule(tooMany ? CLEAN_TIME / 3 : CLEAN_TIME);

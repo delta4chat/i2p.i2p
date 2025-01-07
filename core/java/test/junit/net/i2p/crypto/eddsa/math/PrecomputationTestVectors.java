@@ -48,23 +48,26 @@ public class PrecomputationTestVectors {
                 } else if (line.startsWith("  { ")) {
                     String ypxStr = line.substring(4, line.lastIndexOf(' '));
                     FieldElement ypx = field.fromByteArray(
-                            Utils.hexToBytes(ypxStr));
+                                           Utils.hexToBytes(ypxStr));
                     line = file.readLine();
                     String ymxStr = line.substring(4, line.lastIndexOf(' '));
                     FieldElement ymx = field.fromByteArray(
-                            Utils.hexToBytes(ymxStr));
+                                           Utils.hexToBytes(ymxStr));
                     line = file.readLine();
                     String xy2dStr = line.substring(4, line.lastIndexOf(' '));
                     FieldElement xy2d = field.fromByteArray(
-                            Utils.hexToBytes(xy2dStr));
+                                            Utils.hexToBytes(xy2dStr));
                     precmp[row][col] = GroupElement.precomp(curve,
-                            ypx, ymx, xy2d);
+                                                            ypx, ymx, xy2d);
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            if (file != null) try { file.close(); } catch (IOException e) {}
+            if (file != null) try {
+                    file.close();
+                }
+                catch (IOException e) {}
         }
         return precmp;
     }
@@ -88,23 +91,26 @@ public class PrecomputationTestVectors {
                 } else if (line.startsWith("  { ")) {
                     String ypxStr = line.substring(4, line.lastIndexOf(' '));
                     FieldElement ypx = field.fromByteArray(
-                            Utils.hexToBytes(ypxStr));
+                                           Utils.hexToBytes(ypxStr));
                     line = file.readLine();
                     String ymxStr = line.substring(4, line.lastIndexOf(' '));
                     FieldElement ymx = field.fromByteArray(
-                            Utils.hexToBytes(ymxStr));
+                                           Utils.hexToBytes(ymxStr));
                     line = file.readLine();
                     String xy2dStr = line.substring(4, line.lastIndexOf(' '));
                     FieldElement xy2d = field.fromByteArray(
-                            Utils.hexToBytes(xy2dStr));
+                                            Utils.hexToBytes(xy2dStr));
                     dblPrecmp[row] = GroupElement.precomp(curve,
-                            ypx, ymx, xy2d);
+                                                          ypx, ymx, xy2d);
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            if (file != null) try { file.close(); } catch (IOException e) {}
+            if (file != null) try {
+                    file.close();
+                }
+                catch (IOException e) {}
         }
         return dblPrecmp;
     }

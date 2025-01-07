@@ -31,7 +31,7 @@ final class MuxedEngine {
      */
     public CloveSet decrypt(byte data[], PrivateKey elgKey, PrivateKey ecKey, MuxedSKM keyManager) throws DataFormatException {
         if (elgKey.getType() != EncType.ELGAMAL_2048 ||
-            ecKey.getType() != EncType.ECIES_X25519)
+                ecKey.getType() != EncType.ECIES_X25519)
             throw new IllegalArgumentException();
         final boolean debug = _log.shouldDebug();
         CloveSet rv = null;

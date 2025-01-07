@@ -173,8 +173,8 @@ public class MagnetURI {
                 String protocol = u.getScheme();
                 String host = u.getHost();
                 if (protocol == null || host == null ||
-                    !protocol.toLowerCase(Locale.US).equals("http") ||
-                    !host.toLowerCase(Locale.US).endsWith(".i2p"))
+                        !protocol.toLowerCase(Locale.US).equals("http") ||
+                        !host.toLowerCase(Locale.US).endsWith(".i2p"))
                     continue;
                 return t;
             } catch(URISyntaxException use) {}

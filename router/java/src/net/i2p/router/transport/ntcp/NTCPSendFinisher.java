@@ -45,7 +45,7 @@ class NTCPSendFinisher {
         _transport = transport;
         //_context.statManager().createRateStat("ntcp.sendFinishTime", "How long to queue and excecute msg.afterSend()", "ntcp", new long[] {5*1000});
     }
-    
+
     public synchronized void start() {
         _executor = new CustomThreadPoolExecutor(THREADS);
     }
@@ -63,13 +63,13 @@ class NTCPSendFinisher {
             _log.warn("NTCP send finisher stopped, discarding msg.afterSend()");
         }
     }
-    
+
     // not really needed for now but in case we want to add some hooks like afterExecute()
     private static class CustomThreadPoolExecutor extends ThreadPoolExecutor {
         public CustomThreadPoolExecutor(int num) {
-             // use unbounded queue, so maximumPoolSize and keepAliveTime have no effect
-             super(num, num, 10*1000, TimeUnit.MILLISECONDS,
-                   new LinkedBlockingQueue<Runnable>(), new CustomThreadFactory());
+            // use unbounded queue, so maximumPoolSize and keepAliveTime have no effect
+            super(num, num, 10*1000, TimeUnit.MILLISECONDS,
+                  new LinkedBlockingQueue<Runnable>(), new CustomThreadFactory());
         }
     }
 

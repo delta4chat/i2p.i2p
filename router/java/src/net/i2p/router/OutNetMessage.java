@@ -54,7 +54,7 @@ public class OutNetMessage implements CDPQEntry {
      * (some JVMs have less than 10ms resolution, so the Long above doesn't guarantee order)
      */
     private List<String> _timestampOrder;
-    
+
     /**
      *  Priorities, higher is higher priority.
      *  @since 0.9.3
@@ -114,16 +114,16 @@ public class OutNetMessage implements CDPQEntry {
         if (_shouldTimestamp)
             timestamp("Created");
         //_context.messageStateMonitor().outboundMessageAdded();
-        //_context.statManager().createRateStat("outNetMessage.timeToDiscard", 
+        //_context.statManager().createRateStat("outNetMessage.timeToDiscard",
         //                                      "How long until we discard an outbound msg?",
         //                                      "OutNetMessage", new long[] { 5*60*1000, 30*60*1000, 60*60*1000 });
     }
-    
+
     /**
      * Stamp the message's progress.
      * Only useful if log level is INFO or DEBUG
      *
-     * @param eventName what occurred 
+     * @param eventName what occurred
      */
     public void timestamp(String eventName) {
         if (_shouldTimestamp) {
@@ -171,25 +171,31 @@ public class OutNetMessage implements CDPQEntry {
             _timestampOrder = new ArrayList<String>(8);
         }
     }
-    
+
     /**
      * @deprecated
      * @return null always
      */
     @Deprecated
-    public Exception getCreatedBy() { return null; }
-    
+    public Exception getCreatedBy() {
+        return null;
+    }
+
     /**
      * Specifies the router to which the message should be delivered.
      * Generally non-null but may be null in special cases.
      */
-    public RouterInfo getTarget() { return _target; }
+    public RouterInfo getTarget() {
+        return _target;
+    }
 
     /**
      * Specifies the message to be sent.
      * Generally non-null but may be null in special cases.
      */
-    public I2NPMessage getMessage() { return _message; }
+    public I2NPMessage getMessage() {
+        return _message;
+    }
 
     /**
      *  For debugging only.
@@ -199,9 +205,13 @@ public class OutNetMessage implements CDPQEntry {
         return _message != null ? _message.getClass().getSimpleName() : "null";
     }
 
-    public int getMessageTypeId() { return _messageTypeId; }
-    public long getMessageId() { return _messageId; }
-    
+    public int getMessageTypeId() {
+        return _messageTypeId;
+    }
+    public long getMessageId() {
+        return _messageId;
+    }
+
     /**
      * How large the message is, including the full 16 byte header.
      * Transports with different header sizes should adjust.
@@ -209,7 +219,7 @@ public class OutNetMessage implements CDPQEntry {
     public int getMessageSize() {
         return _messageSize;
     }
-    
+
     /**
      *  Copies the message data to outbuffer.
      *  Used only by VM Comm System.
@@ -223,14 +233,16 @@ public class OutNetMessage implements CDPQEntry {
             return len;
         }
     }
-    
+
     /**
      * Specify the priority of the message, where higher numbers are higher
      * priority.  Higher priority messages should be delivered before lower
      * priority ones, though some algorithm may be used to avoid starvation.
      *
      */
-    public int getPriority() { return _priority; }
+    public int getPriority() {
+        return _priority;
+    }
 
     /**
      * Specify the # ms since the epoch after which if the message has not been
@@ -239,49 +251,71 @@ public class OutNetMessage implements CDPQEntry {
      * expiration is ignored and the expiration from the ReplySelector is used.
      *
      */
-    public long getExpiration() { return _expiration; }
+    public long getExpiration() {
+        return _expiration;
+    }
 
     /**
      * After the message is successfully passed to the router specified, the
      * given job is enqueued.
      *
      */
-    public Job getOnSendJob() { return _onSend; }
-    public void setOnSendJob(Job job) { _onSend = job; }
+    public Job getOnSendJob() {
+        return _onSend;
+    }
+    public void setOnSendJob(Job job) {
+        _onSend = job;
+    }
 
     /**
      * If the router could not be reached or the expiration passed, this job
      * is enqueued.
      *
      */
-    public Job getOnFailedSendJob() { return _onFailedSend; }
-    public void setOnFailedSendJob(Job job) { _onFailedSend = job; }
+    public Job getOnFailedSendJob() {
+        return _onFailedSend;
+    }
+    public void setOnFailedSendJob(Job job) {
+        _onFailedSend = job;
+    }
 
     /**
      * If the MessageSelector detects a reply, this job is enqueued
      *
      */
-    public ReplyJob getOnReplyJob() { return _onReply; }
-    public void setOnReplyJob(ReplyJob job) { _onReply = job; }
+    public ReplyJob getOnReplyJob() {
+        return _onReply;
+    }
+    public void setOnReplyJob(ReplyJob job) {
+        _onReply = job;
+    }
 
     /**
      * If the Message selector is specified but it doesn't find a reply before
      * its expiration passes, this job is enqueued.
      */
-    public Job getOnFailedReplyJob() { return _onFailedReply; }
-    public void setOnFailedReplyJob(Job job) { _onFailedReply = job; }
+    public Job getOnFailedReplyJob() {
+        return _onFailedReply;
+    }
+    public void setOnFailedReplyJob(Job job) {
+        _onFailedReply = job;
+    }
 
     /**
      * Defines a MessageSelector to find a reply to this message.
      *
      */
-    public MessageSelector getReplySelector() { return _replySelector; }
-    public void setReplySelector(MessageSelector selector) { _replySelector = selector; }
-    
+    public MessageSelector getReplySelector() {
+        return _replySelector;
+    }
+    public void setReplySelector(MessageSelector selector) {
+        _replySelector = selector;
+    }
+
     /**
      * As of 0.9.55, returns the previous number of failed transports.
      */
-    public synchronized int transportFailed(String transportStyle) { 
+    public synchronized int transportFailed(String transportStyle) {
         int rv;
         if (_failedTransports == null) {
             _failedTransports = new ArrayList<String>(2);
@@ -289,36 +323,46 @@ public class OutNetMessage implements CDPQEntry {
         } else {
             rv = _failedTransports.size();
         }
-        _failedTransports.add(transportStyle); 
+        _failedTransports.add(transportStyle);
         return rv;
     }
 
     /**
      * @since 0.9.55
      */
-    public synchronized int getFailedTransportCount() { 
-        return (_failedTransports == null ? 0 : _failedTransports.size()); 
+    public synchronized int getFailedTransportCount() {
+        return (_failedTransports == null ? 0 : _failedTransports.size());
     }
 
     /**
      * As of 0.9.55, changed from a Set to a List
      */
-    public synchronized List<String> getFailedTransports() { 
-        return (_failedTransports == null ? Collections.<String>emptyList() : _failedTransports); 
+    public synchronized List<String> getFailedTransports() {
+        return (_failedTransports == null ? Collections.<String>emptyList() : _failedTransports);
     }
-    
+
     /** when did the sending process begin */
-    public long getSendBegin() { return _sendBegin; }
+    public long getSendBegin() {
+        return _sendBegin;
+    }
 
-    public void beginSend() { _sendBegin = _context.clock().now(); }
+    public void beginSend() {
+        _sendBegin = _context.clock().now();
+    }
 
-    public long getCreated() { return _created; }
+    public long getCreated() {
+        return _created;
+    }
 
     /** time since the message was created */
-    public long getLifetime() { return _context.clock().now() - _created; }
+    public long getLifetime() {
+        return _context.clock().now() - _created;
+    }
 
     /** time the transport tries to send the message (including any queueing) */
-    public long getSendTime() { return _context.clock().now() - _sendBegin; }
+    public long getSendTime() {
+        return _context.clock().now() - _sendBegin;
+    }
 
     /**
      *  For CDQ
@@ -371,13 +415,13 @@ public class OutNetMessage implements CDPQEntry {
         return _seqNum;
     }
 
-    /** 
+    /**
      * We've done what we need to do with the data from this message, though
      * we may keep the object around for a while to use its ID, jobs, etc.
      */
     public void discardData() {
     }
-    
+
     @Override
     public String toString() {
         StringBuilder buf = new StringBuilder(256);
@@ -413,30 +457,30 @@ public class OutNetMessage implements CDPQEntry {
         buf.append("]");
         return buf.toString();
     }
-    
+
     /**
      *  Only useful if log level is INFO or DEBUG;
      *  locked_initTimestamps() must have been called previously
      */
     private void renderTimestamps(StringBuilder buf) {
-            synchronized (this) {
-                long lastWhen = -1;
-                for (int i = 0; i < _timestampOrder.size(); i++) {
-                    String name = _timestampOrder.get(i);
-                    Long when = _timestamps.get(name);
-                    buf.append("\t[");
-                    long diff = when.longValue() - lastWhen;
-                    if ( (lastWhen > 0) && (diff > 500) )
-                        buf.append("**");
-                    if (lastWhen > 0)
-                        buf.append(diff);
-                    else
-                        buf.append(0);
-                    buf.append("ms: \t").append(name);
-                    buf.append('=').append(new Date(when.longValue()));
-                    buf.append("]\n");
-                    lastWhen = when.longValue();
-                }
+        synchronized (this) {
+            long lastWhen = -1;
+            for (int i = 0; i < _timestampOrder.size(); i++) {
+                String name = _timestampOrder.get(i);
+                Long when = _timestamps.get(name);
+                buf.append("\t[");
+                long diff = when.longValue() - lastWhen;
+                if ( (lastWhen > 0) && (diff > 500) )
+                    buf.append("**");
+                if (lastWhen > 0)
+                    buf.append(diff);
+                else
+                    buf.append(0);
+                buf.append("ms: \t").append(name);
+                buf.append('=').append(new Date(when.longValue()));
+                buf.append("]\n");
+                lastWhen = when.longValue();
             }
+        }
     }
 }

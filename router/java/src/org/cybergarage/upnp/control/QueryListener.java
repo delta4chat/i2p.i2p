@@ -12,7 +12,7 @@
 *		- first revision.
 *	01/04/04
 *		- Changed the interface.
-*	
+*
 ******************************************************************/
 
 package org.cybergarage.upnp.control;
@@ -21,5 +21,5 @@ import org.cybergarage.upnp.*;
 
 public interface QueryListener
 {
-	public boolean queryControlReceived(StateVariable stateVar);
+    public boolean queryControlReceived(StateVariable stateVar);
 }

@@ -1,6 +1,6 @@
 /*
- * Released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
+ * Released into the public domain
+ * with no warranty of any kind, either expressed or implied.
  */
 package net.i2p.router.client;
 
@@ -63,9 +63,9 @@ class LookupDestJob extends JobImpl {
         super(context);
         _log = context.logManager().getLog(LookupDestJob.class);
         if ((h == null && name == null) ||
-            (h != null && name != null) ||
-            (reqID >= 0 && sessID == null) ||
-            (reqID < 0 && name != null)) {
+                (h != null && name != null) ||
+                (reqID >= 0 && sessID == null) ||
+                (reqID < 0 && name != null)) {
             _log.warn("bad args");
             throw new IllegalArgumentException();
         }
@@ -97,7 +97,7 @@ class LookupDestJob extends JobImpl {
                                 // BlindData from database may have privkey or secret
                                 // check if we need it but don't have it
                                 if ((bd.getAuthRequired() && bd2.getAuthPrivKey() == null) ||
-                                    (bd.getSecretRequired() && (bd2.getSecret() == null || bd2.getSecret().length() == 0))) {
+                                        (bd.getSecretRequired() && (bd2.getSecret() == null || bd2.getSecret().length() == 0))) {
                                     // don't copy over existing info, this will force an immediate
                                     // failure in runJob()
                                     if (_log.shouldDebug())
@@ -109,7 +109,7 @@ class LookupDestJob extends JobImpl {
                                 long now = getContext().clock().now();
                                 bd.setDate(now);
                                 long exp = now + ((bd.getAuthRequired() || bd.getSecretRequired()) ? 365*24*60*60*1000L
-                                                                                                   :  90*24*68*60*1000L);
+                                                  :  90*24*68*60*1000L);
                                 bd.setExpiration(exp);
                                 getContext().netDb().setBlindData(bd);
                             }
@@ -136,10 +136,11 @@ class LookupDestJob extends JobImpl {
         _name = name;
         _blindData = bd;
     }
-    
-    public String getName() { return _name != null ?
-                                     "HostName Lookup for Client" :
-                                     "LeaseSet Lookup for Client";
+
+    public String getName() {
+        return _name != null ?
+               "HostName Lookup for Client" :
+               "LeaseSet Lookup for Client";
     }
 
     public void runJob() {
@@ -200,10 +201,12 @@ class LookupDestJob extends JobImpl {
     }
 
     private class DoneJob extends JobImpl {
-        public DoneJob(RouterContext enclosingContext) { 
+        public DoneJob(RouterContext enclosingContext) {
             super(enclosingContext);
         }
-        public String getName() { return "LeaseSet Lookup Reply to Client"; }
+        public String getName() {
+            return "LeaseSet Lookup Reply to Client";
+        }
         public void runJob() {
             NetworkDatabaseFacade db = _runner.getFloodfillNetworkDatabaseFacade();
             if (db == null)

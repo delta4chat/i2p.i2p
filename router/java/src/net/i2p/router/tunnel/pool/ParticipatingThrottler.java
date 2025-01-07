@@ -83,13 +83,13 @@ class ParticipatingThrottler {
     /**
      *  @since 0.9.52
      */
-/*
-    private class Disconnector implements SimpleTimer.TimedEvent {
-        private final Hash h;
-        public Disconnector(Hash h) { this.h = h; }
-        public void timeReached() {
-            context.commSystem().forceDisconnect(h);
+    /*
+        private class Disconnector implements SimpleTimer.TimedEvent {
+            private final Hash h;
+            public Disconnector(Hash h) { this.h = h; }
+            public void timeReached() {
+                context.commSystem().forceDisconnect(h);
+            }
         }
-    }
-*/
+    */
 }

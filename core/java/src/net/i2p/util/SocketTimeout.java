@@ -33,7 +33,9 @@ public class SocketTimeout extends SimpleTimer2.TimedEvent {
     /**
      *  @param delay The inactivity delay, greater than zero
      */
-    public SocketTimeout(long delay) { this(null, delay); }
+    public SocketTimeout(long delay) {
+        this(null, delay);
+    }
 
     /**
      *  If socket is non-null, or is set later by setSocket(),
@@ -54,7 +56,7 @@ public class SocketTimeout extends SimpleTimer2.TimedEvent {
         if (_cancelled) return;
         long now = System.currentTimeMillis();
         if ((_totalTimeoutTime > 0 && _totalTimeoutTime <= now) ||
-            (_inactivityDelay + _lastActivity <= now)) {
+                (_inactivityDelay + _lastActivity <= now)) {
             if (_targetSocket != null) {
                 try {
                     if (!_targetSocket.isClosed())
@@ -70,7 +72,7 @@ public class SocketTimeout extends SimpleTimer2.TimedEvent {
             }
         }
     }
-    
+
     /**
      *  Change in return value from void to boolean in
      *  0.9.3 accidentally broke Syndie, sorry.
@@ -84,26 +86,32 @@ public class SocketTimeout extends SimpleTimer2.TimedEvent {
     /**
      *  If non-null, will be closed when the timer expires.
      */
-    public void setSocket(Socket s) { _targetSocket = s; }
+    public void setSocket(Socket s) {
+        _targetSocket = s;
+    }
 
     /**
      *  Call when there is activity
      */
-    public void resetTimer() { _lastActivity = System.currentTimeMillis();  }
+    public void resetTimer() {
+        _lastActivity = System.currentTimeMillis();
+    }
 
     /**
      *  Changes the delay provided in the constructor
      *
      *  @param delay greater than zero
      */
-    public void setInactivityTimeout(long delay) { _inactivityDelay = delay; }
+    public void setInactivityTimeout(long delay) {
+        _inactivityDelay = delay;
+    }
 
     /**
      *  If greater than zero, must be greater than the inactivity timeout.
      *
      *  @param timeoutPeriod Time since constructed, or less than or equal to zero to disable
      */
-    public void setTotalTimeoutPeriod(long timeoutPeriod) { 
+    public void setTotalTimeoutPeriod(long timeoutPeriod) {
         if (timeoutPeriod > 0)
             _totalTimeoutTime = _startTime + timeoutPeriod;
         else
@@ -113,8 +121,10 @@ public class SocketTimeout extends SimpleTimer2.TimedEvent {
     /**
      *  If non-null, will be run when the timer expires.
      */
-    public void setTimeoutCommand(Runnable job) { _command = job; }
-    
+    public void setTimeoutCommand(Runnable job) {
+        _command = job;
+    }
+
     @Override
     public String toString() {
         StringBuilder buf = new StringBuilder();

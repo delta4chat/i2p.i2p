@@ -15,7 +15,7 @@ import net.i2p.data.DataHelper;
  * @since 0.9.34
  */
 public class EscapeHTMLWriter extends FilterWriter {
-    
+
     private static final String AMP = "&amp;";
     private static final String QUOT = "&quot;";
     private static final String LT = "&lt;";
@@ -30,43 +30,43 @@ public class EscapeHTMLWriter extends FilterWriter {
     public EscapeHTMLWriter(Writer out) {
         super(out);
     }
-    
+
     @Override
     public void write(int c) throws IOException {
         switch (c) {
-            case '&':
-                out.write(AMP);
-                break;
-            case '"':
-                out.write(QUOT);
-                break;
-            case '<':
-                out.write(LT);
-                break;
-            case '>':
-                out.write(GT);
-                break;
-            case '\'':
-                out.write(APOS);
-                break;
-            case '-':
-                out.write(MDASH);
-                break;
-            case ' ':
-                // this should be breaking but non-collapsing
-                out.write(EMSP);
-                break;
-            case '\t':
-                // this should be breaking but non-collapsing
-                out.write(SP4);
-                break;
-            case '\r':
-                break;
-            case '\n':
-                out.write(BR);
-                break;
-            default:
-                out.write(c);
+        case '&':
+            out.write(AMP);
+            break;
+        case '"':
+            out.write(QUOT);
+            break;
+        case '<':
+            out.write(LT);
+            break;
+        case '>':
+            out.write(GT);
+            break;
+        case '\'':
+            out.write(APOS);
+            break;
+        case '-':
+            out.write(MDASH);
+            break;
+        case ' ':
+            // this should be breaking but non-collapsing
+            out.write(EMSP);
+            break;
+        case '\t':
+            // this should be breaking but non-collapsing
+            out.write(SP4);
+            break;
+        case '\r':
+            break;
+        case '\n':
+            out.write(BR);
+            break;
+        default:
+            out.write(c);
         }
     }
 

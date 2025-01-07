@@ -24,9 +24,12 @@ class Executor implements Runnable {
         while(runn.getAnswer()) {
             SimpleTimer.TimedEvent evt = null;
             synchronized (_readyEvents) {
-                if (_readyEvents.isEmpty()) 
-                    try { _readyEvents.wait(); } catch (InterruptedException ie) {}
-                if (!_readyEvents.isEmpty()) 
+                if (_readyEvents.isEmpty())
+                    try {
+                        _readyEvents.wait();
+                    }
+                    catch (InterruptedException ie) {}
+                if (!_readyEvents.isEmpty())
                     evt = _readyEvents.remove(0);
             }
 

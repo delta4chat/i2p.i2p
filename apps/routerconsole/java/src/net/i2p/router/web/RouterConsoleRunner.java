@@ -86,7 +86,7 @@ import org.tanukisoftware.wrapper.WrapperManager;
  *  Start the router console.
  */
 public class RouterConsoleRunner implements RouterApp {
-        
+
     static {
         // To take effect, must be set before any Jetty classes are loaded
         try {
@@ -207,11 +207,11 @@ public class RouterConsoleRunner implements RouterApp {
             }
         }
         if (_listenHost == null)
-           _listenHost = PortMapper.DEFAULT_HOST;
+            _listenHost = PortMapper.DEFAULT_HOST;
         if (_sslListenHost == null)
-           _sslListenHost = _listenHost;
+            _sslListenHost = _listenHost;
         if (_webAppsDir == null)
-           _webAppsDir = DEFAULT_WEBAPPS_DIR;
+            _webAppsDir = DEFAULT_WEBAPPS_DIR;
         // _listenPort and _sslListenPort are not defaulted, if one or the other is null, do not enable
         if (_listenPort == null && _sslListenPort == null) {
             System.err.println(USAGE);
@@ -219,7 +219,7 @@ public class RouterConsoleRunner implements RouterApp {
         }
         _state = INITIALIZED;
     }
-    
+
     public static void main(String args[]) {
         List<RouterContext> contexts = RouterContext.listContexts();
         if (contexts == null || contexts.isEmpty())
@@ -227,7 +227,7 @@ public class RouterConsoleRunner implements RouterApp {
         RouterConsoleRunner runner = new RouterConsoleRunner(contexts.get(0), null, args);
         runner.startup();
     }
-    
+
     /////// ClientApp methods
 
     /** @since 0.9.4 */
@@ -322,26 +322,26 @@ public class RouterConsoleRunner implements RouterApp {
      *  @since 0.9.48 pulled out of startTrayApp
      */
     static boolean isSystrayEnabled(I2PAppContext context) {
-            // default false except on OSX and non-service windows,
-            // and on Linux KDE and LXDE
-            // Xubuntu XFCE works but doesn't look very good
-            // Ubuntu Unity was far too buggy to enable
-            // Ubuntu GNOME does not work, SystemTray.isSupported() returns false
-            String xdg = System.getenv("XDG_CURRENT_DESKTOP");
-            boolean dflt = !SystemVersion.isService() &&
-                           (SystemVersion.isWindows() ||
-                            SystemVersion.isMac() ||
-                            //"XFCE".equals(xdg) ||
-                            "KDE".equals(xdg) ||
-                            "LXDE".equals(xdg));
-            return context.getProperty(PROP_DTG_ENABLED, dflt);
+        // default false except on OSX and non-service windows,
+        // and on Linux KDE and LXDE
+        // Xubuntu XFCE works but doesn't look very good
+        // Ubuntu Unity was far too buggy to enable
+        // Ubuntu GNOME does not work, SystemTray.isSupported() returns false
+        String xdg = System.getenv("XDG_CURRENT_DESKTOP");
+        boolean dflt = !SystemVersion.isService() &&
+                       (SystemVersion.isWindows() ||
+                        SystemVersion.isMac() ||
+                        //"XFCE".equals(xdg) ||
+                        "KDE".equals(xdg) ||
+                        "LXDE".equals(xdg));
+        return context.getProperty(PROP_DTG_ENABLED, dflt);
     }
 
     private void startTrayApp() {
         // if no permissions, don't even try
         // isLaunchedAsService() always returns true on Linux
         if (GraphicsEnvironment.isHeadless() || SystemVersion.isLinuxService() ||
-            (SystemVersion.isWindows() && _context.hasWrapper() && WrapperManager.isLaunchedAsService())) {
+                (SystemVersion.isWindows() && _context.hasWrapper() && WrapperManager.isLaunchedAsService())) {
             // required true for jrobin to work
             System.setProperty("java.awt.headless", "true");
             return;
@@ -349,11 +349,11 @@ public class RouterConsoleRunner implements RouterApp {
         try {
             if (isSystrayEnabled(_context)) {
                 System.setProperty("java.awt.headless", "false");
-                net.i2p.desktopgui.Main dtg = new net.i2p.desktopgui.Main(_context, _mgr, null);    
+                net.i2p.desktopgui.Main dtg = new net.i2p.desktopgui.Main(_context, _mgr, null);
                 dtg.startup();
             } else {
                 // required true for jrobin to work
-          	System.setProperty("java.awt.headless", "true");
+                System.setProperty("java.awt.headless", "true");
                 // this check is in SysTray but do it here too
                 //if (SystemVersion.isWindows() && (!Boolean.getBoolean("systray.disable")) && (!SystemVersion.is64Bit()))
                 //    SysTray.getInstance();
@@ -492,14 +492,14 @@ public class RouterConsoleRunner implements RouterApp {
         //    //ctp.prestartAllCoreThreads();
         //    _server.setThreadPool(ctp);
         //} catch (Throwable t) {
-            // class not found...
-            //System.out.println("INFO: Jetty concurrent ThreadPool unavailable, using QueuedThreadPool");
-            LinkedBlockingQueue<Runnable> lbq = new LinkedBlockingQueue<Runnable>(4*MAX_THREADS);
-            // min and max threads will be reset below
-            QueuedThreadPool qtp = new QueuedThreadPool(MAX_THREADS, MIN_THREADS, MAX_IDLE_TIME, lbq);
-            qtp.setName(THREAD_NAME);
-            qtp.setDaemon(true);
-            _server = new Server(qtp);
+        // class not found...
+        //System.out.println("INFO: Jetty concurrent ThreadPool unavailable, using QueuedThreadPool");
+        LinkedBlockingQueue<Runnable> lbq = new LinkedBlockingQueue<Runnable>(4*MAX_THREADS);
+        // min and max threads will be reset below
+        QueuedThreadPool qtp = new QueuedThreadPool(MAX_THREADS, MIN_THREADS, MAX_IDLE_TIME, lbq);
+        qtp.setName(THREAD_NAME);
+        qtp.setDaemon(true);
+        _server = new Server(qtp);
         //}
 
         HandlerCollection hColl = new HandlerCollection();
@@ -585,12 +585,15 @@ public class RouterConsoleRunner implements RouterApp {
                             InetSocketAddress isa = new InetSocketAddress(host, 0);
                             testSock.bind(isa);
                         } finally {
-                            if (testSock != null) try { testSock.close(); } catch (IOException ioe) {}
+                            if (testSock != null) try {
+                                    testSock.close();
+                                }
+                                catch (IOException ioe) {}
                         }
                         HttpConfiguration httpConfig = new HttpConfiguration();
                         // number of acceptors, (default) number of selectors
                         ServerConnector lsnr = new ServerConnector(_server, 1, 0,
-                                                                   new HttpConnectionFactory(httpConfig));
+                                new HttpConnectionFactory(httpConfig));
                         //lsnr.setUseDirectBuffers(false);  // default true seems to be leaky
                         lsnr.setHost(host);
                         lsnr.setPort(lport);
@@ -633,7 +636,7 @@ public class RouterConsoleRunner implements RouterApp {
                 while (tok.hasMoreTokens()) {
                     String s = tok.nextToken().trim();
                     if (!s.equals("0.0.0.0") && !s.equals("::") &&
-                        !s.equals("0:0:0:0:0:0:0:0"))
+                            !s.equals("0:0:0:0:0:0:0:0"))
                         altNames.add(s);
                 }
                 String allowed = _context.getProperty(PROP_ALLOWED_HOSTS);
@@ -650,9 +653,9 @@ public class RouterConsoleRunner implements RouterApp {
                     // the X.509 cert password (if not present, verifyKeyStore() returned false)
                     sslFactory.setKeyManagerPassword(_context.getProperty(PROP_KEY_PASSWORD, "thisWontWork"));
                     sslFactory.addExcludeProtocols(I2PSSLSocketFactory.EXCLUDE_PROTOCOLS.toArray(
-                                                   new String[I2PSSLSocketFactory.EXCLUDE_PROTOCOLS.size()]));
+                                                       new String[I2PSSLSocketFactory.EXCLUDE_PROTOCOLS.size()]));
                     sslFactory.addExcludeCipherSuites(I2PSSLSocketFactory.EXCLUDE_CIPHERS.toArray(
-                                                      new String[I2PSSLSocketFactory.EXCLUDE_CIPHERS.size()]));
+                                                          new String[I2PSSLSocketFactory.EXCLUDE_CIPHERS.size()]));
                     List<String> hosts = new ArrayList<String>(2);
                     tok = new StringTokenizer(_sslListenHost, " ,");
                     while (tok.hasMoreTokens()) {
@@ -672,7 +675,10 @@ public class RouterConsoleRunner implements RouterApp {
                                 InetSocketAddress isa = new InetSocketAddress(host, 0);
                                 testSock.bind(isa);
                             } finally {
-                                if (testSock != null) try { testSock.close(); } catch (IOException ioe) {}
+                                if (testSock != null) try {
+                                        testSock.close();
+                                    }
+                                    catch (IOException ioe) {}
                             }
                             HttpConfiguration httpConfig = new HttpConfiguration();
                             httpConfig.setSecureScheme("https");
@@ -680,8 +686,8 @@ public class RouterConsoleRunner implements RouterApp {
                             httpConfig.addCustomizer(new SecureRequestCustomizer());
                             // number of acceptors, (default) number of selectors
                             ServerConnector ssll = new ServerConnector(_server, 1, 0,
-                                                                       new SslConnectionFactory(sslFactory, "http/1.1"),
-                                                                       new HttpConnectionFactory(httpConfig));
+                                    new SslConnectionFactory(sslFactory, "http/1.1"),
+                                    new HttpConnectionFactory(httpConfig));
                             //sssll.setUseDirectBuffers(false);  // default true seems to be leaky
                             ssll.setHost(host);
                             ssll.setPort(sslPort);
@@ -722,11 +728,11 @@ public class RouterConsoleRunner implements RouterApp {
             qtp.setMaxThreads(MAX_THREADS + (2 * boundAddresses));
 
             File tmpdir = new SecureDirectory(workDir, ROUTERCONSOLE + "-" +
-                                                       (_listenPort != null ? _listenPort : _sslListenPort));
+                                              (_listenPort != null ? _listenPort : _sslListenPort));
             tmpdir.mkdir();
             rootServletHandler = new ServletHandler();
             rootWebApp = new LocaleWebAppHandler(_context,
-                                                  "/", _webAppsDir + ROUTERCONSOLE + ".war",
+                                                 "/", _webAppsDir + ROUTERCONSOLE + ".war",
                                                  tmpdir, rootServletHandler);
             try {
                 // Not sure who is supposed to call this, but unless we do,
@@ -751,8 +757,8 @@ public class RouterConsoleRunner implements RouterApp {
 
         // fix up the allowed hosts set (see HostCheckHandler)
         if (listenHosts.contains("0.0.0.0") ||
-            listenHosts.contains("::") ||
-            listenHosts.contains("0:0:0:0:0:0:0:0")) {
+                listenHosts.contains("::") ||
+                listenHosts.contains("0:0:0:0:0:0:0:0")) {
             // empty set says all are valid
             listenHosts.clear();
         } else {
@@ -805,10 +811,10 @@ public class RouterConsoleRunner implements RouterApp {
             if (error) {
                 String port = (_listenPort != null) ? _listenPort : ((_sslListenPort != null) ? _sslListenPort : Integer.toString(DEFAULT_LISTEN_PORT));
                 System.err.println("WARNING: Error starting one or more listeners of the Router Console server.\n" +
-                               "If your console is still accessible at http://127.0.0.1:" + port + "/,\n" +
-                               "this may be a problem only with binding to the IPV6 address ::1.\n" +
-                               "If so, you may ignore this error, or remove the\n" +
-                               "\"::1,\" in the \"clientApp.0.args\" line of the clients.config file.");
+                                   "If your console is still accessible at http://127.0.0.1:" + port + "/,\n" +
+                                   "this may be a problem only with binding to the IPV6 address ::1.\n" +
+                                   "If so, you may ignore this error, or remove the\n" +
+                                   "\"::1,\" in the \"clientApp.0.args\" line of the clients.config file.");
             }
         }
 
@@ -882,8 +888,8 @@ public class RouterConsoleRunner implements RouterApp {
                         System.err.println("Can't find nowebapp.jsp?");
                     }
                 } catch (Throwable me) {
-                     System.err.println(me);
-                     me.printStackTrace();
+                    System.err.println(me);
+                    me.printStackTrace();
                 }
             }
         }
@@ -891,24 +897,24 @@ public class RouterConsoleRunner implements RouterApp {
         Thread t = new I2PAppThread(new StatSummarizer(_context), "StatSummarizer", true);
         t.setPriority(Thread.NORM_PRIORITY - 1);
         t.start();
-        
-            ConsoleUpdateManager um = new ConsoleUpdateManager(_context, _mgr, null);
-            um.start();
-            NewsManager nm = new NewsManager(_context, _mgr, null);
-            nm.startup();
-        
-            if (PluginStarter.pluginsEnabled(_context)) {
-                t = new I2PAppThread(new PluginStarter(_context), "PluginStarter", true);
-                t.setPriority(Thread.NORM_PRIORITY - 1);
-                t.start();
-            }
-            // stat summarizer registers its own hook
-            // RouterAppManager registers its own hook
-            if (_mgr == null)
-                _context.addShutdownTask(new ServerShutdown());
-            ConfigServiceHandler.registerSignalHandler(_context);
+
+        ConsoleUpdateManager um = new ConsoleUpdateManager(_context, _mgr, null);
+        um.start();
+        NewsManager nm = new NewsManager(_context, _mgr, null);
+        nm.startup();
+
+        if (PluginStarter.pluginsEnabled(_context)) {
+            t = new I2PAppThread(new PluginStarter(_context), "PluginStarter", true);
+            t.setPriority(Thread.NORM_PRIORITY - 1);
+            t.start();
+        }
+        // stat summarizer registers its own hook
+        // RouterAppManager registers its own hook
+        if (_mgr == null)
+            _context.addShutdownTask(new ServerShutdown());
+        ConfigServiceHandler.registerSignalHandler(_context);
     }
-    
+
     /**
      * @return success if it exists and we have a password, or it was created successfully.
      * @since 0.8.3
@@ -986,7 +992,7 @@ public class RouterConsoleRunner implements RouterApp {
                 ctx.router().saveConfig(PROP_PW_ENABLE, "false");
             } else {
                 HashLoginService realm = new CustomHashLoginService(JETTY_REALM, context.getContextPath(),
-                                                                    ctx.logManager().getLog(RouterConsoleRunner.class));
+                        ctx.logManager().getLog(RouterConsoleRunner.class));
                 sec.setLoginService(realm);
                 sec.setAuthenticator(authenticator);
                 String[] role = new String[] {JETTY_ROLE};
@@ -1108,14 +1114,14 @@ public class RouterConsoleRunner implements RouterApp {
             return rv;
         }
     }
-    
+
     /** @since 0.8.8 */
     private class ServerShutdown implements Runnable {
         public void run() {
             shutdown(null);
         }
     }
-    
+
     private Properties webAppProperties() {
         return webAppProperties(_context.getConfigDir().getAbsolutePath());
     }
@@ -1130,13 +1136,13 @@ public class RouterConsoleRunner implements RouterApp {
         // String webappConfigFile = _context.getProperty(PROP_WEBAPP_CONFIG_FILENAME, DEFAULT_WEBAPP_CONFIG_FILENAME);
         String webappConfigFile = DEFAULT_WEBAPP_CONFIG_FILENAME;
         File cfgFile = new File(dir, webappConfigFile);
-        
+
         try {
             DataHelper.loadProps(rv, cfgFile);
         } catch (IOException ioe) {
             // _log.warn("Error loading the client app properties from " + cfgFile.getName(), ioe);
         }
-        
+
         return rv;
     }
 
@@ -1144,7 +1150,7 @@ public class RouterConsoleRunner implements RouterApp {
         // String webappConfigFile = _context.getProperty(PROP_WEBAPP_CONFIG_FILENAME, DEFAULT_WEBAPP_CONFIG_FILENAME);
         String webappConfigFile = DEFAULT_WEBAPP_CONFIG_FILENAME;
         File cfgFile = new File(ctx.getConfigDir(), webappConfigFile);
-        
+
         try {
             DataHelper.storeProps(props, cfgFile);
         } catch (IOException ioe) {
@@ -1176,7 +1182,9 @@ public class RouterConsoleRunner implements RouterApp {
                         log.warn("Stopping " + app);
                     try {
                         WebAppStarter.stopWebApp(_context, _server, app);
-                    } catch (Throwable t) { t.printStackTrace(); }
+                    } catch (Throwable t) {
+                        t.printStackTrace();
+                    }
                 } else {
                     if (log.shouldWarn())
                         log.info("Not Stoppping, isn't running " + app);
@@ -1189,7 +1197,9 @@ public class RouterConsoleRunner implements RouterApp {
     private static class WarFilenameFilter extends FileSuffixFilter {
         private static final String RCWAR = ROUTERCONSOLE + ".war";
 
-        public WarFilenameFilter() { super(".war"); }
+        public WarFilenameFilter() {
+            super(".war");
+        }
 
         public boolean accept(File file) {
             return super.accept(file) && !file.getName().equals(RCWAR);
@@ -1201,48 +1211,48 @@ public class RouterConsoleRunner implements RouterApp {
      * @since 0.9.24
      */
     private static class HostComparator implements Comparator<String>, Serializable {
-         public int compare(String l, String r) {
-             boolean l4 = l.contains(".");
-             boolean r4 = r.contains(".");
-             if (l4 && !r4)
-                 return -1;
-             if (r4 && !l4)
-                 return 1;
-             return l.compareTo(r);
+        public int compare(String l, String r) {
+            boolean l4 = l.contains(".");
+            boolean r4 = r.contains(".");
+            if (l4 && !r4)
+                return -1;
+            if (r4 && !l4)
+                return 1;
+            return l.compareTo(r);
         }
     }
-    
-    /**
-     * Just to set the name and set Daemon
-     * @since Jetty 6
-     */
-/*****
-    private static class CustomThreadPoolExecutor extends ExecutorThreadPool {
-        public CustomThreadPoolExecutor() {
-             super(new ThreadPoolExecutor(
-                      MIN_THREADS, MAX_THREADS, MAX_IDLE_TIME, TimeUnit.MILLISECONDS,
-                      new SynchronousQueue<Runnable>(),
-                      new CustomThreadFactory(),
-                      new ThreadPoolExecutor.CallerRunsPolicy())
-                  );
-        }
-    }
-*****/
 
     /**
      * Just to set the name and set Daemon
      * @since Jetty 6
      */
-/*****
-    private static class CustomThreadFactory implements ThreadFactory {
-
-        public Thread newThread(Runnable r) {
-            Thread rv = Executors.defaultThreadFactory().newThread(r);
-            rv.setName(THREAD_NAME);
-            rv.setDaemon(true);
-            return rv;
+    /*****
+        private static class CustomThreadPoolExecutor extends ExecutorThreadPool {
+            public CustomThreadPoolExecutor() {
+                 super(new ThreadPoolExecutor(
+                          MIN_THREADS, MAX_THREADS, MAX_IDLE_TIME, TimeUnit.MILLISECONDS,
+                          new SynchronousQueue<Runnable>(),
+                          new CustomThreadFactory(),
+                          new ThreadPoolExecutor.CallerRunsPolicy())
+                      );
+            }
         }
-    }
-*****/
+    *****/
+
+    /**
+     * Just to set the name and set Daemon
+     * @since Jetty 6
+     */
+    /*****
+        private static class CustomThreadFactory implements ThreadFactory {
+
+            public Thread newThread(Runnable r) {
+                Thread rv = Executors.defaultThreadFactory().newThread(r);
+                rv.setName(THREAD_NAME);
+                rv.setDaemon(true);
+                return rv;
+            }
+        }
+    *****/
 
 }

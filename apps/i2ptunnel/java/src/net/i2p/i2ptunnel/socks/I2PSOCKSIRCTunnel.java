@@ -77,7 +77,10 @@ public class I2PSOCKSIRCTunnel extends I2PSOCKSTunnel {
         } finally {
             // only because we are running it inline
             closeSocket(s);
-            if (destSock != null) try { destSock.close(); } catch (IOException ioe) {}
+            if (destSock != null) try {
+                    destSock.close();
+                }
+                catch (IOException ioe) {}
         }
     }
 }

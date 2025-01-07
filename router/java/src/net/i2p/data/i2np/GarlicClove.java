@@ -36,23 +36,43 @@ public class GarlicClove extends DataStructureImpl {
     private long _cloveId;
     private long _expiration;
     private Certificate _certificate;
-    
+
     public GarlicClove(I2PAppContext context) {
         _context = context;
         _cloveId = -1;
     }
-    
-    public DeliveryInstructions getInstructions() { return _instructions; }
-    public void setInstructions(DeliveryInstructions instr) { _instructions = instr; }
-    public I2NPMessage getData() { return _msg; }
-    public void setData(I2NPMessage msg) { _msg = msg; }
-    public long getCloveId() { return _cloveId; }
-    public void setCloveId(long id) { _cloveId = id; }
-    public long getExpiration() { return _expiration; }
-    public void setExpiration(long exp) { _expiration = exp; }
-    public Certificate getCertificate() { return _certificate; }
-    public void setCertificate(Certificate cert) { _certificate = cert; }
-    
+
+    public DeliveryInstructions getInstructions() {
+        return _instructions;
+    }
+    public void setInstructions(DeliveryInstructions instr) {
+        _instructions = instr;
+    }
+    public I2NPMessage getData() {
+        return _msg;
+    }
+    public void setData(I2NPMessage msg) {
+        _msg = msg;
+    }
+    public long getCloveId() {
+        return _cloveId;
+    }
+    public void setCloveId(long id) {
+        _cloveId = id;
+    }
+    public long getExpiration() {
+        return _expiration;
+    }
+    public void setExpiration(long exp) {
+        _expiration = exp;
+    }
+    public Certificate getCertificate() {
+        return _certificate;
+    }
+    public void setCertificate(Certificate cert) {
+        _certificate = cert;
+    }
+
     /**
      *  @deprecated unused, use byte array method to avoid copying
      *  @throws UnsupportedOperationException always
@@ -155,15 +175,15 @@ public class GarlicClove extends DataStructureImpl {
     public int getSizeRatchet() {
         return _instructions.getSize() + _msg.getMessageSize() - 7;
     }
-    
+
     public int estimateSize() {
         return _instructions.getSize()
-               + _msg.getMessageSize() 
+               + _msg.getMessageSize()
                + 4 // cloveId
                + DataHelper.DATE_LENGTH
                + _certificate.size(); // certificate
     }
-    
+
     @Override
     public boolean equals(Object obj) {
         if ( (obj == null) || !(obj instanceof GarlicClove))
@@ -175,7 +195,7 @@ public class GarlicClove extends DataStructureImpl {
                _expiration == clove._expiration &&
                DataHelper.eq(_instructions,  clove._instructions);
     }
-    
+
     @Override
     public int hashCode() {
         return DataHelper.hashCode(_certificate) ^
@@ -184,7 +204,7 @@ public class GarlicClove extends DataStructureImpl {
                (int) _expiration ^
                DataHelper.hashCode(_instructions);
     }
-    
+
     @Override
     public String toString() {
         StringBuilder buf = new StringBuilder(128);

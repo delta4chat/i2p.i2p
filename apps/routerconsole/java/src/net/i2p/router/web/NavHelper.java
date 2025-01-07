@@ -17,15 +17,15 @@ public class NavHelper implements NavService, ClientApp {
     // both indexed by standard (untranslated) app name
     private final Map<String, App> _apps = new ConcurrentHashMap<String, App>(4);
     private final Map<String, byte[]> _binary = new ConcurrentHashMap<String, byte[]>(4);
-    
+
     /**
      * To register a new client application so that it shows up on the router
-     * console's nav bar, it should be registered with this singleton. 
+     * console's nav bar, it should be registered with this singleton.
      *
      * @param appName standard name for the app (plugin)
      * @param displayName translated name the app will be called in the link
      *             warning, this is the display name aka ConsoleLinkName, not the plugin name
-     * @param path full path pointing to the application's root 
+     * @param path full path pointing to the application's root
      *             (e.g. /i2ptunnel/index.jsp), non-null
      * @param tooltip HTML escaped text or null
      * @param iconpath path-only URL starting with /, HTML escaped, or null
@@ -43,14 +43,14 @@ public class NavHelper implements NavService, ClientApp {
     public void unregisterApp(String name) {
         _apps.remove(name);
     }
-    
+
     /**
      *  Retrieve binary icon for a plugin
      *  @param name plugin name
      *  @return null if not found
      *  @since 0.9.25
      */
-    public byte[] getBinary(String name){
+    public byte[] getBinary(String name) {
         if(name != null)
             return _binary.get(name);
         else
@@ -62,7 +62,7 @@ public class NavHelper implements NavService, ClientApp {
      *  @param name plugin name
      *  @since 0.9.25
      */
-    public void setBinary(String name, byte[] arr){
+    public void setBinary(String name, byte[] arr) {
         _binary.put(name, arr);
     }
 
@@ -95,22 +95,22 @@ public class NavHelper implements NavService, ClientApp {
         }
         return rv;
     }
-    
+
     /**
      *  Get 16x16 icon img and append to buf
      *  @param name standard app name
      *  @since 0.9.45
      */
     private void getClientAppImg(StringBuilder buf, String name, String iconpath) {
-            if (iconpath != null) {
-                buf.append("<img src=\"").append(iconpath).append("\" height=\"16\" width=\"16\" alt=\"\">");
-            } else if (name.equals("orchid")) {
-                buf.append("<img src=\"/themes/console/light/images/flower.png\" alt=\"\">");
-            } else if (name.equals("i2pbote")) {
-                buf.append("<img src=\"/themes/console/light/images/mail_black.png\" alt=\"\">");
-            } else {
-                buf.append("<img src=\"/themes/console/images/plugin.png\" height=\"16\" width=\"16\" alt=\"\">");
-            }
+        if (iconpath != null) {
+            buf.append("<img src=\"").append(iconpath).append("\" height=\"16\" width=\"16\" alt=\"\">");
+        } else if (name.equals("orchid")) {
+            buf.append("<img src=\"/themes/console/light/images/flower.png\" alt=\"\">");
+        } else if (name.equals("i2pbote")) {
+            buf.append("<img src=\"/themes/console/light/images/mail_black.png\" alt=\"\">");
+        } else {
+            buf.append("<img src=\"/themes/console/images/plugin.png\" height=\"16\" width=\"16\" alt=\"\">");
+        }
     }
 
     /**

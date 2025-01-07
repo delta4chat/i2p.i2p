@@ -61,7 +61,7 @@ class InboundEstablishState2 extends InboundEstablishState implements SSU2Payloa
     private int _mtu;
     private PeerState2 _pstate;
     private List<UDPPacket> _queuedDataPackets;
-    
+
     // testing
     private static final boolean ENFORCE_TOKEN = true;
     private static final long MAX_SKEW = 2*60*1000L;
@@ -87,7 +87,7 @@ class InboundEstablishState2 extends InboundEstablishState implements SSU2Payloa
         _aliceSocketAddress = (InetSocketAddress) pkt.getSocketAddress();
         _handshakeState = new HandshakeState(HandshakeState.PATTERN_ID_XK_SSU2, HandshakeState.RESPONDER, transport.getXDHFactory());
         _handshakeState.getLocalKeyPair().setKeys(transport.getSSU2StaticPrivKey(), 0,
-                                                  transport.getSSU2StaticPubKey(), 0);
+                transport.getSSU2StaticPubKey(), 0);
         byte[] introKey = transport.getSSU2StaticIntroKey();
         _sendHeaderEncryptKey1 = introKey;
         //_sendHeaderEncryptKey2 set below
@@ -186,8 +186,10 @@ class InboundEstablishState2 extends InboundEstablishState implements SSU2Payloa
     }
 
     @Override
-    public int getVersion() { return 2; }
-    
+    public int getVersion() {
+        return 2;
+    }
+
     private void processPayload(byte[] payload, int offset, int length, boolean isHandshake) throws GeneralSecurityException {
         try {
             int blocks = SSU2Payload.processPayload(_context, this, payload, offset, length, isHandshake, null);
@@ -324,12 +326,12 @@ class InboundEstablishState2 extends InboundEstablishState implements SSU2Payloa
         if (isBanned) {
             // validate sig to prevent spoofing
             if (ri.verifySignature())
-               _context.blocklist().add(_aliceIP);
+                _context.blocklist().add(_aliceIP);
             throw new RIException("Router is banned: " + h.toBase64(), REASON_BANNED);
         }
         if (ri.getNetworkId() != _context.router().getNetworkID()) {
             if (ri.verifySignature())
-               _context.blocklist().add(_aliceIP);
+                _context.blocklist().add(_aliceIP);
             throw new RIException("SSU2 network ID mismatch", REASON_NETID);
         }
 
@@ -414,7 +416,7 @@ class InboundEstablishState2 extends InboundEstablishState implements SSU2Payloa
         // formerly in EstablishmentManager.receiveSessionOrTokenReques()
         if (_introductionRequested) {
             if (getSentPort() < 1024 ||
-                !_transport.canIntroduce(isIPv6)) {
+                    !_transport.canIntroduce(isIPv6)) {
                 _introductionRequested = false;
             } else if (VersionComparator.comp(ri.getVersion(), MIN_RELAY_VERSION) < 0) {
                 _introductionRequested = false;
@@ -426,7 +428,7 @@ class InboundEstablishState2 extends InboundEstablishState implements SSU2Payloa
                 // may be requesting relay for ipv4/6 if reachable on the other
                 // or may be starting up and not know if reachable or not
                 if (caps.indexOf(Router.CAPABILITY_REACHABLE) < 0 ||
-                    _context.random().nextInt(4) == 0) {
+                        _context.random().nextInt(4) == 0) {
                     // leave it set to true; createPeerState() will copy to PS2,
                     // who will send the relay tag with ACK 0
                 } else {
@@ -554,9 +556,15 @@ class InboundEstablishState2 extends InboundEstablishState implements SSU2Payloa
 
     // SSU 2 things
 
-    public long getSendConnID() { return _sendConnID; }
-    public long getRcvConnID() { return _rcvConnID; }
-    public long getToken() { return _token; }
+    public long getSendConnID() {
+        return _sendConnID;
+    }
+    public long getRcvConnID() {
+        return _rcvConnID;
+    }
+    public long getToken() {
+        return _token;
+    }
     /**
      *  @return may be null
      */
@@ -565,12 +573,24 @@ class InboundEstablishState2 extends InboundEstablishState implements SSU2Payloa
             return null;
         return _transport.getEstablisher().getInboundToken(_remoteHostId);
     }
-    public HandshakeState getHandshakeState() { return _handshakeState; }
-    public byte[] getSendHeaderEncryptKey1() { return _sendHeaderEncryptKey1; }
-    public byte[] getRcvHeaderEncryptKey1() { return _transport.getSSU2StaticIntroKey(); }
-    public byte[] getSendHeaderEncryptKey2() { return _sendHeaderEncryptKey2; }
-    public synchronized byte[] getRcvHeaderEncryptKey2() { return _rcvHeaderEncryptKey2; }
-    public InetSocketAddress getSentAddress() { return _aliceSocketAddress; }
+    public HandshakeState getHandshakeState() {
+        return _handshakeState;
+    }
+    public byte[] getSendHeaderEncryptKey1() {
+        return _sendHeaderEncryptKey1;
+    }
+    public byte[] getRcvHeaderEncryptKey1() {
+        return _transport.getSSU2StaticIntroKey();
+    }
+    public byte[] getSendHeaderEncryptKey2() {
+        return _sendHeaderEncryptKey2;
+    }
+    public synchronized byte[] getRcvHeaderEncryptKey2() {
+        return _rcvHeaderEncryptKey2;
+    }
+    public InetSocketAddress getSentAddress() {
+        return _aliceSocketAddress;
+    }
 
     @Override
     public synchronized void createdPacketSent() {
@@ -589,15 +609,15 @@ class InboundEstablishState2 extends InboundEstablishState implements SSU2Payloa
         _currentState = InboundState.IB_STATE_CREATED_SENT;
     }
 
-    
+
     /** note that we just sent a Retry packet */
     public synchronized void retryPacketSent() {
         // retry after clock skew
         if (_currentState == InboundState.IB_STATE_FAILED)
             return;
         if (_currentState != InboundState.IB_STATE_RETRY_SENT &&
-            _currentState != InboundState.IB_STATE_REQUEST_BAD_TOKEN_RECEIVED &&
-            _currentState != InboundState.IB_STATE_TOKEN_REQUEST_RECEIVED)
+                _currentState != InboundState.IB_STATE_REQUEST_BAD_TOKEN_RECEIVED &&
+                _currentState != InboundState.IB_STATE_TOKEN_REQUEST_RECEIVED)
             throw new IllegalStateException("Bad state for Retry Sent: " + _currentState);
         _lastSend = _context.clock().now();
         if (_currentState == InboundState.IB_STATE_RETRY_SENT) {
@@ -741,7 +761,7 @@ class InboundEstablishState2 extends InboundEstablishState implements SSU2Payloa
      */
     private PeerState2 locked_receiveSessionConfirmed(UDPPacket packet) throws GeneralSecurityException {
         if (_currentState != InboundState.IB_STATE_CREATED_SENT &&
-            _currentState != InboundState.IB_STATE_CONFIRMED_PARTIALLY)
+                _currentState != InboundState.IB_STATE_CONFIRMED_PARTIALLY)
             throw new GeneralSecurityException("Bad state for Session Confirmed: " + _currentState);
         DatagramPacket pkt = packet.getPacket();
         SocketAddress from = pkt.getSocketAddress();
@@ -877,18 +897,18 @@ class InboundEstablishState2 extends InboundEstablishState implements SSU2Payloa
         sender.initializeKey(d_ba, 0);
         ChaChaPolyCipherState rcvr = new ChaChaPolyCipherState();
         rcvr.initializeKey(d_ab, 0);
-      /****
-        if (_log.shouldDebug())
-            _log.debug("split()\nGenerated Chain key:              " + Base64.encode(ckd) +
-                       "\nGenerated split key for A->B:     " + Base64.encode(k_ab) +
-                       "\nGenerated split key for B->A:     " + Base64.encode(k_ba) +
-                       "\nGenerated encrypt key for A->B:   " + Base64.encode(d_ab) +
-                       "\nGenerated encrypt key for B->A:   " + Base64.encode(d_ba) +
-                       "\nIntro key for Alice:              " + Base64.encode(_sendHeaderEncryptKey1) +
-                       "\nIntro key for Bob:                " + Base64.encode(_rcvHeaderEncryptKey1) +
-                       "\nGenerated header key 2 for A->B:  " + Base64.encode(h_ab) +
-                       "\nGenerated header key 2 for B->A:  " + Base64.encode(h_ba));
-       ****/
+        /****
+          if (_log.shouldDebug())
+              _log.debug("split()\nGenerated Chain key:              " + Base64.encode(ckd) +
+                         "\nGenerated split key for A->B:     " + Base64.encode(k_ab) +
+                         "\nGenerated split key for B->A:     " + Base64.encode(k_ba) +
+                         "\nGenerated encrypt key for A->B:   " + Base64.encode(d_ab) +
+                         "\nGenerated encrypt key for B->A:   " + Base64.encode(d_ba) +
+                         "\nIntro key for Alice:              " + Base64.encode(_sendHeaderEncryptKey1) +
+                         "\nIntro key for Bob:                " + Base64.encode(_rcvHeaderEncryptKey1) +
+                         "\nGenerated header key 2 for A->B:  " + Base64.encode(h_ab) +
+                         "\nGenerated header key 2 for B->A:  " + Base64.encode(h_ba));
+         ****/
         Arrays.fill(ckd, (byte) 0);
         Arrays.fill(k_ab, (byte) 0);
         Arrays.fill(k_ba, (byte) 0);
@@ -1034,9 +1054,9 @@ class InboundEstablishState2 extends InboundEstablishState implements SSU2Payloa
             _pstate.receivePacket(packet);
         }
     }
-    
+
     @Override
-    public String toString() {            
+    public String toString() {
         StringBuilder buf = new StringBuilder(128);
         buf.append("IES2 ");
         buf.append(Addresses.toString(_aliceIP, _alicePort));
@@ -1064,8 +1084,12 @@ class InboundEstablishState2 extends InboundEstablishState implements SSU2Payloa
             super(msg, t);
             rsn = reason;
         }
-        public int getReason() { return rsn; }
+        public int getReason() {
+            return rsn;
+        }
         @Override
-        public String getMessage() { return "Code " + rsn + ": " + super.getMessage(); }
+        public String getMessage() {
+            return "Code " + rsn + ": " + super.getMessage();
+        }
     }
 }

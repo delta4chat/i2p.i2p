@@ -26,14 +26,16 @@ class RRDFile implements Constants {
     (byte) 0xC7, (byte) 0xC0, 0x25,
     0x2F}</code> */
     private static final byte[] FLOAT_COOKIE_BIG_ENDIAN = {0x5B, 0x1F, 0x2B, 0x43,
-            (byte) 0xC7, (byte) 0xC0, 0x25,
-            0x2F};
+                                                           (byte) 0xC7, (byte) 0xC0, 0x25,
+                                                           0x2F
+                                                          };
     /** Constant <code>FLOAT_COOKIE_LITTLE_ENDIAN={0x2F, 0x25, (byte) 0xC0,
     (byte) 0xC7, 0x43, 0x2B, 0x1F,
     0x5B}</code> */
     private static final byte[] FLOAT_COOKIE_LITTLE_ENDIAN = {0x2F, 0x25, (byte) 0xC0,
-            (byte) 0xC7, 0x43, 0x2B, 0x1F,
-            0x5B};
+                                                              (byte) 0xC7, 0x43, 0x2B, 0x1F,
+                                                              0x5B
+                                                             };
 
     private int alignment;
     private int longSize = 4;
@@ -51,7 +53,7 @@ class RRDFile implements Constants {
         long len = file.length();
         if (len > Integer.MAX_VALUE) {
             throw new IllegalArgumentException(
-                    "RRDFile cannot read files larger than 2**31 because of limitations of java.nio.ByteBuffer");
+                "RRDFile cannot read files larger than 2**31 because of limitations of java.nio.ByteBuffer");
         }
 
         boolean ok = false;
@@ -84,7 +86,7 @@ class RRDFile implements Constants {
                 order = ByteOrder.BIG_ENDIAN;
             }
             else if ((index = indexOf(FLOAT_COOKIE_LITTLE_ENDIAN, buffer))
-                    != -1) {
+                     != -1) {
                 order = ByteOrder.LITTLE_ENDIAN;
             }
             else {

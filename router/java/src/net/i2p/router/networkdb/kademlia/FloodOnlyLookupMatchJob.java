@@ -21,7 +21,7 @@ class FloodOnlyLookupMatchJob extends JobImpl implements ReplyJob {
         _search = job;
     }
 
-    public void runJob() { 
+    public void runJob() {
         if (_success) {
             if (_log.shouldLog(Log.INFO))
                 _log.info(_search.getJobId() + ": search match for " + _search.getKey());
@@ -35,7 +35,9 @@ class FloodOnlyLookupMatchJob extends JobImpl implements ReplyJob {
         }
     }
 
-    public String getName() { return "NetDb flood search match"; }
+    public String getName() {
+        return "NetDb flood search match";
+    }
 
     public void setMessage(I2NPMessage message) {
         int mtype = message.getType();
@@ -51,8 +53,8 @@ class FloodOnlyLookupMatchJob extends JobImpl implements ReplyJob {
 
         DatabaseStoreMessage dsm = (DatabaseStoreMessage)message;
         if (_log.shouldDebug())
-            _log.debug(_search.getJobId() + ": got a DSM for " 
-                      + dsm.getKey().toBase64());
+            _log.debug(_search.getJobId() + ": got a DSM for "
+                       + dsm.getKey().toBase64());
         // This store will handled by HFDSMJ.
         // Just note success here.
         if (dsm.getKey().equals(_search.getKey()))

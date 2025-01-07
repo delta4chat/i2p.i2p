@@ -126,8 +126,8 @@ public class I2PSSLSocketFactory {
      *  @since 0.9.16
      */
     public static final List<String> EXCLUDE_PROTOCOLS = Collections.unmodifiableList(Arrays.asList(new String[] {
-        "SSLv2Hello", "SSLv3"
-    }));
+                "SSLv2Hello", "SSLv3"
+            }));
 
     /**
      *  Java 7 does not enable 1.1 or 1.2 by default on the client side.
@@ -144,8 +144,8 @@ public class I2PSSLSocketFactory {
      *  @since 0.9.16
      */
     public static final List<String> INCLUDE_PROTOCOLS = Collections.unmodifiableList(Arrays.asList(new String[] {
-        "TLSv1", "TLSv1.1", "TLSv1.2", "TLSv1.3"
-    }));
+                "TLSv1", "TLSv1.1", "TLSv1.2", "TLSv1.3"
+            }));
 
     /**
      *  We exclude everything that Java 8 disables by default, plus some others.
@@ -156,72 +156,72 @@ public class I2PSSLSocketFactory {
      *  @since 0.9.16
      */
     public static final List<String> EXCLUDE_CIPHERS = Collections.unmodifiableList(Arrays.asList(new String[] {
-        // following are disabled by default in Java 8
-        "SSL_DH_anon_EXPORT_WITH_DES40_CBC_SHA",
-        "SSL_DH_anon_EXPORT_WITH_RC4_40_MD5",
-        "SSL_DH_anon_WITH_3DES_EDE_CBC_SHA",
-        "SSL_DH_anon_WITH_DES_CBC_SHA",
-        "SSL_DH_anon_WITH_RC4_128_MD5",
-        "SSL_DHE_DSS_EXPORT_WITH_DES40_CBC_SHA",
-        "SSL_DHE_DSS_WITH_DES_CBC_SHA",
-        "SSL_DHE_RSA_EXPORT_WITH_DES40_CBC_SHA",
-        "SSL_DHE_RSA_WITH_DES_CBC_SHA",
-        "SSL_RSA_EXPORT_WITH_DES40_CBC_SHA",
-        "SSL_RSA_EXPORT_WITH_RC4_40_MD5",
-        "SSL_RSA_WITH_DES_CBC_SHA",
-        "SSL_RSA_WITH_NULL_MD5",
-        "SSL_RSA_WITH_NULL_SHA",
-        "TLS_DH_anon_WITH_AES_128_CBC_SHA",
-        "TLS_DH_anon_WITH_AES_128_CBC_SHA256",
-        "TLS_DH_anon_WITH_AES_128_GCM_SHA256",
-        "TLS_DH_anon_WITH_AES_256_CBC_SHA",
-        "TLS_DH_anon_WITH_AES_256_CBC_SHA256",
-        "TLS_DH_anon_WITH_AES_256_GCM_SHA384",
-        "TLS_ECDH_anon_WITH_3DES_EDE_CBC_SHA",
-        "TLS_ECDH_anon_WITH_AES_128_CBC_SHA",
-        "TLS_ECDH_anon_WITH_AES_256_CBC_SHA",
-        "TLS_ECDH_anon_WITH_NULL_SHA",
-        "TLS_ECDH_anon_WITH_RC4_128_SHA",
-        "TLS_ECDH_ECDSA_WITH_NULL_SHA",
-        "TLS_ECDHE_ECDSA_WITH_NULL_SHA",
-        "TLS_ECDHE_RSA_WITH_NULL_SHA",
-        "TLS_ECDH_RSA_WITH_NULL_SHA",
-        "TLS_KRB5_EXPORT_WITH_DES_CBC_40_MD5",
-        "TLS_KRB5_EXPORT_WITH_DES_CBC_40_SHA",
-        "TLS_KRB5_EXPORT_WITH_RC4_40_MD5",
-        "TLS_KRB5_EXPORT_WITH_RC4_40_SHA",
-        "TLS_KRB5_WITH_3DES_EDE_CBC_MD5",
-        "TLS_KRB5_WITH_3DES_EDE_CBC_SHA",
-        "TLS_KRB5_WITH_DES_CBC_MD5",
-        "TLS_KRB5_WITH_DES_CBC_SHA",
-        "TLS_KRB5_WITH_RC4_128_MD5",
-        "TLS_KRB5_WITH_RC4_128_SHA",
-        "TLS_RSA_WITH_NULL_SHA256",
-        // following are disabled because they are SSLv3
-        "SSL_DHE_DSS_WITH_3DES_EDE_CBC_SHA",
-        "SSL_DHE_RSA_WITH_3DES_EDE_CBC_SHA",
-        "SSL_RSA_WITH_3DES_EDE_CBC_SHA",
-        "SSL_RSA_WITH_RC4_128_MD5",
-        "SSL_RSA_WITH_RC4_128_SHA",
-        // following are disabled because they are RC4
-        "TLS_ECDH_ECDSA_WITH_RC4_128_SHA",
-        "TLS_ECDH_RSA_WITH_RC4_128_SHA",
-        "TLS_ECDHE_ECDSA_WITH_RC4_128_SHA",
-        "TLS_ECDHE_RSA_WITH_RC4_128_SHA",
-        // following are disabled because they are 3DES
-        "TLS_ECDH_ECDSA_WITH_3DES_EDE_CBC_SHA",
-        "TLS_ECDH_RSA_WITH_3DES_EDE_CBC_SHA",
-        "TLS_ECDHE_ECDSA_WITH_3DES_EDE_CBC_SHA",
-        "TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA",
-        // following is disabled because it is weak
-        // see e.g. https://bugzilla.mozilla.org/show_bug.cgi?id=1107787
-        "TLS_DHE_DSS_WITH_AES_128_CBC_SHA"
-        // ??? "TLS_DHE_DSS_WITH_AES_256_CBC_SHA"
-        //
-        //  NOTE:
-        //  If you add anything here, please also add to installer/resources/eepsite/jetty-ssl.xml
-        //
-    }));
+                // following are disabled by default in Java 8
+                "SSL_DH_anon_EXPORT_WITH_DES40_CBC_SHA",
+                "SSL_DH_anon_EXPORT_WITH_RC4_40_MD5",
+                "SSL_DH_anon_WITH_3DES_EDE_CBC_SHA",
+                "SSL_DH_anon_WITH_DES_CBC_SHA",
+                "SSL_DH_anon_WITH_RC4_128_MD5",
+                "SSL_DHE_DSS_EXPORT_WITH_DES40_CBC_SHA",
+                "SSL_DHE_DSS_WITH_DES_CBC_SHA",
+                "SSL_DHE_RSA_EXPORT_WITH_DES40_CBC_SHA",
+                "SSL_DHE_RSA_WITH_DES_CBC_SHA",
+                "SSL_RSA_EXPORT_WITH_DES40_CBC_SHA",
+                "SSL_RSA_EXPORT_WITH_RC4_40_MD5",
+                "SSL_RSA_WITH_DES_CBC_SHA",
+                "SSL_RSA_WITH_NULL_MD5",
+                "SSL_RSA_WITH_NULL_SHA",
+                "TLS_DH_anon_WITH_AES_128_CBC_SHA",
+                "TLS_DH_anon_WITH_AES_128_CBC_SHA256",
+                "TLS_DH_anon_WITH_AES_128_GCM_SHA256",
+                "TLS_DH_anon_WITH_AES_256_CBC_SHA",
+                "TLS_DH_anon_WITH_AES_256_CBC_SHA256",
+                "TLS_DH_anon_WITH_AES_256_GCM_SHA384",
+                "TLS_ECDH_anon_WITH_3DES_EDE_CBC_SHA",
+                "TLS_ECDH_anon_WITH_AES_128_CBC_SHA",
+                "TLS_ECDH_anon_WITH_AES_256_CBC_SHA",
+                "TLS_ECDH_anon_WITH_NULL_SHA",
+                "TLS_ECDH_anon_WITH_RC4_128_SHA",
+                "TLS_ECDH_ECDSA_WITH_NULL_SHA",
+                "TLS_ECDHE_ECDSA_WITH_NULL_SHA",
+                "TLS_ECDHE_RSA_WITH_NULL_SHA",
+                "TLS_ECDH_RSA_WITH_NULL_SHA",
+                "TLS_KRB5_EXPORT_WITH_DES_CBC_40_MD5",
+                "TLS_KRB5_EXPORT_WITH_DES_CBC_40_SHA",
+                "TLS_KRB5_EXPORT_WITH_RC4_40_MD5",
+                "TLS_KRB5_EXPORT_WITH_RC4_40_SHA",
+                "TLS_KRB5_WITH_3DES_EDE_CBC_MD5",
+                "TLS_KRB5_WITH_3DES_EDE_CBC_SHA",
+                "TLS_KRB5_WITH_DES_CBC_MD5",
+                "TLS_KRB5_WITH_DES_CBC_SHA",
+                "TLS_KRB5_WITH_RC4_128_MD5",
+                "TLS_KRB5_WITH_RC4_128_SHA",
+                "TLS_RSA_WITH_NULL_SHA256",
+                // following are disabled because they are SSLv3
+                "SSL_DHE_DSS_WITH_3DES_EDE_CBC_SHA",
+                "SSL_DHE_RSA_WITH_3DES_EDE_CBC_SHA",
+                "SSL_RSA_WITH_3DES_EDE_CBC_SHA",
+                "SSL_RSA_WITH_RC4_128_MD5",
+                "SSL_RSA_WITH_RC4_128_SHA",
+                // following are disabled because they are RC4
+                "TLS_ECDH_ECDSA_WITH_RC4_128_SHA",
+                "TLS_ECDH_RSA_WITH_RC4_128_SHA",
+                "TLS_ECDHE_ECDSA_WITH_RC4_128_SHA",
+                "TLS_ECDHE_RSA_WITH_RC4_128_SHA",
+                // following are disabled because they are 3DES
+                "TLS_ECDH_ECDSA_WITH_3DES_EDE_CBC_SHA",
+                "TLS_ECDH_RSA_WITH_3DES_EDE_CBC_SHA",
+                "TLS_ECDHE_ECDSA_WITH_3DES_EDE_CBC_SHA",
+                "TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA",
+                // following is disabled because it is weak
+                // see e.g. https://bugzilla.mozilla.org/show_bug.cgi?id=1107787
+                "TLS_DHE_DSS_WITH_AES_128_CBC_SHA"
+                // ??? "TLS_DHE_DSS_WITH_AES_256_CBC_SHA"
+                //
+                //  NOTE:
+                //  If you add anything here, please also add to installer/resources/eepsite/jetty-ssl.xml
+                //
+            }));
 
     /**
      *  Nothing for now.
@@ -241,7 +241,7 @@ public class I2PSSLSocketFactory {
      * @since 0.9.9 was static
      */
     public I2PSSLSocketFactory(I2PAppContext context, boolean loadSystemCerts, String relativeCertPath)
-                               throws GeneralSecurityException {
+    throws GeneralSecurityException {
         _factory = initSSLContext(context, loadSystemCerts, relativeCertPath);
         _context = context;
     }
@@ -299,10 +299,10 @@ public class I2PSSLSocketFactory {
     public static void verifyHostname(I2PAppContext ctx, SSLSocket socket, String host) throws SSLException {
         Log log = ctx.logManager().getLog(I2PSSLSocketFactory.class);
         if (ctx.getBooleanProperty(PROP_DISABLE) ||
-            host.equals("localhost") ||
-            host.equals("127.0.0.1") ||
-            host.equals("::1") ||
-            host.equals("0:0:0:0:0:0:0:1")) {
+                host.equals("localhost") ||
+                host.equals("127.0.0.1") ||
+                host.equals("::1") ||
+                host.equals("0:0:0:0:0:0:0:1")) {
             if (log.shouldWarn())
                 log.warn("Skipping hostname validation for " + host);
             return;
@@ -370,14 +370,17 @@ public class I2PSSLSocketFactory {
                         long begin = System.currentTimeMillis();
                         InputStream in = null;
                         PublicSuffixList list = new PublicSuffixList(Arrays.asList(ADDITIONAL_TLDS),
-                                                                     Collections.<String>emptyList());
+                                Collections.<String>emptyList());
                         try {
                             in = new FileInputStream(geoFile);
                             PublicSuffixList list2 = new PublicSuffixListParser().parse(
-                                 new InputStreamReader(in, "UTF-8"));
+                                new InputStreamReader(in, "UTF-8"));
                             list = merge(list, list2);
                         } finally {
-                            try { if (in != null) in.close(); } catch (IOException ioe) {}
+                            try {
+                                if (in != null) in.close();
+                            }
+                            catch (IOException ioe) {}
                         }
                         DEFAULT_MATCHER = new PublicSuffixMatcher(list.getRules(), list.getExceptions());
                         if (log.shouldWarn())
@@ -385,8 +388,8 @@ public class I2PSSLSocketFactory {
                                      " ms and created list with " + list.getRules().size() + " entries and " +
                                      list.getExceptions().size() + " exceptions");
                     } catch (IOException ex) {
-                         log.error("Failure loading public suffix list from " + geoFile, ex);
-                         // DEFAULT_MATCHER remains null
+                        log.error("Failure loading public suffix list from " + geoFile, ex);
+                        // DEFAULT_MATCHER remains null
                     }
                 } else {
                     List<String> list = new ArrayList<String>(320);
@@ -404,12 +407,12 @@ public class I2PSSLSocketFactory {
         return DEFAULT_MATCHER;
     }
 
-   /**
-    *  Merge two PublicSuffixLists
-    *  Have to do this because they are unmodifiable
-    *
-    *  @since 0.9.20
-    */
+    /**
+     *  Merge two PublicSuffixLists
+     *  Have to do this because they are unmodifiable
+     *
+     *  @since 0.9.20
+     */
     private static PublicSuffixList merge(PublicSuffixList a, PublicSuffixList b) {
         List<String> ar = a.getRules();
         List<String> ae = a.getExceptions();
@@ -424,13 +427,13 @@ public class I2PSSLSocketFactory {
         return new PublicSuffixList(cr, ce);
     }
 
-   /**
-    *  Read in the country file and add all TLDs to the list.
-    *  It would almost be easier just to add all possible 26*26 two-letter codes.
-    *
-    *  @param tlds out parameter
-    *  @since 0.9.20 adapted from GeoIP.loadCountryFile()
-    */
+    /**
+     *  Read in the country file and add all TLDs to the list.
+     *  It would almost be easier just to add all possible 26*26 two-letter codes.
+     *
+     *  @param tlds out parameter
+     *  @since 0.9.20 adapted from GeoIP.loadCountryFile()
+     */
     private static void addCountries(I2PAppContext ctx, List<String> tlds) {
         Log log = ctx.logManager().getLog(I2PSSLSocketFactory.class);
         InputStream is = I2PSSLSocketFactory.class.getResourceAsStream("/net/i2p/util/resources/" + COUNTRY_FILE_DEFAULT);
@@ -459,8 +462,14 @@ public class I2PSSLSocketFactory {
         } catch (IOException ioe) {
             log.error("Error reading the Country File", ioe);
         } finally {
-            try { is.close(); } catch (IOException ioe) {}
-            if (br != null) try { br.close(); } catch (IOException ioe) {}
+            try {
+                is.close();
+            }
+            catch (IOException ioe) {}
+            if (br != null) try {
+                    br.close();
+                }
+                catch (IOException ioe) {}
         }
     }
 
@@ -472,7 +481,7 @@ public class I2PSSLSocketFactory {
      *  @param relativeCertPath e.g. "certificates/i2cp"; as of 0.9.41, may be absolute
      */
     private static SSLSocketFactory initSSLContext(I2PAppContext context, boolean loadSystemCerts, String relativeCertPath)
-                               throws GeneralSecurityException {
+    throws GeneralSecurityException {
         Log log = context.logManager().getLog(I2PSSLSocketFactory.class);
         KeyStore ks;
         if (loadSystemCerts) {
@@ -519,18 +528,18 @@ public class I2PSSLSocketFactory {
                 log.info("Loaded total of " + totalAdds + " new trusted certificates");
         } else {
             String msg = "No trusted certificates loaded (looked in " +
-                       dir.getAbsolutePath() + (dir.getAbsolutePath().equals(dir2.getAbsolutePath()) ? "" : (" and " + dir2.getAbsolutePath())) +
-                       ", SSL connections will fail. " +
-                       "Copy the cert in " + relativeCertPath + " from the router to the directory.";
+                         dir.getAbsolutePath() + (dir.getAbsolutePath().equals(dir2.getAbsolutePath()) ? "" : (" and " + dir2.getAbsolutePath())) +
+                         ", SSL connections will fail. " +
+                         "Copy the cert in " + relativeCertPath + " from the router to the directory.";
             // don't continue, since we didn't load the system keystore, we have nothing.
             throw new GeneralSecurityException(msg);
         }
 
-            SSLContext sslc = SSLContext.getInstance("TLS");
-            TrustManagerFactory tmf =   TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-            tmf.init(ks);
-            sslc.init(null, tmf.getTrustManagers(), context.random());
-            return sslc.getSocketFactory();
+        SSLContext sslc = SSLContext.getInstance("TLS");
+        TrustManagerFactory tmf =   TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+        tmf.init(ks);
+        sslc.init(null, tmf.getTrustManagers(), context.random());
+        return sslc.getSocketFactory();
     }
 
     /**
@@ -544,9 +553,9 @@ public class I2PSSLSocketFactory {
      */
     public static void setProtocolsAndCiphers(SSLSocket socket) {
         socket.setEnabledProtocols(selectProtocols(socket.getEnabledProtocols(),
-                                                   socket.getSupportedProtocols()));
+                                   socket.getSupportedProtocols()));
         socket.setEnabledCipherSuites(selectCipherSuites(socket.getEnabledCipherSuites(),
-                                                         socket.getSupportedCipherSuites()));
+                                      socket.getSupportedCipherSuites()));
     }
 
     /**
@@ -569,7 +578,7 @@ public class I2PSSLSocketFactory {
         }
         socket.setEnabledProtocols(p);
         socket.setEnabledCipherSuites(selectCipherSuites(socket.getEnabledCipherSuites(),
-                                                         socket.getSupportedCipherSuites()));
+                                      socket.getSupportedCipherSuites()));
     }
 
     /**
@@ -585,7 +594,7 @@ public class I2PSSLSocketFactory {
      * @since 0.9.16
      */
     private static String[] selectProtocols(String[] enabledProtocols, String[] supportedProtocols) {
-         return select(enabledProtocols, supportedProtocols, INCLUDE_PROTOCOLS, EXCLUDE_PROTOCOLS);
+        return select(enabledProtocols, supportedProtocols, INCLUDE_PROTOCOLS, EXCLUDE_PROTOCOLS);
     }
 
     /**
@@ -601,7 +610,7 @@ public class I2PSSLSocketFactory {
      * @since 0.9.16
      */
     private static String[] selectCipherSuites(String[] enabledCipherSuites, String[] supportedCipherSuites) {
-         return select(enabledCipherSuites, supportedCipherSuites, INCLUDE_CIPHERS, EXCLUDE_CIPHERS);
+        return select(enabledCipherSuites, supportedCipherSuites, INCLUDE_CIPHERS, EXCLUDE_CIPHERS);
     }
 
     /**
@@ -612,7 +621,7 @@ public class I2PSSLSocketFactory {
      * @since 0.9.16
      */
     private static String[] select(String[] enabledArr, String[] supportedArr,
-                            List<String> toEnable, List<String> toExclude) {
+                                   List<String> toEnable, List<String> toExclude) {
         Log log = I2PAppContext.getGlobalContext().logManager().getLog(I2PSSLSocketFactory.class);
         Set<String> selected = new HashSet<String>(enabledArr.length);
         selected.addAll(Arrays.asList(enabledArr));
@@ -622,8 +631,8 @@ public class I2PSSLSocketFactory {
         for (String s : toEnable) {
             if (supported.contains(s)) {
                 if (selected.add(s)) {
-                   if (log.shouldLog(Log.INFO))
-                       log.info("Added, previously disabled: " + s);
+                    if (log.shouldLog(Log.INFO))
+                        log.info("Added, previously disabled: " + s);
                 }
             } else if (log.shouldLog(Log.INFO)) {
                 log.info("Not supported in this JVM: " + s);

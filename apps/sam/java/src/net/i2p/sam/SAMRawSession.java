@@ -1,9 +1,9 @@
 package net.i2p.sam;
 /*
  * free (adj.): unencumbered; not under the control of others
- * Written by human in 2004 and released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
- * It probably won't  make your computer catch on fire, or eat 
+ * Written by human in 2004 and released into the public domain
+ * with no warranty of any kind, either expressed or implied.
+ * It probably won't  make your computer catch on fire, or eat
  * your children, but it might.  Use at your own risk.
  *
  */
@@ -37,10 +37,10 @@ class SAMRawSession extends SAMMessageSession {
      * @param recv Object that will receive incoming data
      * @throws IOException
      * @throws DataFormatException
-     * @throws I2PSessionException 
+     * @throws I2PSessionException
      */
     protected SAMRawSession(String dest, Properties props,
-                         SAMRawReceiver recv) throws IOException, DataFormatException, I2PSessionException {
+                            SAMRawReceiver recv) throws IOException, DataFormatException, I2PSessionException {
         super(dest, props);
         this.recv = recv;
     }
@@ -55,7 +55,7 @@ class SAMRawSession extends SAMMessageSession {
      * @param recv Object that will receive incoming data
      * @throws IOException
      * @throws DataFormatException
-     * @throws I2PSessionException 
+     * @throws I2PSessionException
      */
     public SAMRawSession(InputStream destStream, Properties props,
                          SAMRawReceiver recv) throws IOException, DataFormatException, I2PSessionException {
@@ -70,8 +70,8 @@ class SAMRawSession extends SAMMessageSession {
      * @since 0.9.25
      */
     protected SAMRawSession(I2PSession sess, Properties props, int listenProtocol, int listenPort,
-                            SAMRawReceiver recv) throws IOException, 
-                              DataFormatException, I2PSessionException {
+                            SAMRawReceiver recv) throws IOException,
+        DataFormatException, I2PSessionException {
         super(sess, listenProtocol, listenPort);
         this.recv = recv;
     }
@@ -104,7 +104,7 @@ class SAMRawSession extends SAMMessageSession {
                              int fromPort, int toPort,
                              boolean sendLeaseSet, int sendTags,
                              int tagThreshold, int expiration)
-                                 throws DataFormatException, I2PSessionException {
+    throws DataFormatException, I2PSessionException {
         if (data.length > RAW_SIZE_MAX)
             throw new DataFormatException("Data size limit exceeded (" + data.length + ")");
         if (proto == I2PSession.PROTO_UNSPECIFIED)

@@ -36,7 +36,7 @@ class TunnelGatewayPumper implements Runnable {
      *  See additional comments in PTG.
      */
     private static final long REQUEUE_TIME = 50;
-    
+
     /** Creates a new instance of TunnelGatewayPumper */
     public TunnelGatewayPumper(RouterContext ctx) {
         _context = ctx;
@@ -74,7 +74,7 @@ class TunnelGatewayPumper implements Runnable {
         _threads.clear();
         _wantsPumping.clear();
     }
-    
+
     public void wantsPumping(PumpedTunnelGateway gw) {
         if (!_stop) {
             synchronized (_wantsPumping) {
@@ -83,7 +83,7 @@ class TunnelGatewayPumper implements Runnable {
             }
         }
     }
-    
+
     public void run() {
         try {
             run2();
@@ -148,6 +148,8 @@ class TunnelGatewayPumper implements Runnable {
         }
 
         @Override
-        public int getMessagesSent() { return POISON_PTG; }
+        public int getMessagesSent() {
+            return POISON_PTG;
+        }
     }
 }

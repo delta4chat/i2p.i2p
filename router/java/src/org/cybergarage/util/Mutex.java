@@ -17,38 +17,38 @@ package org.cybergarage.util;
 
 public class Mutex
 {
-	private boolean syncLock;
-	
-	////////////////////////////////////////////////
-	//	Constructor
-	////////////////////////////////////////////////
+    private boolean syncLock;
 
-	public Mutex()
-	{
-		syncLock = false;
-	}
-	
-	////////////////////////////////////////////////
-	//	lock
-	////////////////////////////////////////////////
-	
-	public synchronized void lock()
-	{
-		while(syncLock == true) {
-			try {
-				wait();
-			}
-			catch (Exception e) {
-				Debug.warning(e);
-			};
-		}
-		syncLock = true;
-	}
+    ////////////////////////////////////////////////
+    //	Constructor
+    ////////////////////////////////////////////////
 
-	public synchronized void unlock()
-	{
-		syncLock = false;
-		notifyAll();
-	}
+    public Mutex()
+    {
+        syncLock = false;
+    }
+
+    ////////////////////////////////////////////////
+    //	lock
+    ////////////////////////////////////////////////
+
+    public synchronized void lock()
+    {
+        while(syncLock == true) {
+            try {
+                wait();
+            }
+            catch (Exception e) {
+                Debug.warning(e);
+            };
+        }
+        syncLock = true;
+    }
+
+    public synchronized void unlock()
+    {
+        syncLock = false;
+        notifyAll();
+    }
 
 }

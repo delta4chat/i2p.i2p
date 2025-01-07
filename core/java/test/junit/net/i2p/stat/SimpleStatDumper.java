@@ -26,7 +26,7 @@ public class SimpleStatDumper {
             FrequencyStat freq = ctx.statManager().getFrequency(name);
             buf.append('\n');
             buf.append(freq.getGroupName()).append('.').append(freq.getName()).append(": ")
-               .append(freq.getDescription()).append('\n');
+            .append(freq.getDescription()).append('\n');
             long periods[] = freq.getPeriods();
             Arrays.sort(periods);
             for (int i = 0; i < periods.length; i++) {
@@ -45,7 +45,7 @@ public class SimpleStatDumper {
             RateStat rate = ctx.statManager().getRate(name);
             buf.append('\n');
             buf.append(rate.getGroupName()).append('.').append(rate.getName()).append(": ")
-               .append(rate.getDescription()).append('\n');
+            .append(rate.getDescription()).append('\n');
             long periods[] = rate.getPeriods();
             Arrays.sort(periods);
             for (int i = 0; i < periods.length; i++) {

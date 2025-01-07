@@ -17,7 +17,7 @@ import net.i2p.router.web.HelperBase;
 import net.i2p.util.ObjectCounterUnsafe;
 
 public class JobQueueHelper extends HelperBase {
-    
+
     private static final int MAX_JOBS = 50;
 
     public String getJobQueueSummary() {
@@ -45,20 +45,20 @@ public class JobQueueHelper extends HelperBase {
         List<Job> timedJobs = new ArrayList<Job>(128);
         List<Job> activeJobs = new ArrayList<Job>(8);
         List<Job> justFinishedJobs = new ArrayList<Job>(8);
-        
+
         int numRunners = _context.jobQueue().getJobs(readyJobs, timedJobs, activeJobs, justFinishedJobs);
-        
+
         StringBuilder buf = new StringBuilder(32*1024);
         buf.append("<div class=\"joblog\">")
-           .append("<h2 id=\"jobrunners\">")
-           .append(_t("Job runners")).append(": ").append(numRunners)
-           .append("</h2>\n");
+        .append("<h2 id=\"jobrunners\">")
+        .append(_t("Job runners")).append(": ").append(numRunners)
+        .append("</h2>\n");
 
         long now = _context.clock().now();
 
         buf.append("<h3 id=\"activejobs\">")
-           .append(_t("Active jobs")).append(": ").append(activeJobs.size())
-           .append("</h3><ol>");
+        .append(_t("Active jobs")).append(": ").append(activeJobs.size())
+        .append("</h3><ol>");
         for (int i = 0; i < activeJobs.size(); i++) {
             Job j = activeJobs.get(i);
             buf.append("<li>(").append(_t("started {0} ago", DataHelper.formatDuration2(now-j.getTiming().getStartAfter()))).append("): ");
@@ -67,8 +67,8 @@ public class JobQueueHelper extends HelperBase {
         buf.append("</ol>\n");
 
         buf.append("<h3 id=\"finishedjobs\">")
-           .append(_t("Just finished jobs")).append(": ").append(justFinishedJobs.size())
-           .append("</h3><ol>");
+        .append(_t("Just finished jobs")).append(": ").append(justFinishedJobs.size())
+        .append("</h3><ol>");
         for (int i = 0; i < justFinishedJobs.size(); i++) {
             Job j = justFinishedJobs.get(i);
             buf.append("<li>(").append(_t("finished {0} ago", DataHelper.formatDuration2(now-j.getTiming().getActualEnd()))).append("): ");
@@ -77,8 +77,8 @@ public class JobQueueHelper extends HelperBase {
         buf.append("</ol>\n");
 
         buf.append("<h3 id=\"readyjobs\">")
-           .append(_t("Ready/waiting jobs")).append(": ").append(readyJobs.size())
-           .append("</h3><ol>");
+        .append(_t("Ready/waiting jobs")).append(": ").append(readyJobs.size())
+        .append("</h3><ol>");
         ObjectCounterUnsafe<String> counter = new ObjectCounterUnsafe<String>();
         for (int i = 0; i < readyJobs.size(); i++) {
             Job j = readyJobs.get(i);
@@ -96,8 +96,8 @@ public class JobQueueHelper extends HelperBase {
         buf.setLength(0);
 
         buf.append("<h3 id=\"scheduledjobs\">")
-           .append(_t("Scheduled jobs")).append(": ").append(timedJobs.size())
-           .append("</h3><ol>");
+        .append(_t("Scheduled jobs")).append(": ").append(timedJobs.size())
+        .append("</h3><ol>");
         long prev = Long.MIN_VALUE;
         counter.clear();
         for (int i = 0; i < timedJobs.size(); i++) {
@@ -120,14 +120,14 @@ public class JobQueueHelper extends HelperBase {
         getJobCounts(buf, counter);
         out.write(buf.toString());
         buf.setLength(0);
-        
+
         buf.append("<h3 id=\"totaljobstats\">")
-           .append(_t("Total Job Statistics"))
-           .append("</h3>\n");
+        .append(_t("Total Job Statistics"))
+        .append("</h3>\n");
         getJobStats(buf);
         out.write(buf.toString());
     }
-    
+
     /** @since 0.9.5 */
     private void getJobCounts(StringBuilder buf, ObjectCounterUnsafe<String> counter) {
         List<String> names = new ArrayList<String>(counter.objects());
@@ -138,8 +138,8 @@ public class JobQueueHelper extends HelperBase {
         Collections.sort(names, new JobCountComparator(counter));
         for (String name : names) {
             buf.append("<tr><td>").append(name)
-               .append("</td><td align=\"center\">").append(counter.count(name))
-               .append("</td></tr>\n");
+            .append("</td><td align=\"center\">").append(counter.count(name))
+            .append("</td></tr>\n");
         }
         buf.append("</table>\n");
     }
@@ -149,14 +149,14 @@ public class JobQueueHelper extends HelperBase {
      *  Moved from JobQueue
      *  @since 0.8.9
      */
-    private void getJobStats(StringBuilder buf) { 
+    private void getJobStats(StringBuilder buf) {
         buf.append("<div class=\"widescroll\"><table id=\"jobstats\">\n" +
                    "<tr><th>").append(_t("Job")).append("</th><th>").append(_t("Runs")).append("</th>" +
-                   "<th>").append(_t("Dropped")).append("</th>" +
-                   "<th>").append(_t("Time")).append("</th><th><i>").append(_t("Avg")).append("</i></th><th><i>")
-           .append(_t("Max")).append("</i></th><th><i>").append(_t("Min")).append("</i></th>" +
-                   "<th>").append(_t("Pending")).append("</th><th><i>").append(_t("Avg")).append("</i></th><th><i>")
-           .append(_t("Max")).append("</i></th><th><i>").append(_t("Min")).append("</i></th></tr>\n");
+                           "<th>").append(_t("Dropped")).append("</th>" +
+                                   "<th>").append(_t("Time")).append("</th><th><i>").append(_t("Avg")).append("</i></th><th><i>")
+        .append(_t("Max")).append("</i></th><th><i>").append(_t("Min")).append("</i></th>" +
+                "<th>").append(_t("Pending")).append("</th><th><i>").append(_t("Avg")).append("</i></th><th><i>")
+        .append(_t("Max")).append("</i></th><th><i>").append(_t("Min")).append("</i></th></tr>\n");
         long totRuns = 0;
         long totDropped = 0;
         long totExecTime = 0;
@@ -170,7 +170,7 @@ public class JobQueueHelper extends HelperBase {
 
         List<JobStats> tstats = new ArrayList<JobStats>(_context.jobQueue().getJobStats());
         Collections.sort(tstats, new JobStatsComparator());
-        
+
         for (JobStats stats : tstats) {
             buf.append("<tr>");
             buf.append("<td><b>").append(stats.getName()).append("</b></td>");
@@ -223,31 +223,31 @@ public class JobQueueHelper extends HelperBase {
 
     /** @since 0.8.9 */
     private static class JobStatsComparator implements Comparator<JobStats>, Serializable {
-         private final Collator coll = Collator.getInstance();
+        private final Collator coll = Collator.getInstance();
 
-         public int compare(JobStats l, JobStats r) {
-             return coll.compare(l.getName(), r.getName());
+        public int compare(JobStats l, JobStats r) {
+            return coll.compare(l.getName(), r.getName());
         }
     }
 
     /** @since 0.9.5 */
     private static class JobCountComparator implements Comparator<String>, Serializable {
-         private final ObjectCounterUnsafe<String> _counter;
-         private final Collator coll = Collator.getInstance();
+        private final ObjectCounterUnsafe<String> _counter;
+        private final Collator coll = Collator.getInstance();
 
-         public JobCountComparator(ObjectCounterUnsafe<String> counter) {
-             _counter = counter;
-         }
+        public JobCountComparator(ObjectCounterUnsafe<String> counter) {
+            _counter = counter;
+        }
 
-         public int compare(String l, String r) {
-             // reverse
-             int lc = _counter.count(l);
-             int rc = _counter.count(r);
-             if (lc > rc)
-                 return -1;
-             if (lc < rc)
-                 return 1;
-             return coll.compare(l, r);
+        public int compare(String l, String r) {
+            // reverse
+            int lc = _counter.count(l);
+            int rc = _counter.count(r);
+            if (lc > rc)
+                return -1;
+            if (lc < rc)
+                return 1;
+            return coll.compare(l, r);
         }
     }
 }

@@ -39,7 +39,7 @@ class UpdateRunner implements UpdateTask, CompleteListener {
     private static final long CHECK_INTERVAL = 3*60*1000;
 
     public UpdateRunner(I2PAppContext ctx, UpdateManager umgr, SnarkManager smgr,
-                        UpdateType type, List<URI> uris, String newVersion) { 
+                        UpdateType type, List<URI> uris, String newVersion) {
         _context = ctx;
         _log = ctx.logManager().getLog(getClass());
         _umgr = umgr;
@@ -51,7 +51,9 @@ class UpdateRunner implements UpdateTask, CompleteListener {
 
     //////// begin UpdateTask methods
 
-    public boolean isRunning() { return _isRunning; }
+    public boolean isRunning() {
+        return _isRunning;
+    }
 
     public void shutdown() {
         _isRunning = false;
@@ -60,13 +62,21 @@ class UpdateRunner implements UpdateTask, CompleteListener {
         }
     }
 
-    public UpdateType getType() { return _type; }
+    public UpdateType getType() {
+        return _type;
+    }
 
-    public UpdateMethod getMethod() { return UpdateMethod.TORRENT; }
+    public UpdateMethod getMethod() {
+        return UpdateMethod.TORRENT;
+    }
 
-    public URI getURI() { return _currentURI; }
+    public URI getURI() {
+        return _currentURI;
+    }
 
-    public String getID() { return ""; }
+    public String getID() {
+        return "";
+    }
 
     //////// end UpdateTask methods
 
@@ -92,10 +102,10 @@ class UpdateRunner implements UpdateTask, CompleteListener {
                 _snark = _smgr.getTorrentByInfoHash(ih);
                 if (_snark != null) {
                     if (_snark.getMetaInfo() != null) {
-                         _hasMetaInfo = true;
-                         Storage storage = _snark.getStorage();
-                         if (storage != null && storage.complete())
-                             processComplete(_snark);
+                        _hasMetaInfo = true;
+                        Storage storage = _snark.getStorage();
+                        if (storage != null && storage.complete())
+                            processComplete(_snark);
                     }
                     if (!_isComplete) {
                         if (_snark.isStopped() && !_snark.isStarting())
@@ -108,7 +118,7 @@ class UpdateRunner implements UpdateTask, CompleteListener {
                 String name = magnet.getName();
                 String trackerURL = magnet.getTrackerURL();
                 if (trackerURL == null && !_smgr.util().shouldUseDHT() &&
-                    !_smgr.util().shouldUseOpenTrackers()) {
+                        !_smgr.util().shouldUseOpenTrackers()) {
                     // but won't we use OT as a failsafe even if disabled?
                     _umgr.notifyAttemptFailed(this, "No tracker, no DHT, no OT", null);
                     continue;
@@ -184,35 +194,35 @@ class UpdateRunner implements UpdateTask, CompleteListener {
     }
 
     private void fatal(String error) {
-            if (_snark != null) {
-                if (_hasMetaInfo) {
-                    // avoid loop stopTorrent() ... updateStatus() ... fatal() ...
-                    if (!_snark.isStopped())
-                        _smgr.stopTorrent(_snark, true);
-                    String file = _snark.getName();
-                    _smgr.removeTorrent(file);
-                    // delete torrent file
-                    File f = new File(_smgr.getDataDir(), file);
-                    f.delete();
-                    // delete data
-                    file = _snark.getBaseName();
-                    f = new File(_smgr.getDataDir(), file);
-                    f.delete();
-                } else {
-                    _smgr.deleteMagnet(_snark);
-                }
+        if (_snark != null) {
+            if (_hasMetaInfo) {
+                // avoid loop stopTorrent() ... updateStatus() ... fatal() ...
+                if (!_snark.isStopped())
+                    _smgr.stopTorrent(_snark, true);
+                String file = _snark.getName();
+                _smgr.removeTorrent(file);
+                // delete torrent file
+                File f = new File(_smgr.getDataDir(), file);
+                f.delete();
+                // delete data
+                file = _snark.getBaseName();
+                f = new File(_smgr.getDataDir(), file);
+                f.delete();
+            } else {
+                _smgr.deleteMagnet(_snark);
             }
-            _umgr.notifyTaskFailed(this, error, null);
-            _log.error(error);
-            _isRunning = false;
-            // stop the tunnel if we were the only one running
-            if (_smgr.util().connected() && !_smgr.util().isConnecting()) {
-                for (Snark s : _smgr.getTorrents()) {
-                    if (!s.isStopped())
-                        return;
-                }
-                _smgr.util().disconnect();
+        }
+        _umgr.notifyTaskFailed(this, error, null);
+        _log.error(error);
+        _isRunning = false;
+        // stop the tunnel if we were the only one running
+        if (_smgr.util().connected() && !_smgr.util().isConnecting()) {
+            for (Snark s : _smgr.getTorrents()) {
+                if (!s.isStopped())
+                    return;
             }
+            _smgr.util().disconnect();
+        }
     }
 
     private void processComplete(Snark snark) {
@@ -229,7 +239,7 @@ class UpdateRunner implements UpdateTask, CompleteListener {
     private void notifyProgress() {
         if (_hasMetaInfo) {
             long total = _snark.getTotalLength();
-            long remaining = _snark.getRemainingLength(); 
+            long remaining = _snark.getRemainingLength();
             String status = "<b>" + _smgr.util().getString("Updating") + "</b>";
             _umgr.notifyProgress(this, status, total - remaining, total);
         }
@@ -275,7 +285,7 @@ class UpdateRunner implements UpdateTask, CompleteListener {
     }
 
     public void fatal(Snark snark, String error) {
-         fatal(error);
+        fatal(error);
         _smgr.fatal(snark, error);
     }
 
@@ -330,7 +340,7 @@ class UpdateRunner implements UpdateTask, CompleteListener {
 
     private static String linkify(String url) {
         String durl = url.length() <= 28 ? DataHelper.escapeHTML(url) :
-                                           DataHelper.escapeHTML(url.substring(0, 25)) + "&hellip;";
+                      DataHelper.escapeHTML(url.substring(0, 25)) + "&hellip;";
         // TODO urlEncode instead
         return "<a target=\"_blank\" href=\"" + DataHelper.escapeHTML(url) + "\"/>" + durl + "</a>";
     }

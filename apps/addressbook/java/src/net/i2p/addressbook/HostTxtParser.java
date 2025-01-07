@@ -25,7 +25,7 @@ import net.i2p.util.SystemVersion;
 /**
  * Utility class providing methods to parse and write files in a hosts.txt file
  * format, and subscription file format.
- * 
+ *
  * @since 0.9.26 modified from ConfigParser, public since 0.9.55 for CLI
  */
 public class HostTxtParser {
@@ -38,16 +38,16 @@ public class HostTxtParser {
      * starting with '#' or ';' are considered comments, and ignored. Lines that
      * are obviously not in the format key=value are also ignored.
      * The key is converted to lower case.
-     * 
+     *
      * Returned map will not contain null ("remove") entries.
-     * 
+     *
      * @param input
      *            A BufferedReader with lines in key=value format to parse into
      *            a Map.
      * @return A Map containing the key, value pairs from input.
      * @throws IOException
      *             if the BufferedReader cannot be read.
-     *  
+     *
      */
     private static Map<String, HostTxtEntry> parse(BufferedReader input) throws IOException {
         try {
@@ -61,13 +61,16 @@ public class HostTxtParser {
             }
             return result;
         } finally {
-            try { input.close(); } catch (IOException ioe) {}
+            try {
+                input.close();
+            }
+            catch (IOException ioe) {}
         }
     }
 
     /**
      * Return a HostTxtEntry from the contents of the inputLine.
-     * 
+     *
      * @param inputLine key=value[#!k1=v1#k2=v2...]
      * @param allowCommandOnly if true, a line starting with #! will return
      *                         a HostTxtEntry with a null name and dest and non-null props.
@@ -127,9 +130,9 @@ public class HostTxtParser {
     /**
      * Return a Map using the contents of the File file. See parse(BufferedReader)
      * for details of the input format.
-     * 
+     *
      * Returned map will not contain null ("remove") entries.
-     * 
+     *
      * @param file
      *            A File to parse.
      * @return A Map containing the key, value pairs from file.
@@ -141,7 +144,7 @@ public class HostTxtParser {
         try {
             fileStream = new FileInputStream(file);
             BufferedReader input = new BufferedReader(new InputStreamReader(
-                    fileStream, "UTF-8"));
+                        fileStream, "UTF-8"));
             Map<String, HostTxtEntry> rv = parse(input);
             return rv;
         } finally {
@@ -156,9 +159,9 @@ public class HostTxtParser {
     /**
      * Return a Map using the contents of the File file. If file cannot be read,
      * use map instead, and write the result to where file should have been.
-     * 
+     *
      * Returned map will not contain null ("remove") entries.
-     * 
+     *
      * @param file
      *            A File to attempt to parse.
      * @param map
@@ -187,7 +190,7 @@ public class HostTxtParser {
     /**
      * Write contents of Map map to BufferedWriter output. Output is written
      * with one key, value pair on each line, in the format: key=value.
-     * 
+     *
      * @param map
      *            A Map to write to output.
      * @param output
@@ -201,7 +204,10 @@ public class HostTxtParser {
                 entry.getValue().write(output);
             }
         } finally {
-            try { output.close(); } catch (IOException ioe) {}
+            try {
+                output.close();
+            }
+            catch (IOException ioe) {}
         }
     }
 
@@ -278,9 +284,9 @@ public class HostTxtParser {
         Properties p = e.getProps();
         if (p != null) {
             if (p.containsKey(HostTxtEntry.PROP_ACTION) ||
-                p.containsKey(HostTxtEntry.PROP_OLDDEST) ||
-                p.containsKey(HostTxtEntry.PROP_OLDNAME) ||
-                p.containsKey(HostTxtEntry.PROP_OLDSIG)) {
+                    p.containsKey(HostTxtEntry.PROP_OLDDEST) ||
+                    p.containsKey(HostTxtEntry.PROP_OLDNAME) ||
+                    p.containsKey(HostTxtEntry.PROP_OLDSIG)) {
                 if (!e.hasValidSig()) {
                     if (!quiet) {
                         System.err.println("Bad inner signature for " + e.getName());
@@ -309,18 +315,18 @@ public class HostTxtParser {
         System.exit(0);
     }
 
-/****
-    public static void test(String[] args) throws Exception {
-        File f = new File("tmp-hosts.txt");
-        Map<String, HostTxtEntry> map = parse(f);
-        for (HostTxtEntry e : map.values()) {
-            System.out.println("Host: " + e.getName() +
-                               "\nDest: " + e.getDest() +
-                               "\nAction: " + (e.getProps() != null ? e.getProps().getProperty("action") : "(none)") +
-                               "\nValid Inner? " + e.hasValidInnerSig() +
-                               "\nValid? " + e.hasValidSig() +
-                               '\n');
+    /****
+        public static void test(String[] args) throws Exception {
+            File f = new File("tmp-hosts.txt");
+            Map<String, HostTxtEntry> map = parse(f);
+            for (HostTxtEntry e : map.values()) {
+                System.out.println("Host: " + e.getName() +
+                                   "\nDest: " + e.getDest() +
+                                   "\nAction: " + (e.getProps() != null ? e.getProps().getProperty("action") : "(none)") +
+                                   "\nValid Inner? " + e.hasValidInnerSig() +
+                                   "\nValid? " + e.hasValidSig() +
+                                   '\n');
+            }
         }
-    }
-****/
+    ****/
 }

@@ -100,130 +100,130 @@ public class TranslateReader extends FilterReader {
             if (c >= 0)
                 pushit((char) c);
             //System.err.println("State: " + _state + " char: '" + ((char)c) + "'");
-        
+
             switch (c) {
-                case -1:
-                case '\r':
-                case '\n':
-                    return flushit();
+            case -1:
+            case '\r':
+            case '\n':
+                return flushit();
 
-                case '_':
-                    switch (_state) {
-                        case START:
-                            _state = S.UNDER;
-                            break;
-                        case BACK:
-                            _state = S.QUOTE;
-                            // fall thru
-                        case QUOTE:
-                            _argBuf.append((char) c);
-                            break;
-                        default:
-                            return flushit();
-                    }
+            case '_':
+                switch (_state) {
+                case START:
+                    _state = S.UNDER;
                     break;
-
-                case '(':
-                    switch (_state) {
-                        case UNDER:
-                            _args.clear();
-                            _state = S.LPAREN;
-                            break;
-                        case BACK:
-                            _state = S.QUOTE;
-                            // fall thru
-                        case QUOTE:
-                            _argBuf.append((char) c);
-                            break;
-                        default:
-                            return flushit();
-                    }
+                case BACK:
+                    _state = S.QUOTE;
+                // fall thru
+                case QUOTE:
+                    _argBuf.append((char) c);
                     break;
-
-                case '"':
-                    switch (_state) {
-                        case LPAREN:
-                            // got an opening quote for a parameter
-                            if (_args.size() >= MAX_ARGS)
-                                return flushit();
-                            _argBuf.setLength(0);
-                            _state = S.QUOTE;
-                            break;
-                        case BACK:
-                            _argBuf.append((char) c);
-                            _state = S.QUOTE;
-                            break;
-                        case QUOTE:
-                            // got a closing quote for a parameter
-                            _args.add(_argBuf.toString());
-                            _state = S.LPAREN;
-                            break;
-                        default:
-                            return flushit();
-                    }
-                    break;
-
-                case '\\':
-                    switch (_state) {
-                        case QUOTE:
-                            _state = S.BACK;
-                            break;
-                        case BACK:
-                            _argBuf.append((char) c);
-                            _state = S.QUOTE;
-                            break;
-                        default:
-                            return flushit();
-                    }
-                    break;
-
-                case ' ':
-                case '\t':
-                case ',':
-                    switch (_state) {
-                        case BACK:
-                            _state = S.QUOTE;
-                            // fall thru
-                        case QUOTE:
-                            _argBuf.append((char) c);
-                            break;
-                        case LPAREN:
-                            // ignore whitespace and commas between args
-                            break;
-                        default:
-                            return flushit();
-                    }
-                    break;
-
-                case ')':
-                    switch (_state) {
-                        case BACK:
-                            _state = S.QUOTE;
-                            // fall thru
-                        case QUOTE:
-                            _argBuf.append((char) c);
-                            break;
-                        case LPAREN:
-                            // Finally, we have something to translate!
-                            translate();
-                            return popit();
-                        default:
-                            return flushit();
-                    }
-                    break;
-
                 default:
-                    switch (_state) {
-                        case BACK:
-                            _state = S.QUOTE;
-                            // fall thru
-                        case QUOTE:
-                            _argBuf.append((char) c);
-                            break;
-                        default:
-                            return flushit();
-                    }
+                    return flushit();
+                }
+                break;
+
+            case '(':
+                switch (_state) {
+                case UNDER:
+                    _args.clear();
+                    _state = S.LPAREN;
                     break;
+                case BACK:
+                    _state = S.QUOTE;
+                // fall thru
+                case QUOTE:
+                    _argBuf.append((char) c);
+                    break;
+                default:
+                    return flushit();
+                }
+                break;
+
+            case '"':
+                switch (_state) {
+                case LPAREN:
+                    // got an opening quote for a parameter
+                    if (_args.size() >= MAX_ARGS)
+                        return flushit();
+                    _argBuf.setLength(0);
+                    _state = S.QUOTE;
+                    break;
+                case BACK:
+                    _argBuf.append((char) c);
+                    _state = S.QUOTE;
+                    break;
+                case QUOTE:
+                    // got a closing quote for a parameter
+                    _args.add(_argBuf.toString());
+                    _state = S.LPAREN;
+                    break;
+                default:
+                    return flushit();
+                }
+                break;
+
+            case '\\':
+                switch (_state) {
+                case QUOTE:
+                    _state = S.BACK;
+                    break;
+                case BACK:
+                    _argBuf.append((char) c);
+                    _state = S.QUOTE;
+                    break;
+                default:
+                    return flushit();
+                }
+                break;
+
+            case ' ':
+            case '\t':
+            case ',':
+                switch (_state) {
+                case BACK:
+                    _state = S.QUOTE;
+                // fall thru
+                case QUOTE:
+                    _argBuf.append((char) c);
+                    break;
+                case LPAREN:
+                    // ignore whitespace and commas between args
+                    break;
+                default:
+                    return flushit();
+                }
+                break;
+
+            case ')':
+                switch (_state) {
+                case BACK:
+                    _state = S.QUOTE;
+                // fall thru
+                case QUOTE:
+                    _argBuf.append((char) c);
+                    break;
+                case LPAREN:
+                    // Finally, we have something to translate!
+                    translate();
+                    return popit();
+                default:
+                    return flushit();
+                }
+                break;
+
+            default:
+                switch (_state) {
+                case BACK:
+                    _state = S.QUOTE;
+                // fall thru
+                case QUOTE:
+                    _argBuf.append((char) c);
+                    break;
+                default:
+                    return flushit();
+                }
+                break;
             }
         }
     }
@@ -414,7 +414,10 @@ public class TranslateReader extends FilterReader {
             }
             System.out.flush();
         } finally {
-            if (r != null) try { r.close(); } catch (IOException ioe) {}
+            if (r != null) try {
+                    r.close();
+                }
+                catch (IOException ioe) {}
         }
     }
 

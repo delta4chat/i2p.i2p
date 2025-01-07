@@ -15,14 +15,14 @@ import net.i2p.client.streaming.IncomingConnectionFilter;
 import net.i2p.util.Log;
 /**
  * Have a client connect to a server, where the server waits 5
- * seconds and closes the socket and the client detect that 
+ * seconds and closes the socket and the client detect that
  * EOF.
  *
  */
 public class ConnectCloseIT extends StreamingITBase {
     private Log _log;
     private I2PSession _server;
-    
+
     @Test
     public void test() throws Exception {
         I2PAppContext context = I2PAppContext.getGlobalContext();
@@ -34,9 +34,9 @@ public class ConnectCloseIT extends StreamingITBase {
         _log.debug("running client");
         runClient(context, createSession());
     }
-    
-    
-    
+
+
+
     @Override
     protected Properties getProperties() {
         return System.getProperties();
@@ -58,7 +58,7 @@ public class ConnectCloseIT extends StreamingITBase {
         public ServerRunner(I2PAppContext ctx, I2PSession session) {
             super(ctx,session);
         }
-        
+
         public void run() {
             try {
                 Properties opts = new Properties();
@@ -70,7 +70,10 @@ public class ConnectCloseIT extends StreamingITBase {
                 while (true) {
                     I2PSocket socket = ssocket.accept();
                     _log.debug("* socket accepted: " + socket);
-                    try { Thread.sleep(5*1000); } catch (InterruptedException ie) {}
+                    try {
+                        Thread.sleep(5*1000);
+                    }
+                    catch (InterruptedException ie) {}
                     socket.close();
                     _log.debug("* socket closed: " + socket);
                 }
@@ -78,14 +81,14 @@ public class ConnectCloseIT extends StreamingITBase {
                 _log.error("error running", e);
             }
         }
-        
+
     }
-    
+
     private class ClientRunner extends RunnerBase {
         public ClientRunner(I2PAppContext ctx, I2PSession session) {
             super(ctx,session);
         }
-        
+
         public void run() {
             try {
                 Properties opts = new Properties();
@@ -106,9 +109,12 @@ public class ConnectCloseIT extends StreamingITBase {
             } catch (Exception e) {
                 _log.error("error running", e);
             }
-            try { Thread.sleep(5*1000); } catch (InterruptedException ie) {}
+            try {
+                Thread.sleep(5*1000);
+            }
+            catch (InterruptedException ie) {}
             System.exit(0);
         }
-        
+
     }
 }

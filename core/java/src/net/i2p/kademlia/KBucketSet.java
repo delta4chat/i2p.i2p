@@ -54,7 +54,7 @@ public class KBucketSet<T extends SimpleDataStructure> {
     private final List<KBucket<T>> _buckets;
     private final Range<T> _rangeCalc;
     private final KBucketTrimmer<T> _trimmer;
-    
+
     /**
      *  Locked for reading only when traversing all the buckets.
      *  Locked for writing only when splitting a bucket.
@@ -67,7 +67,7 @@ public class KBucketSet<T extends SimpleDataStructure> {
     private final int BUCKET_SIZE;
     private final int B_VALUE;
     private final int B_FACTOR;
-    
+
     /**
      * Use the default trim strategy, which removes a random entry.
      * @param us the local identity (typically a SHA1Hash or Hash)
@@ -100,7 +100,7 @@ public class KBucketSet<T extends SimpleDataStructure> {
         // this verifies the zero-argument constructor
         makeKey(new byte[us.length()]);
     }
-    
+
     private void getReadLock() {
         _bucketsLock.readLock().lock();
     }
@@ -142,7 +142,9 @@ public class KBucketSet<T extends SimpleDataStructure> {
         getReadLock();
         try {
             bucket = getBucket(peer);
-        } finally { releaseReadLock(); }
+        } finally {
+            releaseReadLock();
+        }
         if (bucket != null) {
             if (bucket.add(peer)) {
                 if (_log.shouldLog(Log.DEBUG))
@@ -173,8 +175,8 @@ public class KBucketSet<T extends SimpleDataStructure> {
      */
     private boolean shouldSplit(KBucket<T> b) {
         return
-               b.getRangeBegin() != b.getRangeEnd() &&
-               b.getKeyCount() > BUCKET_SIZE;
+            b.getRangeBegin() != b.getRangeEnd() &&
+            b.getKeyCount() > BUCKET_SIZE;
     }
 
     /**
@@ -188,7 +190,9 @@ public class KBucketSet<T extends SimpleDataStructure> {
             return;
         try {
             locked_split(r);
-        } finally { releaseWriteLock(); }
+        } finally {
+            releaseWriteLock();
+        }
     }
 
     /**
@@ -211,9 +215,9 @@ public class KBucketSet<T extends SimpleDataStructure> {
             s1 = b0.getRangeBegin();
             e2 = b0.getRangeEnd();
             if (B_VALUE == 1 ||
-                ((s1 & (B_FACTOR - 1)) == 0 &&
-                 ((e2 + 1) & (B_FACTOR - 1)) == 0 &&
-                 e2 > s1 + B_FACTOR)) {
+                    ((s1 & (B_FACTOR - 1)) == 0 &&
+                     ((e2 + 1) & (B_FACTOR - 1)) == 0 &&
+                     e2 > s1 + B_FACTOR)) {
                 // The bucket is a "whole" kbucket with a range > B_FACTOR,
                 // so it should be split into two "whole" kbuckets each with
                 // a range >= B_FACTOR.
@@ -225,7 +229,7 @@ public class KBucketSet<T extends SimpleDataStructure> {
                 // Start or continue splitting down to a depth B_VALUE.
                 // Linear split
                 s2 = s1 + ((1 + e2 - s1) / 2);
-            }	
+            }
             e1 = s2 - 1;
             if (_log.shouldLog(Log.INFO))
                 _log.info("Splitting (" + s1 + ',' + e2 + ") -> (" + s1 + ',' + e1 + ") (" + s2 + ',' + e2 + ')');
@@ -267,22 +271,26 @@ public class KBucketSet<T extends SimpleDataStructure> {
             for (KBucket<T> b : _buckets) {
                 rv += b.getKeyCount();
             }
-        } finally { releaseReadLock(); }
+        } finally {
+            releaseReadLock();
+        }
         return rv;
     }
-    
+
     public boolean remove(T entry) {
         KBucket<T> kbucket;
         getReadLock();
         try {
             kbucket = getBucket(entry);
-        } finally { releaseReadLock(); }
+        } finally {
+            releaseReadLock();
+        }
         if (kbucket == null)  // us
             return false;
         boolean removed = kbucket.remove(entry);
         return removed;
     }
-    
+
     /** @since 0.8.8 */
     public void clear() {
         getReadLock();
@@ -290,10 +298,12 @@ public class KBucketSet<T extends SimpleDataStructure> {
             for (KBucket<T> b : _buckets) {
                 b.clear();
             }
-        } finally { releaseReadLock(); }
+        } finally {
+            releaseReadLock();
+        }
         _rangeCalc.clear();
     }
-    
+
     /**
      *  @return a copy in a new set
      */
@@ -304,7 +314,9 @@ public class KBucketSet<T extends SimpleDataStructure> {
             for (KBucket<T> b : _buckets) {
                 all.addAll(b.getEntries());
             }
-        } finally { releaseReadLock(); }
+        } finally {
+            releaseReadLock();
+        }
         return all;
     }
 
@@ -316,16 +328,18 @@ public class KBucketSet<T extends SimpleDataStructure> {
         all.removeAll(toIgnore);
         return all;
     }
-    
+
     public void getAll(SelectionCollector<T> collector) {
         getReadLock();
         try {
             for (KBucket<T> b : _buckets) {
                 b.getEntries(collector);
             }
-        } finally { releaseReadLock(); }
+        } finally {
+            releaseReadLock();
+        }
     }
-    
+
     /**
      *  The keys closest to us.
      *  Returned list will never contain us.
@@ -334,7 +348,7 @@ public class KBucketSet<T extends SimpleDataStructure> {
     public List<T> getClosest(int max) {
         return getClosest(max, Collections.<T> emptySet());
     }
-    
+
     /**
      *  The keys closest to us.
      *  Returned list will never contain us.
@@ -357,7 +371,9 @@ public class KBucketSet<T extends SimpleDataStructure> {
                     }
                 }
             }
-        } finally { releaseReadLock(); }
+        } finally {
+            releaseReadLock();
+        }
         Comparator<T> comp = new XORComparator<T>(_us);
         Collections.sort(rv, comp);
         int sz = rv.size();
@@ -366,7 +382,7 @@ public class KBucketSet<T extends SimpleDataStructure> {
         }
         return rv;
     }
-    
+
     /**
      *  The keys closest to the key.
      *  Returned list will never contain us.
@@ -375,7 +391,7 @@ public class KBucketSet<T extends SimpleDataStructure> {
     public List<T> getClosest(T key, int max) {
         return getClosest(key, max, Collections.<T> emptySet());
     }
-    
+
     /**
      *  The keys closest to the key.
      *  Returned list will never contain us.
@@ -409,7 +425,9 @@ public class KBucketSet<T extends SimpleDataStructure> {
                     }
                 }
             }
-        } finally { releaseReadLock(); }
+        } finally {
+            releaseReadLock();
+        }
         Comparator<T> comp = new XORComparator<T>(key);
         Collections.sort(rv, comp);
         int sz = rv.size();
@@ -430,10 +448,10 @@ public class KBucketSet<T extends SimpleDataStructure> {
             return -1;
         int rv = pickBucket(range);
         if (rv >= 0) {
-             return rv;
+            return rv;
         }
-        _log.error("Key does not fit in any bucket?!\nKey  : [" 
-                   + DataHelper.toHexString(key.getData()) + "]" 
+        _log.error("Key does not fit in any bucket?!\nKey  : ["
+                   + DataHelper.toHexString(key.getData()) + "]"
                    + "\nUs   : " + _us
                    + "\nDelta: ["
                    + DataHelper.toHexString(DataHelper.xor(_us.getData(), key.getData()))
@@ -442,7 +460,7 @@ public class KBucketSet<T extends SimpleDataStructure> {
         throw new IllegalStateException("pickBucket returned " + rv);
         //return -1;
     }
-    
+
     /**
      *  Returned list is a copy of the bucket list, closest first,
      *  with the actual buckets (not a copy).
@@ -456,7 +474,9 @@ public class KBucketSet<T extends SimpleDataStructure> {
         getReadLock();
         try {
             return new ArrayList<KBucket<T>>(_buckets);
-        } finally { releaseReadLock(); }
+        } finally {
+            releaseReadLock();
+        }
     }
 
     /**
@@ -465,12 +485,12 @@ public class KBucketSet<T extends SimpleDataStructure> {
      *  @return null if key is us
      */
     private KBucket<T> getBucket(T key) {
-       int bucket = pickBucket(key);
-       if (bucket < 0)
-           return null;
-       return _buckets.get(bucket);
+        int bucket = pickBucket(key);
+        if (bucket < 0)
+            return null;
+        return _buckets.get(bucket);
     }
-    
+
     /**
      *  The bucket number that contains this range number
      *  Caller must hold read lock or write lock
@@ -500,16 +520,16 @@ public class KBucketSet<T extends SimpleDataStructure> {
         buckets.add(createBucket(0, NUM_BUCKETS -1));
         return buckets;
     }
-    
+
     private KBucket<T> createBucket(int start, int end) {
         if (end - start >= B_FACTOR &&
-            (((end + 1) & B_FACTOR - 1) != 0 ||
-             (start & B_FACTOR - 1) != 0))
+                (((end + 1) & B_FACTOR - 1) != 0 ||
+                 (start & B_FACTOR - 1) != 0))
             throw new IllegalArgumentException("Sub-bkt crosses K-bkt boundary: " + start + '-' + end);
         KBucket<T> bucket = new KBucketImpl<T>(_context, start, end, BUCKET_SIZE, _trimmer);
         return bucket;
     }
-    
+
     /**
      *  The number of bits minus 1 (range number) for the xor of the key.
      *  Package private for testing only. Others shouldn't need this.
@@ -518,7 +538,7 @@ public class KBucketSet<T extends SimpleDataStructure> {
     int getRange(T key) {
         return _rangeCalc.getRange(key);
     }
-    
+
     /**
      *  For every bucket that hasn't been updated in this long,
      *  or isn't close to full,
@@ -535,13 +555,15 @@ public class KBucketSet<T extends SimpleDataStructure> {
                 int curSize = b.getKeyCount();
                 // Always explore the closest bucket
                 if ((b.getRangeBegin() == 0) ||
-                    (b.getLastChanged() < old || curSize < BUCKET_SIZE * 3 / 4))
+                        (b.getLastChanged() < old || curSize < BUCKET_SIZE * 3 / 4))
                     rv.add(generateRandomKey(b));
             }
-        } finally { releaseReadLock(); }
+        } finally {
+            releaseReadLock();
+        }
         return rv;
     }
-    
+
     /**
      *  Generate a random key to go within this bucket
      *  Package private for testing only. Others shouldn't need this.
@@ -622,7 +644,7 @@ public class KBucketSet<T extends SimpleDataStructure> {
 
         return rv;
     }
-    
+
     /**
      *  Make a new SimpleDataStrucure from the data
      *  @param data size &lt;= SDS length, else throws IAE
@@ -633,7 +655,7 @@ public class KBucketSet<T extends SimpleDataStructure> {
         int len = _us.length();
         int dlen = data.length;
         if (dlen > len + 1 ||
-            (dlen == len + 1 && data[0] != 0))
+                (dlen == len + 1 && data[0] != 0))
             throw new IllegalArgumentException("bad length " + dlen + " > " + len);
         T rv;
         try {
@@ -716,8 +738,12 @@ public class KBucketSet<T extends SimpleDataStructure> {
             r = range;
         }
 
-        public int getRangeBegin() { return r; }
-        public int getRangeEnd() { return r; }
+        public int getRangeBegin() {
+            return r;
+        }
+        public int getRangeEnd() {
+            return r;
+        }
 
         public int getKeyCount() {
             return 0;
@@ -767,10 +793,10 @@ public class KBucketSet<T extends SimpleDataStructure> {
         StringBuilder buf = new StringBuilder(1024);
         buf.append("<div class=\"debug_container buckets\">");
         buf.append("<hr><b>Bucket set rooted on:</b> ").append(_us.toString())
-           .append(" K=").append(BUCKET_SIZE)
-           .append(" B=").append(B_VALUE)
-           .append(" with ").append(size())
-           .append(" keys in ").append(_buckets.size()).append(" buckets:<br>\n");
+        .append(" K=").append(BUCKET_SIZE)
+        .append(" B=").append(B_VALUE)
+        .append(" with ").append(size())
+        .append(" keys in ").append(_buckets.size()).append(" buckets:<br>\n");
         getReadLock();
         try {
             int len = _buckets.size();
@@ -779,7 +805,9 @@ public class KBucketSet<T extends SimpleDataStructure> {
                 buf.append("<b>Bucket ").append(i).append("/").append(len).append(":</b> ");
                 buf.append(b.toString()).append("<br>\n");
             }
-        } finally { releaseReadLock(); }
+        } finally {
+            releaseReadLock();
+        }
         buf.append("</div>");
         return buf.toString();
     }

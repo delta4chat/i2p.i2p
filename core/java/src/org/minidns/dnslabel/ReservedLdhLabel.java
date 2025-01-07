@@ -30,7 +30,7 @@ public class ReservedLdhLabel extends LdhLabel {
 
     static boolean isReservedLdhLabelInternal(String label) {
         return label.length() >= 4
-                && label.charAt(2) == '-'
-                && label.charAt(3) == '-';
+               && label.charAt(2) == '-'
+               && label.charAt(3) == '-';
     }
 }

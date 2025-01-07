@@ -1,9 +1,9 @@
 package net.i2p.router.tasks;
 /*
  * free (adj.): unencumbered; not under the control of others
- * Written by jrandom in 2003 and released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
- * It probably won't make your computer catch on fire, or eat 
+ * Written by jrandom in 2003 and released into the public domain
+ * with no warranty of any kind, either expressed or implied.
+ * It probably won't make your computer catch on fire, or eat
  * your children, but it might.  Use at your own risk.
  *
  */
@@ -27,7 +27,7 @@ public class CoalesceStatsEvent implements SimpleTimer.TimedEvent {
     private final long _maxMemory;
     private static final long LOW_MEMORY_THRESHOLD = 5 * 1024 * 1024;
 
-    public CoalesceStatsEvent(RouterContext ctx) { 
+    public CoalesceStatsEvent(RouterContext ctx) {
         _ctx = ctx;
         StatManager sm = ctx.statManager();
         // NOTE TO TRANSLATORS - each of these phrases is a description for a statistic
@@ -67,7 +67,7 @@ public class CoalesceStatsEvent implements SimpleTimer.TimedEvent {
 
         sm.addRateData("bw.sendRate", (long)_ctx.bandwidthLimiter().getSendBps());
         sm.addRateData("bw.recvRate", (long)_ctx.bandwidthLimiter().getReceiveBps());
-        
+
         sm.addRateData("router.tunnelBacklog", _ctx.tunnelManager().getInboundBuildQueueSize());
         long used = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
         sm.addRateData("router.memoryUsed", used);
@@ -81,9 +81,9 @@ public class CoalesceStatsEvent implements SimpleTimer.TimedEvent {
         RateStat receiveRate = sm.getRate("transport.receiveMessageSize");
         if (receiveRate != null) {
             Rate rate = receiveRate.getRate(60*1000);
-            if (rate != null) { 
+            if (rate != null) {
                 double bytes = rate.getLastTotalValue();
-                double bps = (bytes*1000.0d)/rate.getPeriod(); 
+                double bps = (bytes*1000.0d)/rate.getPeriod();
                 sm.addRateData("bw.receiveBps", (long)bps, 60*1000);
             }
         }
@@ -93,7 +93,7 @@ public class CoalesceStatsEvent implements SimpleTimer.TimedEvent {
             Rate rate = sendRate.getRate(60*1000);
             if (rate != null) {
                 double bytes = rate.getLastTotalValue();
-                double bps = (bytes*1000.0d)/rate.getPeriod(); 
+                double bps = (bytes*1000.0d)/rate.getPeriod();
                 sm.addRateData("bw.sendBps", (long)bps, 60*1000);
             }
         }
@@ -140,7 +140,7 @@ public class CoalesceStatsEvent implements SimpleTimer.TimedEvent {
             }
         }
     }
-    
+
     /**
      *  Mark a string for extraction by xgettext and translation.
      *  Use this only in static initializers.

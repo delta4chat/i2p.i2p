@@ -47,8 +47,8 @@ public class I2PTunnelDCCClient extends I2PTunnelClientBase {
      *                                  valid config to contact the router
      */
     public I2PTunnelDCCClient(String dest, int localPort, int remotePort, Logging l,
-                           I2PSocketManager sktMgr, EventDispatcher notifyThis, 
-                           I2PTunnel tunnel, long clientId) throws IllegalArgumentException {
+                              I2PSocketManager sktMgr, EventDispatcher notifyThis,
+                              I2PTunnel tunnel, long clientId) throws IllegalArgumentException {
         super(localPort, l, sktMgr, tunnel, notifyThis, clientId);
         _dest = dest;
         _remotePort = remotePort;
@@ -91,7 +91,10 @@ public class I2PTunnelDCCClient extends I2PTunnelClientBase {
             // only because we are running it inline
             closeSocket(s);
             if (i2ps != null) {
-                try { i2ps.close(); } catch (IOException ioe) {}
+                try {
+                    i2ps.close();
+                }
+                catch (IOException ioe) {}
             }
         }
         stop();

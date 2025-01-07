@@ -81,7 +81,8 @@ public class WebAppStarter {
 
         // don't scan these wars
         BUILTINS.addAll(Arrays.asList(new String[] {"i2psnark", "i2ptunnel", "imagegen", "jsonrpc",
-                                                    "routerconsole", "susidns", "susimail"} ));
+                                      "routerconsole", "susidns", "susimail"
+                                                   } ));
     }
 
 
@@ -97,7 +98,7 @@ public class WebAppStarter {
      *  @since public since 0.9.33, was package private
      */
     public static void startWebApp(RouterContext ctx, ContextHandlerCollection server,
-                            String appName, String warPath) throws Exception {
+                                   String appName, String warPath) throws Exception {
         startWebApp(ctx, server, appName, warPath, null);
     }
 
@@ -113,21 +114,21 @@ public class WebAppStarter {
      */
     public static void startWebApp(RouterContext ctx, ContextHandlerCollection server,
                                    String appName, String warPath, String pluginName) throws Exception {
-         File tmpdir = new SecureDirectory(ctx.getTempDir(), "jetty-work-" + appName + ctx.random().nextInt());
-         WebAppContext wac = addWebApp(ctx, server, appName, warPath, tmpdir);      
-         //_log.debug("Loading war from: " + warPath);
-         LocaleWebAppHandler.setInitParams(wac, INIT_PARAMS);
-         // save plugin name so WebAppConfiguration can find it
-         if (pluginName != null)
-             wac.setInitParameter(PARAM_PLUGIN_NAME, pluginName);
-         // default false, set to true so we get good logging,
-         // and the caller will know it failed
-         wac.setThrowUnavailableOnStartupException(true);
-         wac.start();
-         // Doesn't have to be right, just for presence indication
-         int port = ctx.portMapper().getPort(PortMapper.SVC_CONSOLE, PortMapper.DEFAULT_CONSOLE_PORT);
-         String host = ctx.portMapper().getActualHost(PortMapper.SVC_CONSOLE, "127.0.0.1");
-         ctx.portMapper().register(appName, host, port);
+        File tmpdir = new SecureDirectory(ctx.getTempDir(), "jetty-work-" + appName + ctx.random().nextInt());
+        WebAppContext wac = addWebApp(ctx, server, appName, warPath, tmpdir);
+        //_log.debug("Loading war from: " + warPath);
+        LocaleWebAppHandler.setInitParams(wac, INIT_PARAMS);
+        // save plugin name so WebAppConfiguration can find it
+        if (pluginName != null)
+            wac.setInitParameter(PARAM_PLUGIN_NAME, pluginName);
+        // default false, set to true so we get good logging,
+        // and the caller will know it failed
+        wac.setThrowUnavailableOnStartupException(true);
+        wac.start();
+        // Doesn't have to be right, just for presence indication
+        int port = ctx.portMapper().getPort(PortMapper.SVC_CONSOLE, PortMapper.DEFAULT_CONSOLE_PORT);
+        String host = ctx.portMapper().getActualHost(PortMapper.SVC_CONSOLE, "127.0.0.1");
+        ctx.portMapper().register(appName, host, port);
     }
 
     /**
@@ -206,8 +207,8 @@ public class WebAppStarter {
             classNames = wac.getDefaultConfigurationClasses();
         List<String> newClassNames = new ArrayList<String>(Arrays.asList(classNames));
         for (String name : newClassNames) {
-             // fix for Jetty 9.4 ticket #2385
-             wac.prependServerClass("-" + name);
+            // fix for Jetty 9.4 ticket #2385
+            wac.prependServerClass("-" + name);
         }
         // https://www.eclipse.org/jetty/documentation/current/using-annotations.html
         // https://www.eclipse.org/jetty/documentation/9.4.x/using-annotations-embedded.html
@@ -289,7 +290,7 @@ public class WebAppStarter {
             return false;
         return wac.isStarted();
     }
-    
+
     /**
      *  @since 0.9.41
      */
@@ -299,7 +300,7 @@ public class WebAppStarter {
             return false;
         return wac.isStarted();
     }
-    
+
     /**
      *  Warning, this will NOT work during shutdown, because
      *  the console is already unregistered.
@@ -312,7 +313,7 @@ public class WebAppStarter {
             return null;
         return getWebApp(server, appName);
     }
-    
+
     /**
      *  @since 0.9.41
      */
@@ -322,7 +323,7 @@ public class WebAppStarter {
             return null;
         return getWebApp(server, appName);
     }
-    
+
     /**
      *  @since 0.9.41
      */

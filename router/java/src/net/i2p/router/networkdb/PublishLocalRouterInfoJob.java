@@ -1,9 +1,9 @@
 package net.i2p.router.networkdb;
 /*
  * free (adj.): unencumbered; not under the control of others
- * Written by jrandom in 2003 and released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
- * It probably won't make your computer catch on fire, or eat 
+ * Written by jrandom in 2003 and released into the public domain
+ * with no warranty of any kind, either expressed or implied.
+ * It probably won't make your computer catch on fire, or eat
  * your children, but it might.  Use at your own risk.
  *
  */
@@ -60,13 +60,15 @@ public class PublishLocalRouterInfoJob extends JobImpl {
     private static final long FIRST_TIME_DELAY = 90*1000;
     private volatile boolean _notFirstTime;
     private final AtomicInteger _runCount = new AtomicInteger();
-    
+
     public PublishLocalRouterInfoJob(RouterContext ctx) {
         super(ctx);
         _log = ctx.logManager().getLog(PublishLocalRouterInfoJob.class);
     }
-    
-    public String getName() { return "Publish Local Router Info"; }
+
+    public String getName() {
+        return "Publish Local Router Info";
+    }
 
     public void runJob() {
         if (!getContext().commSystem().isRunning()) {
@@ -85,7 +87,7 @@ public class PublishLocalRouterInfoJob extends JobImpl {
         }
         RouterInfo oldRI = getContext().router().getRouterInfo();
         if (_log.shouldLog(Log.DEBUG))
-            _log.debug("Old routerInfo contains " + oldRI.getAddresses().size() 
+            _log.debug("Old routerInfo contains " + oldRI.getAddresses().size()
                        + " addresses and " + oldRI.getOptionsMap().size() + " options");
         try {
             List<RouterAddress> oldAddrs = new ArrayList<RouterAddress>(oldRI.getAddresses());
@@ -136,8 +138,8 @@ public class PublishLocalRouterInfoJob extends JobImpl {
             ri.sign(key);
             getContext().router().setRouterInfo(ri);
             if (_log.shouldLog(Log.INFO))
-                _log.info("Newly updated routerInfo is published with " + stats.size() 
-                          + "/" + ri.getOptionsMap().size() + " options on " 
+                _log.info("Newly updated routerInfo is published with " + stats.size()
+                          + "/" + ri.getOptionsMap().size() + " options on "
                           + new Date(ri.getPublished()));
             try {
                 // This won't really publish until the netdb is initialized.

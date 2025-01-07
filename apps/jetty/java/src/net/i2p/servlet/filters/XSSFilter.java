@@ -27,7 +27,7 @@ public class XSSFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-        throws IOException, ServletException {
+    throws IOException, ServletException {
         try {
             chain.doFilter(new XSSRequestWrapper((HttpServletRequest) request), response);
         } catch (IllegalStateException ise) {

@@ -162,7 +162,7 @@ public class I2PTunnelDCCServer extends I2PTunnelServer {
     private int newOutgoing(byte[] ip, int port, String type, int i2pPort) {
         expireOutbound();
         if (_outgoing.size() >= MAX_OUTGOING_PENDING ||
-            _active.size() >= MAX_OUTGOING_ACTIVE) {
+                _active.size() >= MAX_OUTGOING_ACTIVE) {
             _log.error("Too many outgoing DCC, max is " + MAX_OUTGOING_PENDING +
                        '/' + MAX_OUTGOING_ACTIVE + " pending/active");
             return -1;

@@ -147,10 +147,10 @@ public class DNSKEY extends Data {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder()
-                .append(flags).append(' ')
-                .append(protocol).append(' ')
-                .append(algorithm).append(' ')
-                .append(Base64.encodeToString(key));
+        .append(flags).append(' ')
+        .append(protocol).append(' ')
+        .append(algorithm).append(' ')
+        .append(Base64.encodeToString(key));
         return sb.toString();
     }
 

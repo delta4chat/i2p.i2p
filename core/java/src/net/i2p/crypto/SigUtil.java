@@ -66,18 +66,18 @@ public final class SigUtil {
      *  @return JAVA key!
      */
     public static PublicKey toJavaKey(SigningPublicKey pk)
-                              throws GeneralSecurityException {
+    throws GeneralSecurityException {
         switch (pk.getType().getBaseAlgorithm()) {
-            case DSA:
-                return toJavaDSAKey(pk);
-            case EC:
-                return toJavaECKey(pk);
-            case EdDSA:
-                return toJavaEdDSAKey(pk);
-            case RSA:
-                return toJavaRSAKey(pk);
-            default:
-                throw new InvalidKeyException("unsupported key: " + pk);
+        case DSA:
+            return toJavaDSAKey(pk);
+        case EC:
+            return toJavaECKey(pk);
+        case EdDSA:
+            return toJavaEdDSAKey(pk);
+        case RSA:
+            return toJavaRSAKey(pk);
+        default:
+            throw new InvalidKeyException("unsupported key: " + pk);
         }
     }
 
@@ -85,18 +85,18 @@ public final class SigUtil {
      *  @return JAVA key!
      */
     public static PrivateKey toJavaKey(SigningPrivateKey pk)
-                              throws GeneralSecurityException {
+    throws GeneralSecurityException {
         switch (pk.getType().getBaseAlgorithm()) {
-            case DSA:
-                return toJavaDSAKey(pk);
-            case EC:
-                return toJavaECKey(pk);
-            case EdDSA:
-                return toJavaEdDSAKey(pk);
-            case RSA:
-                return toJavaRSAKey(pk);
-            default:
-                throw new InvalidKeyException("unsupported key: " + pk);
+        case DSA:
+            return toJavaDSAKey(pk);
+        case EC:
+            return toJavaECKey(pk);
+        case EdDSA:
+            return toJavaEdDSAKey(pk);
+        case RSA:
+            return toJavaRSAKey(pk);
+        default:
+            throw new InvalidKeyException("unsupported key: " + pk);
         }
     }
 
@@ -109,7 +109,7 @@ public final class SigUtil {
      *  @since 0.9.18
      */
     public static SigningPublicKey fromJavaKey(PublicKey pk)
-                              throws GeneralSecurityException {
+    throws GeneralSecurityException {
         if (pk instanceof DSAPublicKey) {
             return fromJavaKey((DSAPublicKey) pk);
         }
@@ -166,18 +166,18 @@ public final class SigUtil {
      *  @param pk JAVA key!
      */
     public static SigningPublicKey fromJavaKey(PublicKey pk, SigType type)
-                              throws GeneralSecurityException {
+    throws GeneralSecurityException {
         switch (type.getBaseAlgorithm()) {
-            case DSA:
-                return fromJavaKey((DSAPublicKey) pk);
-            case EC:
-                return fromJavaKey((ECPublicKey) pk, type);
-            case EdDSA:
-                return fromJavaKey((EdDSAPublicKey) pk, type);
-            case RSA:
-                return fromJavaKey((RSAPublicKey) pk, type);
-            default:
-                throw new InvalidKeyException("Unknown type: " + type);
+        case DSA:
+            return fromJavaKey((DSAPublicKey) pk);
+        case EC:
+            return fromJavaKey((ECPublicKey) pk, type);
+        case EdDSA:
+            return fromJavaKey((EdDSAPublicKey) pk, type);
+        case RSA:
+            return fromJavaKey((RSAPublicKey) pk, type);
+        default:
+            throw new InvalidKeyException("Unknown type: " + type);
         }
     }
 
@@ -190,7 +190,7 @@ public final class SigUtil {
      *  @since 0.9.18
      */
     public static SigningPrivateKey fromJavaKey(PrivateKey pk)
-                              throws GeneralSecurityException {
+    throws GeneralSecurityException {
         if (pk instanceof DSAPrivateKey) {
             return fromJavaKey((DSAPrivateKey) pk);
         }
@@ -249,18 +249,18 @@ public final class SigUtil {
      *  @param pk JAVA key!
      */
     public static SigningPrivateKey fromJavaKey(PrivateKey pk, SigType type)
-                              throws GeneralSecurityException {
+    throws GeneralSecurityException {
         switch (type.getBaseAlgorithm()) {
-            case DSA:
-                return fromJavaKey((DSAPrivateKey) pk);
-            case EC:
-                return fromJavaKey((ECPrivateKey) pk, type);
-            case EdDSA:
-                return fromJavaKey((EdDSAPrivateKey) pk, type);
-            case RSA:
-                return fromJavaKey((RSAPrivateKey) pk, type);
-            default:
-                throw new InvalidKeyException("Unknown type: " + type);
+        case DSA:
+            return fromJavaKey((DSAPrivateKey) pk);
+        case EC:
+            return fromJavaKey((ECPrivateKey) pk, type);
+        case EdDSA:
+            return fromJavaKey((EdDSAPrivateKey) pk, type);
+        case RSA:
+            return fromJavaKey((RSAPrivateKey) pk, type);
+        default:
+            throw new InvalidKeyException("Unknown type: " + type);
         }
     }
 
@@ -268,7 +268,7 @@ public final class SigUtil {
      *  @return JAVA key!
      */
     public static ECPublicKey toJavaECKey(SigningPublicKey pk)
-                              throws GeneralSecurityException {
+    throws GeneralSecurityException {
         ECPublicKey rv;
         synchronized (_ECPubkeyCache) {
             rv = _ECPubkeyCache.get(pk);
@@ -286,7 +286,7 @@ public final class SigUtil {
      *  @return JAVA key!
      */
     public static ECPrivateKey toJavaECKey(SigningPrivateKey pk)
-                              throws GeneralSecurityException {
+    throws GeneralSecurityException {
         ECPrivateKey rv;
         synchronized (_ECPrivkeyCache) {
             rv = _ECPrivkeyCache.get(pk);
@@ -301,7 +301,7 @@ public final class SigUtil {
     }
 
     private static ECPublicKey cvtToJavaECKey(SigningPublicKey pk)
-                              throws GeneralSecurityException {
+    throws GeneralSecurityException {
         SigType type = pk.getType();
         BigInteger[] xy = split(pk.getData());
         ECPoint w = new ECPoint(xy[0], xy[1]);
@@ -312,7 +312,7 @@ public final class SigUtil {
     }
 
     private static ECPrivateKey cvtToJavaECKey(SigningPrivateKey pk)
-                              throws GeneralSecurityException {
+    throws GeneralSecurityException {
         SigType type = pk.getType();
         byte[] b = pk.getData();
         // Java 17 is zeroing out the byte array somewhere.
@@ -327,7 +327,7 @@ public final class SigUtil {
     }
 
     public static SigningPublicKey fromJavaKey(ECPublicKey pk, SigType type)
-                              throws GeneralSecurityException {
+    throws GeneralSecurityException {
         ECPoint w = pk.getW();
         BigInteger x = w.getAffineX();
         BigInteger y = w.getAffineY();
@@ -337,7 +337,7 @@ public final class SigUtil {
     }
 
     public static SigningPrivateKey fromJavaKey(ECPrivateKey pk, SigType type)
-                              throws GeneralSecurityException {
+    throws GeneralSecurityException {
         BigInteger s = pk.getS();
         int len = type.getPrivkeyLen();
         byte[] bs = rectify(s, len);
@@ -349,7 +349,7 @@ public final class SigUtil {
      *  @since 0.9.15
      */
     public static EdDSAPublicKey toJavaEdDSAKey(SigningPublicKey pk)
-                              throws GeneralSecurityException {
+    throws GeneralSecurityException {
         EdDSAPublicKey rv;
         synchronized (_EdPubkeyCache) {
             rv = _EdPubkeyCache.get(pk);
@@ -368,7 +368,7 @@ public final class SigUtil {
      *  @since 0.9.15
      */
     public static EdDSAPrivateKey toJavaEdDSAKey(SigningPrivateKey pk)
-                              throws GeneralSecurityException {
+    throws GeneralSecurityException {
         EdDSAPrivateKey rv;
         synchronized (_EdPrivkeyCache) {
             rv = _EdPrivkeyCache.get(pk);
@@ -386,10 +386,10 @@ public final class SigUtil {
      *  @since 0.9.15
      */
     private static EdDSAPublicKey cvtToJavaEdDSAKey(SigningPublicKey pk)
-                              throws GeneralSecurityException {
+    throws GeneralSecurityException {
         try {
             return new EdDSAPublicKey(new EdDSAPublicKeySpec(
-                pk.getData(), (EdDSAParameterSpec) pk.getType().getParams()));
+                                          pk.getData(), (EdDSAParameterSpec) pk.getType().getParams()));
         } catch (IllegalArgumentException iae) {
             throw new InvalidKeyException(iae);
         }
@@ -399,13 +399,13 @@ public final class SigUtil {
      *  @since 0.9.15
      */
     private static EdDSAPrivateKey cvtToJavaEdDSAKey(SigningPrivateKey pk)
-                              throws GeneralSecurityException {
+    throws GeneralSecurityException {
         try {
             EdDSAParameterSpec paramspec = (EdDSAParameterSpec) pk.getType().getParams();
             EdDSAPrivateKeySpec pkspec;
             SigType type = pk.getType();
             if (type == SigType.EdDSA_SHA512_Ed25519 ||
-                type == SigType.EdDSA_SHA512_Ed25519ph)
+                    type == SigType.EdDSA_SHA512_Ed25519ph)
                 pkspec = new EdDSAPrivateKeySpec(pk.getData(), paramspec);
             else if (type == SigType.RedDSA_SHA512_Ed25519)
                 pkspec = new EdDSAPrivateKeySpec(pk.getData(), null, paramspec);
@@ -421,7 +421,7 @@ public final class SigUtil {
      *  @since 0.9.15
      */
     public static SigningPublicKey fromJavaKey(EdDSAPublicKey pk, SigType type)
-            throws GeneralSecurityException {
+    throws GeneralSecurityException {
         return new SigningPublicKey(type, pk.getAbyte());
     }
 
@@ -429,10 +429,10 @@ public final class SigUtil {
      *  @since 0.9.15
      */
     public static SigningPrivateKey fromJavaKey(EdDSAPrivateKey pk, SigType type)
-            throws GeneralSecurityException {
+    throws GeneralSecurityException {
         byte[] data;
         if (type == SigType.EdDSA_SHA512_Ed25519 ||
-            type == SigType.EdDSA_SHA512_Ed25519ph)
+                type == SigType.EdDSA_SHA512_Ed25519ph)
             data = pk.getSeed();
         else if (type == SigType.RedDSA_SHA512_Ed25519)
             data = pk.geta();
@@ -442,31 +442,31 @@ public final class SigUtil {
     }
 
     public static DSAPublicKey toJavaDSAKey(SigningPublicKey pk)
-                              throws GeneralSecurityException {
+    throws GeneralSecurityException {
         KeyFactory kf = KeyFactory.getInstance("DSA");
         // y p q g
         KeySpec ks = new DSAPublicKeySpec(new NativeBigInteger(1, pk.getData()),
-                                            CryptoConstants.dsap,
-                                            CryptoConstants.dsaq,
-                                            CryptoConstants.dsag);
+                                          CryptoConstants.dsap,
+                                          CryptoConstants.dsaq,
+                                          CryptoConstants.dsag);
         return (DSAPublicKey) kf.generatePublic(ks);
     }
 
     public static DSAPrivateKey toJavaDSAKey(SigningPrivateKey pk)
-                              throws GeneralSecurityException {
+    throws GeneralSecurityException {
         KeyFactory kf = KeyFactory.getInstance("DSA");
         // x p q g
         KeySpec ks = new DSAPrivateKeySpec(new BigInteger(1, pk.getData()),
-        // see cvtToJavaECKey
-        //KeySpec ks = new DSAPrivateKeySpec(new NativeBigInteger(1, pk.getData()),
-                                            CryptoConstants.dsap,
-                                            CryptoConstants.dsaq,
-                                            CryptoConstants.dsag);
+                                           // see cvtToJavaECKey
+                                           //KeySpec ks = new DSAPrivateKeySpec(new NativeBigInteger(1, pk.getData()),
+                                           CryptoConstants.dsap,
+                                           CryptoConstants.dsaq,
+                                           CryptoConstants.dsag);
         return (DSAPrivateKey) kf.generatePrivate(ks);
     }
 
     public static SigningPublicKey fromJavaKey(DSAPublicKey pk)
-                              throws GeneralSecurityException {
+    throws GeneralSecurityException {
         BigInteger y = pk.getY();
         SigType type = SigType.DSA_SHA1;
         int len = type.getPubkeyLen();
@@ -475,7 +475,7 @@ public final class SigUtil {
     }
 
     public static SigningPrivateKey fromJavaKey(DSAPrivateKey pk)
-                              throws GeneralSecurityException {
+    throws GeneralSecurityException {
         BigInteger x = pk.getX();
         SigType type = SigType.DSA_SHA1;
         int len = type.getPrivkeyLen();
@@ -488,7 +488,7 @@ public final class SigUtil {
      */
     @Deprecated
     public static RSAPublicKey toJavaRSAKey(SigningPublicKey pk)
-                              throws GeneralSecurityException {
+    throws GeneralSecurityException {
         SigType type = pk.getType();
         KeyFactory kf = KeyFactory.getInstance("RSA");
         BigInteger n = new NativeBigInteger(1, pk.getData());
@@ -503,7 +503,7 @@ public final class SigUtil {
      *  this will return a RSAPrivateCrtKey.
      */
     public static RSAPrivateKey toJavaRSAKey(SigningPrivateKey pk)
-                              throws GeneralSecurityException {
+    throws GeneralSecurityException {
         if (pk instanceof RSASigningPrivateCrtKey)
             return ((RSASigningPrivateCrtKey) pk).toJavaKey();
         KeyFactory kf = KeyFactory.getInstance("RSA");
@@ -518,7 +518,7 @@ public final class SigUtil {
      *
      */
     public static SigningPublicKey fromJavaKey(RSAPublicKey pk, SigType type)
-                              throws GeneralSecurityException {
+    throws GeneralSecurityException {
         BigInteger n = pk.getModulus();
         int len = type.getPubkeyLen();
         byte[] bn = rectify(n, len);
@@ -530,7 +530,7 @@ public final class SigUtil {
      *  this will return a RSASigningPrivateCrtKey.
      */
     public static SigningPrivateKey fromJavaKey(RSAPrivateKey pk, SigType type)
-                              throws GeneralSecurityException {
+    throws GeneralSecurityException {
         // private key is modulus (pubkey) + exponent
         BigInteger n = pk.getModulus();
         BigInteger d = pk.getPrivateExponent();
@@ -555,7 +555,7 @@ public final class SigUtil {
      *  @return a Signature with SigType type
      */
     public static Signature fromJavaSig(byte[] asn, SigType type)
-                              throws SignatureException {
+    throws SignatureException {
         // RSA and EdDSA sigs are not ASN encoded
         if (type.getBaseAlgorithm() == SigAlgo.RSA || type.getBaseAlgorithm() == SigAlgo.EdDSA)
             return new Signature(type, asn);
@@ -566,7 +566,7 @@ public final class SigUtil {
      *  @return JAVA key!
      */
     public static PublicKey importJavaPublicKey(File file, SigType type)
-                              throws GeneralSecurityException, IOException {
+    throws GeneralSecurityException, IOException {
         byte[] data = getData(file);
         KeySpec ks = new X509EncodedKeySpec(data);
         String algo = type.getBaseAlgorithm().getName();
@@ -578,7 +578,7 @@ public final class SigUtil {
      *  @return JAVA key!
      */
     public static PrivateKey importJavaPrivateKey(File file, SigType type)
-                              throws GeneralSecurityException, IOException {
+    throws GeneralSecurityException, IOException {
         byte[] data = getData(file);
         KeySpec ks = new PKCS8EncodedKeySpec(data);
         String algo = type.getBaseAlgorithm().getName();
@@ -603,8 +603,11 @@ public final class SigUtil {
             }
             return out.toByteArray();
         } finally {
-            if (in != null) 
-                try { in.close(); } catch (IOException ioe) {}
+            if (in != null)
+                try {
+                    in.close();
+                }
+                catch (IOException ioe) {}
         }
     }
 
@@ -633,7 +636,7 @@ public final class SigUtil {
      *  @since 0.9.9, package private since 0.9.31
      */
     static byte[] combine(BigInteger x, BigInteger y, int len)
-                              throws InvalidKeyException {
+    throws InvalidKeyException {
         if ((len & 0x01) != 0)
             throw new InvalidKeyException("length must be even");
         int sublen = len / 2;
@@ -650,7 +653,7 @@ public final class SigUtil {
      *  @return array of exactly len bytes
      */
     public static byte[] rectify(BigInteger bi, int len)
-                              throws InvalidKeyException {
+    throws InvalidKeyException {
         byte[] b = bi.toByteArray();
         if (b.length == len) {
             // just right
@@ -800,7 +803,7 @@ public final class SigUtil {
      *  @since 0.8.7, moved to SigUtil in 0.9.9
      */
     private static byte[] aSN1ToSigBytes(byte[] asn, int len)
-                              throws SignatureException {
+    throws SignatureException {
         //System.out.println("pre from asn1 len=" + len + "\n" + net.i2p.util.HexDump.dump(asn));
         if (asn[0] != 0x30)
             throw new SignatureException("asn[0] = " + (asn[0] & 0xff));
@@ -814,7 +817,7 @@ public final class SigUtil {
         int sublen = len / 2;
         int rlen = asn[++idx];
         if ((rlen & 0x80) != 0) {
-            if ((rlen & 0xff) == 0x81) { 
+            if ((rlen & 0xff) == 0x81) {
                 rlen = asn[++idx] & 0xff;
             } else if ((rlen & 0xff) == 0x82) {
                 rlen = asn[++idx] & 0xff;
@@ -838,7 +841,7 @@ public final class SigUtil {
             throw new SignatureException("asn[s] = " + (asn[idx] & 0xff));
         int slen = asn[++idx];
         if ((slen & 0x80) != 0) {
-            if ((slen & 0xff) == 0x81) { 
+            if ((slen & 0xff) == 0x81) {
                 slen = asn[++idx] & 0xff;
             } else if ((slen & 0xff) == 0x82) {
                 slen = asn[++idx] & 0xff;
@@ -869,7 +872,7 @@ public final class SigUtil {
      *  @since 0.9.25
      */
     public static NativeBigInteger[] aSN1ToBigInteger(byte[] asn, int len)
-                              throws SignatureException {
+    throws SignatureException {
         byte[] sig = aSN1ToSigBytes(asn, len * 2);
         return split(sig);
     }

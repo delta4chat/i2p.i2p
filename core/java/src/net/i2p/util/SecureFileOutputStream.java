@@ -31,7 +31,7 @@ public class SecureFileOutputStream extends FileOutputStream {
     public SecureFileOutputStream(String file, boolean append) throws FileNotFoundException {
         super(file, append);
         //if (!append)
-            setPerms(new File(file));
+        setPerms(new File(file));
     }
 
     /**
@@ -49,7 +49,7 @@ public class SecureFileOutputStream extends FileOutputStream {
     public SecureFileOutputStream(File file, boolean append) throws FileNotFoundException {
         super(file, append);
         //if (!append)
-            setPerms(file);
+        setPerms(file);
     }
 
     /** @since 0.8.2 */

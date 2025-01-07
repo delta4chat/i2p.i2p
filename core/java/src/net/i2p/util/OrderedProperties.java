@@ -2,9 +2,9 @@ package net.i2p.util;
 
 /*
  * free (adj.): unencumbered; not under the control of others
- * Written by jrandom in 2003 and released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
- * It probably won't make your computer catch on fire, or eat 
+ * Written by jrandom in 2003 and released into the public domain
+ * with no warranty of any kind, either expressed or implied.
+ * It probably won't make your computer catch on fire, or eat
  * your children, but it might.  Use at your own risk.
  *
  */
@@ -18,7 +18,7 @@ import java.util.Set;
 /**
  * Properties map that has its keySet ordered consistently (via the key's lexicographical ordering).
  * This is useful in environments where maps must stay the same order (e.g. for signature verification)
- * This does NOT support remove against the iterators / etc.  
+ * This does NOT support remove against the iterators / etc.
  *
  * @author zzz Rewritten
  *
@@ -50,8 +50,8 @@ public class OrderedProperties extends Properties {
     }
 
     private static class EntryComparator implements Comparator<Map.Entry<Object, Object>>, Serializable {
-         public int compare(Map.Entry<Object, Object> l, Map.Entry<Object, Object> r) {
-             return ((String)l.getKey()).compareTo(((String)r.getKey()));
+        public int compare(Map.Entry<Object, Object> l, Map.Entry<Object, Object> r) {
+            return ((String)l.getKey()).compareTo(((String)r.getKey()));
         }
     }
 }

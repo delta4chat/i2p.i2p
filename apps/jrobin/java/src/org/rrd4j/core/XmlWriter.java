@@ -19,8 +19,8 @@ public class XmlWriter implements AutoCloseable {
     static final String INDENT_STR = "   ";
     private static final String STYLE = "style";
     private static final DateTimeFormatter ISOLIKE = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSZ")
-                                                                      .withLocale(Locale.ENGLISH)
-                                                                      .withZone(ZoneId.of("UTC"));
+            .withLocale(Locale.ENGLISH)
+            .withZone(ZoneId.of("UTC"));
     private static final String DEFAULT_NAN_STRING = Double.toString(Double.NaN);
 
     @FunctionalInterface
@@ -128,7 +128,7 @@ public class XmlWriter implements AutoCloseable {
     public void writeTag(String tag, Object value) {
         if (value != null) {
             writer.println(indent + "<" + tag + ">" +
-                    escape(value.toString()) + "</" + tag + ">");
+                           escape(value.toString()) + "</" + tag + ">");
         }
         else {
             writer.println(indent + "<" + tag + "></" + tag + ">");
@@ -265,7 +265,7 @@ public class XmlWriter implements AutoCloseable {
      * @return the formatted timestamp
      */
     public String formatTimestamp(long timestamp) {
-         return timeFormatter.format(Instant.ofEpochSecond(timestamp));
+        return timeFormatter.format(Instant.ofEpochSecond(timestamp));
     }
 
     private static String escape(String s) {

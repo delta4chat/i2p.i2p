@@ -47,7 +47,7 @@ public class Ed25519LittleEndianEncodingTest {
 
     @Test
     public void encodeReturnsCorrectByteArray() {
-        for (int i=0; i<10000; i++){
+        for (int i=0; i<10000; i++) {
             // Arrange:
             final int[] t = new int[10];
             for (int j=0; j<10; j++) {

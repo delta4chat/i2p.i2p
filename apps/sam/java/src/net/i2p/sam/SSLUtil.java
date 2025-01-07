@@ -101,17 +101,17 @@ class SSLUtil {
         }
         if (success) {
             logAlways("Created self-signed certificate for " + cname + " in keystore: " + ks.getAbsolutePath() + "\n" +
-                           "The certificate was generated randomly, and is not associated with your " +
-                           "IP address, hostname, router identity, or destination keys.");
+                      "The certificate was generated randomly, and is not associated with your " +
+                      "IP address, hostname, router identity, or destination keys.");
         } else {
             error("Failed to create SAM SSL keystore.\n" +
-                       "If you create the keystore manually, you must add " + PROP_KEYSTORE_PASSWORD + " and " + PROP_KEY_PASSWORD +
-                       " to " + (new File(I2PAppContext.getGlobalContext().getConfigDir(), SAMBridge.DEFAULT_SAM_CONFIGFILE)).getAbsolutePath());
+                  "If you create the keystore manually, you must add " + PROP_KEYSTORE_PASSWORD + " and " + PROP_KEY_PASSWORD +
+                  " to " + (new File(I2PAppContext.getGlobalContext().getConfigDir(), SAMBridge.DEFAULT_SAM_CONFIGFILE)).getAbsolutePath());
         }
         return success;
     }
 
-    /** 
+    /**
      *  Pull the cert back OUT of the keystore and save it as ascii
      *  so the clients can get to it.
      *
@@ -132,7 +132,7 @@ class SSLUtil {
         }
     }
 
-    /** 
+    /**
      *  Sets up the SSLContext and sets the socket factory.
      *  No option prefix allowed.
      *
@@ -144,12 +144,12 @@ class SSLUtil {
         String keyPass = opts.getProperty(PROP_KEY_PASSWORD);
         if (keyPass == null) {
             throw new IOException("No key password, set " + PROP_KEY_PASSWORD + " in " +
-                       (new File(I2PAppContext.getGlobalContext().getConfigDir(), SAMBridge.DEFAULT_SAM_CONFIGFILE)).getAbsolutePath());
+                                  (new File(I2PAppContext.getGlobalContext().getConfigDir(), SAMBridge.DEFAULT_SAM_CONFIGFILE)).getAbsolutePath());
         }
         String ksname = opts.getProperty(PROP_KS_NAME);
         if (ksname == null) {
             throw new IOException("No keystore, set " + PROP_KS_NAME + " in " +
-                       (new File(I2PAppContext.getGlobalContext().getConfigDir(), SAMBridge.DEFAULT_SAM_CONFIGFILE)).getAbsolutePath());
+                                  (new File(I2PAppContext.getGlobalContext().getConfigDir(), SAMBridge.DEFAULT_SAM_CONFIGFILE)).getAbsolutePath());
         }
         File ks = new File(ksname);
         if (!ks.isAbsolute()) {
@@ -173,7 +173,10 @@ class SSLUtil {
             ioe.initCause(gse);
             throw ioe;
         } finally {
-            if (fis != null) try { fis.close(); } catch (IOException ioe) {}
+            if (fis != null) try {
+                    fis.close();
+                }
+                catch (IOException ioe) {}
         }
     }
 

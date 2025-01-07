@@ -74,10 +74,10 @@ public class GroupElement implements Serializable {
      * @return The group element in P2 representation.
      */
     public static GroupElement p2(
-            final Curve curve,
-            final FieldElement X,
-            final FieldElement Y,
-            final FieldElement Z) {
+        final Curve curve,
+        final FieldElement X,
+        final FieldElement Y,
+        final FieldElement Z) {
         return new GroupElement(curve, Representation.P2, X, Y, Z, null);
     }
 
@@ -92,11 +92,11 @@ public class GroupElement implements Serializable {
      * @return The group element in P3 representation.
      */
     public static GroupElement p3(
-            final Curve curve,
-            final FieldElement X,
-            final FieldElement Y,
-            final FieldElement Z,
-            final FieldElement T) {
+        final Curve curve,
+        final FieldElement X,
+        final FieldElement Y,
+        final FieldElement Z,
+        final FieldElement T) {
         return p3(curve, X, Y, Z, T, false);
     }
 
@@ -113,12 +113,12 @@ public class GroupElement implements Serializable {
      * @since 0.9.36
      */
     public static GroupElement p3(
-            final Curve curve,
-            final FieldElement X,
-            final FieldElement Y,
-            final FieldElement Z,
-            final FieldElement T,
-            final boolean precomputeDoubleOnly) {
+        final Curve curve,
+        final FieldElement X,
+        final FieldElement Y,
+        final FieldElement Z,
+        final FieldElement T,
+        final boolean precomputeDoubleOnly) {
         return new GroupElement(curve, Representation.P3, X, Y, Z, T, precomputeDoubleOnly);
     }
 
@@ -133,11 +133,11 @@ public class GroupElement implements Serializable {
      * @return The group element in P1P1 representation.
      */
     public static GroupElement p1p1(
-            final Curve curve,
-            final FieldElement X,
-            final FieldElement Y,
-            final FieldElement Z,
-            final FieldElement T) {
+        final Curve curve,
+        final FieldElement X,
+        final FieldElement Y,
+        final FieldElement Z,
+        final FieldElement T) {
         return new GroupElement(curve, Representation.P1P1, X, Y, Z, T);
     }
 
@@ -151,10 +151,10 @@ public class GroupElement implements Serializable {
      * @return The group element in PRECOMP representation.
      */
     public static GroupElement precomp(
-            final Curve curve,
-            final FieldElement ypx,
-            final FieldElement ymx,
-            final FieldElement xy2d) {
+        final Curve curve,
+        final FieldElement ypx,
+        final FieldElement ymx,
+        final FieldElement xy2d) {
         return new GroupElement(curve, Representation.PRECOMP, ypx, ymx, xy2d, null);
     }
 
@@ -169,11 +169,11 @@ public class GroupElement implements Serializable {
      * @return The group element in CACHED representation.
      */
     public static GroupElement cached(
-            final Curve curve,
-            final FieldElement YpX,
-            final FieldElement YmX,
-            final FieldElement Z,
-            final FieldElement T2d) {
+        final Curve curve,
+        final FieldElement YpX,
+        final FieldElement YmX,
+        final FieldElement Z,
+        final FieldElement T2d) {
         return new GroupElement(curve, Representation.CACHED, YpX, YmX, Z, T2d);
     }
 
@@ -234,12 +234,12 @@ public class GroupElement implements Serializable {
      * @param T The $T$ coordinate.
      */
     public GroupElement(
-            final Curve curve,
-            final Representation repr,
-            final FieldElement X,
-            final FieldElement Y,
-            final FieldElement Z,
-            final FieldElement T) {
+        final Curve curve,
+        final Representation repr,
+        final FieldElement X,
+        final FieldElement Y,
+        final FieldElement Z,
+        final FieldElement T) {
         this(curve, repr, X, Y, Z, T, false);
     }
 
@@ -256,13 +256,13 @@ public class GroupElement implements Serializable {
      * @since 0.9.36
      */
     public GroupElement(
-            final Curve curve,
-            final Representation repr,
-            final FieldElement X,
-            final FieldElement Y,
-            final FieldElement Z,
-            final FieldElement T,
-            final boolean precomputeDouble) {
+        final Curve curve,
+        final Representation repr,
+        final FieldElement X,
+        final FieldElement Y,
+        final FieldElement Z,
+        final FieldElement T,
+        final boolean precomputeDouble) {
         this.curve = curve;
         this.repr = repr;
         this.X = X;
@@ -428,16 +428,16 @@ public class GroupElement implements Serializable {
      */
     public byte[] toByteArray() {
         switch (this.repr) {
-            case P2:
-            case P3:
-                FieldElement recip = Z.invert();
-                FieldElement x = X.multiply(recip);
-                FieldElement y = Y.multiply(recip);
-                byte[] s = y.toByteArray();
-                s[s.length-1] |= (x.isNegative() ? (byte) 0x80 : 0);
-                return s;
-            default:
-                return toP2().toByteArray();
+        case P2:
+        case P3:
+            FieldElement recip = Z.invert();
+            FieldElement x = X.multiply(recip);
+            FieldElement y = Y.multiply(recip);
+            byte[] s = y.toByteArray();
+            s[s.length-1] |= (x.isNegative() ? (byte) 0x80 : 0);
+            return s;
+        default:
+            return toP2().toByteArray();
         }
     }
 
@@ -497,43 +497,43 @@ public class GroupElement implements Serializable {
         if (this.repr == repr)
             return this;
         switch (this.repr) {
-            case P2:
-                switch (repr) {
-                    default:
-                        throw new IllegalArgumentException();
-                }
-            case P3:
-                switch (repr) {
-                    case P2:
-                        return p2(this.curve, this.X, this.Y, this.Z);
-                    case CACHED:
-                        return cached(this.curve, this.Y.add(this.X), this.Y.subtract(this.X), this.Z, this.T.multiply(this.curve.get2D()));
-                    default:
-                        throw new IllegalArgumentException();
-                }
-            case P1P1:
-                switch (repr) {
-                    case P2:
-                        return p2(this.curve, this.X.multiply(this.T), Y.multiply(this.Z), this.Z.multiply(this.T));
-                    case P3:
-                        return p3(this.curve, this.X.multiply(this.T), Y.multiply(this.Z), this.Z.multiply(this.T), this.X.multiply(this.Y), false);
-                    case P3PrecomputedDouble:
-                        return p3(this.curve, this.X.multiply(this.T), Y.multiply(this.Z), this.Z.multiply(this.T), this.X.multiply(this.Y), true);
-                    default:
-                        throw new IllegalArgumentException();
-                }
-            case PRECOMP:
-                switch (repr) {
-                    default:
-                        throw new IllegalArgumentException();
-                }
-            case CACHED:
-                switch (repr) {
-                    default:
-                        throw new IllegalArgumentException();
-                }
+        case P2:
+            switch (repr) {
             default:
-                throw new UnsupportedOperationException();
+                throw new IllegalArgumentException();
+            }
+        case P3:
+            switch (repr) {
+            case P2:
+                return p2(this.curve, this.X, this.Y, this.Z);
+            case CACHED:
+                return cached(this.curve, this.Y.add(this.X), this.Y.subtract(this.X), this.Z, this.T.multiply(this.curve.get2D()));
+            default:
+                throw new IllegalArgumentException();
+            }
+        case P1P1:
+            switch (repr) {
+            case P2:
+                return p2(this.curve, this.X.multiply(this.T), Y.multiply(this.Z), this.Z.multiply(this.T));
+            case P3:
+                return p3(this.curve, this.X.multiply(this.T), Y.multiply(this.Z), this.Z.multiply(this.T), this.X.multiply(this.Y), false);
+            case P3PrecomputedDouble:
+                return p3(this.curve, this.X.multiply(this.T), Y.multiply(this.Z), this.Z.multiply(this.T), this.X.multiply(this.Y), true);
+            default:
+                throw new IllegalArgumentException();
+            }
+        case PRECOMP:
+            switch (repr) {
+            default:
+                throw new IllegalArgumentException();
+            }
+        case CACHED:
+            switch (repr) {
+            default:
+                throw new IllegalArgumentException();
+            }
+        default:
+            throw new UnsupportedOperationException();
         }
     }
 
@@ -829,36 +829,36 @@ public class GroupElement implements Serializable {
             }
         }
         switch (this.repr) {
-            case P2:
-            case P3:
-                // Try easy way first
-                if (this.Z.equals(ge.Z))
-                    return this.X.equals(ge.X) && this.Y.equals(ge.Y);
-                // X1/Z1 = X2/Z2 --> X1*Z2 = X2*Z1
-                final FieldElement x1 = this.X.multiply(ge.Z);
-                final FieldElement y1 = this.Y.multiply(ge.Z);
-                final FieldElement x2 = ge.X.multiply(this.Z);
-                final FieldElement y2 = ge.Y.multiply(this.Z);
-                return x1.equals(x2) && y1.equals(y2);
-            case P1P1:
-                return toP2().equals(ge);
-            case PRECOMP:
-                // Compare directly, PRECOMP is derived directly from x and y
-                return this.X.equals(ge.X) && this.Y.equals(ge.Y) && this.Z.equals(ge.Z);
-            case CACHED:
-                // Try easy way first
-                if (this.Z.equals(ge.Z))
-                    return this.X.equals(ge.X) && this.Y.equals(ge.Y) && this.T.equals(ge.T);
-                // (Y+X)/Z = y+x etc.
-                final FieldElement x3 = this.X.multiply(ge.Z);
-                final FieldElement y3 = this.Y.multiply(ge.Z);
-                final FieldElement t3 = this.T.multiply(ge.Z);
-                final FieldElement x4 = ge.X.multiply(this.Z);
-                final FieldElement y4 = ge.Y.multiply(this.Z);
-                final FieldElement t4 = ge.T.multiply(this.Z);
-                return x3.equals(x4) && y3.equals(y4) && t3.equals(t4);
-            default:
-                return false;
+        case P2:
+        case P3:
+            // Try easy way first
+            if (this.Z.equals(ge.Z))
+                return this.X.equals(ge.X) && this.Y.equals(ge.Y);
+            // X1/Z1 = X2/Z2 --> X1*Z2 = X2*Z1
+            final FieldElement x1 = this.X.multiply(ge.Z);
+            final FieldElement y1 = this.Y.multiply(ge.Z);
+            final FieldElement x2 = ge.X.multiply(this.Z);
+            final FieldElement y2 = ge.Y.multiply(this.Z);
+            return x1.equals(x2) && y1.equals(y2);
+        case P1P1:
+            return toP2().equals(ge);
+        case PRECOMP:
+            // Compare directly, PRECOMP is derived directly from x and y
+            return this.X.equals(ge.X) && this.Y.equals(ge.Y) && this.Z.equals(ge.Z);
+        case CACHED:
+            // Try easy way first
+            if (this.Z.equals(ge.Z))
+                return this.X.equals(ge.X) && this.Y.equals(ge.Y) && this.T.equals(ge.T);
+            // (Y+X)/Z = y+x etc.
+            final FieldElement x3 = this.X.multiply(ge.Z);
+            final FieldElement y3 = this.Y.multiply(ge.Z);
+            final FieldElement t3 = this.T.multiply(ge.Z);
+            final FieldElement x4 = ge.X.multiply(this.Z);
+            final FieldElement y4 = ge.Y.multiply(this.Z);
+            final FieldElement t4 = ge.T.multiply(this.Z);
+            return x3.equals(x4) && y3.equals(y4) && t3.equals(t4);
+        default:
+            return false;
         }
     }
 
@@ -930,14 +930,14 @@ public class GroupElement implements Serializable {
 
         // 16^i |r_i| B
         final GroupElement t = this.curve.getZero(Representation.PRECOMP)
-                .cmov(this.precmp[pos][0], Utils.equal(babs, 1))
-                .cmov(this.precmp[pos][1], Utils.equal(babs, 2))
-                .cmov(this.precmp[pos][2], Utils.equal(babs, 3))
-                .cmov(this.precmp[pos][3], Utils.equal(babs, 4))
-                .cmov(this.precmp[pos][4], Utils.equal(babs, 5))
-                .cmov(this.precmp[pos][5], Utils.equal(babs, 6))
-                .cmov(this.precmp[pos][6], Utils.equal(babs, 7))
-                .cmov(this.precmp[pos][7], Utils.equal(babs, 8));
+                               .cmov(this.precmp[pos][0], Utils.equal(babs, 1))
+                               .cmov(this.precmp[pos][1], Utils.equal(babs, 2))
+                               .cmov(this.precmp[pos][2], Utils.equal(babs, 3))
+                               .cmov(this.precmp[pos][3], Utils.equal(babs, 4))
+                               .cmov(this.precmp[pos][4], Utils.equal(babs, 5))
+                               .cmov(this.precmp[pos][5], Utils.equal(babs, 6))
+                               .cmov(this.precmp[pos][6], Utils.equal(babs, 7))
+                               .cmov(this.precmp[pos][7], Utils.equal(babs, 8));
         // -16^i |r_i| B
         final GroupElement tminus = precomp(curve, t.Y, t.X, t.Z.negate());
         // 16^i r_i B
@@ -1051,17 +1051,17 @@ public class GroupElement implements Serializable {
         for (; i >= 0; --i) {
             GroupElement t = r.dbl();
 
-                if (aslide[i] > 0) {
-                    t = t.toP3().madd(A.dblPrecmp[aslide[i]/2]);
-                } else if(aslide[i] < 0) {
-                    t = t.toP3().msub(A.dblPrecmp[(-aslide[i])/2]);
-                }
+            if (aslide[i] > 0) {
+                t = t.toP3().madd(A.dblPrecmp[aslide[i]/2]);
+            } else if(aslide[i] < 0) {
+                t = t.toP3().msub(A.dblPrecmp[(-aslide[i])/2]);
+            }
 
-                if (bslide[i] > 0) {
-                    t = t.toP3().madd(this.dblPrecmp[bslide[i]/2]);
-                } else if(bslide[i] < 0) {
-                    t = t.toP3().msub(this.dblPrecmp[(-bslide[i])/2]);
-                }
+            if (bslide[i] > 0) {
+                t = t.toP3().madd(this.dblPrecmp[bslide[i]/2]);
+            } else if(bslide[i] < 0) {
+                t = t.toP3().msub(this.dblPrecmp[(-bslide[i])/2]);
+            }
 
             r = t.toP2();
         }

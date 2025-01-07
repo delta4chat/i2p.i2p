@@ -91,9 +91,9 @@ public class KeyCertificate extends Certificate {
      *  @throws DataFormatException
      */
     public KeyCertificate(byte[] payload) throws DataFormatException {
-         super(CERTIFICATE_TYPE_KEY, payload);
-         if (payload != null && payload.length < HEADER_LENGTH)
-             throw new DataFormatException("data");
+        super(CERTIFICATE_TYPE_KEY, payload);
+        if (payload != null && payload.length < HEADER_LENGTH)
+            throw new DataFormatException("data");
     }
 
     /**
@@ -104,19 +104,19 @@ public class KeyCertificate extends Certificate {
      *  @throws IllegalArgumentException
      */
     public KeyCertificate(SigningPublicKey spk) {
-         super(CERTIFICATE_TYPE_KEY, null);
-         if (spk == null || spk.getData() == null)
-             throw new IllegalArgumentException();
-         SigType type = spk.getType();
-         int len = type.getPubkeyLen();
-         int extra = Math.max(0, len - 128);
-         _payload = new byte[HEADER_LENGTH + extra];
-         int code = type.getCode();
-         _payload[0] = (byte) (code >> 8);
-         _payload[1] = (byte) (code & 0xff);
-         // 2 and 3 always 0, it is the only crypto code for now
-         if (extra > 0)
-             System.arraycopy(spk.getData(), 128, _payload, HEADER_LENGTH, extra);
+        super(CERTIFICATE_TYPE_KEY, null);
+        if (spk == null || spk.getData() == null)
+            throw new IllegalArgumentException();
+        SigType type = spk.getType();
+        int len = type.getPubkeyLen();
+        int extra = Math.max(0, len - 128);
+        _payload = new byte[HEADER_LENGTH + extra];
+        int code = type.getCode();
+        _payload[0] = (byte) (code >> 8);
+        _payload[1] = (byte) (code & 0xff);
+        // 2 and 3 always 0, it is the only crypto code for now
+        if (extra > 0)
+            System.arraycopy(spk.getData(), 128, _payload, HEADER_LENGTH, extra);
     }
 
     /**
@@ -130,22 +130,22 @@ public class KeyCertificate extends Certificate {
      *  @since 0.9.42
      */
     public KeyCertificate(SigningPublicKey spk, PublicKey pk) {
-         super(CERTIFICATE_TYPE_KEY, null);
-         if (spk == null || spk.getData() == null ||
-             pk == null || pk.getData() == null)
-             throw new IllegalArgumentException();
-         SigType type = spk.getType();
-         int len = type.getPubkeyLen();
-         int extra = Math.max(0, len - 128);
-         _payload = new byte[HEADER_LENGTH + extra];
-         int code = type.getCode();
-         _payload[0] = (byte) (code >> 8);
-         _payload[1] = (byte) (code & 0xff);
-         code = pk.getType().getCode();
-         _payload[2] = (byte) (code >> 8);
-         _payload[3] = (byte) (code & 0xff);
-         if (extra > 0)
-             System.arraycopy(spk.getData(), 128, _payload, HEADER_LENGTH, extra);
+        super(CERTIFICATE_TYPE_KEY, null);
+        if (spk == null || spk.getData() == null ||
+                pk == null || pk.getData() == null)
+            throw new IllegalArgumentException();
+        SigType type = spk.getType();
+        int len = type.getPubkeyLen();
+        int extra = Math.max(0, len - 128);
+        _payload = new byte[HEADER_LENGTH + extra];
+        int code = type.getCode();
+        _payload[0] = (byte) (code >> 8);
+        _payload[1] = (byte) (code & 0xff);
+        code = pk.getType().getCode();
+        _payload[2] = (byte) (code >> 8);
+        _payload[3] = (byte) (code & 0xff);
+        if (extra > 0)
+            System.arraycopy(spk.getData(), 128, _payload, HEADER_LENGTH, extra);
     }
 
     /**
@@ -176,16 +176,16 @@ public class KeyCertificate extends Certificate {
      *  @since 0.9.42
      */
     public KeyCertificate(SigType type, EncType etype) {
-         super(CERTIFICATE_TYPE_KEY, null);
-         int len = type.getPubkeyLen();
-         int extra = Math.max(0, len - 128);
-         _payload = new byte[HEADER_LENGTH + extra];
-         int code = type.getCode();
-         _payload[0] = (byte) (code >> 8);
-         _payload[1] = (byte) (code & 0xff);
-         code = etype.getCode();
-         _payload[2] = (byte) (code >> 8);
-         _payload[3] = (byte) (code & 0xff);
+        super(CERTIFICATE_TYPE_KEY, null);
+        int len = type.getPubkeyLen();
+        int extra = Math.max(0, len - 128);
+        _payload = new byte[HEADER_LENGTH + extra];
+        int code = type.getCode();
+        _payload[0] = (byte) (code >> 8);
+        _payload[1] = (byte) (code & 0xff);
+        code = etype.getCode();
+        _payload[2] = (byte) (code >> 8);
+        _payload[3] = (byte) (code & 0xff);
     }
 
     /**
@@ -288,9 +288,9 @@ public class KeyCertificate extends Certificate {
             buf.append(" null payload");
         } else {
             buf.append("\n\tCrypto type: ").append(getCryptoTypeCode())
-               .append(" (").append(getEncType()).append(')');
+            .append(" (").append(getEncType()).append(')');
             buf.append("\n\tSig type: ").append(getSigTypeCode())
-               .append(" (").append(getSigType()).append(')');
+            .append(" (").append(getSigType()).append(')');
             if (_payload.length > HEADER_LENGTH)
                 buf.append("\n\tKey data: ").append(_payload.length - HEADER_LENGTH).append(" bytes");
         }
@@ -324,38 +324,38 @@ public class KeyCertificate extends Certificate {
         public void setPayload(byte[] payload) {
             throw new RuntimeException("Data already set");
         }
-    
+
         /** @throws RuntimeException always */
         @Override
         public void readBytes(InputStream in) throws DataFormatException, IOException {
             throw new RuntimeException("Data already set");
         }
-    
+
         /** Overridden for efficiency */
         @Override
         public void writeBytes(OutputStream out) throws IOException {
             out.write(ECDSA256_DATA);
         }
-    
+
         /** Overridden for efficiency */
         @Override
         public int writeBytes(byte target[], int offset) {
             System.arraycopy(ECDSA256_DATA, 0, target, offset, ECDSA256_LENGTH);
             return ECDSA256_LENGTH;
         }
-    
+
         /** @throws RuntimeException always */
         @Override
         public int readBytes(byte source[], int offset) throws DataFormatException {
             throw new RuntimeException("Data already set");
         }
-    
+
         /** Overridden for efficiency */
         @Override
         public int size() {
             return ECDSA256_LENGTH;
         }
-    
+
         /** Overridden for efficiency */
         @Override
         public int hashCode() {
@@ -369,10 +369,10 @@ public class KeyCertificate extends Certificate {
      */
     private static final class Ed25519Cert extends KeyCertificate {
         private static final byte[] ED_DATA = new byte[] { CERTIFICATE_TYPE_KEY,
-                                                           0, HEADER_LENGTH,
-                                                           0, (byte) SigType.EdDSA_SHA512_Ed25519.getCode(),
-                                                           0, 0
-        };
+                0, HEADER_LENGTH,
+                0, (byte) SigType.EdDSA_SHA512_Ed25519.getCode(),
+                0, 0
+                                                         };
         private static final int ED_LENGTH = ED_DATA.length;
         private final int _hashcode;
 
@@ -392,38 +392,38 @@ public class KeyCertificate extends Certificate {
         public void setPayload(byte[] payload) {
             throw new RuntimeException("Data already set");
         }
-    
+
         /** @throws RuntimeException always */
         @Override
         public void readBytes(InputStream in) throws DataFormatException, IOException {
             throw new RuntimeException("Data already set");
         }
-    
+
         /** Overridden for efficiency */
         @Override
         public void writeBytes(OutputStream out) throws IOException {
             out.write(ED_DATA);
         }
-    
+
         /** Overridden for efficiency */
         @Override
         public int writeBytes(byte target[], int offset) {
             System.arraycopy(ED_DATA, 0, target, offset, ED_LENGTH);
             return ED_LENGTH;
         }
-    
+
         /** @throws RuntimeException always */
         @Override
         public int readBytes(byte source[], int offset) throws DataFormatException {
             throw new RuntimeException("Data already set");
         }
-    
+
         /** Overridden for efficiency */
         @Override
         public int size() {
             return ED_LENGTH;
         }
-    
+
         /** Overridden for efficiency */
         @Override
         public int hashCode() {
@@ -437,10 +437,10 @@ public class KeyCertificate extends Certificate {
      */
     private static final class X25519_Ed25519Cert extends KeyCertificate {
         private static final byte[] ED_DATA = new byte[] { CERTIFICATE_TYPE_KEY,
-                                                           0, HEADER_LENGTH,
-                                                           0, (byte) SigType.EdDSA_SHA512_Ed25519.getCode(),
-                                                           0, (byte) EncType.ECIES_X25519.getCode()
-        };
+                0, HEADER_LENGTH,
+                0, (byte) SigType.EdDSA_SHA512_Ed25519.getCode(),
+                0, (byte) EncType.ECIES_X25519.getCode()
+                                                         };
         private static final int ED_LENGTH = ED_DATA.length;
         private final int _hashcode;
 
@@ -460,38 +460,38 @@ public class KeyCertificate extends Certificate {
         public void setPayload(byte[] payload) {
             throw new RuntimeException("Data already set");
         }
-    
+
         /** @throws RuntimeException always */
         @Override
         public void readBytes(InputStream in) throws DataFormatException, IOException {
             throw new RuntimeException("Data already set");
         }
-    
+
         /** Overridden for efficiency */
         @Override
         public void writeBytes(OutputStream out) throws IOException {
             out.write(ED_DATA);
         }
-    
+
         /** Overridden for efficiency */
         @Override
         public int writeBytes(byte target[], int offset) {
             System.arraycopy(ED_DATA, 0, target, offset, ED_LENGTH);
             return ED_LENGTH;
         }
-    
+
         /** @throws RuntimeException always */
         @Override
         public int readBytes(byte source[], int offset) throws DataFormatException {
             throw new RuntimeException("Data already set");
         }
-    
+
         /** Overridden for efficiency */
         @Override
         public int size() {
             return ED_LENGTH;
         }
-    
+
         /** Overridden for efficiency */
         @Override
         public int hashCode() {

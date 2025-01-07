@@ -44,7 +44,7 @@ import net.i2p.util.SystemVersion;
  *  @since 0.9.9
  */
 public final class KeyStoreUtil {
-        
+
     private static boolean _blacklistLogged;
 
     public static final String DEFAULT_KEYSTORE_PASSWORD = "changeit";
@@ -117,7 +117,7 @@ public final class KeyStoreUtil {
         // Comodo SHA1 https://cabforum.org/pipermail/public/2015-December/006500.html
         // https://bugzilla.mozilla.org/show_bug.cgi?id=1208461
         //new BigInteger("44:be:0c:8b:50:00:21:b4:11:d3:2a:68:06:a9:ad:69".replace(":", ""), 16)
-	//"UTN - DATACorp SGC"
+        //"UTN - DATACorp SGC"
         //null
         "58:11:9f:0e:12:82:87:ea:50:fd:d9:87:45:6f:4f:78:dc:fa:d6:d4"
     };
@@ -150,7 +150,7 @@ public final class KeyStoreUtil {
      *  @return success
      */
     public static KeyStore createKeyStore(File ksFile, String password)
-                              throws GeneralSecurityException, IOException {
+    throws GeneralSecurityException, IOException {
         boolean exists = ksFile != null && ksFile.exists();
         char[] pwchars = password != null ? password.toCharArray() : null;
         KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
@@ -160,7 +160,10 @@ public final class KeyStoreUtil {
                 fis = new FileInputStream(ksFile);
                 ks.load(fis, pwchars);
             } finally {
-                if (fis != null) try { fis.close(); } catch (IOException ioe) {}
+                if (fis != null) try {
+                        fis.close();
+                    }
+                    catch (IOException ioe) {}
             }
         }
         if (ksFile != null && !exists) {
@@ -171,7 +174,10 @@ public final class KeyStoreUtil {
                 fos = new SecureFileOutputStream(ksFile);
                 ks.store(fos, pwchars);
             } finally {
-                if (fos != null) try { fos.close(); } catch (IOException ioe) {}
+                if (fos != null) try {
+                        fos.close();
+                    }
+                    catch (IOException ioe) {}
             }
         }
         return ks;
@@ -260,7 +266,10 @@ public final class KeyStoreUtil {
             } catch (GeneralSecurityException e) {}
             return false;
         } finally {
-            try { if (fis != null) fis.close(); } catch (IOException foo) {}
+            try {
+                if (fis != null) fis.close();
+            }
+            catch (IOException foo) {}
         }
         return true;
     }
@@ -315,7 +324,10 @@ public final class KeyStoreUtil {
             error("Unable to check certificates in key store " + location, gse);
             return false;
         } finally {
-            try { if (fis != null) fis.close(); } catch (IOException foo) {}
+            try {
+                if (fis != null) fis.close();
+            }
+            catch (IOException foo) {}
         }
     }
 
@@ -362,11 +374,11 @@ public final class KeyStoreUtil {
                                     Log l = I2PAppContext.getGlobalContext().logManager().getLog(KeyStoreUtil.class);
                                     String subj = cert.getIssuerX500Principal().toString();
                                     l.logAlways(Log.WARN, "Certificate \"" + subj + "\" in key store " + location +
-                                                          " will expire in " + DataHelper.formatDuration2(expiresIn).replace("&nbsp;", " ") +
-                                                          "\nYou should renew the certificate soon." +
-                                                          // TODO better help or tools, or autorenew
-                                                          "\nFor a local self-signed certificate, you may delete the keystore and restart," +
-                                                          " or ask for help on how to renew.");
+                                                " will expire in " + DataHelper.formatDuration2(expiresIn).replace("&nbsp;", " ") +
+                                                "\nYou should renew the certificate soon." +
+                                                // TODO better help or tools, or autorenew
+                                                "\nFor a local self-signed certificate, you may delete the keystore and restart," +
+                                                " or ask for help on how to renew.");
                                 }
                             } catch (CertificateExpiredException cee) {
                                 String subj = cert.getIssuerX500Principal().toString();
@@ -491,9 +503,9 @@ public final class KeyStoreUtil {
                     if (alias.startsWith("."))
                         continue;
                     if (alias.endsWith(".crt") || alias.endsWith(".pem") || alias.endsWith(".key") ||
-                        alias.endsWith(".der") || alias.endsWith(".key") || alias.endsWith(".p7b") ||
-                        alias.endsWith(".p7c") || alias.endsWith(".pfx") || alias.endsWith(".p12") ||
-                        alias.endsWith(".cer"))
+                            alias.endsWith(".der") || alias.endsWith(".key") || alias.endsWith(".p7b") ||
+                            alias.endsWith(".p7c") || alias.endsWith(".pfx") || alias.endsWith(".p12") ||
+                            alias.endsWith(".cer"))
                         alias = alias.substring(0, alias.length() - 4);
                     boolean success = addCert(f, alias, ks, cs);
                     if (success)
@@ -531,10 +543,10 @@ public final class KeyStoreUtil {
         try {
             X509Certificate cert = CertUtil.loadCert(file);
             info("Read X509 Certificate from " + file.getAbsolutePath() +
-                          " Issuer: " + cert.getIssuerX500Principal() +
-                          " Serial: " + cert.getSerialNumber().toString(16) +
-                          "; Valid From: " + cert.getNotBefore() +
-                          " To: " + cert.getNotAfter());
+                 " Issuer: " + cert.getIssuerX500Principal() +
+                 " Serial: " + cert.getSerialNumber().toString(16) +
+                 "; Valid From: " + cert.getNotBefore() +
+                 " To: " + cert.getNotAfter());
             if (cs != null && CertUtil.isRevoked(cs, cert)) {
                 error("Certificate is revoked: " + file, new Exception());
                 return false;
@@ -546,7 +558,7 @@ public final class KeyStoreUtil {
             // Android often has old system certs
             // our SSL certs may be old also
             //if (SystemVersion.isAndroid())
-                warn(s, cee);
+            warn(s, cee);
             //else
             //    error(s, cee);
             return false;
@@ -734,7 +746,7 @@ public final class KeyStoreUtil {
      */
     public static Object[] createKeysAndCRL(File ks, String ksPW, String alias, String cname, String ou,
                                             int validDays, String keyAlg, int keySize, String keyPW)
-                                                throws GeneralSecurityException, IOException {
+    throws GeneralSecurityException, IOException {
         return createKeysAndCRL(ks, ksPW, alias, cname, null, ou, validDays, keyAlg, keySize, keyPW);
     }
 
@@ -774,7 +786,7 @@ public final class KeyStoreUtil {
      */
     public static Object[] createKeysAndCRL(File ks, String ksPW, String alias, String cname, Set<String> altNames, String ou,
                                             int validDays, String keyAlg, int keySize, String keyPW)
-                                                throws GeneralSecurityException, IOException {
+    throws GeneralSecurityException, IOException {
         String algoName = getSigAlg(keySize, keyAlg);
         SigType type = null;
         for (SigType t : EnumSet.allOf(SigType.class)) {
@@ -820,7 +832,7 @@ public final class KeyStoreUtil {
      */
     public static Object[] createKeysAndCRL(File ks, String ksPW, String alias, String cname, String ou,
                                             int validDays, SigType type, String keyPW)
-                                                throws GeneralSecurityException, IOException {
+    throws GeneralSecurityException, IOException {
         return createKeysAndCRL(ks, ksPW, alias, cname, null, ou, validDays, type, keyPW);
     }
 
@@ -858,7 +870,7 @@ public final class KeyStoreUtil {
      */
     public static Object[] createKeysAndCRL(File ks, String ksPW, String alias, String cname, Set<String> altNames, String ou,
                                             int validDays, SigType type, String keyPW)
-                                                throws GeneralSecurityException, IOException {
+    throws GeneralSecurityException, IOException {
         File dir = ks.getParentFile();
         if (dir != null && !dir.exists()) {
             File sdir = new SecureDirectory(dir.getAbsolutePath());
@@ -895,7 +907,7 @@ public final class KeyStoreUtil {
      *  @since 0.8.3, consolidated from RouterConsoleRunner and SSLClientListenerRunner in 0.9.9
      */
     private static boolean createKeysCLI(File ks, String ksPW, String alias, String cname, String ou,
-                                     int validDays, String keyAlg, int keySize, String keyPW) {
+                                         int validDays, String keyAlg, int keySize, String keyPW) {
         if (ks.exists()) {
             try {
                 if (getCert(ks, ksPW, alias) != null) {
@@ -924,22 +936,34 @@ public final class KeyStoreUtil {
         a.add(keytool);
         a.add("-genkey");    // -genkeypair preferred in newer keytools, but this works with more
         //a.add("-v");         // verbose, gives you a stack trace on exception
-        a.add("-storetype"); a.add(KeyStore.getDefaultType());
-        a.add("-keystore");  a.add(ks.getAbsolutePath());
-        a.add("-storepass"); a.add(ksPW);
-        a.add("-alias");     a.add(alias);
-        a.add("-dname");     a.add("CN=" + cname + ",OU=" + ou + ",O=I2P Anonymous Network,L=XX,ST=XX,C=XX");
-        a.add("-validity");  a.add(Integer.toString(validDays));  // 10 years
-        a.add("-keyalg");    a.add(keyAlg);
-        a.add("-sigalg");    a.add(getSigAlg(keySize, keyAlg));
-        a.add("-keysize");   a.add(Integer.toString(keySize));
-        a.add("-keypass");   a.add(keyPW);
+        a.add("-storetype");
+        a.add(KeyStore.getDefaultType());
+        a.add("-keystore");
+        a.add(ks.getAbsolutePath());
+        a.add("-storepass");
+        a.add(ksPW);
+        a.add("-alias");
+        a.add(alias);
+        a.add("-dname");
+        a.add("CN=" + cname + ",OU=" + ou + ",O=I2P Anonymous Network,L=XX,ST=XX,C=XX");
+        a.add("-validity");
+        a.add(Integer.toString(validDays));  // 10 years
+        a.add("-keyalg");
+        a.add(keyAlg);
+        a.add("-sigalg");
+        a.add(getSigAlg(keySize, keyAlg));
+        a.add("-keysize");
+        a.add(Integer.toString(keySize));
+        a.add("-keypass");
+        a.add(keyPW);
         if (keyAlg.equals("Ed") || keyAlg.equals("EdDSA") || keyAlg.equals("ElGamal")) {
             File f = I2PAppContext.getGlobalContext().getLibDir();
             f = new File(f, "i2p.jar");
             // providerpath is not in the man page; see keytool -genkey -help
-            a.add("-providerpath");  a.add(f.getAbsolutePath());
-            a.add("-providerclass"); a.add("net.i2p.crypto.provider.I2PProvider");
+            a.add("-providerpath");
+            a.add(f.getAbsolutePath());
+            a.add("-providerclass");
+            a.add("net.i2p.crypto.provider.I2PProvider");
         }
         String[] args = a.toArray(new String[a.size()]);
         // TODO pipe key password to process; requires ShellCommand enhancements
@@ -1003,7 +1027,7 @@ public final class KeyStoreUtil {
         return hash + "with" + keyalg;
     }
 
-    /** 
+    /**
      *  Get a private key out of a keystore
      *
      *  @param ks path to the keystore
@@ -1013,7 +1037,7 @@ public final class KeyStoreUtil {
      *  @return the key or null if not found
      */
     public static PrivateKey getPrivateKey(File ks, String ksPW, String alias, String keyPW)
-                              throws GeneralSecurityException, IOException {
+    throws GeneralSecurityException, IOException {
         InputStream fis = null;
         try {
             KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
@@ -1026,11 +1050,14 @@ public final class KeyStoreUtil {
             // PE is unchecked
             throw new GeneralSecurityException(pe);
         } finally {
-            if (fis != null) try { fis.close(); } catch (IOException ioe) {}
+            if (fis != null) try {
+                    fis.close();
+                }
+                catch (IOException ioe) {}
         }
     }
 
-    /** 
+    /**
      *  Export the private key and certificate chain (if any) out of a keystore.
      *  Does NOT close the output stream. Throws on all errors.
      *
@@ -1042,7 +1069,7 @@ public final class KeyStoreUtil {
      */
     public static void exportPrivateKey(File ks, String ksPW, String alias, String keyPW,
                                         OutputStream out)
-                              throws GeneralSecurityException, IOException {
+    throws GeneralSecurityException, IOException {
         InputStream fis = null;
         try {
             KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
@@ -1059,11 +1086,14 @@ public final class KeyStoreUtil {
             // PE is unchecked
             throw new GeneralSecurityException(pe);
         } finally {
-            if (fis != null) try { fis.close(); } catch (IOException ioe) {}
+            if (fis != null) try {
+                    fis.close();
+                }
+                catch (IOException ioe) {}
         }
     }
 
-    /** 
+    /**
      *  Renew the the private key certificate in a keystore.
      *  Closes the input and output streams. Throws on all errors.
      *
@@ -1076,8 +1106,8 @@ public final class KeyStoreUtil {
      *  @since 0.9.34
      */
     public static X509Certificate renewPrivateKeyCertificate(File ks, String ksPW, String alias,
-                                                             String keyPW, int validDays)
-                                                             throws GeneralSecurityException, IOException {
+            String keyPW, int validDays)
+    throws GeneralSecurityException, IOException {
         InputStream fis = null;
         OutputStream fos = null;
         try {
@@ -1085,7 +1115,10 @@ public final class KeyStoreUtil {
             fis = new FileInputStream(ks);
             char[] pwchars = ksPW != null ? ksPW.toCharArray() : null;
             keyStore.load(fis, pwchars);
-            try { fis.close(); } catch (IOException ioe) {}
+            try {
+                fis.close();
+            }
+            catch (IOException ioe) {}
             fis = null;
             char[] keypwchars = keyPW.toCharArray();
             if (alias == null) {
@@ -1114,12 +1147,18 @@ public final class KeyStoreUtil {
             // PE is unchecked
             throw new GeneralSecurityException(pe);
         } finally {
-            if (fis != null) try { fis.close(); } catch (IOException ioe) {}
-            if (fos != null) try { fos.close(); } catch (IOException ioe) {}
+            if (fis != null) try {
+                    fis.close();
+                }
+                catch (IOException ioe) {}
+            if (fos != null) try {
+                    fos.close();
+                }
+                catch (IOException ioe) {}
         }
     }
 
-    /** 
+    /**
      *  Import the private key and certificate chain to a keystore.
      *  Keystore will be created if it does not exist.
      *  Private key MUST be first in the stream.
@@ -1135,7 +1174,7 @@ public final class KeyStoreUtil {
      */
     public static String importPrivateKey(File ks, String ksPW, String alias, String keyPW,
                                           InputStream in)
-                              throws GeneralSecurityException, IOException {
+    throws GeneralSecurityException, IOException {
         OutputStream fos = null;
         try {
             KeyStore keyStore = createKeyStore(ks, ksPW);
@@ -1157,12 +1196,18 @@ public final class KeyStoreUtil {
             // PE is unchecked
             throw new GeneralSecurityException(pe);
         } finally {
-            if (fos != null) try { fos.close(); } catch (IOException ioe) {}
-            try { in.close(); } catch (IOException ioe) {}
+            if (fos != null) try {
+                    fos.close();
+                }
+                catch (IOException ioe) {}
+            try {
+                in.close();
+            }
+            catch (IOException ioe) {}
         }
     }
 
-    /** 
+    /**
      *  Import the private key and certificate chain to a keystore.
      *  Keystore will be created if it does not exist.
      *  Private key MUST be first in the stream.
@@ -1176,7 +1221,7 @@ public final class KeyStoreUtil {
      */
     public static void storePrivateKey(File ks, String ksPW, String alias, String keyPW,
                                        PrivateKey pk, List<X509Certificate> certs)
-                              throws GeneralSecurityException, IOException {
+    throws GeneralSecurityException, IOException {
         OutputStream fos = null;
         try {
             KeyStore keyStore = createKeyStore(ks, ksPW);
@@ -1188,11 +1233,14 @@ public final class KeyStoreUtil {
             // PE is unchecked
             throw new GeneralSecurityException(pe);
         } finally {
-            if (fos != null) try { fos.close(); } catch (IOException ioe) {}
+            if (fos != null) try {
+                    fos.close();
+                }
+                catch (IOException ioe) {}
         }
     }
 
-    /** 
+    /**
      *  Get a cert out of a keystore
      *
      *  @param ks path to the keystore
@@ -1201,7 +1249,7 @@ public final class KeyStoreUtil {
      *  @return the certificate or null if not found
      */
     public static Certificate getCert(File ks, String ksPW, String alias)
-                              throws GeneralSecurityException, IOException {
+    throws GeneralSecurityException, IOException {
         InputStream fis = null;
         try {
             KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
@@ -1210,11 +1258,14 @@ public final class KeyStoreUtil {
             keyStore.load(fis, pwchars);
             return keyStore.getCertificate(alias);
         } finally {
-            if (fis != null) try { fis.close(); } catch (IOException ioe) {}
+            if (fis != null) try {
+                    fis.close();
+                }
+                catch (IOException ioe) {}
         }
     }
 
-    /** 
+    /**
      *  Pull the cert back OUT of the keystore and save it in Base64-encoded X.509 format
      *  so the clients can get to it.
      *
@@ -1345,15 +1396,15 @@ public final class KeyStoreUtil {
     }
 
     private static void usage() {
-         System.err.println(
-                            "Usage: KeyStoreUtil create keystore.ks (create empty keystore)\n" +
-                            "       KeyStoreUtil export keystore.ks alias keypw (exports private key from keystore)\n" +
-                            "       KeyStoreUtil import keystore.ks file.key alias keypw (imports private key from file to keystore)\n" +
-                            "       KeyStoreUtil keygen keystore.ks alias keypw (create keypair in keystore)\n" +
-                            "       KeyStoreUtil keygen2 keystore.ks alias keypw (create keypair using I2PProvider)\n" +
-                            "       KeyStoreUtil list keystore.ks (list contents)\n" +
-                            "       KeyStoreUtil system (loads from system keystore)\n" +
-                            "       KeyStoreUtil keystore.ks (loads from system keystore and from keystore.ks)");
+        System.err.println(
+            "Usage: KeyStoreUtil create keystore.ks (create empty keystore)\n" +
+            "       KeyStoreUtil export keystore.ks alias keypw (exports private key from keystore)\n" +
+            "       KeyStoreUtil import keystore.ks file.key alias keypw (imports private key from file to keystore)\n" +
+            "       KeyStoreUtil keygen keystore.ks alias keypw (create keypair in keystore)\n" +
+            "       KeyStoreUtil keygen2 keystore.ks alias keypw (create keypair using I2PProvider)\n" +
+            "       KeyStoreUtil list keystore.ks (list contents)\n" +
+            "       KeyStoreUtil system (loads from system keystore)\n" +
+            "       KeyStoreUtil keystore.ks (loads from system keystore and from keystore.ks)");
     }
 
     private static void testImport(String[] args) throws Exception {
@@ -1384,13 +1435,13 @@ public final class KeyStoreUtil {
                                 DEFAULT_KEY_VALID_DAYS, "EC", 256, pw);
         System.out.println("EC genkey ok? " + ok);
         ok = createKeys(ksf, DEFAULT_KEYSTORE_PASSWORD, alias + "-DSA", "test cname", "test ou",
-                                DEFAULT_KEY_VALID_DAYS, "DSA", 1024, pw);
+                        DEFAULT_KEY_VALID_DAYS, "DSA", 1024, pw);
         System.out.println("DSA genkey ok? " + ok);
         ok = createKeys(ksf, DEFAULT_KEYSTORE_PASSWORD, alias + "-RSA", "test cname", "test ou",
-                                DEFAULT_KEY_VALID_DAYS, "RSA", 4096, pw);
+                        DEFAULT_KEY_VALID_DAYS, "RSA", 4096, pw);
         System.out.println("RSA genkey ok? " + ok);
         ok = createKeys(ksf, DEFAULT_KEYSTORE_PASSWORD, alias + "-EdDSA", "test cname", "test ou",
-                                DEFAULT_KEY_VALID_DAYS, "EdDSA", 256, pw);
+                        DEFAULT_KEY_VALID_DAYS, "EdDSA", 256, pw);
         System.out.println("EdDSA genkey ok? " + ok);
         //ok = createKeys(ksf, DEFAULT_KEYSTORE_PASSWORD, alias + "-ElG", "test cname", "test ou",
         //                        DEFAULT_KEY_VALID_DAYS, "ElGamal", 2048, pw);
@@ -1458,7 +1509,10 @@ public final class KeyStoreUtil {
             } catch (GeneralSecurityException gse) {
                 error("Unable to get certificates in key store " + ksf, gse);
             } finally {
-                try { if (fis != null) fis.close(); } catch (IOException foo) {}
+                try {
+                    if (fis != null) fis.close();
+                }
+                catch (IOException foo) {}
             }
         } else {
             System.err.println("Keystore file not found: " + ksf);

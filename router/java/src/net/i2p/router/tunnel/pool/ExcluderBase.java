@@ -37,25 +37,53 @@ abstract class ExcluderBase implements Set<Hash> {
      */
     public abstract boolean contains(Object o);
 
-    public boolean add(Hash h) { return s.add(h); }
-    public boolean addAll(Collection<? extends Hash> c) { return s.addAll(c); }
-    public void clear() { s.clear(); }
-    public boolean containsAll(Collection<?> c) { return s.containsAll(c); }
-    public boolean equals(Object o) { return s.equals(o); }
-    public int hashCode() { return s.hashCode(); }
-    public boolean isEmpty() { return s.isEmpty(); }
-    public Iterator<Hash> iterator() { return s.iterator(); }
-    public boolean remove(Object o) { return s.remove(o); }
-    public boolean removeAll(Collection<?> c) { return s.removeAll(c); }
-    public boolean retainAll(Collection<?> c) { return s.retainAll(c); }
-    public int size() { return s.size(); }
-    public Object[] toArray() { return s.toArray(); }
-    public <Hash> Hash[] toArray(Hash[] a) { return s.toArray(a); }
+    public boolean add(Hash h) {
+        return s.add(h);
+    }
+    public boolean addAll(Collection<? extends Hash> c) {
+        return s.addAll(c);
+    }
+    public void clear() {
+        s.clear();
+    }
+    public boolean containsAll(Collection<?> c) {
+        return s.containsAll(c);
+    }
+    public boolean equals(Object o) {
+        return s.equals(o);
+    }
+    public int hashCode() {
+        return s.hashCode();
+    }
+    public boolean isEmpty() {
+        return s.isEmpty();
+    }
+    public Iterator<Hash> iterator() {
+        return s.iterator();
+    }
+    public boolean remove(Object o) {
+        return s.remove(o);
+    }
+    public boolean removeAll(Collection<?> c) {
+        return s.removeAll(c);
+    }
+    public boolean retainAll(Collection<?> c) {
+        return s.retainAll(c);
+    }
+    public int size() {
+        return s.size();
+    }
+    public Object[] toArray() {
+        return s.toArray();
+    }
+    public <Hash> Hash[] toArray(Hash[] a) {
+        return s.toArray(a);
+    }
 
     @Override
     public String toString() {
-         return getClass().getSimpleName() +
-                " (" + s.size() + ") " +
-                (s.size() <= 10 ? s.toString() : "");
+        return getClass().getSimpleName() +
+               " (" + s.size() + ") " +
+               (s.size() <= 10 ? s.toString() : "");
     }
 }

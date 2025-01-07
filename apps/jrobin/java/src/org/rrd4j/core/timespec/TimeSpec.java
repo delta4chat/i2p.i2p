@@ -53,7 +53,7 @@ public class TimeSpec {
         // how would I guess what time it was?
         else {
             throw new IllegalStateException("Relative times like '" +
-                    dateString + "' require proper absolute context to be evaluated");
+                                            dateString + "' require proper absolute context to be evaluated");
         }
         gc.add(Calendar.YEAR, dyear);
         gc.add(Calendar.MONTH, dmonth);
@@ -80,10 +80,10 @@ public class TimeSpec {
 
     String dump() {
         return (type == TYPE_ABSOLUTE ? "ABSTIME" : type == TYPE_START ? "START" : "END") +
-                ": " + year + "/" + month + "/" + day +
-                "/" + hour + "/" + min + "/" + sec + " (" +
-                dyear + "/" + dmonth + "/" + dday +
-                "/" + dhour + "/" + dmin + "/" + dsec + ")";
+               ": " + year + "/" + month + "/" + day +
+               "/" + hour + "/" + min + "/" + sec + " (" +
+               dyear + "/" + dmonth + "/" + dday +
+               "/" + dhour + "/" + dmin + "/" + dsec + ")";
     }
 
     /**
@@ -107,10 +107,10 @@ public class TimeSpec {
         }
         spec1.context = spec2;
         spec2.context = spec1;
-        return new Calendar[]{
-                spec1.getTime(),
-                spec2.getTime()
-        };
+        return new Calendar[] {
+                   spec1.getTime(),
+                   spec2.getTime()
+               };
     }
 
     /**
@@ -131,7 +131,7 @@ public class TimeSpec {
     public static long[] getTimestamps(TimeSpec spec1, TimeSpec spec2) {
         Calendar[] gcs = getTimes(spec1, spec2);
         return new long[] {
-                gcs[0].toInstant().getEpochSecond(), gcs[1].toInstant().getEpochSecond()
-        };
+                   gcs[0].toInstant().getEpochSecond(), gcs[1].toInstant().getEpochSecond()
+               };
     }
 }

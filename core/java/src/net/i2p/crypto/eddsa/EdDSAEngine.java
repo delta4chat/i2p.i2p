@@ -196,7 +196,7 @@ public class EdDSAEngine extends Signature {
      */
     @Override
     protected void engineUpdate(byte[] b, int off, int len)
-            throws SignatureException {
+    throws SignatureException {
         if (oneShotMode) {
             if (oneShotBytes != null)
                 throw new SignatureException("update() already called");
@@ -320,7 +320,7 @@ public class EdDSAEngine extends Signature {
 
         // R = SB - H(Rbar,Abar,M)A
         GroupElement R = key.getParams().getB().doubleScalarMultiplyVariableTime(
-                ((EdDSAPublicKey) key).getNegativeA(), h, Sbyte);
+                             ((EdDSAPublicKey) key).getNegativeA(), h, Sbyte);
 
         // Variable time. This should be okay, because there are no secret
         // values used anywhere in verification.

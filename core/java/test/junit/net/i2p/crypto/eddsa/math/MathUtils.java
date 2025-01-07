@@ -53,9 +53,9 @@ public class MathUtils {
      */
     public static Field getField() {
         return new Field(
-                256, // b
-                Utils.hexToBytes("edffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7f"), // q
-                new Ed25519LittleEndianEncoding());
+                   256, // b
+                   Utils.hexToBytes("edffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7f"), // q
+                   new Ed25519LittleEndianEncoding());
     }
 
     // region field element
@@ -190,7 +190,9 @@ public class MathUtils {
      *
      * @return The group element.
      */
-    public static GroupElement getRandomGroupElement() { return getRandomGroupElement(false); }
+    public static GroupElement getRandomGroupElement() {
+        return getRandomGroupElement(false);
+    }
 
     /**
      * Gets a random group element in P3 representation, with precmp and dblPrecmp populated.
@@ -259,72 +261,72 @@ public class MathUtils {
 
         // Switch to affine coordinates.
         switch (g.getRepresentation()) {
-            case P2:
-            case P3:
-            case P3PrecomputedDouble:
-                x = gX.multiply(gZ.modInverse(getQ())).mod(getQ());
-                y = gY.multiply(gZ.modInverse(getQ())).mod(getQ());
-                break;
-            case P1P1:
-                x = gX.multiply(gZ.modInverse(getQ())).mod(getQ());
-                y = gY.multiply(gT.modInverse(getQ())).mod(getQ());
-                break;
-            case CACHED:
-                x = gX.subtract(gY).multiply(gZ.multiply(new BigInteger("2")).modInverse(getQ())).mod(getQ());
-                y = gX.add(gY).multiply(gZ.multiply(new BigInteger("2")).modInverse(getQ())).mod(getQ());
-                break;
-            case PRECOMP:
-                x = gX.subtract(gY).multiply(new BigInteger("2").modInverse(getQ())).mod(getQ());
-                y = gX.add(gY).multiply(new BigInteger("2").modInverse(getQ())).mod(getQ());
-                break;
-            default:
-                throw new UnsupportedOperationException();
+        case P2:
+        case P3:
+        case P3PrecomputedDouble:
+            x = gX.multiply(gZ.modInverse(getQ())).mod(getQ());
+            y = gY.multiply(gZ.modInverse(getQ())).mod(getQ());
+            break;
+        case P1P1:
+            x = gX.multiply(gZ.modInverse(getQ())).mod(getQ());
+            y = gY.multiply(gT.modInverse(getQ())).mod(getQ());
+            break;
+        case CACHED:
+            x = gX.subtract(gY).multiply(gZ.multiply(new BigInteger("2")).modInverse(getQ())).mod(getQ());
+            y = gX.add(gY).multiply(gZ.multiply(new BigInteger("2")).modInverse(getQ())).mod(getQ());
+            break;
+        case PRECOMP:
+            x = gX.subtract(gY).multiply(new BigInteger("2").modInverse(getQ())).mod(getQ());
+            y = gX.add(gY).multiply(new BigInteger("2").modInverse(getQ())).mod(getQ());
+            break;
+        default:
+            throw new UnsupportedOperationException();
         }
 
         // Now back to the desired representation.
         switch (repr) {
-            case P2:
-                return GroupElement.p2(
-                        curve,
-                        toFieldElement(x),
-                        toFieldElement(y),
-                        getField().ONE);
-            case P3:
-                return GroupElement.p3(
-                        curve,
-                        toFieldElement(x),
-                        toFieldElement(y),
-                        getField().ONE,
-                        toFieldElement(x.multiply(y).mod(getQ())), false);
-            case P3PrecomputedDouble:
-                return GroupElement.p3(
-                        curve,
-                        toFieldElement(x),
-                        toFieldElement(y),
-                        getField().ONE,
-                        toFieldElement(x.multiply(y).mod(getQ())), true);
-            case P1P1:
-                return GroupElement.p1p1(
-                        curve,
-                        toFieldElement(x),
-                        toFieldElement(y),
-                        getField().ONE,
-                        getField().ONE);
-            case CACHED:
-                return GroupElement.cached(
-                        curve,
-                        toFieldElement(y.add(x).mod(getQ())),
-                        toFieldElement(y.subtract(x).mod(getQ())),
-                        getField().ONE,
-                        toFieldElement(d.multiply(new BigInteger("2")).multiply(x).multiply(y).mod(getQ())));
-            case PRECOMP:
-                return GroupElement.precomp(
-                        curve,
-                        toFieldElement(y.add(x).mod(getQ())),
-                        toFieldElement(y.subtract(x).mod(getQ())),
-                        toFieldElement(d.multiply(new BigInteger("2")).multiply(x).multiply(y).mod(getQ())));
-            default:
-                throw new UnsupportedOperationException();
+        case P2:
+            return GroupElement.p2(
+                       curve,
+                       toFieldElement(x),
+                       toFieldElement(y),
+                       getField().ONE);
+        case P3:
+            return GroupElement.p3(
+                       curve,
+                       toFieldElement(x),
+                       toFieldElement(y),
+                       getField().ONE,
+                       toFieldElement(x.multiply(y).mod(getQ())), false);
+        case P3PrecomputedDouble:
+            return GroupElement.p3(
+                       curve,
+                       toFieldElement(x),
+                       toFieldElement(y),
+                       getField().ONE,
+                       toFieldElement(x.multiply(y).mod(getQ())), true);
+        case P1P1:
+            return GroupElement.p1p1(
+                       curve,
+                       toFieldElement(x),
+                       toFieldElement(y),
+                       getField().ONE,
+                       getField().ONE);
+        case CACHED:
+            return GroupElement.cached(
+                       curve,
+                       toFieldElement(y.add(x).mod(getQ())),
+                       toFieldElement(y.subtract(x).mod(getQ())),
+                       getField().ONE,
+                       toFieldElement(d.multiply(new BigInteger("2")).multiply(x).multiply(y).mod(getQ())));
+        case PRECOMP:
+            return GroupElement.precomp(
+                       curve,
+                       toFieldElement(y.add(x).mod(getQ())),
+                       toFieldElement(y.subtract(x).mod(getQ())),
+                       toFieldElement(d.multiply(new BigInteger("2")).multiply(x).multiply(y).mod(getQ())));
+        default:
+            throw new UnsupportedOperationException();
         }
     }
 
@@ -340,7 +342,7 @@ public class MathUtils {
     public static GroupElement addGroupElements(final GroupElement g1, final GroupElement g2) {
         // Relying on a special representation of the group elements.
         if ((g1.getRepresentation() != GroupElement.Representation.P2 && g1.getRepresentation() != GroupElement.Representation.P3) ||
-            (g2.getRepresentation() != GroupElement.Representation.P2 && g2.getRepresentation() != GroupElement.Representation.P3)) {
+                (g2.getRepresentation() != GroupElement.Representation.P2 && g2.getRepresentation() != GroupElement.Representation.P3)) {
             throw new IllegalArgumentException("g1 and g2 must have representation P2 or P3");
         }
 
@@ -367,9 +369,9 @@ public class MathUtils {
         // d = -121665/121666
         BigInteger dx1x2y1y2 = d.multiply(g1x).multiply(g2x).multiply(g1y).multiply(g2y).mod(getQ());
         BigInteger x3 = g1x.multiply(g2y).add(g2x.multiply(g1y))
-                .multiply(BigInteger.ONE.add(dx1x2y1y2).modInverse(getQ())).mod(getQ());
+                        .multiply(BigInteger.ONE.add(dx1x2y1y2).modInverse(getQ())).mod(getQ());
         BigInteger y3 = g1x.multiply(g2x).add(g1y.multiply(g2y))
-                .multiply(BigInteger.ONE.subtract(dx1x2y1y2).modInverse(getQ())).mod(getQ());
+                        .multiply(BigInteger.ONE.subtract(dx1x2y1y2).modInverse(getQ())).mod(getQ());
         BigInteger t3 = x3.multiply(y3).mod(getQ());
 
         return GroupElement.p3(g1.getCurve(), toFieldElement(x3), toFieldElement(y3), getField().ONE, toFieldElement(t3));
@@ -417,10 +419,10 @@ public class MathUtils {
      * @return The resulting group element.
      */
     public static GroupElement doubleScalarMultiplyGroupElements(
-            final GroupElement g1,
-            final FieldElement f1,
-            final GroupElement g2,
-            final FieldElement f2) {
+        final GroupElement g1,
+        final FieldElement f1,
+        final GroupElement g2,
+        final FieldElement f2) {
         final GroupElement h1 = scalarMultiplyGroupElement(g1, f1);
         final GroupElement h2 = scalarMultiplyGroupElement(g2, f2);
         return addGroupElements(h1, h2);

@@ -24,7 +24,7 @@ class OutboundReceiver implements TunnelGateway.Receiver {
     private final int _priority;
     // same job used for all messages
     private final JobImpl _sendFailJob;
-    
+
     private static final long MAX_LOOKUP_TIME = 15*1000;
     private static final int PRIORITY = OutNetMessage.PRIORITY_MY_DATA;
 
@@ -37,7 +37,7 @@ class OutboundReceiver implements TunnelGateway.Receiver {
         _sendFailJob = new SendFailedJob(ctx);
         // all createRateStat() in TunnelDispatcher
     }
-    
+
     public long receiveEncrypted(byte encrypted[]) {
         TunnelDataMessage msg = new TunnelDataMessage(_context);
         msg.setData(encrypted);
@@ -57,7 +57,7 @@ class OutboundReceiver implements TunnelGateway.Receiver {
             // It should be rare to forget the router info for a peer in our own tunnel.
             if (_log.shouldLog(Log.WARN))
                 _log.warn("lookup of " + _config.getPeer(1)
-                           + " required for " + msg);
+                          + " required for " + msg);
             _context.netDb().lookupRouterInfo(_config.getPeer(1), new SendJob(_context, msg),
                                               new LookupFailedJob(_context), MAX_LOOKUP_TIME);
             return -1;
@@ -91,7 +91,9 @@ class OutboundReceiver implements TunnelGateway.Receiver {
             _msg = msg;
         }
 
-        public String getName() { return "OBGW send after lookup"; }
+        public String getName() {
+            return "OBGW send after lookup";
+        }
 
         public void runJob() {
             RouterInfo ri = _context.netDb().lookupRouterInfoLocally(_config.getPeer(1));
@@ -119,12 +121,14 @@ class OutboundReceiver implements TunnelGateway.Receiver {
             super(ctx);
         }
 
-        public String getName() { return "OBGW lookup fail"; }
+        public String getName() {
+            return "OBGW lookup fail";
+        }
 
         public void runJob() {
             if (_log.shouldLog(Log.WARN))
                 _log.warn("lookup of " + _config.getPeer(1)
-                           + " failed for " + _config);
+                          + " failed for " + _config);
             _context.statManager().addRateData("tunnel.outboundLookupSuccess", 0);
             _config.tunnelFailedFirstHop();
         }
@@ -140,12 +144,14 @@ class OutboundReceiver implements TunnelGateway.Receiver {
             super(ctx);
         }
 
-        public String getName() { return "OBGW send fail"; }
+        public String getName() {
+            return "OBGW send fail";
+        }
 
         public void runJob() {
             if (_log.shouldWarn())
                 _log.warn("send to " + _config.getPeer(1)
-                           + " failed for " + _config);
+                          + " failed for " + _config);
             _config.tunnelFailedFirstHop();
         }
     }

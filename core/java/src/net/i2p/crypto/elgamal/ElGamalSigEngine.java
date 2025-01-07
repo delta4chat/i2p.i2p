@@ -72,7 +72,7 @@ public final class ElGamalSigEngine extends Signature {
 
     @Override
     protected void engineUpdate(byte[] b, int off, int len)
-            throws SignatureException {
+    throws SignatureException {
         digest.update(b, off, len);
     }
 
@@ -131,7 +131,7 @@ public final class ElGamalSigEngine extends Signature {
             BigInteger r = rs[0];
             BigInteger s = rs[1];
             if (r.signum() != 1 || s.signum() != 1 ||
-                r.compareTo(elgp) != -1 || s.compareTo(pm1) != -1)
+                    r.compareTo(elgp) != -1 || s.compareTo(pm1) != -1)
                 return false;
             NativeBigInteger h = new NativeBigInteger(1, data);
             BigInteger modvalr = r.modPow(s, elgp);

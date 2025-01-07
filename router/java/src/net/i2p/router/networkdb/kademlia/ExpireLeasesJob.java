@@ -34,18 +34,20 @@ import net.i2p.util.SystemVersion;
 class ExpireLeasesJob extends JobImpl {
     private final Log _log;
     private final KademliaNetworkDatabaseFacade _facade;
-    
+
     private final static long RERUN_DELAY_MS = 1*60*1000;
     private static final int LIMIT_LEASES_FF = 1250;
     private static final int LIMIT_LEASES_CLIENT = SystemVersion.isSlow() ? 750 : 300;
-    
+
     public ExpireLeasesJob(RouterContext ctx, KademliaNetworkDatabaseFacade facade) {
         super(ctx);
         _log = ctx.logManager().getLog(ExpireLeasesJob.class);
         _facade = facade;
     }
-    
-    public String getName() { return "Expire Lease Sets Job"; }
+
+    public String getName() {
+        return "Expire Lease Sets Job";
+    }
 
     public void runJob() {
         List<Hash> toExpire = selectKeysToExpire();
@@ -58,7 +60,7 @@ class ExpireLeasesJob extends JobImpl {
         }
         requeue(RERUN_DELAY_MS);
     }
-    
+
     /**
      * Run through the entire data store, finding all expired leaseSets (ones that
      * don't have any leases that haven't yet passed, even with the CLOCK_FUDGE_FACTOR)
@@ -103,22 +105,22 @@ class ExpireLeasesJob extends JobImpl {
                     // don't drop very close to us
                     byte[] rkey = gen.getRoutingKey(h).getData();
                     int distance = (((rkey[0] ^ ourRKey[0]) & 0xff) << 8) |
-                                    ((rkey[1] ^ ourRKey[1]) & 0xff);
+                                   ((rkey[1] ^ ourRKey[1]) & 0xff);
                     // they have to be within 1/256 of the keyspace
                     if (distance >= 256) {
-                         toExpire.add(h);
-                         if (--sz <= limit)
-                             break;
+                        toExpire.add(h);
+                        if (--sz <= limit)
+                            break;
                     }
                 }
             } else {
                 Collections.sort(current, new LeaseSetComparator());
                 for (LeaseSet ls : current) {
-                     toExpire.add(ls.getHash());
-                     //if (_log.shouldInfo())
-                     //    _log.info("Aggressive LS expire for " + _facade + '\n' + ls);
-                     if (--sz <= limit)
-                         break;
+                    toExpire.add(ls.getHash());
+                    //if (_log.shouldInfo())
+                    //    _log.info("Aggressive LS expire for " + _facade + '\n' + ls);
+                    if (--sz <= limit)
+                        break;
                 }
             }
             int exp = origsz - sz;
@@ -134,12 +136,12 @@ class ExpireLeasesJob extends JobImpl {
      *  @since 0.9.65
      */
     private static class LeaseSetComparator implements Comparator<LeaseSet> {
-         public int compare(LeaseSet l, LeaseSet r) {
-             long dl = l.getLatestLeaseDate();
-             long dr = r.getLatestLeaseDate();
-             if (dl < dr) return -1;
-             if (dl > dr) return 1;
-             return 0;
+        public int compare(LeaseSet l, LeaseSet r) {
+            long dl = l.getLatestLeaseDate();
+            long dr = r.getLatestLeaseDate();
+            if (dl < dr) return -1;
+            if (dl > dr) return 1;
+            return 0;
         }
     }
 }

@@ -14,7 +14,9 @@ public class Pair implements Comparable<Pair> {
     public final BigInteger dist;
 
     public Pair(RouterInfo ri1, RouterInfo ri2, BigInteger distance) {
-        r1 = ri1; r2 = ri2; dist = distance;
+        r1 = ri1;
+        r2 = ri2;
+        dist = distance;
     }
 
     public int compareTo(Pair p) {

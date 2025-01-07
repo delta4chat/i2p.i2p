@@ -2,7 +2,7 @@ package net.i2p.crypto;
 
 /*
  * free (adj.): unencumbered; not under the control of others
- * No warranty of any kind, either expressed or implied.  
+ * No warranty of any kind, either expressed or implied.
  */
 
 import java.io.IOException;
@@ -24,7 +24,7 @@ public interface KeyRing {
      *  @return null if none
      */
     public PublicKey getKey(String keyName, String scope, SigType type)
-                            throws GeneralSecurityException, IOException;
+    throws GeneralSecurityException, IOException;
 
     /**
      *  Store a key.
@@ -32,5 +32,5 @@ public interface KeyRing {
      *  @param scope a domain identifier, indicating router update, reseed, etc.
      */
     public void setKey(String keyName, String scope, PublicKey key)
-                            throws GeneralSecurityException, IOException;
+    throws GeneralSecurityException, IOException;
 }

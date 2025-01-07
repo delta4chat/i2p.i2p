@@ -1,9 +1,9 @@
 package net.i2p.i2ptunnel;
 /*
  * free (adj.): unencumbered; not under the control of others
- * Written by jrandom in 2005 and released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
- * It probably won't make your computer catch on fire, or eat 
+ * Written by jrandom in 2005 and released into the public domain
+ * with no warranty of any kind, either expressed or implied.
+ * It probably won't make your computer catch on fire, or eat
  * your children, but it might.  Use at your own risk.
  *
  */
@@ -55,7 +55,7 @@ class HTTPResponseOutputStream extends FilterOutputStream {
     private static final byte NL = '\n';
     private static final byte[] CONNECTION_CLOSE = DataHelper.getASCII("Connection: close\r\n");
     private static final byte[] CRLF = DataHelper.getASCII("\r\n");
-    
+
     public HTTPResponseOutputStream(OutputStream raw) {
         this(raw, null);
     }
@@ -149,7 +149,7 @@ class HTTPResponseOutputStream extends FilterOutputStream {
             }
         }
     }
-    
+
     /**
      *  grow (and free) the buffer as necessary
      *  @throws IOException if the headers are too big
@@ -172,7 +172,7 @@ class HTTPResponseOutputStream extends FilterOutputStream {
             _headerBuffer = newBuf;
         }
     }
-    
+
     /** are the headers finished? */
     private boolean headerReceived() {
         int valid = _headerBuffer.getValid();
@@ -188,7 +188,7 @@ class HTTPResponseOutputStream extends FilterOutputStream {
         byte second = data[valid - 2];
         return second == NL; //   \n\n
     }
-     
+
     /**
      * Possibly tweak that first HTTP response line (HTTP/1.0 200 OK, etc).
      * Overridden on server side.
@@ -197,12 +197,12 @@ class HTTPResponseOutputStream extends FilterOutputStream {
     protected String filterResponseLine(String line) {
         return line;
     }
-    
+
     /** ok, received, now munge & write it */
     private void writeHeader() throws IOException {
         boolean connectionSent = false;
         boolean chunked = false;
-        
+
         int lastEnd = -1;
         byte[] data = _headerBuffer.getData();
         int valid = _headerBuffer.getValid();
@@ -245,10 +245,10 @@ class HTTPResponseOutputStream extends FilterOutputStream {
                                 val = "";
                             else
                                 val = DataHelper.getUTF8(data, j+2, valLen).trim();
-                            
+
                             if (_log.shouldInfo())
                                 _log.info("Response header [" + key + "] = [" + val + "]");
-                            
+
                             String lcKey = key.toLowerCase(Locale.US);
                             if ("connection".equals(lcKey)) {
                                 if (val.toLowerCase(Locale.US).contains("upgrade")) {
@@ -295,9 +295,9 @@ class HTTPResponseOutputStream extends FilterOutputStream {
                                 } else if ("set-cookie".equals(lcKey)) {
                                     String lcVal = val.toLowerCase(Locale.US);
                                     if (lcVal.contains("domain=b32.i2p") ||
-                                        lcVal.contains("domain=.b32.i2p") ||
-                                        lcVal.contains("domain=i2p") ||
-                                        lcVal.contains("domain=.i2p")) {
+                                            lcVal.contains("domain=.b32.i2p") ||
+                                            lcVal.contains("domain=i2p") ||
+                                            lcVal.contains("domain=.i2p")) {
                                         // Strip privacy-damaging "supercookies" for i2p and b32.i2p
                                         // See RFC 6265 and http://publicsuffix.org/
                                         if (_log.shouldInfo())
@@ -319,25 +319,25 @@ class HTTPResponseOutputStream extends FilterOutputStream {
         if (_keepAliveOut) {
             // we need one but not both
             if ((chunked && _dataExpected >= 0) ||
-                (!chunked && _dataExpected < 0))
+                    (!chunked && _dataExpected < 0))
                 _keepAliveOut = false;
         }
         if (_keepAliveIn) {
             // we need one but not both
             if ((chunked && _dataExpected >= 0) ||
-                (!chunked && _dataExpected < 0))
+                    (!chunked && _dataExpected < 0))
                 _keepAliveIn = false;
         }
-        
+
         if (!connectionSent && !_keepAliveOut)
             out.write(CONNECTION_CLOSE);
-            
+
         finishHeaders();
 
         boolean shouldCompress = shouldCompress();
         if (_log.shouldInfo())
             _log.info("After headers: gzip? " + _gzip + " compress? " + shouldCompress + " keepaliveIn? " + _keepAliveIn + " keepaliveOut? " + _keepAliveOut);
-        
+
         if (data.length == CACHE_SIZE)
             _cache.release(_headerBuffer);
         _headerBuffer = null;
@@ -367,13 +367,15 @@ class HTTPResponseOutputStream extends FilterOutputStream {
             beginProcessing();
         }
     }
-    
-    protected boolean shouldCompress() { return _gzip; }
-    
+
+    protected boolean shouldCompress() {
+        return _gzip;
+    }
+
     protected void finishHeaders() throws IOException {
         out.write(CRLF); // end of the headers
     }
-    
+
     @Override
     public void close() throws IOException {
         if (_log.shouldInfo())
@@ -384,7 +386,7 @@ class HTTPResponseOutputStream extends FilterOutputStream {
             super.close();
         }
     }
-    
+
     protected void beginProcessing() throws IOException {
         OutputStream po = new GunzipOutputStream(out, _callback);
         synchronized(this) {
@@ -392,87 +394,87 @@ class HTTPResponseOutputStream extends FilterOutputStream {
         }
     }
 
-/*******
-    public static void main(String args[]) {
-        String simple   = "HTTP/1.1 200 OK\n" +
-                          "foo: bar\n" +
-                          "baz: bat\n" +
-                          "\n" +
-                          "hi ho, this is the body";
-        String filtered = "HTTP/1.1 200 OK\n" +
-                          "Connection: keep-alive\n" +
-                          "foo: bar\n" +
-                          "baz: bat\n" +
-                          "\n" +
-                          "hi ho, this is the body";
-        String winfilter= "HTTP/1.1 200 OK\r\n" +
-                          "Connection: keep-alive\r\n" +
-                          "foo: bar\r\n" +
-                          "baz: bat\r\n" +
-                          "\r\n" +
-                          "hi ho, this is the body";
-        String minimal  = "HTTP/1.1 200 OK\n" +
-                          "\n" +
-                          "hi ho, this is the body";
-        String winmin   = "HTTP/1.1 200 OK\r\n" +
-                          "\r\n" +
-                          "hi ho, this is the body";
-        String invalid1 = "HTTP/1.1 200 OK\n";
-        String invalid2 = "HTTP/1.1 200 OK";
-        String invalid3 = "HTTP 200 OK\r\n";
-        String invalid4 = "HTTP 200 OK\r";
-        String invalid5 = "HTTP/1.1 200 OK\r\n" +
-                          "I am broken, and I smell\r\n" +
-                          "\r\n";
-        String invalid6 = "HTTP/1.1 200 OK\r\n" +
-                          ":I am broken, and I smell\r\n" +
-                          "\r\n";
-        String invalid7 = "HTTP/1.1 200 OK\n" +
-                          "I am broken, and I smell:\n" +
-                          ":asdf\n" +
-                          ":\n" +
-                          "\n";
-        String large    = "HTTP/1.1 200 OK\n" +
-                          "Last-modified: Tue, 25 Nov 2003 12:05:38 GMT\n" +
-                          "Expires: Tue, 25 Nov 2003 12:05:38 GMT\n" +
-                          "Content-length: 32\n" +
-                          "\n" +
-                          "hi ho, this is the body";
-        String blankval = "HTTP/1.0 200 OK\n" +
-                          "A:\n" +
-                          "\n";
-        
-        test("Simple", simple, true);
-        test("Filtered", filtered, true);
-        test("Filtered windows", winfilter, true);
-        test("Minimal", minimal, true);
-        test("Windows", winmin, true);
-        test("Large", large, true);
-        test("Blank whitespace", blankval, true);
-        test("Invalid (short headers)", invalid1, true);
-        test("Invalid (no headers)", invalid2, true);
-        test("Invalid (windows with short headers)", invalid3, true);
-        test("Invalid (windows no headers)", invalid4, true);
-        test("Invalid (bad headers)", invalid5, true);
-        test("Invalid (bad headers2)", invalid6, false);
-        test("Invalid (bad headers3)", invalid7, false);
-    }
-    
-    private static void test(String name, String orig, boolean shouldPass) {
-        System.out.println("====Testing: " + name + "\n" + orig + "\n------------");
-        try {
-            OutputStream baos = new java.io.ByteArrayOutputStream(4096);
-            HTTPResponseOutputStream resp = new HTTPResponseOutputStream(baos);
-            resp.write(orig.getBytes());
-            resp.flush();
-            String received = new String(baos.toByteArray());
-            System.out.println(received);
-        } catch (Exception e) {
-            if (shouldPass)
-                e.printStackTrace();
-            else
-                System.out.println("Properly fails with " + e.getMessage());
+    /*******
+        public static void main(String args[]) {
+            String simple   = "HTTP/1.1 200 OK\n" +
+                              "foo: bar\n" +
+                              "baz: bat\n" +
+                              "\n" +
+                              "hi ho, this is the body";
+            String filtered = "HTTP/1.1 200 OK\n" +
+                              "Connection: keep-alive\n" +
+                              "foo: bar\n" +
+                              "baz: bat\n" +
+                              "\n" +
+                              "hi ho, this is the body";
+            String winfilter= "HTTP/1.1 200 OK\r\n" +
+                              "Connection: keep-alive\r\n" +
+                              "foo: bar\r\n" +
+                              "baz: bat\r\n" +
+                              "\r\n" +
+                              "hi ho, this is the body";
+            String minimal  = "HTTP/1.1 200 OK\n" +
+                              "\n" +
+                              "hi ho, this is the body";
+            String winmin   = "HTTP/1.1 200 OK\r\n" +
+                              "\r\n" +
+                              "hi ho, this is the body";
+            String invalid1 = "HTTP/1.1 200 OK\n";
+            String invalid2 = "HTTP/1.1 200 OK";
+            String invalid3 = "HTTP 200 OK\r\n";
+            String invalid4 = "HTTP 200 OK\r";
+            String invalid5 = "HTTP/1.1 200 OK\r\n" +
+                              "I am broken, and I smell\r\n" +
+                              "\r\n";
+            String invalid6 = "HTTP/1.1 200 OK\r\n" +
+                              ":I am broken, and I smell\r\n" +
+                              "\r\n";
+            String invalid7 = "HTTP/1.1 200 OK\n" +
+                              "I am broken, and I smell:\n" +
+                              ":asdf\n" +
+                              ":\n" +
+                              "\n";
+            String large    = "HTTP/1.1 200 OK\n" +
+                              "Last-modified: Tue, 25 Nov 2003 12:05:38 GMT\n" +
+                              "Expires: Tue, 25 Nov 2003 12:05:38 GMT\n" +
+                              "Content-length: 32\n" +
+                              "\n" +
+                              "hi ho, this is the body";
+            String blankval = "HTTP/1.0 200 OK\n" +
+                              "A:\n" +
+                              "\n";
+
+            test("Simple", simple, true);
+            test("Filtered", filtered, true);
+            test("Filtered windows", winfilter, true);
+            test("Minimal", minimal, true);
+            test("Windows", winmin, true);
+            test("Large", large, true);
+            test("Blank whitespace", blankval, true);
+            test("Invalid (short headers)", invalid1, true);
+            test("Invalid (no headers)", invalid2, true);
+            test("Invalid (windows with short headers)", invalid3, true);
+            test("Invalid (windows no headers)", invalid4, true);
+            test("Invalid (bad headers)", invalid5, true);
+            test("Invalid (bad headers2)", invalid6, false);
+            test("Invalid (bad headers3)", invalid7, false);
         }
-    }
-******/
+
+        private static void test(String name, String orig, boolean shouldPass) {
+            System.out.println("====Testing: " + name + "\n" + orig + "\n------------");
+            try {
+                OutputStream baos = new java.io.ByteArrayOutputStream(4096);
+                HTTPResponseOutputStream resp = new HTTPResponseOutputStream(baos);
+                resp.write(orig.getBytes());
+                resp.flush();
+                String received = new String(baos.toByteArray());
+                System.out.println(received);
+            } catch (Exception e) {
+                if (shouldPass)
+                    e.printStackTrace();
+                else
+                    System.out.println("Properly fails with " + e.getMessage());
+            }
+        }
+    ******/
 }

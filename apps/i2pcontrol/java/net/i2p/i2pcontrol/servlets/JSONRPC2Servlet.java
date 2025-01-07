@@ -149,11 +149,11 @@ public class JSONRPC2Servlet extends HttpServlet {
         PrintWriter out = httpServletResponse.getWriter();
         out.println("<html><head></head><body>");
         out.println("<p>I2PControl RPC Service version " + I2PControlVersion.VERSION + " : Running");
-	if ("/password".equals(httpServletRequest.getServletPath())) {
+        if ("/password".equals(httpServletRequest.getServletPath())) {
             out.println("<form method=\"POST\" action=\"password\">");
             if (_secMan.isDefaultPasswordValid()) {
                 out.println("<p>The current API password is the default, \"" + _secMan.DEFAULT_AUTH_PASSWORD + "\". You should change it.");
-            } else {	
+            } else {
                 out.println("<p>Current API password:<input name=\"password\" type=\"password\">");
             }
             out.println("<p>New API password (twice): <input name=\"password2\" type=\"password\"> " +
@@ -162,7 +162,7 @@ public class JSONRPC2Servlet extends HttpServlet {
                         "<p>If you forget the API password, <a href=\"/configwebapps\">stop jsonrpc</a>, delete the file <tt>" + _conf.getConfFile() +
                         "</tt>, and <a href=\"/configwebapps\">restart jsonrpc</a>.");
             out.println("</form>");
-        } else {	
+        } else {
             out.println("<p><a href=\"password\">Change API Password</a>");
         }
         out.println("</body></html>");
@@ -193,7 +193,7 @@ public class JSONRPC2Servlet extends HttpServlet {
             } else if (_secMan.isValid(pw)) {
                 _secMan.setPasswd(pw2);
                 out.println("<p>API Password changed");
-            } else {	
+            } else {
                 out.println("<p>Incorrect old password, not changed");
             }
         }
@@ -217,7 +217,7 @@ public class JSONRPC2Servlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
-	if ("/password".equals(httpServletRequest.getServletPath())) {
+        if ("/password".equals(httpServletRequest.getServletPath())) {
             doPasswordChange(httpServletRequest, httpServletResponse);
             return;
         }

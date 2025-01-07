@@ -42,13 +42,13 @@ abstract class ExtensionHandler {
     private static final int PARALLEL_REQUESTS = 3;
 
 
-  /**
-   *  @param metasize -1 if unknown
-   *  @param pexAndMetadata advertise these capabilities
-   *  @param dht advertise DHT capability
-   *  @param comment advertise ut_comment capability
-   *  @return bencoded outgoing handshake message
-   */
+    /**
+     *  @param metasize -1 if unknown
+     *  @param pexAndMetadata advertise these capabilities
+     *  @param dht advertise DHT capability
+     *  @param comment advertise ut_comment capability
+     *  @return bencoded outgoing handshake message
+     */
     public static byte[] getHandshake(int metasize, boolean pexAndMetadata, boolean dht, boolean uploadOnly, boolean comment) {
         Map<String, Object> handshake = new HashMap<String, Object>();
         Map<String, Integer> m = new HashMap<String, Integer>();
@@ -289,11 +289,11 @@ abstract class ExtensionHandler {
         sendMessage(peer, TYPE_REQUEST, piece);
     }
 
-  /****
-    private static void sendReject(Peer peer, int piece) {
-        sendMessage(peer, TYPE_REJECT, piece);
-    }
-  ****/
+    /****
+      private static void sendReject(Peer peer, int piece) {
+          sendMessage(peer, TYPE_REJECT, piece);
+      }
+    ****/
 
     /** REQUEST and REJECT are the same except for message type */
     private static void sendMessage(Peer peer, int type, int piece) {
@@ -476,14 +476,14 @@ abstract class ExtensionHandler {
                 List<Comment> comments = new ArrayList<Comment>(list.size());
                 long now = I2PAppContext.getGlobalContext().clock().now();
                 for (BEValue li : list) {
-                     Map<String, BEValue> m = li.getMap();
-                     String owner = m.get("owner").getString();
-                     String text = m.get("text").getString();
-                     // 0-5 range for rating is enforced by Comment constructor
-                     int rating = m.get("like").getInt();
-                     long time = now - (Math.max(0, m.get("timestamp").getInt()) * 1000L);
-                     Comment c = new Comment(text, owner, rating, time, false);
-                     comments.add(c);
+                    Map<String, BEValue> m = li.getMap();
+                    String owner = m.get("owner").getString();
+                    String text = m.get("text").getString();
+                    // 0-5 range for rating is enforced by Comment constructor
+                    int rating = m.get("like").getInt();
+                    long time = now - (Math.max(0, m.get("timestamp").getInt()) * 1000L);
+                    Comment c = new Comment(text, owner, rating, time, false);
+                    comments.add(c);
                 }
                 listener.gotComments(peer, comments);
             } else {

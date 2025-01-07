@@ -15,13 +15,13 @@ class Piece implements Comparable<Piece> {
     private volatile Set<PeerID> requests;
     /** @since 0.8.1 */
     private int priority;
-    
+
     public Piece(int id) {
         this.id = id;
         this.peers = new HashSet<PeerID>(I2PSnarkUtil.MAX_CONNECTIONS / 2);
         // defer creating requests to save memory
     }
-    
+
     /**
      *  Highest priority first,
      *  then rarest first
@@ -32,7 +32,7 @@ class Piece implements Comparable<Piece> {
             return pdiff;
         return this.peers.size() - op.peers.size();
     }
-    
+
     @Override
     public boolean equals(Object o) {
         if (o == null) return false;
@@ -48,17 +48,23 @@ class Piece implements Comparable<Piece> {
         hash = 31 * hash + this.id;
         return hash;
     }
-    
-    public int getId() { return this.id; }
+
+    public int getId() {
+        return this.id;
+    }
 
     /** caller must synchronize */
-    public boolean addPeer(Peer peer) { return this.peers.add(peer.getPeerID()); }
+    public boolean addPeer(Peer peer) {
+        return this.peers.add(peer.getPeerID());
+    }
 
     /**
      * Caller must synchronize.
      * @return true if removed
      */
-    public boolean removePeer(Peer peer) { return this.peers.remove(peer.getPeerID()); }
+    public boolean removePeer(Peer peer) {
+        return this.peers.remove(peer.getPeerID());
+    }
 
     /**
      * How many peers have this piece?
@@ -67,8 +73,8 @@ class Piece implements Comparable<Piece> {
      */
     public int getPeerCount() {
         return this.peers.size();
-    } 
-    
+    }
+
     /** caller must synchronize */
     public boolean isRequested() {
         return this.requests != null && !this.requests.isEmpty();
@@ -87,9 +93,9 @@ class Piece implements Comparable<Piece> {
         } else {
             if (this.requests != null)
                 this.requests.remove(peer.getPeerID());
-        } 
-    } 
-    
+        }
+    }
+
     /**
      * Is peer requesting this piece?
      * Caller must synchronize
@@ -97,8 +103,8 @@ class Piece implements Comparable<Piece> {
      */
     public boolean isRequestedBy(Peer peer) {
         return this.requests != null && this.requests.contains(peer.getPeerID());
-    } 
-    
+    }
+
     /**
      * How many peers are requesting this piece?
      * Caller must synchronize
@@ -106,7 +112,7 @@ class Piece implements Comparable<Piece> {
      */
     public int getRequestCount() {
         return this.requests == null ? 0 : this.requests.size();
-    } 
+    }
 
     /**
      * Clear all knowledge of peers
@@ -117,19 +123,27 @@ class Piece implements Comparable<Piece> {
         peers.clear();
         if (requests != null)
             requests.clear();
-    } 
-    
+    }
+
     /** @return default 0 @since 0.8.1 */
-    public int getPriority() { return this.priority; }
+    public int getPriority() {
+        return this.priority;
+    }
 
     /** @since 0.8.1 */
-    public void setPriority(int p) { this.priority = p; }
+    public void setPriority(int p) {
+        this.priority = p;
+    }
 
     /** @since 0.8.1 */
-    public boolean isDisabled() { return this.priority < 0; }
+    public boolean isDisabled() {
+        return this.priority < 0;
+    }
 
     /** @since 0.8.1 */
-    public void setDisabled() { this.priority = -1; }
+    public void setDisabled() {
+        this.priority = -1;
+    }
 
     @Override
     public String toString() {

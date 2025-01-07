@@ -17,7 +17,7 @@ class RrdDoubleArray<U extends RrdUpdater<U>> extends RrdPrimitive<U> {
     void set(int index, double value, int count) throws IOException {
         // rollovers not allowed!
         assert index + count <= length : "Invalid robin index supplied: index=" + index +
-                ", count=" + count + ", length=" + length;
+        ", count=" + count + ", length=" + length;
         writeDouble(index, value, count);
     }
 
@@ -28,7 +28,7 @@ class RrdDoubleArray<U extends RrdUpdater<U>> extends RrdPrimitive<U> {
 
     double[] get(int index, int count) throws IOException {
         assert index + count <= length : "Invalid index/count supplied: " + index +
-                "/" + count + " (length=" + length + ")";
+        "/" + count + " (length=" + length + ")";
         return readDouble(index, count);
     }
 

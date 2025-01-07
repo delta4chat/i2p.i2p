@@ -54,7 +54,7 @@ import net.i2p.util.SystemVersion;
  *  @since 0.9.9
  */
 public final class CertUtil {
-        
+
     private static final String CERT_DIR = "certificates";
     private static final String REVOCATION_DIR = "revocations";
     private static final int LINE_LENGTH = 64;
@@ -72,19 +72,22 @@ public final class CertUtil {
     public static boolean saveCert(Certificate cert, File file) {
         OutputStream os = null;
         try {
-           // The point is probably to share this, so don't make it 600
-           //os = new SecureFileOutputStream(file);
-           os = new FileOutputStream(file);
-           exportCert(cert, os);
-           return true;
+            // The point is probably to share this, so don't make it 600
+            //os = new SecureFileOutputStream(file);
+            os = new FileOutputStream(file);
+            exportCert(cert, os);
+            return true;
         } catch (CertificateEncodingException cee) {
             error("Error writing X509 Certificate " + file.getAbsolutePath(), cee);
-           return false;
+            return false;
         } catch (IOException ioe) {
             error("Error writing X509 Certificate " + file.getAbsolutePath(), ioe);
-           return false;
+            return false;
         } finally {
-            try { if (os != null) os.close(); } catch (IOException foo) {}
+            try {
+                if (os != null) os.close();
+            }
+            catch (IOException foo) {}
         }
     }
 
@@ -99,7 +102,7 @@ public final class CertUtil {
      *  @since 0.9.24
      */
     public static void exportPrivateKey(PrivateKey pk, Certificate[] certs, OutputStream out)
-                                                throws IOException, GeneralSecurityException {
+    throws IOException, GeneralSecurityException {
         exportPrivateKey(pk, out);
         if (certs == null)
             return;
@@ -118,7 +121,7 @@ public final class CertUtil {
      *  @since 0.9.24, pulled out of saveCert(), public since 0.9.25
      */
     public static void exportCert(Certificate cert, OutputStream out)
-                                                throws IOException, CertificateEncodingException {
+    throws IOException, CertificateEncodingException {
         // Get the encoded form which is suitable for exporting
         byte[] buf = cert.getEncoded();
         writePEM(buf, "CERTIFICATE", out);
@@ -135,7 +138,7 @@ public final class CertUtil {
      *  @since 0.9.24
      */
     private static void exportPrivateKey(PrivateKey pk, OutputStream out)
-                                                throws IOException, InvalidKeyException {
+    throws IOException, InvalidKeyException {
         // Get the encoded form which is suitable for exporting
         byte[] buf = pk.getEncoded();
         if (buf == null)
@@ -153,7 +156,7 @@ public final class CertUtil {
      *  @since 0.9.25 consolidated from other methods
      */
     private static void writePEM(byte[] buf, String what, OutputStream out)
-                                                throws IOException {
+    throws IOException {
         PrintWriter wr = new PrintWriter(new OutputStreamWriter(out, "UTF-8"));
         wr.println("-----BEGIN " + what + "-----");
         String b64 = Base64.encode(buf, true);     // true = use standard alphabet
@@ -317,7 +320,10 @@ public final class CertUtil {
             // at java.util.Base64$Decoder.decode0(Base64.java:704)
             throw new GeneralSecurityException("cert error", iae);
         } finally {
-            try { if (fis != null) fis.close(); } catch (IOException foo) {}
+            try {
+                if (fis != null) fis.close();
+            }
+            catch (IOException foo) {}
         }
     }
 
@@ -403,7 +409,10 @@ public final class CertUtil {
             // at java.util.Base64$Decoder.decode0(Base64.java:704)
             throw new GeneralSecurityException("cert error", iae);
         } finally {
-            try { in.close(); } catch (IOException foo) {}
+            try {
+                in.close();
+            }
+            catch (IOException foo) {}
         }
     }
 
@@ -416,17 +425,20 @@ public final class CertUtil {
     public static boolean saveCRL(X509CRL crl, File file) {
         OutputStream os = null;
         try {
-           os = new SecureFileOutputStream(file);
-           exportCRL(crl, os);
-           return true;
+            os = new SecureFileOutputStream(file);
+            exportCRL(crl, os);
+            return true;
         } catch (CRLException ce) {
             error("Error writing X509 CRL " + file.getAbsolutePath(), ce);
-           return false;
+            return false;
         } catch (IOException ioe) {
             error("Error writing X509 CRL " + file.getAbsolutePath(), ioe);
-           return false;
+            return false;
         } finally {
-            try { if (os != null) os.close(); } catch (IOException foo) {}
+            try {
+                if (os != null) os.close();
+            }
+            catch (IOException foo) {}
         }
     }
 
@@ -438,7 +450,7 @@ public final class CertUtil {
      *  @since 0.9.25
      */
     public static void exportCRL(X509CRL crl, OutputStream out)
-                                                throws IOException, CRLException {
+    throws IOException, CRLException {
         byte[] buf = crl.getEncoded();
         writePEM(buf, "X509 CRL", out);
     }
@@ -559,7 +571,10 @@ public final class CertUtil {
             in = new FileInputStream(file);
             return loadCRL(in);
         } finally {
-            if (in != null) try { in.close(); } catch (IOException ioe) {}
+            if (in != null) try {
+                    in.close();
+                }
+                catch (IOException ioe) {}
         }
     }
 
@@ -665,7 +680,7 @@ public final class CertUtil {
                                 continue;
                             }
                             long exp = cert.getNotAfter().getTime() - now;
-                            if (exp < CHECK) {                            
+                            if (exp < CHECK) {
                                 System.out.println("**** WARNING: Cert " + f + " expires in " + DataHelper.formatDuration(exp));
                                 soon++;
                             } else {

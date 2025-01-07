@@ -35,7 +35,7 @@ public final class KeyFactory extends KeyFactorySpi {
      *  As of 0.9.25, supports PKCS8EncodedKeySpec
      */
     protected PrivateKey engineGeneratePrivate(KeySpec keySpec)
-            throws InvalidKeySpecException {
+    throws InvalidKeySpecException {
         if (keySpec instanceof EdDSAPrivateKeySpec) {
             return new EdDSAPrivateKey((EdDSAPrivateKeySpec) keySpec);
         }
@@ -49,7 +49,7 @@ public final class KeyFactory extends KeyFactorySpi {
      *  As of 0.9.25, supports X509EncodedKeySpec
      */
     protected PublicKey engineGeneratePublic(KeySpec keySpec)
-            throws InvalidKeySpecException {
+    throws InvalidKeySpecException {
         if (keySpec instanceof EdDSAPublicKeySpec) {
             return new EdDSAPublicKey((EdDSAPublicKeySpec) keySpec);
         }
@@ -61,7 +61,7 @@ public final class KeyFactory extends KeyFactorySpi {
 
     @SuppressWarnings("unchecked")
     protected <T extends KeySpec> T engineGetKeySpec(Key key, Class<T> keySpec)
-            throws InvalidKeySpecException {
+    throws InvalidKeySpecException {
         if (keySpec.isAssignableFrom(EdDSAPublicKeySpec.class) && key instanceof EdDSAPublicKey) {
             EdDSAPublicKey k = (EdDSAPublicKey) key;
             if (k.getParams() != null) {

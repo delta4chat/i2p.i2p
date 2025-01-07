@@ -26,7 +26,7 @@ import org.tanukisoftware.wrapper.WrapperManager;
  *
  */
 public class ConfigServiceHandler extends FormHandler {
-    
+
     private static WrapperListener _wrapperListener;
 
     private static final String LISTENER_AVAILABLE = "3.2.0";
@@ -42,7 +42,7 @@ public class ConfigServiceHandler extends FormHandler {
     private void registerWrapperNotifier(int code, boolean rekey) {
         registerWrapperNotifier(_context, code, rekey);
     }
-    
+
     /**
      *  Register two shutdown hooks, one to rekey and/or tell the wrapper we are stopping,
      *  and a final one to tell the wrapper we are stopped.
@@ -170,7 +170,7 @@ public class ConfigServiceHandler extends FormHandler {
             String wv = System.getProperty("wrapper.version");
             if (wv != null && VersionComparator.comp(wv, LISTENER_AVAILABLE) >= 0) {
                 try {
-                   _wrapperListener = new WrapperListener(ctx);
+                    _wrapperListener = new WrapperListener(ctx);
                 } catch (Throwable t) {}
             }
         }
@@ -297,7 +297,7 @@ public class ConfigServiceHandler extends FormHandler {
             //addFormNotice("Blah blah blah.  whatever.  I'm not going to " + _action);
         }
     }
-    
+
     /**
      *  Does not necessarily exist.
      *
@@ -310,7 +310,7 @@ public class ConfigServiceHandler extends FormHandler {
             String wv = System.getProperty("wrapper.version");
             if (wv != null && VersionComparator.comp(wv, LOCATION_AVAILABLE) >= 0) {
                 try {
-                   f = WrapperManager.getWrapperLogFile();
+                    f = WrapperManager.getWrapperLogFile();
                 } catch (Throwable t) {}
             }
         }
@@ -328,9 +328,9 @@ public class ConfigServiceHandler extends FormHandler {
         }
         return f;
     }
-    
+
     private void installService() {
-        try { 
+        try {
             Runtime.getRuntime().exec("install_i2p_service_winnt.bat");
             addFormNotice(_t("Service installed"));
         } catch (IOException ioe) {
@@ -339,7 +339,7 @@ public class ConfigServiceHandler extends FormHandler {
     }
 
     private void uninstallService() {
-        try { 
+        try {
             Runtime.getRuntime().exec("uninstall_i2p_service_winnt.bat");
             addFormNotice(_t("Service removed"));
         } catch (IOException ioe) {
@@ -406,7 +406,7 @@ public class ConfigServiceHandler extends FormHandler {
                     if (Boolean.parseBoolean(System.getProperty("java.awt.headless"))) {
                         addFormError(_t("Restart required to take effect"));
                     } else {
-                        dtg = new net.i2p.desktopgui.Main(_context, mgr, null);    
+                        dtg = new net.i2p.desktopgui.Main(_context, mgr, null);
                         dtg.startup();
                         addFormNotice(_t("Enabled system tray"));
                     }
@@ -420,7 +420,7 @@ public class ConfigServiceHandler extends FormHandler {
         }
 
         boolean saved = _context.router().saveConfig(RouterConsoleRunner.PROP_DTG_ENABLED, Boolean.toString(enable));
-        if (saved) 
+        if (saved)
             addFormNotice(_t("Configuration saved successfully"));
         else
             addFormError(_t("Error saving the configuration (applied but not saved) - please see the error logs"));

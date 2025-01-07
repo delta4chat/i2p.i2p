@@ -59,14 +59,14 @@ public class SOCKSUDPTunnel extends I2PTunnelUDPClientBase {
         if (sup != null)
             sup.stop();
     }
-    
+
     @Override
     public final void startRunning() {
         super.startRunning();
         // demuxer start() doesn't do anything
         startall();
     }
-    
+
     @Override
     public boolean close(boolean forced) {
         stopall();
@@ -78,9 +78,9 @@ public class SOCKSUDPTunnel extends I2PTunnelUDPClientBase {
     }
 
     private void stopall() {
-         for (SOCKSUDPPort sup : this.ports.values()) {
-              sup.stop();
-         }
-         this.ports.clear();
+        for (SOCKSUDPPort sup : this.ports.values()) {
+            sup.stop();
+        }
+        this.ports.clear();
     }
 }

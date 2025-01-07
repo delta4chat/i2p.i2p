@@ -44,7 +44,7 @@ public class DecodingOutputStream extends OutputStream {
         }
         _bb = ByteBuffer.allocate(1024);
         _cb = CharBuffer.allocate(1024);
-    }						
+    }
 
     @Override
     public void write(int b) throws IOException {
@@ -55,10 +55,10 @@ public class DecodingOutputStream extends OutputStream {
 
     @Override
     public void write(byte buf[], int off, int len) throws IOException {
-	while (len > 0) {
+        while (len > 0) {
             if (_bb.hasRemaining()) {
-	        int toWrite = Math.min(len, _bb.remaining());
-    	        _bb.put(buf, off, toWrite);
+                int toWrite = Math.min(len, _bb.remaining());
+                _bb.put(buf, off, toWrite);
                 len -= toWrite;
                 off += toWrite;
             }
@@ -69,7 +69,7 @@ public class DecodingOutputStream extends OutputStream {
     private void decodeAndWrite(boolean endOfInput) throws IOException {
         // not ByteBuffer to avoid Java 8/9 issues with flip()
         ((Buffer)_bb).flip();
-	if (!_bb.hasRemaining())
+        if (!_bb.hasRemaining())
             return;
         CoderResult result;
         try {
@@ -110,41 +110,41 @@ public class DecodingOutputStream extends OutputStream {
         decodeAndWrite(true);
     }
 
-/****
-    public static void main(String[] args) {
-        try {
-            String s = "Consider the encoding of the Euro sign, €." +
-                       " The Unicode code point for \"€\" is U+20AC.\n";
-            StringBuilder buf = new StringBuilder();
-            for (int i = 0; i < 100; i++) {
-                buf.append(s);
+    /****
+        public static void main(String[] args) {
+            try {
+                String s = "Consider the encoding of the Euro sign, €." +
+                           " The Unicode code point for \"€\" is U+20AC.\n";
+                StringBuilder buf = new StringBuilder();
+                for (int i = 0; i < 100; i++) {
+                    buf.append(s);
+                }
+                s = buf.toString();
+                byte[] test = s.getBytes("UTF-8");
+                java.io.InputStream bais = new java.io.ByteArrayInputStream(test);
+                Writer w = new StringBuilderWriter();
+                DecodingOutputStream r = new DecodingOutputStream(w, "UTF-8");
+                int b;
+                byte[] bf = new byte[256];
+                int rand = 1 + net.i2p.I2PAppContext.getGlobalContext().random().nextInt(256);
+                while ((b = bais.read(bf, 0, rand)) >= 0) {
+                    r.write(bf, 0, b);
+                    rand = 1 + net.i2p.I2PAppContext.getGlobalContext().random().nextInt(256);
+                }
+                r.close();
+                System.out.println("Received: \"" + w.toString() + '"');
+                System.out.println("Test passed? " + w.toString().equals(s));
+                bais = new java.io.ByteArrayInputStream(new byte[] { 'x', (byte) 0xcc, 'x' } );
+                w = new StringBuilderWriter();
+                r = new DecodingOutputStream(w, "UTF-8");
+                while ((b = bais.read()) >= 0) {
+                    r.write(b);
+                }
+                r.close();
+                System.out.println("Received: \"" + w.toString() + '"');
+            } catch (IOException ioe) {
+                ioe.printStackTrace();
             }
-            s = buf.toString();
-            byte[] test = s.getBytes("UTF-8");
-            java.io.InputStream bais = new java.io.ByteArrayInputStream(test);
-            Writer w = new StringBuilderWriter();
-            DecodingOutputStream r = new DecodingOutputStream(w, "UTF-8");
-            int b;
-            byte[] bf = new byte[256];
-            int rand = 1 + net.i2p.I2PAppContext.getGlobalContext().random().nextInt(256);
-            while ((b = bais.read(bf, 0, rand)) >= 0) {
-                r.write(bf, 0, b);
-                rand = 1 + net.i2p.I2PAppContext.getGlobalContext().random().nextInt(256);
-            }
-            r.close();
-            System.out.println("Received: \"" + w.toString() + '"');
-            System.out.println("Test passed? " + w.toString().equals(s));
-            bais = new java.io.ByteArrayInputStream(new byte[] { 'x', (byte) 0xcc, 'x' } );
-            w = new StringBuilderWriter();
-            r = new DecodingOutputStream(w, "UTF-8");
-            while ((b = bais.read()) >= 0) {
-                r.write(b);
-            }
-            r.close();
-            System.out.println("Received: \"" + w.toString() + '"');
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
         }
-    }
-****/
+    ****/
 }

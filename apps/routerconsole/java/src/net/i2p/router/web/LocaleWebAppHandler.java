@@ -43,7 +43,7 @@ public class LocaleWebAppHandler extends HandlerWrapper
         _wac.setServletHandler(servletHandler);
         setHandler(_wac);
     }
-    
+
     /**
      *  Handle foo.jsp by converting to foo_xx.jsp
      *  for language xx, where xx is the language for the default locale,
@@ -54,7 +54,7 @@ public class LocaleWebAppHandler extends HandlerWrapper
                        Request baseRequest,
                        HttpServletRequest httpRequest,
                        HttpServletResponse httpResponse)
-         throws IOException, ServletException
+    throws IOException, ServletException
     {
 
         // transparent rewriting
@@ -114,28 +114,28 @@ public class LocaleWebAppHandler extends HandlerWrapper
      *  Overrides method in ServletHandler
      *  @since 0.8
      */
-/****  not in Jetty 6
-    @Override
-    public void handleTrace(HttpServletRequest request,
-                            HttpServletResponse response)
-        throws IOException
-    {
-        response.sendError(405);
-    }
-****/
+    /****  not in Jetty 6
+        @Override
+        public void handleTrace(HttpServletRequest request,
+                                HttpServletResponse response)
+            throws IOException
+        {
+            response.sendError(405);
+        }
+    ****/
 
     /**
      *  Not an override
      *  @since 0.8
      */
-/****  not in Jetty 7
-    public void handleOptions(HttpServletRequest request,
-                              HttpServletResponse response)
-        throws IOException
-    {
-        response.sendError(405);
-    }
-****/
+    /****  not in Jetty 7
+        public void handleOptions(HttpServletRequest request,
+                                  HttpServletResponse response)
+            throws IOException
+        {
+            response.sendError(405);
+        }
+    ****/
 
     /**
      *  Mysteriously removed from Jetty 7

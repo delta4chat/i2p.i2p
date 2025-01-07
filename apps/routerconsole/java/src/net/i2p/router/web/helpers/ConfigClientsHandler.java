@@ -43,7 +43,7 @@ import org.eclipse.jetty.server.handler.ContextHandlerCollection;
  *  Saves changes to clients.config or webapps.config
  */
 public class ConfigClientsHandler extends FormHandler {
-    
+
     @Override
     protected void processForm() {
         // set action for when CR is hit in a text input box
@@ -77,8 +77,8 @@ public class ConfigClientsHandler extends FormHandler {
         }
         if (_action.equals(_t("Install Plugin"))) {
             if (pluginsEnabled &&
-                (_context.getBooleanPropertyDefaultTrue(ConfigClientsHelper.PROP_ENABLE_PLUGIN_INSTALL) ||
-                 isAdvanced()))
+                    (_context.getBooleanPropertyDefaultTrue(ConfigClientsHelper.PROP_ENABLE_PLUGIN_INSTALL) ||
+                     isAdvanced()))
                 installPlugin();
             else
                 addFormError("Plugins disabled");
@@ -86,8 +86,8 @@ public class ConfigClientsHandler extends FormHandler {
         }
         if (_action.equals(_t("Install Plugin from File"))) {
             if (pluginsEnabled &&
-                (_context.getBooleanPropertyDefaultTrue(ConfigClientsHelper.PROP_ENABLE_PLUGIN_INSTALL) ||
-                 isAdvanced()))
+                    (_context.getBooleanPropertyDefaultTrue(ConfigClientsHelper.PROP_ENABLE_PLUGIN_INSTALL) ||
+                     isAdvanced()))
                 installPluginFromFile();
             else
                 addFormError("Plugins disabled");
@@ -132,7 +132,7 @@ public class ConfigClientsHandler extends FormHandler {
             } catch (NumberFormatException nfe) {}
             if (appnum >= 0) {
                 if (_context.getBooleanProperty(ConfigClientsHelper.PROP_ENABLE_CLIENT_CHANGE) ||
-                    isAdvanced()) {
+                        isAdvanced()) {
                     deleteClient(appnum);
                 } else {
                     addFormError("Delete client disabled");
@@ -163,7 +163,7 @@ public class ConfigClientsHandler extends FormHandler {
 
         // value
         if (_action.startsWith("Stop ")) {
-            
+
             String app = _action.substring(5);
             int appnum = -1;
             try {
@@ -218,7 +218,7 @@ public class ConfigClientsHandler extends FormHandler {
         // label (IE)
         String xStart = _t("Start");
         if (_action.toLowerCase(Locale.US).startsWith(xStart + "<span class=hide> ") &&
-                   _action.toLowerCase(Locale.US).endsWith("</span>")) {
+                _action.toLowerCase(Locale.US).endsWith("</span>")) {
             // IE sucks
             String app = _action.substring(xStart.length() + 18, _action.length() - 7);
             int appnum = -1;
@@ -243,7 +243,7 @@ public class ConfigClientsHandler extends FormHandler {
         }
 
     }
-    
+
     private void saveClientChanges() {
         try {
             synchronized(ClientAppConfig.class) {
@@ -274,7 +274,7 @@ public class ConfigClientsHandler extends FormHandler {
             }
             // edit of an existing entry
             if (_context.getBooleanProperty(ConfigClientsHelper.PROP_ENABLE_CLIENT_CHANGE) ||
-                isAdvanced()) {
+                    isAdvanced()) {
                 String desc = getJettyString("nofilter_desc" + cur);
                 if (desc != null) {
                     int spc = desc.indexOf(' ');
@@ -294,7 +294,7 @@ public class ConfigClientsHandler extends FormHandler {
 
         // new client
         if (_context.getBooleanProperty(ConfigClientsHelper.PROP_ENABLE_CLIENT_CHANGE) ||
-            isAdvanced()) {
+                isAdvanced()) {
             int newClient = clients.size();
             String newDesc = getJettyString("nofilter_desc" + newClient);
             if (newDesc != null && newDesc.trim().length() > 0) {
@@ -309,7 +309,7 @@ public class ConfigClientsHandler extends FormHandler {
                 String name = getJettyString("nofilter_name" + newClient);
                 if (name == null || name.trim().length() <= 0) name = "new client";
                 ClientAppConfig ca = new ClientAppConfig(clss, name, args, 2*60*1000,
-                                                         _settings.get(newClient + ".enabled") == null);  // true for disabled
+                        _settings.get(newClient + ".enabled") == null);  // true for disabled
                 clients.add(ca);
                 saveClients.add(ca);
                 addFormNotice(_t("New client added") + ": " + name + " (" + clss + ").");
@@ -345,7 +345,7 @@ public class ConfigClientsHandler extends FormHandler {
                 addFormNotice(_t("Client {0} stopped", ca.clientName));
                 // Give a chance for status to update
                 try {
-                   Thread.sleep(1000);
+                    Thread.sleep(1000);
                 } catch (InterruptedException ie) {}
             } catch (Throwable t) {
                 addFormError("Cannot stop client " + ca.className + ": " + t);
@@ -424,16 +424,16 @@ public class ConfigClientsHandler extends FormHandler {
     private void startWebApp(String app) {
         ContextHandlerCollection s = WebAppStarter.getConsoleServer(_context);
         if (s != null) {
-                    try {
-                        File path = new File(_context.getBaseDir(), "webapps");
-                        path = new File(path, app + ".war");
-                        WebAppStarter.startWebApp(_context, s, app, path.getAbsolutePath());
-                        addFormNoticeNoEscape(_t("WebApp") + " <a href=\"/" + app + "/\">" + _t(app) + "</a> " + _t("started") + '.');
-                    } catch (Throwable e) {
-                        addFormError(_t("Failed to start") + ' ' + _t(app) + ": " + e);
-                        _log.error("Failed to start webapp " + app, e);
-                    }
-                    return;
+            try {
+                File path = new File(_context.getBaseDir(), "webapps");
+                path = new File(path, app + ".war");
+                WebAppStarter.startWebApp(_context, s, app, path.getAbsolutePath());
+                addFormNoticeNoEscape(_t("WebApp") + " <a href=\"/" + app + "/\">" + _t(app) + "</a> " + _t("started") + '.');
+            } catch (Throwable e) {
+                addFormError(_t("Failed to start") + ' ' + _t(app) + ": " + e);
+                _log.error("Failed to start webapp " + app, e);
+            }
+            return;
         }
         addFormError(_t("Failed to find server."));
     }
@@ -494,19 +494,25 @@ public class ConfigClientsHandler extends FormHandler {
                     break;
                 }
                 try {
-                   Thread.sleep(500);
+                    Thread.sleep(500);
                 } catch (InterruptedException ie) {}
-             }
-             String status = mgr.getStatus();
-             if (status != null && status.length() > 0)
-                 addFormNoticeNoEscape(status);
+            }
+            String status = mgr.getStatus();
+            if (status != null && status.length() > 0)
+                addFormNoticeNoEscape(status);
         } catch (IOException ioe) {
             addFormError(_t("Install from file failed") + " - " + ioe.getLocalizedMessage());
         } finally {
             // it's really a ByteArrayInputStream but we'll play along...
             if (in != null)
-                try { in.close(); } catch (IOException ioe) {}
-            if (out != null)  try { out.close(); } catch (IOException ioe) {}
+                try {
+                    in.close();
+                }
+                catch (IOException ioe) {}
+            if (out != null)  try {
+                    out.close();
+                }
+                catch (IOException ioe) {}
         }
     }
 
@@ -534,7 +540,7 @@ public class ConfigClientsHandler extends FormHandler {
         PluginStarter.updateAll(_context);
         // So that update() will post a status to the summary bar before we reload
         try {
-           Thread.sleep(1000);
+            Thread.sleep(1000);
         } catch (InterruptedException ie) {}
     }
 
@@ -577,7 +583,7 @@ public class ConfigClientsHandler extends FormHandler {
         }
         // So that update() will post a status to the summary bar before we reload
         try {
-           Thread.sleep(5000);
+            Thread.sleep(5000);
         } catch (InterruptedException ie) {}
     }
 
@@ -593,7 +599,7 @@ public class ConfigClientsHandler extends FormHandler {
         addFormNotice(_t("Checking plugin {0} for updates", app));
         // So that update() will post a status to the summary bar before we reload
         try {
-           Thread.sleep(1000);
+            Thread.sleep(1000);
         } catch (InterruptedException ie) {}
     }
 
@@ -610,9 +616,9 @@ public class ConfigClientsHandler extends FormHandler {
         String proxyHost = _context.getProperty(ConfigUpdateHandler.PROP_PROXY_HOST, ConfigUpdateHandler.DEFAULT_PROXY_HOST);
         int proxyPort = ConfigUpdateHandler.proxyPort(_context);
         boolean rv = !
-            (proxyPort == ConfigUpdateHandler.DEFAULT_PROXY_PORT_INT &&
-             proxyHost.equals(ConfigUpdateHandler.DEFAULT_PROXY_HOST) &&
-             !_context.portMapper().isRegistered(PortMapper.SVC_HTTP_PROXY));
+                     (proxyPort == ConfigUpdateHandler.DEFAULT_PROXY_PORT_INT &&
+                      proxyHost.equals(ConfigUpdateHandler.DEFAULT_PROXY_HOST) &&
+                      !_context.portMapper().isRegistered(PortMapper.SVC_HTTP_PROXY));
         if (!rv)
             addFormError(_t("HTTP client proxy tunnel must be running"));
         return rv;
@@ -662,11 +668,11 @@ public class ConfigClientsHandler extends FormHandler {
         boolean disabled = "0".equals(mode);
         boolean ssl = "2".equals(mode);
         changes.put(ConfigClientsHelper.PROP_DISABLE_EXTERNAL,
-                                           Boolean.toString(disabled));
+                    Boolean.toString(disabled));
         changes.put(ConfigClientsHelper.PROP_ENABLE_SSL,
-                                           Boolean.toString(ssl));
+                    Boolean.toString(ssl));
         changes.put(ConfigClientsHelper.PROP_AUTH,
-                                           Boolean.toString((_settings.get("auth") != null)));
+                    Boolean.toString((_settings.get("auth") != null)));
         boolean all = "0.0.0.0".equals(intfc) || "0:0:0:0:0:0:0:0".equals(intfc) ||
                       "::".equals(intfc);
         changes.put(ConfigClientsHelper.BIND_ALL_INTERFACES, Boolean.toString(all));

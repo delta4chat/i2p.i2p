@@ -24,16 +24,16 @@ public class DataStructureImplTest {
     DataStructure _struct;
 
     @Before
-    public void setUp(){
-        _struct = new DataStructureImpl(){
+    public void setUp() {
+        _struct = new DataStructureImpl() {
             private int x = 0;
-            public void writeBytes(OutputStream out) throws IOException, DataFormatException{
+            public void writeBytes(OutputStream out) throws IOException, DataFormatException {
                 if(x++==0)
                     throw new DataFormatException("let it enfold you", new Exception());
                 else
                     throw new IOException();
             }
-            public void readBytes(InputStream in) throws IOException{
+            public void readBytes(InputStream in) throws IOException {
                 throw new IOException();
             }
         };

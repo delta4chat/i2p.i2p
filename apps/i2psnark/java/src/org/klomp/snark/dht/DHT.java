@@ -50,8 +50,8 @@ public interface DHT {
      *  @return possibly empty (never null)
      */
     public Collection<Hash> getPeersAndAnnounce(byte[] ih, int max, long maxWait,
-                                                int annMax, long annMaxWait,
-                                                boolean isSeed, boolean noSeeds);
+            int annMax, long annMaxWait,
+            boolean isSeed, boolean noSeeds);
 
     /**
      *  Announce to ourselves.

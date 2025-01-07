@@ -81,19 +81,29 @@ public enum EncType {
     }
 
     /** the unique identifier for this type */
-    public int getCode() { return code; }
+    public int getCode() {
+        return code;
+    }
 
     /** the length of the public key, in bytes */
-    public int getPubkeyLen() { return pubkeyLen; }
+    public int getPubkeyLen() {
+        return pubkeyLen;
+    }
 
     /** the length of the private key, in bytes */
-    public int getPrivkeyLen() { return privkeyLen; }
+    public int getPrivkeyLen() {
+        return privkeyLen;
+    }
 
     /** the standard base algorithm name used for the Java crypto factories */
-    public EncAlgo getBaseAlgorithm() { return base; }
+    public EncAlgo getBaseAlgorithm() {
+        return base;
+    }
 
     /** the standard name used for the Java crypto factories */
-    public String getAlgorithmName() { return algoName; }
+    public String getAlgorithmName() {
+        return algoName;
+    }
 
     /**
      *  The elliptic curve ECParameterSpec for ECDSA; DSAParameterSpec for DSA

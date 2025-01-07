@@ -60,7 +60,7 @@ public class DsDef {
         }
         if (!Double.isNaN(minValue) && !Double.isNaN(maxValue) && minValue >= maxValue) {
             throw new IllegalArgumentException("Invalid min/max values specified: " +
-                    minValue + "/" + maxValue);
+                                               minValue + "/" + maxValue);
         }
 
         this.dsName = dsName;
@@ -122,8 +122,8 @@ public class DsDef {
      */
     public String dump() {
         return "DS:" + dsName + ":" + dsType + ":" + heartbeat +
-                ":" + Util.formatDouble(minValue, "U", false) +
-                ":" + Util.formatDouble(maxValue, "U", false);
+               ":" + Util.formatDouble(minValue, "U", false) +
+               ":" + Util.formatDouble(maxValue, "U", false);
     }
 
     /**
@@ -148,7 +148,7 @@ public class DsDef {
 
     boolean exactlyEqual(DsDef def) {
         return dsName.equals(def.dsName) && dsType == def.dsType &&
-                heartbeat == def.heartbeat && Util.equal(minValue, def.minValue) &&
-                Util.equal(maxValue, def.maxValue);
+               heartbeat == def.heartbeat && Util.equal(minValue, def.minValue) &&
+               Util.equal(maxValue, def.maxValue);
     }
 }

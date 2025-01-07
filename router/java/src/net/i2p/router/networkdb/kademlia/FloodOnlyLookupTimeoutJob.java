@@ -22,5 +22,7 @@ class FloodOnlyLookupTimeoutJob extends JobImpl {
         _search.failed();
     }
 
-    public String getName() { return "NetDb flood search timeout"; }
+    public String getName() {
+        return "NetDb flood search timeout";
+    }
 }

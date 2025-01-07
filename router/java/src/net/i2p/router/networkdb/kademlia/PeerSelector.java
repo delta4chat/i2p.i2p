@@ -1,9 +1,9 @@
 package net.i2p.router.networkdb.kademlia;
 /*
  * free (adj.): unencumbered; not under the control of others
- * Written by jrandom in 2003 and released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
- * It probably won't make your computer catch on fire, or eat 
+ * Written by jrandom in 2003 and released into the public domain
+ * with no warranty of any kind, either expressed or implied.
+ * It probably won't make your computer catch on fire, or eat
  * your children, but it might.  Use at your own risk.
  *
  */
@@ -29,12 +29,12 @@ import net.i2p.util.Log;
 abstract class PeerSelector {
     protected final Log _log;
     protected final RouterContext _context;
-    
+
     public PeerSelector(RouterContext ctx) {
         _context = ctx;
         _log = _context.logManager().getLog(getClass());
     }
-    
+
     /**
      * UNUSED - See FloodfillPeerSelector override
      * Search through the kbucket set to find the most reliable peers close to the
@@ -47,10 +47,10 @@ abstract class PeerSelector {
         // get the peers closest to the key
         return selectNearestExplicit(key, numClosest, alreadyChecked, kbuckets);
     }
-    
+
     /**
      * Ignore KBucket ordering and do the XOR explicitly per key.  Runs in O(n*log(n))
-     * time (n=routing table size with c ~ 32 xor ops).  This gets strict ordering 
+     * time (n=routing table size with c ~ 32 xor ops).  This gets strict ordering
      * on closest
      * List will not include our own hash.
      *
@@ -58,39 +58,39 @@ abstract class PeerSelector {
      */
     List<Hash> selectNearestExplicit(Hash key, int maxNumRouters, Set<Hash> peersToIgnore, KBucketSet<Hash> kbuckets) {
         //if (true)
-            return selectNearestExplicitThin(key, maxNumRouters, peersToIgnore, kbuckets);
-        
-/******
-        if (peersToIgnore == null)
-            peersToIgnore = new HashSet(1);
-        peersToIgnore.add(_context.routerHash());
-        Set allHashes = kbuckets.getAll(peersToIgnore);
-        removeFailingPeers(allHashes);
-        Map diffMap = new HashMap(allHashes.size());
-        for (Iterator iter = allHashes.iterator(); iter.hasNext(); ) {
-            Hash cur = (Hash)iter.next();
-            BigInteger diff = getDistance(key, cur);
-            diffMap.put(diff, cur);
-        }
-        // n*log(n)
-        Map sortedMap = new TreeMap(diffMap);
-        List peerHashes = new ArrayList(maxNumRouters);
-        for (Iterator iter = sortedMap.values().iterator(); iter.hasNext(); ) {
-            if (peerHashes.size() >= maxNumRouters) break;
-            peerHashes.add(iter.next());
-        }
-        if (_log.shouldLog(Log.DEBUG))
-            _log.debug("Searching for " + maxNumRouters + " peers close to " + key + ": " 
-                       + peerHashes + " (not including " + peersToIgnore + ") [allHashes.size = " 
-                       + allHashes.size() + "]");
-        return peerHashes;
-******/
+        return selectNearestExplicitThin(key, maxNumRouters, peersToIgnore, kbuckets);
+
+        /******
+                if (peersToIgnore == null)
+                    peersToIgnore = new HashSet(1);
+                peersToIgnore.add(_context.routerHash());
+                Set allHashes = kbuckets.getAll(peersToIgnore);
+                removeFailingPeers(allHashes);
+                Map diffMap = new HashMap(allHashes.size());
+                for (Iterator iter = allHashes.iterator(); iter.hasNext(); ) {
+                    Hash cur = (Hash)iter.next();
+                    BigInteger diff = getDistance(key, cur);
+                    diffMap.put(diff, cur);
+                }
+                // n*log(n)
+                Map sortedMap = new TreeMap(diffMap);
+                List peerHashes = new ArrayList(maxNumRouters);
+                for (Iterator iter = sortedMap.values().iterator(); iter.hasNext(); ) {
+                    if (peerHashes.size() >= maxNumRouters) break;
+                    peerHashes.add(iter.next());
+                }
+                if (_log.shouldLog(Log.DEBUG))
+                    _log.debug("Searching for " + maxNumRouters + " peers close to " + key + ": "
+                               + peerHashes + " (not including " + peersToIgnore + ") [allHashes.size = "
+                               + allHashes.size() + "]");
+                return peerHashes;
+        ******/
     }
-    
+
     /**
      * UNUSED - See FloodfillPeerSelector override
      * Ignore KBucket ordering and do the XOR explicitly per key.  Runs in O(n*log(n))
-     * time (n=routing table size with c ~ 32 xor ops).  This gets strict ordering 
+     * time (n=routing table size with c ~ 32 xor ops).  This gets strict ordering
      * on closest
      * List will not include our own hash.
      *
@@ -104,12 +104,12 @@ abstract class PeerSelector {
         kbuckets.getAll(matches);
         List<Hash> rv = matches.get(maxNumRouters);
         if (_log.shouldLog(Log.DEBUG))
-            _log.debug("Searching for " + maxNumRouters + " peers close to " + key + ": " 
-                       + rv + " (not including " + peersToIgnore + ") [allHashes.size = " 
+            _log.debug("Searching for " + maxNumRouters + " peers close to " + key + ": "
+                       + rv + " (not including " + peersToIgnore + ") [allHashes.size = "
                        + matches.size() + "]");
         return rv;
     }
-    
+
     /** UNUSED */
     private class MatchSelectionCollector implements SelectionCollector<Hash> {
         private final TreeMap<BigInteger, Hash> _sorted;
@@ -132,7 +132,7 @@ abstract class PeerSelector {
                 return;
             if (info.isHidden())
                 return;
-            
+
             BigInteger diff = HashDistance.getDistance(_key, entry);
             _sorted.put(diff, entry);
             _matches++;
@@ -147,54 +147,56 @@ abstract class PeerSelector {
             }
             return rv;
         }
-        public int size() { return _matches; }
+        public int size() {
+            return _matches;
+        }
     }
-        
-    /** 
+
+    /**
      * strip out all of the peers that are failing
      *
      */
-/********
-    private void removeFailingPeers(Set peerHashes) {
-        List failing = null;
-        for (Iterator iter = peerHashes.iterator(); iter.hasNext(); ) {
-            Hash cur = (Hash)iter.next();
-            if (_context.profileOrganizer().isFailing(cur)) {
-                if (_log.shouldLog(Log.DEBUG))
-                    _log.debug("Peer " + cur.toBase64() + " is failing, don't include them in the peer selection");
-                if (failing == null)
-                    failing = new ArrayList(4);
-                failing.add(cur);
-            } else if (_context.profileOrganizer().peerSendsBadReplies(cur)) {
-                if (true) {
-                    _log.warn("Peer " + cur.toBase64() + " sends us bad replies (but we still query them)");
-                } else {
+    /********
+        private void removeFailingPeers(Set peerHashes) {
+            List failing = null;
+            for (Iterator iter = peerHashes.iterator(); iter.hasNext(); ) {
+                Hash cur = (Hash)iter.next();
+                if (_context.profileOrganizer().isFailing(cur)) {
+                    if (_log.shouldLog(Log.DEBUG))
+                        _log.debug("Peer " + cur.toBase64() + " is failing, don't include them in the peer selection");
                     if (failing == null)
                         failing = new ArrayList(4);
                     failing.add(cur);
-                    if (_log.shouldLog(Log.WARN)) {
-                        PeerProfile profile = _context.profileOrganizer().getProfile(cur);
-                        if (profile != null) {
-                            RateStat invalidReplyRateStat = profile.getDBHistory().getInvalidReplyRate();
-                            Rate invalidReplyRate = invalidReplyRateStat.getRate(60*60*1000l);
-                            _log.warn("Peer " + cur.toBase64() + " sends us bad replies: current hour: " 
-                                      + invalidReplyRate.getCurrentEventCount() + " and last hour: " 
-                                      + invalidReplyRate.getLastEventCount() + ":\n" + invalidReplyRate.toString());
+                } else if (_context.profileOrganizer().peerSendsBadReplies(cur)) {
+                    if (true) {
+                        _log.warn("Peer " + cur.toBase64() + " sends us bad replies (but we still query them)");
+                    } else {
+                        if (failing == null)
+                            failing = new ArrayList(4);
+                        failing.add(cur);
+                        if (_log.shouldLog(Log.WARN)) {
+                            PeerProfile profile = _context.profileOrganizer().getProfile(cur);
+                            if (profile != null) {
+                                RateStat invalidReplyRateStat = profile.getDBHistory().getInvalidReplyRate();
+                                Rate invalidReplyRate = invalidReplyRateStat.getRate(60*60*1000l);
+                                _log.warn("Peer " + cur.toBase64() + " sends us bad replies: current hour: "
+                                          + invalidReplyRate.getCurrentEventCount() + " and last hour: "
+                                          + invalidReplyRate.getLastEventCount() + ":\n" + invalidReplyRate.toString());
+                            }
                         }
                     }
                 }
             }
+            if (failing != null)
+                peerHashes.removeAll(failing);
         }
-        if (failing != null)
-            peerHashes.removeAll(failing);
-    }
-**********/
-    
+    **********/
+
     /**
      * UNUSED - See FloodfillPeerSelector override
      * Generic KBucket filtering to find the hashes close to a key, regardless of other considerations.
      * This goes through the kbuckets, starting with the key's location, moving towards us, and then away from the
-     * key's location's bucket, selecting peers until we have numClosest.  
+     * key's location's bucket, selecting peers until we have numClosest.
      * List MAY INCLUDE our own router - add to peersToIgnore if you don't want
      *
      * @param key the original key (NOT the routing key)

@@ -19,8 +19,9 @@ import java.util.concurrent.atomic.AtomicReference;
 public final class Reader implements Closeable {
     private static final int DATA_SECTION_SEPARATOR_SIZE = 16;
     private static final byte[] METADATA_START_MARKER = {(byte) 0xAB,
-            (byte) 0xCD, (byte) 0xEF, 'M', 'a', 'x', 'M', 'i', 'n', 'd', '.',
-            'c', 'o', 'm'};
+                                                         (byte) 0xCD, (byte) 0xEF, 'M', 'a', 'x', 'M', 'i', 'n', 'd', '.',
+                                                         'c', 'o', 'm'
+                                                        };
 
     private final int ipV4Start;
     private final Metadata metadata;
@@ -120,7 +121,7 @@ public final class Reader implements Closeable {
 
     private Reader(BufferHolder bufferHolder, String name, NodeCache cache) throws IOException {
         this.bufferHolderReference = new AtomicReference<BufferHolder>(
-                bufferHolder);
+            bufferHolder);
 
         if (cache == null) {
             throw new NullPointerException("Cache cannot be null");
@@ -251,10 +252,10 @@ public final class Reader implements Closeable {
                     //    sip = Integer.toHexString((ip >> 16) & 0xffff) + ":" +
                     //          Integer.toHexString(ip & 0xffff) + "::/" + depth;
                     //} else {
-                        sip = ((ip >> 24) & 0xff) + "." +
-                                 ((ip >> 16) & 0xff) + '.' +
-                                 ((ip >> 8) & 0xff) + '.' +
-                                 (ip & 0xff);
+                    sip = ((ip >> 24) & 0xff) + "." +
+                          ((ip >> 16) & 0xff) + '.' +
+                          ((ip >> 8) & 0xff) + '.' +
+                          (ip & 0xff);
                     //}
                     _out.write(sip);
                     if (depth < 32) {
@@ -282,7 +283,7 @@ public final class Reader implements Closeable {
     }
 
     private int findAddressInTree(ByteBuffer buffer, InetAddress address)
-            throws InvalidDatabaseException {
+    throws InvalidDatabaseException {
         byte[] rawAddress = address.getAddress();
 
         int bitLength = rawAddress.length * 8;
@@ -318,7 +319,7 @@ public final class Reader implements Closeable {
     }
 
     private int findIpV4StartNode(ByteBuffer buffer)
-            throws InvalidDatabaseException {
+    throws InvalidDatabaseException {
         if (this.metadata.getIpVersion() == 4) {
             return 0;
         }
@@ -331,47 +332,47 @@ public final class Reader implements Closeable {
     }
 
     private int readNode(ByteBuffer buffer, int nodeNumber, int index)
-            throws InvalidDatabaseException {
+    throws InvalidDatabaseException {
         int baseOffset = nodeNumber * this.metadata.getNodeByteSize();
 
         switch (this.metadata.getRecordSize()) {
-            case 24:
-                buffer.position(baseOffset + index * 3);
-                return Decoder.decodeInteger(buffer, 0, 3);
-            case 28:
-                int middle = buffer.get(baseOffset + 3);
+        case 24:
+            buffer.position(baseOffset + index * 3);
+            return Decoder.decodeInteger(buffer, 0, 3);
+        case 28:
+            int middle = buffer.get(baseOffset + 3);
 
-                if (index == 0) {
-                    middle = (0xF0 & middle) >>> 4;
-                } else {
-                    middle = 0x0F & middle;
-                }
-                buffer.position(baseOffset + index * 4);
-                return Decoder.decodeInteger(buffer, middle, 3);
-            case 32:
-                buffer.position(baseOffset + index * 4);
-                return Decoder.decodeInteger(buffer, 0, 4);
-            default:
-                throw new InvalidDatabaseException("Unknown record size: "
-                        + this.metadata.getRecordSize());
+            if (index == 0) {
+                middle = (0xF0 & middle) >>> 4;
+            } else {
+                middle = 0x0F & middle;
+            }
+            buffer.position(baseOffset + index * 4);
+            return Decoder.decodeInteger(buffer, middle, 3);
+        case 32:
+            buffer.position(baseOffset + index * 4);
+            return Decoder.decodeInteger(buffer, 0, 4);
+        default:
+            throw new InvalidDatabaseException("Unknown record size: "
+                                               + this.metadata.getRecordSize());
         }
     }
 
     private Object resolveDataPointer(ByteBuffer buffer, int pointer)
-            throws IOException {
+    throws IOException {
         int resolved = (pointer - this.metadata.getNodeCount())
-                + this.metadata.getSearchTreeSize();
+                       + this.metadata.getSearchTreeSize();
 
         if (resolved >= buffer.capacity()) {
             throw new InvalidDatabaseException(
-                    "The MaxMind DB file's search tree is corrupt: "
-                            + "contains pointer larger than the database.");
+                "The MaxMind DB file's search tree is corrupt: "
+                + "contains pointer larger than the database.");
         }
 
         // We only want the data from the decoder, not the offset where it was
         // found.
         Decoder decoder = new Decoder(this.cache, buffer,
-                this.metadata.getSearchTreeSize() + DATA_SECTION_SEPARATOR_SIZE);
+                                      this.metadata.getSearchTreeSize() + DATA_SECTION_SEPARATOR_SIZE);
         return decoder.decode(resolved);
     }
 
@@ -384,7 +385,7 @@ public final class Reader implements Closeable {
      * an issue, but I suspect it won't be.
      */
     private int findMetadataStart(ByteBuffer buffer, String databaseName)
-            throws InvalidDatabaseException {
+    throws InvalidDatabaseException {
         int fileSize = buffer.capacity();
 
         FILE:
@@ -392,15 +393,15 @@ public final class Reader implements Closeable {
             for (int j = 0; j < METADATA_START_MARKER.length; j++) {
                 byte b = buffer.get(fileSize - i - j - 1);
                 if (b != METADATA_START_MARKER[METADATA_START_MARKER.length - j
-                        - 1]) {
+                                               - 1]) {
                     continue FILE;
                 }
             }
             return fileSize - i;
         }
         throw new InvalidDatabaseException(
-                "Could not find a MaxMind DB metadata marker in this file ("
-                        + databaseName + "). Is this a valid MaxMind DB file?");
+            "Could not find a MaxMind DB metadata marker in this file ("
+            + databaseName + "). Is this a valid MaxMind DB file?");
     }
 
     /**

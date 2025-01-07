@@ -26,5 +26,7 @@ class IterativeTimeoutJob extends JobImpl {
         _search.failed(_peer, true);
     }
 
-    public String getName() { return "Iterative search timeout"; }
+    public String getName() {
+        return "Iterative search timeout";
+    }
 }

@@ -2,9 +2,9 @@ package net.i2p.data.router;
 
 /*
  * free (adj.): unencumbered; not under the control of others
- * Written by jrandom in 2003 and released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
- * It probably won't make your computer catch on fire, or eat 
+ * Written by jrandom in 2003 and released into the public domain
+ * with no warranty of any kind, either expressed or implied.
+ * It probably won't make your computer catch on fire, or eat
  * your children, but it might.  Use at your own risk.
  *
  */
@@ -46,7 +46,7 @@ import net.i2p.util.SystemVersion;
 
 /**
  * Defines the data that a router either publishes to the global routing table or
- * provides to trusted peers.  
+ * provides to trusted peers.
  *
  * For efficiency, the methods and structures here are now unsynchronized.
  * Initialize the RI with readBytes(), or call the setters and then sign() in a single thread.
@@ -100,15 +100,15 @@ public class RouterInfo extends DatabaseEntry {
      * NOTE: individual chars defined in Router.java
      */
     public static final String BW_CAPABILITY_CHARS = "" +
-        // reverse, so e.g. "POfR" works correctly
-        Router.CAPABILITY_BW_UNLIMITED +
-        Router.CAPABILITY_BW512 +
-        Router.CAPABILITY_BW256 +
-        Router.CAPABILITY_BW128 +
-        Router.CAPABILITY_BW64 +
-        Router.CAPABILITY_BW32 +
-        Router.CAPABILITY_BW12;
-    
+            // reverse, so e.g. "POfR" works correctly
+            Router.CAPABILITY_BW_UNLIMITED +
+            Router.CAPABILITY_BW512 +
+            Router.CAPABILITY_BW256 +
+            Router.CAPABILITY_BW128 +
+            Router.CAPABILITY_BW64 +
+            Router.CAPABILITY_BW32 +
+            Router.CAPABILITY_BW12;
+
     public RouterInfo() {
         _addresses = new ArrayList<RouterAddress>(2);
         _options = new OrderedProperties();
@@ -152,7 +152,7 @@ public class RouterInfo extends DatabaseEntry {
 
     /**
      * Configure the identity of the router represented
-     * 
+     *
      * @throws IllegalStateException if RouterInfo is already signed
      */
     public void setIdentity(RouterIdentity ident) {
@@ -204,7 +204,7 @@ public class RouterInfo extends DatabaseEntry {
      * @return unmodifiable view, non-null
      */
     public Collection<RouterAddress> getAddresses() {
-            return Collections.unmodifiableList(_addresses);
+        return Collections.unmodifiableList(_addresses);
     }
 
     /**
@@ -316,7 +316,7 @@ public class RouterInfo extends DatabaseEntry {
             _options.putAll(options);
     }
 
-    /** 
+    /**
      * Write out the raw payload of the routerInfo, excluding the signature.  This
      * caches the data in memory if possible.
      *
@@ -336,7 +336,7 @@ public class RouterInfo extends DatabaseEntry {
         return data;
     }
 
-    /** 
+    /**
      * Write out the raw payload of the routerInfo, excluding the signature.  This
      * caches the data in memory if possible.
      *
@@ -348,35 +348,35 @@ public class RouterInfo extends DatabaseEntry {
         if (_identity == null) throw new DataFormatException("Missing identity");
         if (_published < 0) throw new DataFormatException("Invalid published date: " + _published);
 
-            _identity.writeBytes(out);
-            DataHelper.writeLong(out, 8, _published);
-            // There shouldn't be any addresses when hidden, but if there are,
-            // write them out, so as not to invalidate the signature
-            int sz = _addresses.size();
-            out.write((byte) sz);
-            if (sz > 0) {
-                for (RouterAddress addr : _addresses) {
-                    addr.writeBytes(out);
-                }
+        _identity.writeBytes(out);
+        DataHelper.writeLong(out, 8, _published);
+        // There shouldn't be any addresses when hidden, but if there are,
+        // write them out, so as not to invalidate the signature
+        int sz = _addresses.size();
+        out.write((byte) sz);
+        if (sz > 0) {
+            for (RouterAddress addr : _addresses) {
+                addr.writeBytes(out);
             }
-            // XXX: what about peers?
-            // answer: they're always empty... they're a placeholder for one particular
-            //         method of trusted links, which isn't implemented in the router
-            //         at the moment, and may not be later.
-            int psz = _peers == null ? 0 : _peers.size();
-            out.write((byte) psz);
-            if (psz > 0) {
-                Collection<Hash> peers = _peers;
-                if (psz > 1)
-                    // WARNING this sort algorithm cannot be changed, as it must be consistent
-                    // network-wide. The signature is not checked at readin time, but only
-                    // later, and the hashes are stored in a Set, not a List.
-                    peers = SortHelper.sortStructures(peers);
-                for (Hash peerHash : peers) {
-                    peerHash.writeBytes(out);
-                }
+        }
+        // XXX: what about peers?
+        // answer: they're always empty... they're a placeholder for one particular
+        //         method of trusted links, which isn't implemented in the router
+        //         at the moment, and may not be later.
+        int psz = _peers == null ? 0 : _peers.size();
+        out.write((byte) psz);
+        if (psz > 0) {
+            Collection<Hash> peers = _peers;
+            if (psz > 1)
+                // WARNING this sort algorithm cannot be changed, as it must be consistent
+                // network-wide. The signature is not checked at readin time, but only
+                // later, and the hashes are stored in a Set, not a List.
+                peers = SortHelper.sortStructures(peers);
+            for (Hash peerHash : peers) {
+                peerHash.writeBytes(out);
             }
-            DataHelper.writeProperties(out, _options);
+        }
+        DataHelper.writeProperties(out, _options);
     }
 
     /**
@@ -470,7 +470,7 @@ public class RouterInfo extends DatabaseEntry {
 
         return true;
     }
-    
+
     /**
      * Pull the first workable target address for the given transport.
      * Use to check for any address. For all addresses, use getTargetAddresses(),
@@ -478,12 +478,12 @@ public class RouterInfo extends DatabaseEntry {
      */
     public RouterAddress getTargetAddress(String transportStyle) {
         for (RouterAddress addr :  _addresses) {
-            if (addr.getTransportStyle().equals(transportStyle)) 
+            if (addr.getTransportStyle().equals(transportStyle))
                 return addr;
         }
         return null;
     }
-    
+
     /**
      *  For multiple addresses per-transport (IPv4 or IPv6)
      *  @return non-null
@@ -497,7 +497,7 @@ public class RouterInfo extends DatabaseEntry {
         }
         return ret;
     }
-    
+
     /**
      *  For multiple addresses per-transport (IPv4 or IPv6)
      *  Return addresses matching either of two styles
@@ -526,12 +526,12 @@ public class RouterInfo extends DatabaseEntry {
             Log log = I2PAppContext.getGlobalContext().logManager().getLog(RouterInfo.class);
             if (log.shouldWarn()) {
                 log.warn("Sig verify fail: " + toString(), new Exception("from"));
-            //} else {
-            //    log.error("RI Sig verify fail: " + _identity.getHash());
+                //} else {
+                //    log.error("RI Sig verify fail: " + _identity.getHash());
             }
         }
     }
-    
+
     /**
      *  This does NOT validate the signature
      *
@@ -628,7 +628,7 @@ public class RouterInfo extends DatabaseEntry {
 
         //_log.debug("Read routerInfo: " + toString());
     }
-    
+
     /**
      *  This does NOT validate the signature
      */
@@ -637,22 +637,22 @@ public class RouterInfo extends DatabaseEntry {
         writeDataBytes(out);
         _signature.writeBytes(out);
     }
-    
+
     @Override
     public boolean equals(Object object) {
         if (object == this) return true;
         if ((object == null) || !(object instanceof RouterInfo)) return false;
         RouterInfo info = (RouterInfo) object;
         return
-               _published == info.getPublished()
-               && DataHelper.eq(_signature, info.getSignature())
-               && DataHelper.eq(_identity, info.getIdentity());
-               // Let's speed up the NetDB
-               //&& DataHelper.eq(_addresses, info.getAddresses())
-               //&& DataHelper.eq(_options, info.getOptions()) 
-               //&& DataHelper.eq(getPeers(), info.getPeers());
+            _published == info.getPublished()
+            && DataHelper.eq(_signature, info.getSignature())
+            && DataHelper.eq(_identity, info.getIdentity());
+        // Let's speed up the NetDB
+        //&& DataHelper.eq(_addresses, info.getAddresses())
+        //&& DataHelper.eq(_options, info.getOptions())
+        //&& DataHelper.eq(getPeers(), info.getPeers());
     }
-    
+
     @Override
     public int hashCode() {
         if (!_hashCodeInitialized) {
@@ -661,7 +661,7 @@ public class RouterInfo extends DatabaseEntry {
         }
         return _hashCode;
     }
-    
+
     @Override
     public String toString() {
         //if (_stringified != null) return _stringified;
@@ -706,28 +706,31 @@ public class RouterInfo extends DatabaseEntry {
         }
         boolean fail = false;
         for (int i = 0; i < args.length; i++) {
-             RouterInfo ri = new RouterInfo();
-             InputStream is = null;
-             try {
-                 is = new java.io.FileInputStream(args[i]);
-                 ri.readBytes(is);
-                 if (ri.isValid()) {
-                     System.out.println(ri.toString());
-                  } else {
-                     System.err.println("Router info " + args[i] + " is invalid");
-                     fail = true;
-                  }
-             } catch (IOException e) {
-                 System.err.println("Error reading " + args[i] + ": " + e);
-                 fail = true;
-             } catch (DataFormatException e) {
-                 System.err.println("Error reading " + args[i] + ": " + e);
-                 fail = true;
-             } finally {
-                 if (is != null) {
-                     try { is.close(); } catch (IOException ioe) {}
-                 }
-             }
+            RouterInfo ri = new RouterInfo();
+            InputStream is = null;
+            try {
+                is = new java.io.FileInputStream(args[i]);
+                ri.readBytes(is);
+                if (ri.isValid()) {
+                    System.out.println(ri.toString());
+                } else {
+                    System.err.println("Router info " + args[i] + " is invalid");
+                    fail = true;
+                }
+            } catch (IOException e) {
+                System.err.println("Error reading " + args[i] + ": " + e);
+                fail = true;
+            } catch (DataFormatException e) {
+                System.err.println("Error reading " + args[i] + ": " + e);
+                fail = true;
+            } finally {
+                if (is != null) {
+                    try {
+                        is.close();
+                    }
+                    catch (IOException ioe) {}
+                }
+            }
         }
         if (fail)
             System.exit(1);

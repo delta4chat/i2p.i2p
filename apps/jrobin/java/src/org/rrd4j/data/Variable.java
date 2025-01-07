@@ -10,7 +10,7 @@ import org.rrd4j.core.Util;
 /**
  *  An abstract class to help extract single value from a set of value (VDEF in rrdtool)
  * <p>
- *  It can be used to add new fancy statistical calculation with rrd values 
+ *  It can be used to add new fancy statistical calculation with rrd values
  *
  */
 public abstract class Variable {
@@ -104,7 +104,7 @@ public abstract class Variable {
      * <p>
      * Value is to be filled with both the double value and a possible timestamp, when it's used to find
      * a specific point
-     * 
+     *
      * @param timestamps the timestamps for the value
      * @param values the actual values
      * @param start the start of the period
@@ -492,8 +492,8 @@ public abstract class Variable {
             if (cnt > 0) {
                 /* Bestfit line by linear least squares method */
                 lslcorrel =
-                        (SUMxy - (SUMx * SUMy) / cnt) /
-                        Math.sqrt((SUMxx - (SUMx * SUMx) / cnt) * (SUMyy - (SUMy * SUMy) / cnt));
+                    (SUMxy - (SUMx * SUMy) / cnt) /
+                    Math.sqrt((SUMxx - (SUMx * SUMx) / cnt) * (SUMyy - (SUMy * SUMy) / cnt));
                 return new Value(0, lslcorrel);
             }
             return new Value(0, Double.NaN);

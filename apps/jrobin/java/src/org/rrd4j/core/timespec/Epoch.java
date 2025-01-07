@@ -34,9 +34,9 @@ import java.util.Date;
  */
 public class Epoch extends JFrame {
     private final String[] supportedFormats = {
-            "MM/dd/yy HH:mm:ss", "dd.MM.yy HH:mm:ss", "yy-MM-dd HH:mm:ss", "MM/dd/yy HH:mm",
-            "dd.MM.yy HH:mm", "yy-MM-dd HH:mm", "MM/dd/yy", "dd.MM.yy", "yy-MM-dd", "HH:mm MM/dd/yy",
-            "HH:mm dd.MM.yy", "HH:mm yy-MM-dd", "HH:mm:ss MM/dd/yy", "HH:mm:ss dd.MM.yy", "HH:mm:ss yy-MM-dd"
+        "MM/dd/yy HH:mm:ss", "dd.MM.yy HH:mm:ss", "yy-MM-dd HH:mm:ss", "MM/dd/yy HH:mm",
+        "dd.MM.yy HH:mm", "yy-MM-dd HH:mm", "MM/dd/yy", "dd.MM.yy", "yy-MM-dd", "HH:mm MM/dd/yy",
+        "HH:mm dd.MM.yy", "HH:mm yy-MM-dd", "HH:mm:ss MM/dd/yy", "HH:mm:ss dd.MM.yy", "HH:mm:ss yy-MM-dd"
     };
 
     private final SimpleDateFormat[] parsers = new SimpleDateFormat[supportedFormats.length];
@@ -79,7 +79,7 @@ public class Epoch extends JFrame {
         convertButton.addActionListener(e -> convert());
         c.add(helpButton, BorderLayout.EAST);
         helpButton.addActionListener(
-                e -> JOptionPane.showMessageDialog(helpButton, helpText, "Epoch Help", JOptionPane.INFORMATION_MESSAGE));
+            e -> JOptionPane.showMessageDialog(helpButton, helpText, "Epoch Help", JOptionPane.INFORMATION_MESSAGE));
         inputField.requestFocus();
         getRootPane().setDefaultButton(convertButton);
         setResizable(false);

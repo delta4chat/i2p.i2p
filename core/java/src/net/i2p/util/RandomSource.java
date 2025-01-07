@@ -2,9 +2,9 @@ package net.i2p.util;
 
 /*
  * free (adj.): unencumbered; not under the control of others
- * Written by jrandom in 2003 and released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
- * It probably won't make your computer catch on fire, or eat 
+ * Written by jrandom in 2003 and released into the public domain
+ * with no warranty of any kind, either expressed or implied.
+ * It probably won't make your computer catch on fire, or eat
  * your children, but it might.  Use at your own risk.
  *
  */
@@ -20,7 +20,7 @@ import net.i2p.I2PAppContext;
 import net.i2p.crypto.EntropyHarvester;
 
 /**
- * Singleton for whatever PRNG i2p uses.  
+ * Singleton for whatever PRNG i2p uses.
  *
  * @author jrandom
  */
@@ -41,7 +41,7 @@ public class RandomSource extends SecureRandom implements EntropyHarvester {
     }
 
     /**
-     * Singleton for whatever PRNG i2p uses.  
+     * Singleton for whatever PRNG i2p uses.
      * Same as I2PAppContext.getGlobalContext().random();
      * use context.random() if you have a context already.
      * @return I2PAppContext.getGlobalContext().random()
@@ -54,7 +54,7 @@ public class RandomSource extends SecureRandom implements EntropyHarvester {
      * According to the java docs (http://java.sun.com/j2se/1.4.1/docs/api/java/util/Random.html#nextInt(int))
      * nextInt(n) should return a number between 0 and n (including 0 and excluding n).  However, their pseudocode,
      * as well as sun's, kaffe's, and classpath's implementation INCLUDES NEGATIVE VALUES.
-     * Ok, so we're going to have it return between 0 and n (including 0, excluding n), since 
+     * Ok, so we're going to have it return between 0 and n (including 0, excluding n), since
      * thats what it has been used for.
      *
      * This code unused, see FortunaRandomSource override
@@ -109,13 +109,15 @@ public class RandomSource extends SecureRandom implements EntropyHarvester {
         }
     }
 
-    public EntropyHarvester harvester() { return this; }
- 
+    public EntropyHarvester harvester() {
+        return this;
+    }
+
     public void feedEntropy(String source, long data, int bitoffset, int bits) {
         if (bitoffset == 0)
             setSeed(data);
     }
-    
+
     public void feedEntropy(String source, byte[] data, int offset, int len) {
         if ( (offset == 0) && (len == data.length) ) {
             setSeed(data);
@@ -138,9 +140,9 @@ public class RandomSource extends SecureRandom implements EntropyHarvester {
         nextBytes(buf);
         writeSeed(buf);
     }
-    
+
     private static final String SEEDFILE = "prngseed.rnd";
-    
+
     public static final void writeSeed(byte buf[]) {
         File f = new File(I2PAppContext.getGlobalContext().getConfigDir(), SEEDFILE);
         FileOutputStream fos = null;
@@ -150,10 +152,13 @@ public class RandomSource extends SecureRandom implements EntropyHarvester {
         } catch (IOException ioe) {
             // ignore
         } finally {
-            if (fos != null) try { fos.close(); } catch (IOException ioe) {}
+            if (fos != null) try {
+                    fos.close();
+                }
+                catch (IOException ioe) {}
         }
     }
- 
+
     /**
      *  May block up to 10 seconds
      */
@@ -188,7 +193,7 @@ public class RandomSource extends SecureRandom implements EntropyHarvester {
         ok = seedFromFile(localFile, buf) || ok;
         return ok;
     }
-    
+
     /**
      *  Thread to prevent hanging on init,
      *  presumably due to /dev/random blocking,
@@ -245,32 +250,35 @@ public class RandomSource extends SecureRandom implements EntropyHarvester {
             } catch (IOException ioe) {
                 // ignore
             } finally {
-                if (fis != null) try { fis.close(); } catch (IOException ioe) {}
+                if (fis != null) try {
+                        fis.close();
+                    }
+                    catch (IOException ioe) {}
             }
         }
         return false;
     }
 
-/****
-    public static void main(String args[]) {
-        for (int j = 0; j < 2; j++) {
-        RandomSource rs = new RandomSource(I2PAppContext.getGlobalContext());
-        byte buf[] = new byte[1024];
-        boolean seeded = rs.initSeed(buf);
-        System.out.println("PRNG class hierarchy: ");
-        Class c = rs.getClass();
-        while (c != null) {
-            System.out.println("\t" + c.getName());
-            c = c.getSuperclass();
+    /****
+        public static void main(String args[]) {
+            for (int j = 0; j < 2; j++) {
+            RandomSource rs = new RandomSource(I2PAppContext.getGlobalContext());
+            byte buf[] = new byte[1024];
+            boolean seeded = rs.initSeed(buf);
+            System.out.println("PRNG class hierarchy: ");
+            Class c = rs.getClass();
+            while (c != null) {
+                System.out.println("\t" + c.getName());
+                c = c.getSuperclass();
+            }
+            System.out.println("Provider: \n" + rs.getProvider());
+            if (seeded) {
+                System.out.println("Initialized seed: " + Base64.encode(buf));
+                rs.setSeed(buf);
+            }
+            for (int i = 0; i < 64; i++) rs.nextBytes(buf);
+            rs.saveSeed();
+            }
         }
-        System.out.println("Provider: \n" + rs.getProvider());
-        if (seeded) {
-            System.out.println("Initialized seed: " + Base64.encode(buf));
-            rs.setSeed(buf);
-        }
-        for (int i = 0; i < 64; i++) rs.nextBytes(buf);
-        rs.saveSeed();
-        }
-    }
-****/
+    ****/
 }

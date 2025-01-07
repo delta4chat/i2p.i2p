@@ -30,50 +30,62 @@ public class HopConfig {
     private int _oldMessagesProcessed;
     //private int _messagesSent;
     //private int _oldMessagesSent;
-    
+
     public HopConfig() {
         _creation = -1;
         _expiration = -1;
     }
-    
+
     /**
      * What tunnel ID are we receiving on? (0 if uninitialized)
      */
-    public long getReceiveTunnelId() { return (_receiveTunnel != null) ? _receiveTunnel.getTunnelId() : 0; }
+    public long getReceiveTunnelId() {
+        return (_receiveTunnel != null) ? _receiveTunnel.getTunnelId() : 0;
+    }
 
     /**
      * What tunnel ID are we receiving on? (null if uninitialized)
      */
-    public TunnelId getReceiveTunnel() { 
+    public TunnelId getReceiveTunnel() {
         return _receiveTunnel;
     }
 
-    public void setReceiveTunnelId(TunnelId id) { _receiveTunnel = id; }
+    public void setReceiveTunnelId(TunnelId id) {
+        _receiveTunnel = id;
+    }
 
     /**
      *  @param id 1 to 0xffffffff
      *  @throws IllegalArgumentException if less than or equal to zero or greater than max value
      *  @since 0.9.48
      */
-    public void setReceiveTunnelId(long id) { _receiveTunnel = new TunnelId(id); }
+    public void setReceiveTunnelId(long id) {
+        _receiveTunnel = new TunnelId(id);
+    }
 
     /** what is the previous peer in the tunnel (null if gateway) */
-    public Hash getReceiveFrom() { return _receiveFrom; }
+    public Hash getReceiveFrom() {
+        return _receiveFrom;
+    }
 
     /**
      *  Do not set for gateway
      */
-    public void setReceiveFrom(Hash from) { _receiveFrom = from; }
-    
+    public void setReceiveFrom(Hash from) {
+        _receiveFrom = from;
+    }
+
     /**
      * What is the next tunnel ID we are sending to? (0 if endpoint)
      */
-    public long getSendTunnelId() { return (_sendTunnel != null) ? _sendTunnel.getTunnelId() : 0; }
+    public long getSendTunnelId() {
+        return (_sendTunnel != null) ? _sendTunnel.getTunnelId() : 0;
+    }
 
     /**
      * What is the next tunnel ID we are sending to? (null if endpoint)
      */
-    public TunnelId getSendTunnel() { 
+    public TunnelId getSendTunnel() {
         return _sendTunnel;
     }
 
@@ -81,7 +93,9 @@ public class HopConfig {
      *  Do not set for endpoint
      *  @since 0.9.48
      */
-    public void setSendTunnelId(TunnelId id) { _sendTunnel = id; }
+    public void setSendTunnelId(TunnelId id) {
+        _sendTunnel = id;
+    }
 
     /**
      *  Do not set for endpoint
@@ -89,50 +103,76 @@ public class HopConfig {
      *  @throws IllegalArgumentException if less than or equal to zero or greater than max value
      *  @since 0.9.48
      */
-    public void setSendTunnelId(long id) { _sendTunnel = new TunnelId(id); }
-    
+    public void setSendTunnelId(long id) {
+        _sendTunnel = new TunnelId(id);
+    }
+
     /** what is the next peer in the tunnel (null if endpoint) */
-    public Hash getSendTo() { return _sendTo; }
+    public Hash getSendTo() {
+        return _sendTo;
+    }
 
     /**
      *  Do not set for endpoint
      */
-    public void setSendTo(Hash to) { _sendTo = to; }
-    
+    public void setSendTo(Hash to) {
+        _sendTo = to;
+    }
+
     /** what key should we use to encrypt the layer before passing it on? */
-    public SessionKey getLayerKey() { return _layerKey; }
-    public void setLayerKey(SessionKey key) { _layerKey = key; }
-    
+    public SessionKey getLayerKey() {
+        return _layerKey;
+    }
+    public void setLayerKey(SessionKey key) {
+        _layerKey = key;
+    }
+
     /** what key should we use to encrypt the preIV before passing it on? */
-    public SessionKey getIVKey() { return _ivKey; }
-    public void setIVKey(SessionKey key) { _ivKey = key; }
-    
+    public SessionKey getIVKey() {
+        return _ivKey;
+    }
+    public void setIVKey(SessionKey key) {
+        _ivKey = key;
+    }
+
     /** when does this tunnel expire (in ms since the epoch)? */
-    public long getExpiration() { return _expiration; }
-    public void setExpiration(long when) { _expiration = when; }
+    public long getExpiration() {
+        return _expiration;
+    }
+    public void setExpiration(long when) {
+        _expiration = when;
+    }
 
     /** when was this tunnel created (in ms since the epoch)? */
-    public long getCreation() { return _creation; }
-    public void setCreation(long when) { _creation = when; }
-    
-    /** 
+    public long getCreation() {
+        return _creation;
+    }
+    public void setCreation(long when) {
+        _creation = when;
+    }
+
+    /**
      * what are the configuration options for this tunnel (if any).  keys to
-     * this map should be strings and values should be Objects of an 
+     * this map should be strings and values should be Objects of an
      * option-specific type (e.g. "maxMessages" would be an Integer, "shouldPad"
      * would be a Boolean, etc).
      *
      */
     //public Map getOptions() { return _options; }
     //public void setOptions(Map options) { _options = options; }
-    
+
     /**
      *  Take note of a message being pumped through this tunnel.
      *  "processed" is for incoming and "sent" is for outgoing (could be dropped in between)
      *  We use synchronization instead of an AtomicInteger here to save space.
      */
-    public synchronized void incrementProcessedMessages() { _messagesProcessed++; }
+    public synchronized void incrementProcessedMessages() {
+        _messagesProcessed++;
+    }
 
-    public synchronized int getProcessedMessagesCount() { return _messagesProcessed; }
+    public synchronized int getProcessedMessagesCount() {
+        return _messagesProcessed;
+    }
 
     /**
      *  This returns the number of processed messages since
@@ -160,18 +200,18 @@ public class HopConfig {
      *  Take note of a message being pumped through this tunnel.
      *  "processed" is for incoming and "sent" is for outgoing (could be dropped in between)
      */
-  /****
-    public void incrementSentMessages() { _messagesSent++; }
+    /****
+      public void incrementSentMessages() { _messagesSent++; }
 
-    public int getSentMessagesCount() { return _messagesSent; }
+      public int getSentMessagesCount() { return _messagesSent; }
 
-    public int getRecentSentMessagesCount() {
-        int rv = _messagesSent - _oldMessagesSent;
-        _oldMessagesSent = _messagesSent;
-        return rv;
-    }
-  ****/
-    
+      public int getRecentSentMessagesCount() {
+          int rv = _messagesSent - _oldMessagesSent;
+          _oldMessagesSent = _messagesSent;
+          return rv;
+      }
+    ****/
+
     /** */
     @Override
     public String toString() {

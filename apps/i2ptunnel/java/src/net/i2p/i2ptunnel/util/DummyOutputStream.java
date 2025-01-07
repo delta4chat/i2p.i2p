@@ -8,7 +8,7 @@ import java.io.OutputStream;
  * @since 0.9.62 copied from susimail
  */
 public class DummyOutputStream extends OutputStream {
-    
+
     public void write(int val) {}
 
     @Override

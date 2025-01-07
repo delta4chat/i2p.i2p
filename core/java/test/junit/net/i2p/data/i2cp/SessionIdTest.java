@@ -1,9 +1,9 @@
 package net.i2p.data.i2cp;
 /*
  * free (adj.): unencumbered; not under the control of others
- * Written by jrandom in 2003 and released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
- * It probably won't make your computer catch on fire, or eat 
+ * Written by jrandom in 2003 and released into the public domain
+ * with no warranty of any kind, either expressed or implied.
+ * It probably won't make your computer catch on fire, or eat
  * your children, but it might.  Use at your own risk.
  *
  */
@@ -24,17 +24,25 @@ public class SessionIdTest extends StructureTest {
         id.setSessionId(7);
         return id;
     }
-    public DataStructure createStructureToRead() { return new SessionIdStructure(); }
+    public DataStructure createStructureToRead() {
+        return new SessionIdStructure();
+    }
 
     /**
      * so we can test it as a structure
      * @since 0.9.48 no longer extends DataStructureImpl
      */
     private static class SessionIdStructure extends SessionId implements DataStructure {
-        public Hash calculateHash() { return null; }
+        public Hash calculateHash() {
+            return null;
+        }
         public void fromByteArray(byte[] in) {}
-        public byte[] toByteArray() { return null; }
+        public byte[] toByteArray() {
+            return null;
+        }
         public void fromBase64(String in) {}
-        public String toBase64() { return null; }
+        public String toBase64() {
+            return null;
+        }
     }
 }

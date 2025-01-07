@@ -91,7 +91,10 @@ public class I2PSOCKSTunnel extends I2PTunnelClientBase {
         } finally {
             // only because we are running it inline
             closeSocket(s);
-            if (destSock != null) try { destSock.close(); } catch (IOException ioe) {}
+            if (destSock != null) try {
+                    destSock.close();
+                }
+                catch (IOException ioe) {}
         }
     }
 
@@ -122,27 +125,27 @@ public class I2PSOCKSTunnel extends I2PTunnelClientBase {
                 opts.setProperty(PROP_PROXY_DEFAULT, proxyList);
         }
         for (Map.Entry<Object, Object> e : opts.entrySet()) {
-           String prop = (String)e.getKey();
-           if ((!prop.startsWith(PROP_PROXY_PREFIX)) || prop.length() <= PROP_PROXY_PREFIX.length())
-              continue;
-           String port = prop.substring(PROP_PROXY_PREFIX.length());
-           List<String> proxyList = new ArrayList<String>(1);
-           StringTokenizer tok = new StringTokenizer((String)e.getValue(), ", \t");
-           while (tok.hasMoreTokens()) {
-               String proxy = tok.nextToken().trim();
-               String host = proxy;
-               int colon = proxy.indexOf(':');
-               if (colon > 0)
-                   host = host.substring(0, colon);
-               if (host.endsWith(".i2p")) {
-                   proxyList.add(proxy);
-               } else {
-                   String m = "Non-i2p SOCKS outproxy: " + proxy;
-                   l.log(m);
-                   _log.error(m);
-               }
-           }
-           proxies.put(port, proxyList);
+            String prop = (String)e.getKey();
+            if ((!prop.startsWith(PROP_PROXY_PREFIX)) || prop.length() <= PROP_PROXY_PREFIX.length())
+                continue;
+            String port = prop.substring(PROP_PROXY_PREFIX.length());
+            List<String> proxyList = new ArrayList<String>(1);
+            StringTokenizer tok = new StringTokenizer((String)e.getValue(), ", \t");
+            while (tok.hasMoreTokens()) {
+                String proxy = tok.nextToken().trim();
+                String host = proxy;
+                int colon = proxy.indexOf(':');
+                if (colon > 0)
+                    host = host.substring(0, colon);
+                if (host.endsWith(".i2p")) {
+                    proxyList.add(proxy);
+                } else {
+                    String m = "Non-i2p SOCKS outproxy: " + proxy;
+                    l.log(m);
+                    _log.error(m);
+                }
+            }
+            proxies.put(port, proxyList);
         }
     }
 
@@ -161,7 +164,7 @@ public class I2PSOCKSTunnel extends I2PTunnelClientBase {
         return proxies.get(DEFAULT);
     }
 
-    /** 
+    /**
      * Because getDefaultOptions() in super() is protected
      * @since 0.8.2
      *

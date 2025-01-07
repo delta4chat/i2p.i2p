@@ -19,9 +19,9 @@ public class Util {
         double c = 0;
         double d = 0.5;
         for (int i = b; i >= 0; --i) {
-             if (a.testBit(i))
-                 c += d;
-             d /= 2;
+            if (a.testBit(i))
+                c += d;
+            d /= 2;
         }
         return b + c;
     }

@@ -88,16 +88,16 @@ class SummaryRenderer {
     // hide ticks
     private static final Stroke TICK_STROKE = new BasicStroke(0);
 
-    public SummaryRenderer(I2PAppContext ctx, SummaryListener lsnr) { 
+    public SummaryRenderer(I2PAppContext ctx, SummaryListener lsnr) {
         _log = ctx.logManager().getLog(SummaryRenderer.class);
         _listener = lsnr;
         _context = ctx;
         ctx.statManager().createRateStat("graph.renderTime", "", "Router", RATES);
     }
-    
+
     /**
      * Render the stats as determined by the specified JRobin xml config,
-     * but note that this doesn't work on stock jvms, as it requires 
+     * but note that this doesn't work on stock jvms, as it requires
      * DOM level 3 load and store support.  Perhaps we can bundle that, or
      * specify who can get it from where, etc.
      *
@@ -109,8 +109,10 @@ class SummaryRenderer {
         throw new UnsupportedOperationException();
     }
 
-    public void render(OutputStream out) throws IOException { render(out, DEFAULT_X, DEFAULT_Y,
-                                                                     false, false, false, false, -1, 0, false); }
+    public void render(OutputStream out) throws IOException {
+        render(out, DEFAULT_X, DEFAULT_Y,
+               false, false, false, false, -1, 0, false);
+    }
 
     /**
      *  Single graph.
@@ -204,7 +206,7 @@ class SummaryRenderer {
             // heuristic to set K=1024
             //if ((name.startsWith("bw.") || name.indexOf("Size") >= 0 || name.indexOf("Bps") >= 0 || name.indexOf("memory") >= 0)
             if ((name.indexOf("Size") >= 0 || name.indexOf("memory") >= 0)
-                && !showEvents)
+                    && !showEvents)
                 def.setBase(1024);
             if (titleOverride != null) {
                 def.setTitle(titleOverride);
@@ -404,7 +406,10 @@ class SummaryRenderer {
             throw new IOException("Error plotting: " + oom.getLocalizedMessage());
         } finally {
             // this does not close the underlying stream
-            if (ios != null) try {ios.close();} catch (IOException ioe) {}
+            if (ios != null) try {
+                    ios.close();
+                }
+                catch (IOException ioe) {}
         }
     }
 

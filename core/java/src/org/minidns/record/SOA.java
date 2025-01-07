@@ -60,7 +60,7 @@ public class SOA extends Data {
     public final long /* unsigned int */ minimum;
 
     public static SOA parse(DataInputStream dis, byte[] data)
-            throws IOException {
+    throws IOException {
         DnsName mname = DnsName.parse(dis, data);
         DnsName rname = DnsName.parse(dis, data);
         long serial = dis.readInt() & 0xFFFFFFFFL;
@@ -104,13 +104,13 @@ public class SOA extends Data {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder()
-                .append(mname).append(". ")
-                .append(rname).append(". ")
-                .append(serial).append(' ')
-                .append(refresh).append(' ')
-                .append(retry).append(' ')
-                .append(expire).append(' ')
-                .append(minimum);
+        .append(mname).append(". ")
+        .append(rname).append(". ")
+        .append(serial).append(' ')
+        .append(refresh).append(' ')
+        .append(retry).append(' ')
+        .append(expire).append(' ')
+        .append(minimum);
         return sb.toString();
     }
 }

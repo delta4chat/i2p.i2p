@@ -44,17 +44,17 @@ public class SimpleSVGMaker {
         this.buf = buf;
     }
 
-   /**
-     * Start svg tag
-     * @param bgcolor null for none
-     * @param id CSS id or null for none
-     * @param clz CSS class or null for none
-     */
+    /**
+      * Start svg tag
+      * @param bgcolor null for none
+      * @param id CSS id or null for none
+      * @param clz CSS class or null for none
+      */
     public void startSVG(int width, int height, Color bgcolor, String id, String clz) {
         buf.append("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n" +
                    // "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n" +
                    "<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" ");
-        addIDClass(id, clz);	
+        addIDClass(id, clz);
         addString("viewBox", "0 0 " + width + ' ' + height);
         addInt("width", width);
         addInt("height", height);
@@ -79,7 +79,7 @@ public class SimpleSVGMaker {
      */
     public void startGroup(String id, String clz, String att, String val) {
         buf.append("<g ");
-        addIDClass(id, clz);	
+        addIDClass(id, clz);
         if (att != null && val != null)
             addString(att, val);
         buf.append(">\n");
@@ -99,7 +99,7 @@ public class SimpleSVGMaker {
     public String defineClipPath(Rectangle clip) {
         buf.append("<clipPath ");
         String rv = "clip-" + hashCode() + '-' + (clipid++);
-        addIDClass(rv, null);   
+        addIDClass(rv, null);
         buf.append("><rect ");
         addInt("x", (int) clip.getX());
         addInt("y", (int) clip.getY());
@@ -118,7 +118,7 @@ public class SimpleSVGMaker {
      */
     public void drawCircle(int x, int y, int radius, Color border, Color fill, BasicStroke stroke, String clipid, Map<Object, Object> hints) {
         buf.append("<circle ");
-        addAttributes(hints);	
+        addAttributes(hints);
         addClipPath(clipid);
         addInt("cx", x);
         addInt("cy", y);
@@ -155,7 +155,7 @@ public class SimpleSVGMaker {
      */
     public void drawRect(int x, int y, int width, int height, Color border, Color fill, BasicStroke stroke, String clipid, Map<Object, Object> hints) {
         buf.append("<rect ");
-        addAttributes(hints);	
+        addAttributes(hints);
         addClipPath(clipid);
         addInt("x", x);
         addInt("y", y);
@@ -183,7 +183,7 @@ public class SimpleSVGMaker {
      */
     public void drawLine(int x1, int y1, int x2, int y2, Color color, BasicStroke stroke, String clipid, Map<Object, Object> hints) {
         buf.append("<line ");
-        addAttributes(hints);	
+        addAttributes(hints);
         addClipPath(clipid);
         addInt("x1", x1);
         addInt("y1", y1);
@@ -214,7 +214,7 @@ public class SimpleSVGMaker {
         if (sz < 2)
             return;
         buf.append("<path ");
-        addAttributes(hints);	
+        addAttributes(hints);
         addClipPath(clipid);
         buf.append("d=\"M");
         buf.append(x[0]).append(',').append(y[0]);
@@ -259,7 +259,7 @@ public class SimpleSVGMaker {
         if (sz < 2)
             return;
         buf.append("<path ");
-        addAttributes(hints);	
+        addAttributes(hints);
         addClipPath(clipid);
         buf.append("d=\"M");
         buf.append(x[0]).append(',').append(y[0]);
@@ -301,7 +301,7 @@ public class SimpleSVGMaker {
      */
     public void drawText(String text, int x, int y, Color color, Font font, String clipid, Map<Object, Object> hints) {
         buf.append("<text ");
-        addAttributes(hints);	
+        addAttributes(hints);
         addClipPath(clipid);
         addInt("x", x);
         addInt("y", y);
@@ -411,43 +411,43 @@ public class SimpleSVGMaker {
             buf.append("  ").append(inner).append("\n");
     }
 
-/*
-    public void main(String[] args) {
-        StringBuilder buf = new StringBuilder(2048);
-        SimpleSVGMaker g = new SimpleSVGMaker(buf);
-        Font f = new Font("Dialog", Font.BOLD, 24);
-        Color c = new Color(255, 128, 128);
-        g.startSVG(190, 200, c, "id", "class");
-        g.startGroup("gid", "class", "transform", "matrix");
-        c = new Color(255, 0, 0);
-        BasicStroke s = new BasicStroke(4);
-        Map<Object,Object> hints = new java.util.HashMap<Object,Object>();
-        g.drawSquare(100, 36, 17, null, c, s, null, hints);
-        c = new Color(33, 33, 33, 128);
-        s = new BasicStroke(8);
-        g.drawCircle(75, 56, 27, c, null, s, null, hints);
-        g.drawCircle(100, 100, 110, c, null, s, null, hints);
-        c = new Color(0, 255, 0);
-        s = new BasicStroke(2);
-        g.drawLine(55, 96, 97, 178, c, s, null, hints);
-        int[] xx = { 10, 20, 30, 40, 150 };
-        int[] yy = { 81, 92, 113, 184, 29 };
-        c = new Color(0, 0, 255);
-        s = new BasicStroke(2);
-        g.drawPolyline(xx, yy, 5, c, s, null, hints);
-        Color cc = new Color(128, 128, 0, 128);
-        Color ccc = new Color(128, 0, 192, 128);
-        g.drawRect(100, 80, 40, 20, cc, ccc, s, null, hints);
-        c = new Color(0, 128, 128);
-        g.drawText("foo", 135, 156, c, f, null, hints);
-        c = new Color(128, 128, 0);
-        f = new Font(Font.SANS_SERIF, Font.ITALIC, 20);
-        g.drawText("bar", 115, 136, c, f, null, hints);
-        f = new Font(Font.SANS_SERIF, Font.PLAIN, 16);
-        g.drawText("baz", 115, 176, c, f, null, hints);
-        g.endGroup();
-        g.endSVG();
-        System.out.print(buf.toString());
-    }
-*/
+    /*
+        public void main(String[] args) {
+            StringBuilder buf = new StringBuilder(2048);
+            SimpleSVGMaker g = new SimpleSVGMaker(buf);
+            Font f = new Font("Dialog", Font.BOLD, 24);
+            Color c = new Color(255, 128, 128);
+            g.startSVG(190, 200, c, "id", "class");
+            g.startGroup("gid", "class", "transform", "matrix");
+            c = new Color(255, 0, 0);
+            BasicStroke s = new BasicStroke(4);
+            Map<Object,Object> hints = new java.util.HashMap<Object,Object>();
+            g.drawSquare(100, 36, 17, null, c, s, null, hints);
+            c = new Color(33, 33, 33, 128);
+            s = new BasicStroke(8);
+            g.drawCircle(75, 56, 27, c, null, s, null, hints);
+            g.drawCircle(100, 100, 110, c, null, s, null, hints);
+            c = new Color(0, 255, 0);
+            s = new BasicStroke(2);
+            g.drawLine(55, 96, 97, 178, c, s, null, hints);
+            int[] xx = { 10, 20, 30, 40, 150 };
+            int[] yy = { 81, 92, 113, 184, 29 };
+            c = new Color(0, 0, 255);
+            s = new BasicStroke(2);
+            g.drawPolyline(xx, yy, 5, c, s, null, hints);
+            Color cc = new Color(128, 128, 0, 128);
+            Color ccc = new Color(128, 0, 192, 128);
+            g.drawRect(100, 80, 40, 20, cc, ccc, s, null, hints);
+            c = new Color(0, 128, 128);
+            g.drawText("foo", 135, 156, c, f, null, hints);
+            c = new Color(128, 128, 0);
+            f = new Font(Font.SANS_SERIF, Font.ITALIC, 20);
+            g.drawText("bar", 115, 136, c, f, null, hints);
+            f = new Font(Font.SANS_SERIF, Font.PLAIN, 16);
+            g.drawText("baz", 115, 176, c, f, null, hints);
+            g.endGroup();
+            g.endSVG();
+            System.out.print(buf.toString());
+        }
+    */
 }

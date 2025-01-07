@@ -27,7 +27,7 @@ import net.i2p.client.streaming.StatefulConnectionFilter;
 /**
  * A filter for incoming connections which can be configured
  * based on access list rules.
- * 
+ *
  * It keeps a track of known destinations - those defined in existing access
  * lists and unknown ones - those who are not defined in such lists but have
  * recently attempted to connect to us.
@@ -71,8 +71,8 @@ class AccessFilter implements StatefulConnectionFilter {
      * @param context the context, used for scheduling and timer purposes
      * @param definition definition of this filter
      */
-    AccessFilter(I2PAppContext context, FilterDefinition definition) 
-            throws IOException {
+    AccessFilter(I2PAppContext context, FilterDefinition definition)
+    throws IOException {
         this.context = context;
         this.definition = definition;
 
@@ -119,17 +119,17 @@ class AccessFilter implements StatefulConnectionFilter {
         for (FilterDefinitionElement element : definition.getElements()) {
             element.update(tmp);
         }
-        
+
         synchronized(knownDests) {
             knownDests.keySet().retainAll(tmp.keySet());
             for (Map.Entry<Hash, DestTracker> e : tmp.entrySet()) {
                 Hash newHash = e.getKey();
-                if (knownDests.containsKey(newHash)) 
+                if (knownDests.containsKey(newHash))
                     continue;
                 knownDests.put(newHash, e.getValue());
-            }    
+            }
         }
-        
+
     }
 
     private void record() throws IOException {
@@ -141,15 +141,18 @@ class AccessFilter implements StatefulConnectionFilter {
 
             // if the file already exists, add previously breached b32s
             if (file.exists() && file.isFile()) {
-                BufferedReader reader = null; 
+                BufferedReader reader = null;
                 try {
-                    reader = new BufferedReader(new FileReader(file)); 
+                    reader = new BufferedReader(new FileReader(file));
                     String b32;
                     while((b32 = reader.readLine()) != null) {
                         breached.add(b32);
                     }
                 } finally {
-                    if (reader != null) try { reader.close(); } catch (IOException ignored) {}
+                    if (reader != null) try {
+                            reader.close();
+                        }
+                        catch (IOException ignored) {}
                 }
             }
 
@@ -165,7 +168,7 @@ class AccessFilter implements StatefulConnectionFilter {
             if (breached.isEmpty() || !newBreaches)
                 continue;
 
-            BufferedWriter writer = null; 
+            BufferedWriter writer = null;
             try {
                 writer = new BufferedWriter(
                     new OutputStreamWriter(
@@ -175,14 +178,17 @@ class AccessFilter implements StatefulConnectionFilter {
                     writer.newLine();
                 }
             } finally {
-                if (writer != null) try { writer.close(); } catch (IOException ignored) {}
+                if (writer != null) try {
+                        writer.close();
+                    }
+                    catch (IOException ignored) {}
             }
         }
     }
 
     private void purge() {
         long olderThan = context.clock().now() - definition.getPurgeSeconds() * 1000;
-        
+
         synchronized(knownDests) {
             for (DestTracker tracker : knownDests.values()) {
                 tracker.purge(olderThan);
@@ -232,7 +238,7 @@ class AccessFilter implements StatefulConnectionFilter {
                         record();
                         reload();
                         Syncer syncer = AccessFilter.this.syncer;
-                        if (syncer != null) 
+                        if (syncer != null)
                             syncer.schedule(SYNC_INTERVAL);
                     } catch (IOException bad) {
                         Log log = context.logManager().getLog(AccessFilter.class);
@@ -240,6 +246,6 @@ class AccessFilter implements StatefulConnectionFilter {
                     }
                 }
             });
-         }   
+        }
     }
 }

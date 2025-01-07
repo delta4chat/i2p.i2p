@@ -4,7 +4,7 @@ import net.i2p.I2PAppContext;
 import net.i2p.util.Log;
 
 /**
- * <p>Scheduler used for after both SYNs have been ACKed and both sides 
+ * <p>Scheduler used for after both SYNs have been ACKed and both sides
  * have closed the stream, but either we haven't ACKed their close or
  * they haven't ACKed ours.</p>
  *
@@ -34,19 +34,19 @@ class SchedulerClosing extends SchedulerImpl {
     public SchedulerClosing(I2PAppContext ctx) {
         super(ctx);
     }
-    
+
     public boolean accept(Connection con) {
         if (con == null)
             return false;
         long timeSinceClose = _context.clock().now() - con.getCloseSentOn();
-        boolean ok = (!con.getResetSent()) && 
+        boolean ok = (!con.getResetSent()) &&
                      (!con.getResetReceived()) &&
                      ( (con.getCloseSentOn() > 0) || (con.getCloseReceivedOn() > 0) ) &&
                      (timeSinceClose < Connection.DISCONNECT_TIMEOUT) &&
                      ( (con.getUnackedPacketsReceived() > 0) || (con.getUnackedPacketsSent() > 0) );
         return ok;
     }
-    
+
     public void eventOccurred(Connection con) {
         long nextSend = con.getNextSendTime();
         long now = _context.clock().now();

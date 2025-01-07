@@ -67,7 +67,7 @@ public class GraphHelper extends FormHandler {
      */
     public String getRefreshMeta() {
         if (_refreshDelaySeconds <= 8 ||
-            ConfigRestartBean.getRestartTimeRemaining() < (1000 * (_refreshDelaySeconds + 30)))
+                ConfigRestartBean.getRestartTimeRemaining() < (1000 * (_refreshDelaySeconds + 30)))
             return "";
         // shorten the refresh by 3 seconds so we beat the iframe
         return "<noscript><meta http-equiv=\"refresh\" content=\"" + (_refreshDelaySeconds - 3) + ";url=/graphs\" /></noscript>";
@@ -81,7 +81,7 @@ public class GraphHelper extends FormHandler {
         return _refreshDelaySeconds - 3;
     }
 
-    public void setPeriodCount(String str) { 
+    public void setPeriodCount(String str) {
         setC(str);
     }
 
@@ -99,7 +99,9 @@ public class GraphHelper extends FormHandler {
         } catch (NumberFormatException nfe) {}
     }
 
-    public void setShowEvents(String b) { _showEvents = !"false".equals(b); }
+    public void setShowEvents(String b) {
+        _showEvents = !"false".equals(b);
+    }
 
     public void setHeight(String str) {
         setH(str);
@@ -134,13 +136,19 @@ public class GraphHelper extends FormHandler {
     }
 
     /** @since 0.8.7 */
-    public void setPersistent(String foo) { _persistent = true; }
+    public void setPersistent(String foo) {
+        _persistent = true;
+    }
 
     /** @since 0.9.32 */
-    public void setHideLegend(String foo) { _graphHideLegend = true; }
+    public void setHideLegend(String foo) {
+        _graphHideLegend = true;
+    }
 
     /** @since 0.9.49 */
-    public void setUtc(String foo) { _utc = true; }
+    public void setUtc(String foo) {
+        _utc = true;
+    }
 
     /**
      *  For single stat page
@@ -150,7 +158,7 @@ public class GraphHelper extends FormHandler {
         _stat = stat;
     }
 
-    public String getImages() { 
+    public String getImages() {
         StatSummarizer ss = StatSummarizer.instance(_context);
         if (ss == null)
             return "";
@@ -209,8 +217,8 @@ public class GraphHelper extends FormHandler {
                 // e.g. "statname for 60m"
                 String title = _t("{0} for {1}", r.getRateStat().getName(), DataHelper.formatDuration2(_periodCount * r.getPeriod()));
                 _out.write("<a href=\"graph?stat="
-                           + r.getRateStat().getName() 
-                           + '.' + r.getPeriod() 
+                           + r.getRateStat().getName()
+                           + '.' + r.getPeriod()
                            + "&amp;c=" + (3 * _periodCount)
                            + "&amp;w=" + (3 * _width)
                            + "&amp;h=" + (3 * _height)
@@ -219,7 +227,7 @@ public class GraphHelper extends FormHandler {
                            + "\">");
                 _out.write("<img class=\"statimage\" border=\"0\""
                            + " src=\"viewstat.jsp?stat="
-                           + r.getRateStat().getName() 
+                           + r.getRateStat().getName()
                            + "&amp;showEvents=" + _showEvents
                            + "&amp;period=" + r.getPeriod()
                            + "&amp;periodCount=" + _periodCount
@@ -237,7 +245,7 @@ public class GraphHelper extends FormHandler {
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
-        return ""; 
+        return "";
     }
 
     /**
@@ -366,7 +374,7 @@ public class GraphHelper extends FormHandler {
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
-        return ""; 
+        return "";
     }
 
     /** @since 0.9 */
@@ -374,19 +382,19 @@ public class GraphHelper extends FormHandler {
                                int periodCount, int end,
                                int width, int height) {
         return
-               "<a href=\"graph?stat="
-               + stat
-               + "&amp;c=" + periodCount
-               + "&amp;w=" + width
-               + "&amp;h=" + height
-               + (end > 0 ? "&amp;e=" + end : "")
-               + (showEvents ? "&amp;showEvents=1" : "")
-               + "\">";
+            "<a href=\"graph?stat="
+            + stat
+            + "&amp;c=" + periodCount
+            + "&amp;w=" + width
+            + "&amp;h=" + height
+            + (end > 0 ? "&amp;e=" + end : "")
+            + (showEvents ? "&amp;showEvents=1" : "")
+            + "\">";
     }
 
     private static final int[] times = { 15, 30, 60, 2*60, 5*60, 10*60, 30*60, 60*60, -1 };
 
-    public String getForm() { 
+    public String getForm() {
         StatSummarizer ss = StatSummarizer.instance(_context);
         if (ss == null)
             return "";
@@ -449,7 +457,7 @@ public class GraphHelper extends FormHandler {
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
-        return ""; 
+        return "";
     }
 
     /**
@@ -461,12 +469,12 @@ public class GraphHelper extends FormHandler {
         if (StatSummarizer.isDisabled(_context)) {
             addFormError("Graphing not supported with this JVM or OS");
             addFormNotice("JVM: " + System.getProperty("java.vendor") + ' ' +
-                         System.getProperty("java.version") + " (" +
-                         System.getProperty("java.runtime.name") + ' ' +
-                         System.getProperty("java.runtime.version") + ')');
+                          System.getProperty("java.version") + " (" +
+                          System.getProperty("java.runtime.name") + ' ' +
+                          System.getProperty("java.runtime.version") + ')');
             addFormNotice("OS: " + System.getProperty("os.name") + ' ' +
-                           System.getProperty("os.arch") + ' ' +
-                           System.getProperty("os.version"));
+                          System.getProperty("os.arch") + ' ' +
+                          System.getProperty("os.version"));
             if (!SystemVersion.isMac() && !SystemVersion.isWindows())
                 addFormNotice("Installing the fonts-dejavu package and then restarting I2P may resolve the issue");
             addFormNotice("Check logs for more information");
@@ -494,13 +502,13 @@ public class GraphHelper extends FormHandler {
      */
     private void saveSettings() {
         if (_width != _context.getProperty(PROP_X, DEFAULT_X) ||
-            _height != _context.getProperty(PROP_Y, DEFAULT_Y) ||
-            _periodCount != _context.getProperty(PROP_PERIODS, DEFAULT_PERIODS) ||
-            _refreshDelaySeconds != _context.getProperty(PROP_REFRESH, DEFAULT_REFRESH) ||
-            _showEvents != _context.getBooleanProperty(PROP_EVENTS) ||
-            _graphHideLegend != _context.getProperty(PROP_LEGEND, DEFAULT_LEGEND) ||
-            _utc != _context.getBooleanProperty(PROP_UTC) ||
-            _persistent != _context.getBooleanPropertyDefaultTrue(SummaryListener.PROP_PERSISTENT)) {
+                _height != _context.getProperty(PROP_Y, DEFAULT_Y) ||
+                _periodCount != _context.getProperty(PROP_PERIODS, DEFAULT_PERIODS) ||
+                _refreshDelaySeconds != _context.getProperty(PROP_REFRESH, DEFAULT_REFRESH) ||
+                _showEvents != _context.getBooleanProperty(PROP_EVENTS) ||
+                _graphHideLegend != _context.getProperty(PROP_LEGEND, DEFAULT_LEGEND) ||
+                _utc != _context.getBooleanProperty(PROP_UTC) ||
+                _persistent != _context.getBooleanPropertyDefaultTrue(SummaryListener.PROP_PERSISTENT)) {
             Map<String, String> changes = new HashMap<String, String>();
             changes.put(PROP_X, Integer.toString(_width));
             changes.put(PROP_Y, Integer.toString(_height));

@@ -64,7 +64,7 @@ public class Ed25519ScalarOpsTest {
      */
     @Test
     public void testMultiplyAndAdd() {
-         // Example from test case 1
+        // Example from test case 1
         byte[] h = Utils.hexToBytes("86eabc8e4c96193d290504e7c600df6cf8d8256131ec2c138a3e7e162e525404");
         byte[] a = Utils.hexToBytes("307c83864f2833cb427a2ef1c00a013cfdff2768d980c0a3a520f006904de94f");
         byte[] r = Utils.hexToBytes("f38907308c893deaf244787db4af53682249107418afc2edc58f75ac58a07404");

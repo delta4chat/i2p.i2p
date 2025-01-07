@@ -31,10 +31,12 @@ public class SigningPublicKeyTest extends StructureTest {
         publicKey.setData(data);
         return publicKey;
     }
-    public DataStructure createStructureToRead() { return new SigningPublicKey(); }
+    public DataStructure createStructureToRead() {
+        return new SigningPublicKey();
+    }
 
     @Test
-    public void testBase64Constructor() throws Exception{
+    public void testBase64Constructor() throws Exception {
         SigningPublicKey publicKey = new SigningPublicKey();
         byte data[] = new byte[SigningPublicKey.KEYSIZE_BYTES];
         for (int i = 0; i < data.length; i++)
@@ -46,7 +48,7 @@ public class SigningPublicKeyTest extends StructureTest {
     }
 
     @Test
-    public void testNullEquals(){
+    public void testNullEquals() {
         SigningPublicKey publicKey = new SigningPublicKey();
         byte data[] = new byte[SigningPublicKey.KEYSIZE_BYTES];
         for (int i = 0; i < data.length; i++)
@@ -57,7 +59,7 @@ public class SigningPublicKeyTest extends StructureTest {
     }
 
     @Test
-    public void testNullData() throws Exception{
+    public void testNullData() throws Exception {
         SigningPublicKey publicKey = new SigningPublicKey();
         publicKey.toString();
 
@@ -71,7 +73,7 @@ public class SigningPublicKeyTest extends StructureTest {
     }
 
     @Test
-    public void testShortData() throws Exception{
+    public void testShortData() throws Exception {
         SigningPublicKey publicKey = new SigningPublicKey();
         byte data[] = new byte[56];
         for (int i = 0; i < data.length; i++)
@@ -87,7 +89,7 @@ public class SigningPublicKeyTest extends StructureTest {
     }
 
     @Test
-    public void testShortRead() throws Exception{
+    public void testShortRead() throws Exception {
         SigningPublicKey publicKey = new SigningPublicKey();
         ByteArrayInputStream in = new ByteArrayInputStream(DataHelper.getASCII("six times nine equals forty-two"));
 

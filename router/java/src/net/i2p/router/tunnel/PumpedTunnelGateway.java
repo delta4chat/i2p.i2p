@@ -25,11 +25,11 @@ import net.i2p.util.Log;
  *     messages or instruct the TunnelGateway to offer it the messages again in
  *     a short while (in an attempt to coallesce them).
  * <li>when the QueueProcessor accepts a TunnelGateway.Pending, it preprocesses
- *     it into fragments, forwarding each preprocessed fragment group through 
+ *     it into fragments, forwarding each preprocessed fragment group through
  *     the Sender.</li>
- * <li>the Sender then encrypts the preprocessed data and delivers it to the 
+ * <li>the Sender then encrypts the preprocessed data and delivers it to the
  *     Receiver.</li>
- * <li>the Receiver now has the encrypted message and may do with it as it 
+ * <li>the Receiver now has the encrypted message and may do with it as it
  *     pleases (e.g. wrap it as necessary and enqueue it onto the OutNetMessagePool,
  *     or if debugging, verify that it can be decrypted properly)</li>
  * </ol>
@@ -40,7 +40,7 @@ class PumpedTunnelGateway extends TunnelGateway {
     private final TunnelGatewayPumper _pumper;
     private final boolean _isInbound;
     private final Hash _nextHop;
-    
+
     /**
      *  warning - these limit total messages per second throughput due to
      *  requeue delay in TunnelGatewayPumper to max * 1000 / REQUEUE_TIME
@@ -53,9 +53,9 @@ class PumpedTunnelGateway extends TunnelGateway {
     /**
      * @param preprocessor this pulls Pending messages off a list, builds some
      *                     full preprocessed messages, and pumps those into the sender
-     * @param sender this takes a preprocessed message, encrypts it, and sends it to 
+     * @param sender this takes a preprocessed message, encrypts it, and sends it to
      *               the receiver
-     * @param receiver this receives the encrypted message and forwards it off 
+     * @param receiver this receives the encrypted message and forwards it off
      *                 to the first hop
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -81,7 +81,7 @@ class PumpedTunnelGateway extends TunnelGateway {
         }
         _pumper = pumper;
     }
-    
+
     /**
      * Add a message to be sent down the tunnel, either sending it now (perhaps
      * coallesced with other pending messages) or after a brief pause (_flushFrequency).
@@ -163,7 +163,7 @@ class PumpedTunnelGateway extends TunnelGateway {
             if (delayedFlush)
                 delayAmount = _preprocessor.getDelayAmount();
             _lastFlush = _context.clock().now();
-            
+
             // expire any as necessary, even if its fragmented
             for (int i = 0; i < _queue.size(); i++) {
                 PendingGatewayMessage m = _queue.get(i);
@@ -181,7 +181,7 @@ class PumpedTunnelGateway extends TunnelGateway {
                     _log.debug("Remaining after preprocessing: " + _queue);
             }
         }
-        
+
         if (delayedFlush) {
             _delayedFlush.reschedule(delayAmount);
         }
@@ -201,5 +201,5 @@ class PumpedTunnelGateway extends TunnelGateway {
                       " IB? " + _isInbound + " backlogged? " + backlogged);
         return rv;
     }
-    
+
 }

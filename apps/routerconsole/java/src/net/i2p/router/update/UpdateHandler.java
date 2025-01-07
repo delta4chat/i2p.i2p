@@ -25,12 +25,12 @@ import static net.i2p.update.UpdateMethod.*;
 class UpdateHandler implements Updater {
     protected final RouterContext _context;
     protected final ConsoleUpdateManager _mgr;
-    
+
     public UpdateHandler(RouterContext ctx, ConsoleUpdateManager mgr) {
         _context = ctx;
         _mgr = mgr;
     }
-    
+
     /**
      *  Start a download and return a handle to the download task.
      *  Should not block.
@@ -43,9 +43,9 @@ class UpdateHandler implements Updater {
                              String id, String newVersion, long maxTime) {
         boolean shouldProxy = _context.getProperty(ConfigUpdateHandler.PROP_SHOULD_PROXY, ConfigUpdateHandler.DEFAULT_SHOULD_PROXY);
         if ((type != ROUTER_SIGNED && type != ROUTER_SIGNED_SU3) ||
-            (shouldProxy && method != HTTP) ||
-            ((!shouldProxy) && method != HTTP_CLEARNET && method != HTTPS_CLEARNET) ||
-            updateSources.isEmpty())
+                (shouldProxy && method != HTTP) ||
+                ((!shouldProxy) && method != HTTP_CLEARNET && method != HTTPS_CLEARNET) ||
+                updateSources.isEmpty())
             return null;
         UpdateRunner update = new UpdateRunner(_context, _mgr, type, method, updateSources);
         // set status before thread to ensure UI feedback

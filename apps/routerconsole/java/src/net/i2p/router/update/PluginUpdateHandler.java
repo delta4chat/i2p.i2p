@@ -42,7 +42,7 @@ class PluginUpdateHandler implements Checker, Updater {
     public UpdateTask check(UpdateType type, UpdateMethod method,
                             String appName, String currentVersion, long maxTime) {
         if ((type != UpdateType.PLUGIN) ||
-            method != UpdateMethod.HTTP || appName.length() <= 0)
+                method != UpdateMethod.HTTP || appName.length() <= 0)
             return null;
 
         Properties props = PluginStarter.pluginProperties(_context, appName);
@@ -73,10 +73,10 @@ class PluginUpdateHandler implements Checker, Updater {
     /** download a single plugin */
     @Override
     public UpdateTask update(UpdateType type, UpdateMethod method, List<URI> updateSources,
-                               String appName, String newVersion, long maxTime) {
+                             String appName, String newVersion, long maxTime) {
         if (type != UpdateType.PLUGIN ||
-            (method != UpdateMethod.HTTP && method != UpdateMethod.FILE) ||
-            updateSources.isEmpty())
+                (method != UpdateMethod.HTTP && method != UpdateMethod.FILE) ||
+                updateSources.isEmpty())
             return null;
         Properties props = PluginStarter.pluginProperties(_context, appName);
         String oldVersion = props.getProperty("version");

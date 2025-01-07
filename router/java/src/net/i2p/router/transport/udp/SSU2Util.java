@@ -221,8 +221,8 @@ final class SSU2Util {
      *  @since 0.9.55
      */
     public static byte[] createRelayRequestData(I2PAppContext ctx, Hash h, Hash h2,
-                                                long nonce, long tag, byte[] ip, int port,
-                                                SigningPrivateKey spk) {
+            long nonce, long tag, byte[] ip, int port,
+            SigningPrivateKey spk) {
         int datalen = 16 + ip.length;
         byte[] data = new byte[datalen];
         DataHelper.toLong(data, 0, 4, nonce);
@@ -255,8 +255,8 @@ final class SSU2Util {
      *  @since 0.9.55
      */
     public static byte[] createRelayResponseData(I2PAppContext ctx, Hash h, int code,
-                                                 long nonce, byte[] ip, int port,
-                                                 SigningPrivateKey spk, long token) {
+            long nonce, byte[] ip, int port,
+            SigningPrivateKey spk, long token) {
         int datalen = 10;
         if (ip != null)
             datalen += 2 + ip.length;

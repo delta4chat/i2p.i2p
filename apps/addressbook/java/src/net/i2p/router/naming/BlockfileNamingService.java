@@ -1,8 +1,8 @@
 /*
  * free (adj.): unencumbered; not under the control of others
- * Written by mihi in 2004 and released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
- * It probably won't make your computer catch on fire, or eat 
+ * Written by mihi in 2004 and released into the public domain
+ * with no warranty of any kind, either expressed or implied.
+ * It probably won't make your computer catch on fire, or eat
  * your children, but it might.  Use at your own risk.
  */
 package net.i2p.router.naming;
@@ -143,7 +143,7 @@ public class BlockfileNamingService extends DummyNamingService {
     private static final String PROP_SOURCE = "s";
     // See susidns
     //private static final String PROP_VALIDATED = "v";
-    
+
     private static final String DUMMY = "";
     private static final int NEGATIVE_CACHE_SIZE = 32;
     private static final int MAX_VALUE_LENGTH = 4096;
@@ -192,12 +192,15 @@ public class BlockfileNamingService extends DummyNamingService {
                 }
             } catch (IOException ioe) {
                 if (raf != null) {
-                    try { raf.close(); } catch (IOException e) {}
+                    try {
+                        raf.close();
+                    }
+                    catch (IOException e) {}
                 }
                 File corrupt = new File(_context.getRouterDir(), HOSTS_DB + '.' + System.currentTimeMillis() + ".corrupt");
                 _log.log(Log.CRIT, "Corrupt, unsupported version, or unreadable database " +
-                                   f + ", moving to " + corrupt +
-                                   " and creating new database", ioe);
+                         f + ", moving to " + corrupt +
+                         " and creating new database", ioe);
                 boolean success = f.renameTo(corrupt);
                 if (!success)
                     _log.log(Log.CRIT, "Failed to move corrupt database " + f + " to " + corrupt);
@@ -212,7 +215,10 @@ public class BlockfileNamingService extends DummyNamingService {
                 bf = initNew(raf);
             } catch (IOException ioe) {
                 if (raf != null) {
-                    try { raf.close(); } catch (IOException e) {}
+                    try {
+                        raf.close();
+                    }
+                    catch (IOException e) {}
                 }
                 _log.log(Log.CRIT, "Failed to initialize database", ioe);
                 throw new RuntimeException(ioe);
@@ -281,13 +287,16 @@ public class BlockfileNamingService extends DummyNamingService {
                             count++;
                         } else {
                             _log.logAlways(Log.WARN, "Unable to import entry for " + key +
-                                                     " from file " + file + " - bad Base 64: " + b64);
+                                           " from file " + file + " - bad Base 64: " + b64);
                         }
                     }
                 } catch (IOException ioe) {
                     _log.error("Failed to read hosts from " + file, ioe);
                 } finally {
-                    if (in != null) try { in.close(); } catch (IOException ioe) {}
+                    if (in != null) try {
+                            in.close();
+                        }
+                        catch (IOException ioe) {}
                 }
                 total += count;
                 _log.logAlways(Log.INFO, "Migrating " + count + " hosts from " + file + " to new hosts database");
@@ -414,8 +423,8 @@ public class BlockfileNamingService extends DummyNamingService {
                 Map<String, Destination> entries = getEntries();
                 int i = 0;
                 for (Map.Entry<String, Destination> entry : entries.entrySet()) {
-                     addReverseEntry(entry.getKey(), entry.getValue());
-                     i++;
+                    addReverseEntry(entry.getKey(), entry.getValue());
+                    i++;
                 }
                 // i may be greater than skiplist keys if there are dups
                 if (_log.shouldLog(Log.WARN))
@@ -438,7 +447,7 @@ public class BlockfileNamingService extends DummyNamingService {
                 Properties info = hdr.get(PROP_INFO);
                 if (info == null)
                     throw new IOException("No header info");
-                for (String list : _lists) { 
+                for (String list : _lists) {
                     try {
                         // so that we can handle an aborted upgrade,
                         // we keep track of the version of each list
@@ -550,15 +559,15 @@ public class BlockfileNamingService extends DummyNamingService {
      *  @param source may be null
      *  @throws RuntimeException
      */
-/****
-    private void addEntry(SkipList sl, String key, Destination dest, String source) {
-        Properties props = new Properties();
-        props.setProperty(PROP_ADDED, Long.toString(_context.clock().now()));
-        if (source != null)
-            props.setProperty(PROP_SOURCE, source);
-        addEntry(sl, key, dest, props);
-    }
-****/
+    /****
+        private void addEntry(SkipList sl, String key, Destination dest, String source) {
+            Properties props = new Properties();
+            props.setProperty(PROP_ADDED, Long.toString(_context.clock().now()));
+            if (source != null)
+                props.setProperty(PROP_SOURCE, source);
+            addEntry(sl, key, dest, props);
+        }
+    ****/
 
     /**
      *  Single dest version.
@@ -600,7 +609,7 @@ public class BlockfileNamingService extends DummyNamingService {
             rv.add(tok.nextToken());
         return rv;
     }
-    
+
     /**
      *  Caller must synchronize
      *  @return removed object or null
@@ -617,11 +626,11 @@ public class BlockfileNamingService extends DummyNamingService {
      *  @return null without exception on error (logs only)
      *  @since 0.8.9
      */
-/****
-    private String getReverseEntry(Destination dest) {
-        return getReverseEntry(dest.calculateHash());
-    }
-****/
+    /****
+        private String getReverseEntry(Destination dest) {
+            return getReverseEntry(dest.calculateHash());
+        }
+    ****/
 
     /**
      *  Caller must synchronize.
@@ -738,14 +747,14 @@ public class BlockfileNamingService extends DummyNamingService {
      *  @since 0.8.9
      */
     private static Integer getReverseKey(Destination dest) {
-        return getReverseKey(dest.calculateHash());        
+        return getReverseKey(dest.calculateHash());
     }
 
     /**
      *  @since 0.8.9
      */
     private static Integer getReverseKey(Hash hash) {
-        byte[] hashBytes = hash.getData();        
+        byte[] hashBytes = hash.getData();
         int i = (int) DataHelper.fromLong(hashBytes, 0, 4);
         return Integer.valueOf(i);
     }
@@ -809,7 +818,7 @@ public class BlockfileNamingService extends DummyNamingService {
         synchronized(_bf) {
             if (_isClosed)
                 return null;
-            for (String list : _lists) { 
+            for (String list : _lists) {
                 if (listname != null && !list.equals(listname))
                     continue;
                 try {
@@ -871,7 +880,7 @@ public class BlockfileNamingService extends DummyNamingService {
         synchronized(_bf) {
             if (_isClosed)
                 return null;
-            for (String list : _lists) { 
+            for (String list : _lists) {
                 if (listname != null && !list.equals(listname))
                     continue;
                 try {
@@ -963,14 +972,14 @@ public class BlockfileNamingService extends DummyNamingService {
                     sl = _bf.makeIndex(listname, _stringSerializer, _destSerializer);
                 boolean changed =  (checkExisting || !_listeners.isEmpty()) && sl.get(key) != null;
                 if (changed && checkExisting)
-                        return false;
+                    return false;
                 addEntry(sl, key, d, props);
                 if (changed) {
                     removeCache(hostname);
                     // removeReverseEntry(key, oldDest) ???
                 }
                 addReverseEntry(key, d);
-                for (NamingServiceListener nsl : _listeners) { 
+                for (NamingServiceListener nsl : _listeners) {
                     if (changed)
                         nsl.entryChanged(this, hostname, d, options);
                     else
@@ -1035,7 +1044,7 @@ public class BlockfileNamingService extends DummyNamingService {
                     sl = _bf.makeIndex(listname, _stringSerializer, _destSerializer);
                 boolean changed =  (checkExisting || !_listeners.isEmpty()) && sl.get(key) != null;
                 if (changed && checkExisting)
-                        return false;
+                    return false;
                 addEntry(sl, key, dests, outProps);
                 if (changed) {
                     removeCache(hostname);
@@ -1045,7 +1054,7 @@ public class BlockfileNamingService extends DummyNamingService {
                     Destination d = dests.get(i);
                     Properties options = propsList.get(i);
                     addReverseEntry(key, d);
-                    for (NamingServiceListener nsl : _listeners) { 
+                    for (NamingServiceListener nsl : _listeners) {
                         if (changed)
                             nsl.entryChanged(this, hostname, d, options);
                         else
@@ -1097,7 +1106,7 @@ public class BlockfileNamingService extends DummyNamingService {
                     } catch (ClassCastException cce) {
                         _log.error("DB reverse remove error", cce);
                     }
-                    for (NamingServiceListener nsl : _listeners) { 
+                    for (NamingServiceListener nsl : _listeners) {
                         nsl.entryRemoved(this, key);
                     }
                 }
@@ -1798,37 +1807,37 @@ public class BlockfileNamingService extends DummyNamingService {
         _invalid.clear();
     }
 
-  /****
-    private void dumpDB() {
-        synchronized(_bf) {
-            if (_isClosed)
-                _log.error("Database is closed");
-            for (String list : _lists) { 
-                try {
-                    SkipList sl = _bf.getIndex(list, _stringSerializer, _destSerializer);
-                    if (sl == null) {
-                        _log.error("No list found for " + list);
-                        continue;
-                    }
-                    int i = 0;
-                    for (SkipIterator iter = sl.iterator(); iter.hasNext(); ) {
-                         String key = (String) iter.nextKey();
-                         DestEntry de = (DestEntry) iter.next();
-                         if (!validate(key, de, list))
-                             continue;
-                         _log.error("DB " + list + " key " + key + " val " + de);
-                         i++;
-                    }
-                    _log.error(i + " entries found for " + list);
-                } catch (IOException ioe) {
-                    _log.error("Fail", ioe);
-                    break;
-                }
-            }
-            deleteInvalid();
-        }
-    }
-  ****/
+    /****
+      private void dumpDB() {
+          synchronized(_bf) {
+              if (_isClosed)
+                  _log.error("Database is closed");
+              for (String list : _lists) {
+                  try {
+                      SkipList sl = _bf.getIndex(list, _stringSerializer, _destSerializer);
+                      if (sl == null) {
+                          _log.error("No list found for " + list);
+                          continue;
+                      }
+                      int i = 0;
+                      for (SkipIterator iter = sl.iterator(); iter.hasNext(); ) {
+                           String key = (String) iter.nextKey();
+                           DestEntry de = (DestEntry) iter.next();
+                           if (!validate(key, de, list))
+                               continue;
+                           _log.error("DB " + list + " key " + key + " val " + de);
+                           i++;
+                      }
+                      _log.error(i + " entries found for " + list);
+                  } catch (IOException ioe) {
+                      _log.error("Fail", ioe);
+                      break;
+                  }
+              }
+              deleteInvalid();
+          }
+      }
+    ****/
 
     private void close() {
         synchronized(_bf) {
@@ -2062,8 +2071,8 @@ public class BlockfileNamingService extends DummyNamingService {
      *                             (not including the two length bytes) is greater than 65535 bytes.
      * @since 0.9.26
      */
-    private static void writeProperties(ByteArrayOutputStream rawStream, Properties p) 
-            throws DataFormatException, IOException {
+    private static void writeProperties(ByteArrayOutputStream rawStream, Properties p)
+    throws DataFormatException, IOException {
         if (p != null && !p.isEmpty()) {
             ByteArrayOutputStream baos = new ByteArrayOutputStream(p.size() * 32);
             for (Map.Entry<Object, Object> entry : p.entrySet()) {
@@ -2095,8 +2104,8 @@ public class BlockfileNamingService extends DummyNamingService {
      * @return a Properties
      * @since 0.9.26
      */
-    public static Properties readProperties(ByteArrayInputStream in) 
-        throws DataFormatException, IOException {
+    public static Properties readProperties(ByteArrayInputStream in)
+    throws DataFormatException, IOException {
         Properties props = new Properties();
         int size = (int) DataHelper.readLong(in, 2);
         // this doesn't prevent reading past the end on corruption
@@ -2128,8 +2137,8 @@ public class BlockfileNamingService extends DummyNamingService {
      * @throws DataFormatException if the string is not valid
      * @throws IOException if there is an IO error writing the string
      */
-    private static void writeLongStringUTF8(ByteArrayOutputStream out, String string) 
-        throws DataFormatException, IOException {
+    private static void writeLongStringUTF8(ByteArrayOutputStream out, String string)
+    throws DataFormatException, IOException {
         if (string == null) {
             out.write(0);
         } else {
@@ -2138,7 +2147,7 @@ public class BlockfileNamingService extends DummyNamingService {
             if (len >= 255) {
                 if (len > MAX_VALUE_LENGTH)
                     throw new DataFormatException(MAX_VALUE_LENGTH + " max, but this is "
-                                              + len + " [" + string + "]");
+                                                  + len + " [" + string + "]");
                 out.write(0xff);
                 DataHelper.writeLong(out, 2, len);
             } else {
@@ -2211,100 +2220,100 @@ public class BlockfileNamingService extends DummyNamingService {
         sprops.setProperty("list", lname);
         System.out.println("List " + lname + " contains " + bns.size(sprops));
 
-/****
-        List<String> names = null;
-        Properties props = new Properties();
-        try {
-            DataHelper.loadProps(props, new File("hosts.txt"), true);
-            names = new ArrayList(props.keySet());
-            Collections.shuffle(names);
-        } catch (IOException ioe) {
-            System.out.println("No hosts.txt to test with");
-            bns.close();
-            return;
-        }
+        /****
+                List<String> names = null;
+                Properties props = new Properties();
+                try {
+                    DataHelper.loadProps(props, new File("hosts.txt"), true);
+                    names = new ArrayList(props.keySet());
+                    Collections.shuffle(names);
+                } catch (IOException ioe) {
+                    System.out.println("No hosts.txt to test with");
+                    bns.close();
+                    return;
+                }
 
-        System.out.println("size() reports " + bns.size());
-        System.out.println("getEntries() returns " + bns.getEntries().size());
+                System.out.println("size() reports " + bns.size());
+                System.out.println("getEntries() returns " + bns.getEntries().size());
 
-        System.out.println("Testing with " + names.size() + " hostnames");
-        int found = 0;
-        int notfound = 0;
-        int rfound = 0;
-        int rnotfound = 0;
-        long start = System.currentTimeMillis();
-        for (String name : names) {
-             Destination dest = bns.lookup(name);
-             if (dest != null) {
-                 found++;
-                 String reverse = bns.reverseLookup(dest);
-                 if (reverse != null)
-                     rfound++;
-                 else
-                     rnotfound++;
-             } else {
-                 notfound++;
-             }
-        }
-        System.out.println("BFNS took " + DataHelper.formatDuration(System.currentTimeMillis() - start));
-        System.out.println("found " + found + " notfound " + notfound);
-        System.out.println("reverse found " + rfound + " notfound " + rnotfound);
+                System.out.println("Testing with " + names.size() + " hostnames");
+                int found = 0;
+                int notfound = 0;
+                int rfound = 0;
+                int rnotfound = 0;
+                long start = System.currentTimeMillis();
+                for (String name : names) {
+                     Destination dest = bns.lookup(name);
+                     if (dest != null) {
+                         found++;
+                         String reverse = bns.reverseLookup(dest);
+                         if (reverse != null)
+                             rfound++;
+                         else
+                             rnotfound++;
+                     } else {
+                         notfound++;
+                     }
+                }
+                System.out.println("BFNS took " + DataHelper.formatDuration(System.currentTimeMillis() - start));
+                System.out.println("found " + found + " notfound " + notfound);
+                System.out.println("reverse found " + rfound + " notfound " + rnotfound);
 
-        //if (true) return;
+                //if (true) return;
 
-        System.out.println("Removing all " + names.size() + " hostnames");
-        found = 0;
-        notfound = 0;
-        Collections.shuffle(names);
-        start = System.currentTimeMillis();
-        for (String name : names) {
-             if (bns.remove(name))
-                 found++;
-             else
-                 notfound++;
-        }
-        System.out.println("BFNS took " + DataHelper.formatDuration(System.currentTimeMillis() - start));
-        System.out.println("removed " + found + " not removed " + notfound);
+                System.out.println("Removing all " + names.size() + " hostnames");
+                found = 0;
+                notfound = 0;
+                Collections.shuffle(names);
+                start = System.currentTimeMillis();
+                for (String name : names) {
+                     if (bns.remove(name))
+                         found++;
+                     else
+                         notfound++;
+                }
+                System.out.println("BFNS took " + DataHelper.formatDuration(System.currentTimeMillis() - start));
+                System.out.println("removed " + found + " not removed " + notfound);
 
-        System.out.println("Adding back " + names.size() + " hostnames");
-        found = 0;
-        notfound = 0;
-        Collections.shuffle(names);
-        start = System.currentTimeMillis();
-        for (String name : names) {
-            try {
-                 if (bns.put(name, new Destination(props.getProperty(name))))
-                     found++;
-                 else
-                     notfound++;
-            } catch (DataFormatException dfe) {}
-        }
-        System.out.println("BFNS took " + DataHelper.formatDuration(System.currentTimeMillis() - start));
-        System.out.println("Added " + found + " not added " + notfound);
-        System.out.println("size() reports " + bns.size());
+                System.out.println("Adding back " + names.size() + " hostnames");
+                found = 0;
+                notfound = 0;
+                Collections.shuffle(names);
+                start = System.currentTimeMillis();
+                for (String name : names) {
+                    try {
+                         if (bns.put(name, new Destination(props.getProperty(name))))
+                             found++;
+                         else
+                             notfound++;
+                    } catch (DataFormatException dfe) {}
+                }
+                System.out.println("BFNS took " + DataHelper.formatDuration(System.currentTimeMillis() - start));
+                System.out.println("Added " + found + " not added " + notfound);
+                System.out.println("size() reports " + bns.size());
 
 
-        //bns.dumpDB();
-****/
+                //bns.dumpDB();
+        ****/
         bns.close();
         ctx.logManager().flush();
         System.out.flush();
-/****
-        if (true) return;
+        /****
+                if (true) return;
 
-        HostsTxtNamingService htns = new HostsTxtNamingService(I2PAppContext.getGlobalContext());
-        found = 0;
-        notfound = 0;
-        start = System.currentTimeMillis();
-        for (String name : names) {
-             Destination dest = htns.lookup(name);
-             if (dest != null)
-                 found++;
-             else
-                 notfound++;
-        }
-        System.out.println("HTNS took " + DataHelper.formatDuration(System.currentTimeMillis() - start));
-        System.out.println("found " + found + " notfound " + notfound);
-****/
+                HostsTxtNamingService htns = new HostsTxtNamingService(I2PAppContext.getGlobalContext());
+                found = 0;
+                notfound = 0;
+                start = System.currentTimeMillis();
+                for (String name : names) {
+                     Destination dest = htns.lookup(name);
+                     if (dest != null)
+                         found++;
+                     else
+                         notfound++;
+                }
+                System.out.println("HTNS took " + DataHelper.formatDuration(System.currentTimeMillis() - start));
+                System.out.println("found " + found + " notfound " + notfound);
+        ****/
     }
 }

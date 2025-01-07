@@ -57,7 +57,7 @@ class OutboundTunnelEndpoint {
             }
         }
     }
-    
+
     private class DefragmentedHandler implements FragmentHandler.DefragmentedReceiver {
 
         /**
@@ -114,7 +114,7 @@ class OutboundTunnelEndpoint {
             // don't drop it if we are the target
             boolean toUs = _context.routerHash().equals(toRouter);
             if ((!toUs) &&
-                _context.tunnelDispatcher().shouldDropParticipatingMessage(TunnelDispatcher.Location.OBEP, type, size))
+                    _context.tunnelDispatcher().shouldDropParticipatingMessage(TunnelDispatcher.Location.OBEP, type, size))
                 return;
             // this overstates the stat somewhat, but ok for now
             //int kb = (size + 1023) / 1024;

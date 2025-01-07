@@ -21,7 +21,7 @@ import net.i2p.desktopgui.router.RouterManager;
  *  Not fully supported.
  */
 class ExternalTrayManager extends TrayManager {
-	
+
     public ExternalTrayManager(I2PAppContext ctx, boolean useSwing) {
         super(ctx, useSwing);
     }
@@ -38,7 +38,7 @@ class ExternalTrayManager extends TrayManager {
                         RouterManager.start();
                         return null;
                     }
-                    
+
                     @Override
                     protected void done() {
                         trayIcon.displayMessage(_t("Starting"), _t("I2P is starting!"), TrayIcon.MessageType.INFO);
@@ -47,7 +47,7 @@ class ExternalTrayManager extends TrayManager {
                         //since that risks killing the I2P process as well.
                         tray.remove(trayIcon);
                     }
-                }.execute();
+                } .execute();
             }
         });
         popup.add(startItem);
@@ -59,31 +59,31 @@ class ExternalTrayManager extends TrayManager {
 
     public JPopupMenu getSwingMainMenu() {
         JPopupMenu popup = new JPopupMenu();
-/*
-        JMenuItem startItem = new JMenuItem(_t("Start I2P"));
-        startItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                new SwingWorker<Object, Object>() {
+        /*
+                JMenuItem startItem = new JMenuItem(_t("Start I2P"));
+                startItem.addActionListener(new ActionListener() {
                     @Override
-                    protected Object doInBackground() throws Exception {
-                        RouterManager.start();
-                        return null;
+                    public void actionPerformed(ActionEvent arg0) {
+                        new SwingWorker<Object, Object>() {
+                            @Override
+                            protected Object doInBackground() throws Exception {
+                                RouterManager.start();
+                                return null;
+                            }
+
+                            @Override
+                            protected void done() {
+                                trayIcon.displayMessage(_t("Starting"), _t("I2P is starting!"), TrayIcon.MessageType.INFO);
+                                //Hide the tray icon.
+                                //We cannot stop the desktopgui program entirely,
+                                //since that risks killing the I2P process as well.
+                                tray.remove(trayIcon);
+                            }
+                        }.execute();
                     }
-                    
-                    @Override
-                    protected void done() {
-                        trayIcon.displayMessage(_t("Starting"), _t("I2P is starting!"), TrayIcon.MessageType.INFO);
-                        //Hide the tray icon.
-                        //We cannot stop the desktopgui program entirely,
-                        //since that risks killing the I2P process as well.
-                        tray.remove(trayIcon);
-                    }
-                }.execute();
-            }
-        });
-        popup.add(startItem);
-*/
+                });
+                popup.add(startItem);
+        */
         initializeJNotificationItems();
         popup.add(_jnotificationItem2);
         popup.add(_jnotificationItem1);

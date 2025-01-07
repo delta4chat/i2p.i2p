@@ -6,7 +6,7 @@ import net.i2p.router.OutNetMessage;
  *
  */
 class PacketBuilder {
-    
+
     /**
      *  For debugging and stats only - does not go out on the wire.
      *  These are chosen to be higher than the highest I2NP message type,
@@ -31,7 +31,7 @@ class PacketBuilder {
      *  If we ever change this, uncomment below and in UDPPacket
     static final int PROTOCOL_VERSION = 0;
      */
-    
+
     /** if no extended options or rekey data, which we don't support  = 37 */
     public static final int HEADER_SIZE = UDPPacket.MAC_SIZE + UDPPacket.IV_SIZE + 1 + 4;
 
@@ -88,7 +88,7 @@ class PacketBuilder {
      */
     static final int PRIORITY_HIGH = 550;
     private static final int PRIORITY_LOW = OutNetMessage.PRIORITY_LOWEST;
-    
+
     /**
      *  Class for passing multiple fragments to buildPacket()
      *

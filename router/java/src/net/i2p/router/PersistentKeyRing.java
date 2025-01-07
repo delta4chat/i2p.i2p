@@ -31,7 +31,7 @@ public class PersistentKeyRing extends KeyRing {
         SessionKey old = super.put(h, sk);
         if (!sk.equals(old)) {
             _ctx.router().saveConfig(PROP_PFX + h.toBase64().replace("=", "$"),
-                                           sk.toBase64());
+                                     sk.toBase64());
         }
         return old;
     }
@@ -61,7 +61,9 @@ public class PersistentKeyRing extends KeyRing {
                 dest.fromBase64(hb);
                 sk.fromBase64(key);
                 super.put(dest, sk);
-            } catch (DataFormatException dfe) { continue; }
+            } catch (DataFormatException dfe) {
+                continue;
+            }
         }
     }
 }

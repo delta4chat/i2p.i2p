@@ -18,11 +18,11 @@ import net.i2p.util.SystemVersion;
 
 /**
  * Pull inbound packets from the inbound receiver's queue, figure out what
- * peer session they belong to (if any), authenticate and decrypt them 
- * with the appropriate keys, and push them to the appropriate handler.  
- * Data and ACK packets go to the InboundMessageFragments, the various 
+ * peer session they belong to (if any), authenticate and decrypt them
+ * with the appropriate keys, and push them to the appropriate handler.
+ * Data and ACK packets go to the InboundMessageFragments, the various
  * establishment packets go to the EstablishmentManager, and, once implemented,
- * relay packets will go to the relay manager.  At the moment, this is 
+ * relay packets will go to the relay manager.  At the moment, this is
  * an actual pool of packet handler threads, each pulling off the inbound
  * receiver's queue and pushing them as necessary.
  *
@@ -37,13 +37,13 @@ class PacketHandler {
     private final Handler[] _handlers;
     private final BlockingQueue<UDPPacket> _inboundQueue;
     private final int _networkID;
-    
+
     private static final int TYPE_POISON = -99999;
     private static final int MIN_QUEUE_SIZE = 16;
     private static final int MAX_QUEUE_SIZE = 192;
     private static final int MIN_NUM_HANDLERS = 1;  // unless < 32MB
     private static final int MAX_NUM_HANDLERS = 1;
-    
+
     PacketHandler(RouterContext ctx, UDPTransport transport, boolean enableSSU1, boolean enableSSU2, EstablishmentManager establisher,
                   InboundMessageFragments inbound, PeerTestManager testManager, IntroductionManager introManager) {
         _context = ctx;
@@ -70,17 +70,17 @@ class PacketHandler {
 
         _context.statManager().createRateStat("udp.destroyedInvalidSkew", "Destroyed session due to bad skew", "udp", UDPTransport.RATES);
     }
-    
-    public synchronized void startup() { 
+
+    public synchronized void startup() {
         _keepReading = true;
         for (int i = 0; i < _handlers.length; i++) {
             I2PThread t = new I2PThread(_handlers[i], "UDP Packet handler " + (i+1) + '/' + _handlers.length, true);
             t.start();
         }
     }
-    
-    public synchronized void shutdown() { 
-        _keepReading = false; 
+
+    public synchronized void shutdown() {
+        _keepReading = false;
         stopQueue();
     }
 
@@ -145,7 +145,7 @@ class PacketHandler {
         return rv;
     }
 
-    private class Handler implements Runnable { 
+    private class Handler implements Runnable {
 
         public void run() {
             while (_keepReading) {
@@ -161,7 +161,7 @@ class PacketHandler {
                     if (_log.shouldLog(Log.ERROR))
                         _log.error("Internal error handling " + packet, e);
                 }
-                
+
                 // back to the cache with thee!
                 packet.release();
             }
@@ -245,17 +245,17 @@ class PacketHandler {
             k2 = k1;
             header = SSU2Header.trialDecryptHandshakeHeader(packet, k1, k2);
             if (header == null ||
-                header.getType() != SSU2Util.SESSION_REQUEST_FLAG_BYTE ||
-                header.getVersion() != 2 ||
-                header.getNetID() != _networkID) {
+                    header.getType() != SSU2Util.SESSION_REQUEST_FLAG_BYTE ||
+                    header.getVersion() != 2 ||
+                    header.getNetID() != _networkID) {
                 if (header != null && _log.shouldInfo())
                     _log.info("Does not decrypt as Session Request, attempt to decrypt as TokenRequest/PeerTest/HolePunch: " + header + " from " + from);
                 // The first 32 bytes were fine, but it corrupted the next 32 bytes
                 // TODO make this more efficient, just take the first 32 bytes
                 header = SSU2Header.trialDecryptLongHeader(packet, k1, k2);
                 if (header == null ||
-                    header.getVersion() != 2 ||
-                    header.getNetID() != _networkID) {
+                        header.getVersion() != 2 ||
+                        header.getNetID() != _networkID) {
                     // typical case, SSU 1 that didn't validate, will be logged at WARN level above
                     // in group 4 receive packet
                     //if (_log.shouldDebug())
@@ -293,7 +293,7 @@ class PacketHandler {
                     return false;
                 }
                 if (type == SSU2Util.SESSION_REQUEST_FLAG_BYTE &&
-                    packet.getPacket().getLength() == SSU2Util.MIN_HANDSHAKE_DATA_LEN - 1) {
+                        packet.getPacket().getLength() == SSU2Util.MIN_HANDSHAKE_DATA_LEN - 1) {
                     // i2pd short 87 byte session request thru 0.9.56, drop packet
                     if (_log.shouldWarn())
                         _log.warn("Short Session Request len 87 from " + from);
@@ -311,23 +311,23 @@ class PacketHandler {
                 k2 = k1;
                 header = SSU2Header.trialDecryptHandshakeHeader(packet, k1, k2);
                 if (header == null ||
-                    header.getType() != SSU2Util.SESSION_REQUEST_FLAG_BYTE ||
-                    header.getVersion() != 2 ||
-                    header.getNetID() != _networkID) {
+                        header.getType() != SSU2Util.SESSION_REQUEST_FLAG_BYTE ||
+                        header.getVersion() != 2 ||
+                        header.getNetID() != _networkID) {
                     // possibly token-request-after-retry? let's see...
                     header = SSU2Header.trialDecryptLongHeader(packet, k1, k2);
                     if (header != null && header.getType() == SSU2Util.SESSION_REQUEST_FLAG_BYTE &&
-                        header.getVersion() == 2 && header.getNetID() == _networkID &&
-                        packet.getPacket().getLength() == 87) {
+                            header.getVersion() == 2 && header.getNetID() == _networkID &&
+                            packet.getPacket().getLength() == 87) {
                         // i2pd short 87 byte session request thru 0.9.56, drop packet
                         if (_log.shouldWarn())
                             _log.warn("Short Session Request after Retry len 87 on " + state);
                         return true;
                     }
                     if (header == null ||
-                        header.getType() != SSU2Util.TOKEN_REQUEST_FLAG_BYTE ||
-                        header.getVersion() != 2 ||
-                        header.getNetID() != _networkID) {
+                            header.getType() != SSU2Util.TOKEN_REQUEST_FLAG_BYTE ||
+                            header.getVersion() != 2 ||
+                            header.getNetID() != _networkID) {
                         if (_log.shouldWarn())
                             _log.warn("Failed decrypt Session/Token Request after Retry: " + header +
                                       " len " + packet.getPacket().getLength() + " on " + state);
@@ -367,7 +367,7 @@ class PacketHandler {
                     return false;
                 }
                 if (header.getPacketNumber() != 0 ||
-                    header.getType() != SSU2Util.SESSION_CONFIRMED_FLAG_BYTE) {
+                        header.getType() != SSU2Util.SESSION_CONFIRMED_FLAG_BYTE) {
                     if (_log.shouldWarn())
                         _log.warn("Queue possible data packet len: " +
                                   packet.getPacket().getLength() + " on " + state);
@@ -451,17 +451,17 @@ class PacketHandler {
         }
         int type;
         if (header == null ||
-            header.getType() != SSU2Util.SESSION_CREATED_FLAG_BYTE ||
-            header.getVersion() != 2 ||
-            header.getNetID() != _networkID) {
+                header.getType() != SSU2Util.SESSION_CREATED_FLAG_BYTE ||
+                header.getVersion() != 2 ||
+                header.getNetID() != _networkID) {
             if (_log.shouldInfo())
                 _log.info("Does not decrypt as Session Created, attempt to decrypt as Retry: " + header);
             k2 = state.getRcvRetryHeaderEncryptKey2();
             header = SSU2Header.trialDecryptLongHeader(packet, k1, k2);
             if (header == null ||
-                header.getType() != SSU2Util.RETRY_FLAG_BYTE ||
-                header.getVersion() != 2 ||
-                header.getNetID() != _networkID) {
+                    header.getType() != SSU2Util.RETRY_FLAG_BYTE ||
+                    header.getVersion() != 2 ||
+                    header.getNetID() != _networkID) {
                 if (_log.shouldInfo())
                     _log.info("Does not decrypt as Session Created or Retry: " + header + " on " + state);
                 return false;

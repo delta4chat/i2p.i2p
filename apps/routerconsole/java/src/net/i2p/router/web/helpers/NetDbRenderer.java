@@ -71,25 +71,25 @@ class NetDbRenderer {
      *  Inner class, can't be Serializable
      */
     private class LeaseSetComparator implements Comparator<LeaseSet> {
-         public int compare(LeaseSet l, LeaseSet r) {
-             Hash dl = l.getHash();
-             Hash dr = r.getHash();
-             boolean locall = _context.clientManager().isLocal(dl);
-             boolean localr = _context.clientManager().isLocal(dr);
-             if (locall && !localr) return -1;
-             if (localr && !locall) return 1;
-             return dl.toBase32().compareTo(dr.toBase32());
+        public int compare(LeaseSet l, LeaseSet r) {
+            Hash dl = l.getHash();
+            Hash dr = r.getHash();
+            boolean locall = _context.clientManager().isLocal(dl);
+            boolean localr = _context.clientManager().isLocal(dr);
+            if (locall && !localr) return -1;
+            if (localr && !locall) return 1;
+            return dl.toBase32().compareTo(dr.toBase32());
         }
     }
 
     /** for debugging @since 0.7.14 */
     private static class LeaseSetRoutingKeyComparator implements Comparator<LeaseSet>, Serializable {
-         private final Hash _us;
-         public LeaseSetRoutingKeyComparator(Hash us) {
-             _us = us;
-         }
-         public int compare(LeaseSet l, LeaseSet r) {
-             return HashDistance.getDistance(_us, l.getRoutingKey()).compareTo(HashDistance.getDistance(_us, r.getRoutingKey()));
+        private final Hash _us;
+        public LeaseSetRoutingKeyComparator(Hash us) {
+            _us = us;
+        }
+        public int compare(LeaseSet l, LeaseSet r) {
+            return HashDistance.getDistance(_us, l.getRoutingKey()).compareTo(HashDistance.getDistance(_us, r.getRoutingKey()));
         }
     }
 
@@ -115,8 +115,8 @@ class NetDbRenderer {
 
         if (".".equals(routerPrefix)) {
             buf.append("<table><tr><td class=\"infohelp\">")
-               .append(_t("Never reveal your router identity to anyone, as it is uniquely linked to your IP address in the network database."))
-               .append("</td></tr></table>");
+            .append(_t("Never reveal your router identity to anyone, as it is uniquely linked to your IP address in the network database."))
+            .append("</td></tr></table>");
             renderRouterInfo(buf, _context.router().getRouterInfo(), true, true);
         } else if (routerPrefix != null && routerPrefix.length() >= 44) {
             // easy way, full hash
@@ -133,13 +133,16 @@ class NetDbRenderer {
                         netdb.lookupRouterInfo(hash, lw, lw, 8*1000);
                         // just wait right here in the middle of the rendering, sure
                         synchronized(lw) {
-                            try { lw.wait(9*1000); } catch (InterruptedException ie) {}
+                            try {
+                                lw.wait(9*1000);
+                            }
+                            catch (InterruptedException ie) {}
                         }
                         ri = (RouterInfo) netdb.lookupLocallyWithoutValidation(hash);
                     }
                 }
                 if (ri != null) {
-                   renderRouterInfo(buf, ri, false, true);
+                    renderRouterInfo(buf, ri, false, true);
                 } else {
                     buf.append("<div class=\"netdbnotfound\">");
                     buf.append(_t("Router")).append(' ');
@@ -349,14 +352,14 @@ class NetDbRenderer {
         buf.append("<div class=\"netdbnotfound\">");
         if (page > 0) {
             buf.append("<a href=\"/netdb?pg=").append(page)
-               .append("&amp;ps=").append(pageSize).append(ubuf).append("\">");
+            .append("&amp;ps=").append(pageSize).append(ubuf).append("\">");
             buf.append(_t("Previous Page"));
             buf.append("</a>&nbsp;&nbsp;&nbsp;");
         }
         buf.append(_t("Page")).append(' ').append(page + 1);
         if (morePages) {
             buf.append("&nbsp;&nbsp;&nbsp;<a href=\"/netdb?pg=").append(page + 2)
-               .append("&amp;ps=").append(pageSize).append(ubuf).append("\">");
+            .append("&amp;ps=").append(pageSize).append(ubuf).append("\">");
             buf.append(_t("Next Page"));
             buf.append("</a>");
         }
@@ -474,20 +477,20 @@ class NetDbRenderer {
             RouterAddress ra = ri.getTargetAddress(transport);
             if (ra != null) {
                 switch (mode) {
-                    case 0:
-                    case 2:
-                        if (ra.getOption("v") == null)
-                            continue;
-                        break;
-
-                    case 1:
-                    case 3:
-                        if (ra.getOption("v") != null)
-                            continue;
-                        break;
-
-                    case 4:
+                case 0:
+                case 2:
+                    if (ra.getOption("v") == null)
                         continue;
+                    break;
+
+                case 1:
+                case 3:
+                    if (ra.getOption("v") != null)
+                        continue;
+                    break;
+
+                case 4:
+                    continue;
 
                 }
             }
@@ -541,7 +544,7 @@ class NetDbRenderer {
             for (RouterAddress ra : ri.getAddresses()) {
                 String host = ra.getHost();
                 if (host != null &&
-                    (host.startsWith(ip) || (altip != null && host.startsWith(altip))))
+                        (host.startsWith(ip) || (altip != null && host.startsWith(altip))))
                     continue outer;
             }
             iter.remove();
@@ -559,7 +562,7 @@ class NetDbRenderer {
             for (RouterAddress ra : ri.getAddresses()) {
                 int raport = ra.getPort();
                 if (port == raport ||
-                    (highPort > 0 && raport >= port && raport <= highPort)) {
+                        (highPort > 0 && raport >= port && raport <= highPort)) {
                     continue outer;
                 }
             }
@@ -644,13 +647,17 @@ class NetDbRenderer {
      *  @since 0.9.48
      */
     private class LookupWaiter extends JobImpl {
-        public LookupWaiter() { super(_context); }
+        public LookupWaiter() {
+            super(_context);
+        }
         public void runJob() {
             synchronized(this) {
                 notifyAll();
             }
         }
-        public String getName() { return "Console netdb lookup"; }
+        public String getName() {
+            return "Console netdb lookup";
+        }
     }
 
     /**
@@ -744,9 +751,9 @@ class NetDbRenderer {
                         exp = myLeaseSet.getLatestLeaseDate() - now;
                     }
                     if (exp > 0)
-                            buf.append(_t("Expires in {0}", DataHelper.formatDuration2(exp)));
-                        else
-                            buf.append(_t("Expired {0} ago", DataHelper.formatDuration2(0-exp)));
+                        buf.append(_t("Expires in {0}", DataHelper.formatDuration2(exp)));
+                    else
+                        buf.append(_t("Expired {0} ago", DataHelper.formatDuration2(0-exp)));
                 }
                 buf.append("</th><th></th></tr>\n");
                 buf.append("\n<tr><td colspan=\"2\"><ul class=\"netdb_leases\">");
@@ -778,18 +785,18 @@ class NetDbRenderer {
         } else {
             buf.append("<tr><th colspan=\"3\">Leaseset Summary for Floodfill</th>" +
                        "<th><a href=\"/configadvanced\" title=\"").append(_t("Manually Configure Floodfill Participation")).append("\">[")
-               .append(_t("Configure Floodfill Participation"))
-               .append("]</a></th></tr>\n");
-               buf.append("<tr><td><b>Total Known Leasesets:</b></td><td colspan=\"3\">").append(leases.size()).append("</td></tr>\n");
+            .append(_t("Configure Floodfill Participation"))
+            .append("]</a></th></tr>\n");
+            buf.append("<tr><td><b>Total Known Leasesets:</b></td><td colspan=\"3\">").append(leases.size()).append("</td></tr>\n");
         }
 
         if (debug) {
             RouterKeyGenerator gen = _context.routerKeyGenerator();
             buf.append("<tr><td><b>Published (RAP) Leasesets:</b></td><td colspan=\"3\">").append(netdb.getKnownLeaseSets()).append("</td></tr>\n")
-               .append("<tr><td><b>Mod Data:</b></td><td>").append(DataHelper.getUTF8(gen.getModData())).append("</td>")
-               .append("<td><b>Last Changed:</b></td><td>").append(DataHelper.formatTime(gen.getLastChanged())).append("</td></tr>\n")
-               .append("<tr><td><b>Next Mod Data:</b></td><td>").append(DataHelper.getUTF8(gen.getNextModData())).append("</td>")
-               .append("<td><b>Change in:</b></td><td>").append(DataHelper.formatDuration(gen.getTimeTillMidnight())).append("</td></tr>\n");
+            .append("<tr><td><b>Mod Data:</b></td><td>").append(DataHelper.getUTF8(gen.getModData())).append("</td>")
+            .append("<td><b>Last Changed:</b></td><td>").append(DataHelper.formatTime(gen.getLastChanged())).append("</td></tr>\n")
+            .append("<tr><td><b>Next Mod Data:</b></td><td>").append(DataHelper.getUTF8(gen.getNextModData())).append("</td>")
+            .append("<td><b>Change in:</b></td><td>").append(DataHelper.formatDuration(gen.getTimeTillMidnight())).append("</td></tr>\n");
         }
         if (client == null) {
             int ff = _context.peerManager().getPeersByCapability(FloodfillNetworkDatabaseFacade.CAPABILITY_FLOODFILL).size();
@@ -807,55 +814,55 @@ class NetDbRenderer {
             //if (!debug)
             //    buf.append("<div id=\"noleasesets\"><i>").append(_t("No Leasesets currently active.")).append("</i></div>");
         } else {
-          if (debug) {
-            // Find the center of the RAP leasesets
-            for (LeaseSet ls : leases) {
-                if (ls.getReceivedAsPublished())
-                    rapCount++;
-            }
-            medianCount = rapCount / 2;
-          }
-
-          boolean linkSusi = _context.portMapper().isRegistered("susidns");
-          long now = _context.clock().now();
-          buf.append("<div class=\"leasesets_container\">");
-          boolean ldebug = debug || client != null;
-          for (LeaseSet ls : leases) {
-            String distance;
             if (debug) {
-                BigInteger dist = HashDistance.getDistance(ourRKey, ls.getRoutingKey());
-                if (ls.getReceivedAsPublished()) {
-                    if (c++ == medianCount)
-                        median = dist;
+                // Find the center of the RAP leasesets
+                for (LeaseSet ls : leases) {
+                    if (ls.getReceivedAsPublished())
+                        rapCount++;
                 }
-                distance = fmt.format(biLog2(dist));
-            } else {
-                distance = null;
+                medianCount = rapCount / 2;
             }
-            if (!ls.getHash().equals(myLeaseSet.getHash())) {
-                renderLeaseSet(buf, ls, ldebug, now, linkSusi, distance);
-                out.write(buf.toString());
-                buf.setLength(0);
-            }
-          } // for each
-          if (debug) {
-              buf.append("<table id=\"leasesetdebug\"><tr><td><b>Network data (only valid if floodfill):</b></td><td colspan=\"3\">");
-              //buf.append("</b></p><p><b>Center of Key Space (router hash): " + ourRKey.toBase64());
-              if (median != null) {
-                  double log2 = biLog2(median);
-                  buf.append("</td></tr>")
-                     .append("<tr><td><b>Median distance (bits):</b></td><td colspan=\"3\">").append(fmt.format(log2)).append("</td></tr>\n");
-                  // 2 for 4 floodfills... -1 for median
-                  // this can be way off for unknown reasons
-                  int total = (int) Math.round(Math.pow(2, 2 + 256 - 1 - log2));
-                  buf.append("<tr><td><b>Estimated total floodfills:</b></td><td colspan=\"3\">").append(total).append("</td></tr>\n");
-                  buf.append("<tr><td><b>Estimated total leasesets:</b></td><td colspan=\"3\">").append(total * rapCount / 4);
-              } else {
-                  buf.append("<i>Not floodfill or no data.</i>");
-              }
-              buf.append("</td></tr></table>\n");
-          } // median table
-          buf.append("</div>");
+
+            boolean linkSusi = _context.portMapper().isRegistered("susidns");
+            long now = _context.clock().now();
+            buf.append("<div class=\"leasesets_container\">");
+            boolean ldebug = debug || client != null;
+            for (LeaseSet ls : leases) {
+                String distance;
+                if (debug) {
+                    BigInteger dist = HashDistance.getDistance(ourRKey, ls.getRoutingKey());
+                    if (ls.getReceivedAsPublished()) {
+                        if (c++ == medianCount)
+                            median = dist;
+                    }
+                    distance = fmt.format(biLog2(dist));
+                } else {
+                    distance = null;
+                }
+                if (!ls.getHash().equals(myLeaseSet.getHash())) {
+                    renderLeaseSet(buf, ls, ldebug, now, linkSusi, distance);
+                    out.write(buf.toString());
+                    buf.setLength(0);
+                }
+            } // for each
+            if (debug) {
+                buf.append("<table id=\"leasesetdebug\"><tr><td><b>Network data (only valid if floodfill):</b></td><td colspan=\"3\">");
+                //buf.append("</b></p><p><b>Center of Key Space (router hash): " + ourRKey.toBase64());
+                if (median != null) {
+                    double log2 = biLog2(median);
+                    buf.append("</td></tr>")
+                    .append("<tr><td><b>Median distance (bits):</b></td><td colspan=\"3\">").append(fmt.format(log2)).append("</td></tr>\n");
+                    // 2 for 4 floodfills... -1 for median
+                    // this can be way off for unknown reasons
+                    int total = (int) Math.round(Math.pow(2, 2 + 256 - 1 - log2));
+                    buf.append("<tr><td><b>Estimated total floodfills:</b></td><td colspan=\"3\">").append(total).append("</td></tr>\n");
+                    buf.append("<tr><td><b>Estimated total leasesets:</b></td><td colspan=\"3\">").append(total * rapCount / 4);
+                } else {
+                    buf.append("<i>Not floodfill or no data.</i>");
+                }
+                buf.append("</td></tr></table>\n");
+            } // median table
+            buf.append("</div>");
         }  // !empty
         out.write(buf.toString());
         out.flush();
@@ -882,7 +889,10 @@ class NetDbRenderer {
                 _context.netDb().lookupLeaseSetRemotely(hash, lw, lw, 8*1000, null);
                 // just wait right here in the middle of the rendering, sure
                 synchronized(lw) {
-                    try { lw.wait(9*1000); } catch (InterruptedException ie) {}
+                    try {
+                        lw.wait(9*1000);
+                    }
+                    catch (InterruptedException ie) {}
                 }
                 ls = _context.netDb().lookupLeaseSetLocally(hash);
             }
@@ -908,170 +918,170 @@ class NetDbRenderer {
     /** @since 0.9.57 split out from above */
     private void renderLeaseSet(StringBuilder buf, LeaseSet ls, boolean debug, long now,
                                 boolean linkSusi, String distance) {
-            // warning - will be null for non-local encrypted
-            Destination dest = ls.getDestination();
-            Hash key = ls.getHash();
-            buf.append("<table class=\"leaseset\">\n")
-               .append("<tr><th><b>").append(_t("LeaseSet")).append(":</b>&nbsp;<code>").append(key.toBase64()).append("</code>");
-            int type = ls.getType();
-            if (type == DatabaseEntry.KEY_TYPE_ENCRYPTED_LS2 || _context.keyRing().get(key) != null)
-                buf.append(" <b>(").append(_t("Encrypted")).append(")</b>");
-            buf.append("</th>");
-            if (_context.clientManager().isLocal(key)) {
-                buf.append("<th><a href=\"tunnels#").append(key.toBase64(), 0, 4).append("\">").append(_t("Local")).append("</a> ");
-                boolean unpublished = ! _context.clientManager().shouldPublishLeaseSet(key);
-                if (unpublished)
-                    buf.append("<b>").append(_t("Unpublished")).append("</b> ");
-                buf.append("<b>").append(_t("Destination")).append(":</b> ");
-                TunnelPoolSettings in = _context.tunnelManager().getInboundSettings(key);
-                if (in != null && in.getDestinationNickname() != null)
-                    buf.append(DataHelper.escapeHTML(in.getDestinationNickname()));
-                else
-                    buf.append(dest.toBase64(), 0, 6);
-                buf.append("</th></tr>\n");
-                // we don't show a b32 or addressbook links if encrypted
-                if (type != DatabaseEntry.KEY_TYPE_ENCRYPTED_LS2) {
-                    buf.append("<tr><td");
-                    // If the dest is published but not in the addressbook, an extra
-                    // <td> is appended with an "Add to addressbook" link, so this
-                    // <td> should not span 2 columns.
-                    String host = null;
-                    if (!unpublished) {
-                        host = _context.namingService().reverseLookup(dest);
-                    }
-                    if (unpublished || host != null || !linkSusi) {
-                        buf.append(" colspan=\"2\"");
-                    }
-                    buf.append(">");
-                    String b32 = key.toBase32();
-                    buf.append("<a href=\"http://").append(b32).append("\">").append(b32).append("</a></td>");
-                    if (linkSusi && !unpublished && host == null) {
-                        buf.append("<td class=\"addtobook\" colspan=\"2\">").append("<a title=\"").append(_t("Add to address book"))
-                           .append("\" href=\"/susidns/addressbook.jsp?book=private&amp;destination=")
-                           .append(dest.toBase64()).append("#add\">").append(_t("Add to local address book")).append("</a></td>");
-                    } // else probably a client
-                }
-            } else {
-                buf.append("<th><b>").append(_t("Destination")).append(":</b> ");
-                String host = (dest != null) ? _context.namingService().reverseLookup(dest) : null;
-                if (host != null) {
-                    buf.append("<a href=\"http://").append(host).append("/\">").append(host).append("</a></th>");
-                } else {
-                    String b32 = key.toBase32();
-                    buf.append("<code>");
-                    if (dest != null)
-                        buf.append(dest.toBase64(), 0, 6);
-                    else
-                        buf.append("n/a");
-                    buf.append("</code></th>" +
-                               "</tr>\n<tr><td");
-                    if (!linkSusi)
-                        buf.append(" colspan=\"2\"");
-                    buf.append("><a href=\"http://").append(b32).append("\">").append(b32).append("</a></td>\n");
-                    if (linkSusi && dest != null) {
-                       buf.append("<td class=\"addtobook\"><a title=\"").append(_t("Add to address book"))
-                       .append("\" href=\"/susidns/addressbook.jsp?book=private&amp;destination=")
-                       .append(dest.toBase64()).append("#add\">").append(_t("Add to local address book")).append("</a></td>");
-                    }
-                }
-            }
-            long exp;
-            if (type == DatabaseEntry.KEY_TYPE_LEASESET) {
-                exp = ls.getLatestLeaseDate() - now;
-            } else {
-                LeaseSet2 ls2 = (LeaseSet2) ls;
-                long pub = now - ls2.getPublished();
-                buf.append("</tr>\n<tr><td colspan=\"2\">\n<b>")
-                   .append(_t("Published {0} ago", DataHelper.formatDuration2(pub)))
-                   .append("</b>");
-                exp = ((LeaseSet2)ls).getExpires()-now;
-            }
-            buf.append("</tr>\n<tr><td colspan=\"2\">\n<b>");
-            if (exp > 0)
-                buf.append(_t("Expires in {0}", DataHelper.formatDuration2(exp)));
+        // warning - will be null for non-local encrypted
+        Destination dest = ls.getDestination();
+        Hash key = ls.getHash();
+        buf.append("<table class=\"leaseset\">\n")
+        .append("<tr><th><b>").append(_t("LeaseSet")).append(":</b>&nbsp;<code>").append(key.toBase64()).append("</code>");
+        int type = ls.getType();
+        if (type == DatabaseEntry.KEY_TYPE_ENCRYPTED_LS2 || _context.keyRing().get(key) != null)
+            buf.append(" <b>(").append(_t("Encrypted")).append(")</b>");
+        buf.append("</th>");
+        if (_context.clientManager().isLocal(key)) {
+            buf.append("<th><a href=\"tunnels#").append(key.toBase64(), 0, 4).append("\">").append(_t("Local")).append("</a> ");
+            boolean unpublished = ! _context.clientManager().shouldPublishLeaseSet(key);
+            if (unpublished)
+                buf.append("<b>").append(_t("Unpublished")).append("</b> ");
+            buf.append("<b>").append(_t("Destination")).append(":</b> ");
+            TunnelPoolSettings in = _context.tunnelManager().getInboundSettings(key);
+            if (in != null && in.getDestinationNickname() != null)
+                buf.append(DataHelper.escapeHTML(in.getDestinationNickname()));
             else
-                buf.append(_t("Expired {0} ago", DataHelper.formatDuration2(0-exp)));
-            buf.append("</b></td></tr>\n");
-            if (debug) {
-                buf.append("<tr><td colspan=\"2\">");
-                buf.append("<b>RAP?</b> ").append(ls.getReceivedAsPublished());
-                buf.append("&nbsp;&nbsp;<b>RAR?</b> ").append(ls.getReceivedAsReply());
-                buf.append("&nbsp;&nbsp;<b>Distance: </b>").append(distance);
-                buf.append("&nbsp;&nbsp;<b>").append(_t("Type")).append(": </b>").append(type);
-                byte[] padding = dest.getPadding();
-                if (padding != null && padding.length >= 64) {
-                    if (DataHelper.eq(padding, 0, padding, 32, 32))
-                        buf.append("&nbsp;&nbsp;<b>Compressible?</b> true");
+                buf.append(dest.toBase64(), 0, 6);
+            buf.append("</th></tr>\n");
+            // we don't show a b32 or addressbook links if encrypted
+            if (type != DatabaseEntry.KEY_TYPE_ENCRYPTED_LS2) {
+                buf.append("<tr><td");
+                // If the dest is published but not in the addressbook, an extra
+                // <td> is appended with an "Add to addressbook" link, so this
+                // <td> should not span 2 columns.
+                String host = null;
+                if (!unpublished) {
+                    host = _context.namingService().reverseLookup(dest);
                 }
-                if (type != DatabaseEntry.KEY_TYPE_LEASESET) {
-                    LeaseSet2 ls2 = (LeaseSet2) ls;
-                    buf.append("&nbsp;&nbsp;<b>Unpublished? </b>").append(ls2.isUnpublished());
-                    if (ls2.isOffline()) {
-                        buf.append("&nbsp;&nbsp;<b>Offline signed: </b>");
-                        exp = ls2.getTransientExpiration() - now;
-                        if (exp > 0)
-                            buf.append(_t("Expires in {0}", DataHelper.formatDuration2(exp)));
-                        else
-                            buf.append(_t("Expired {0} ago", DataHelper.formatDuration2(0-exp)));
-                        buf.append("&nbsp;&nbsp;<b>Type: </b>").append(ls2.getTransientSigningKey().getType());
-                    }
+                if (unpublished || host != null || !linkSusi) {
+                    buf.append(" colspan=\"2\"");
                 }
-                buf.append("</td></tr>\n<tr><td colspan=\"2\">");
-                //buf.append(dest.toBase32()).append("<br>");
-                buf.append("<b>Signature type:</b> ");
-                if (dest != null && type != DatabaseEntry.KEY_TYPE_ENCRYPTED_LS2) {
-                    buf.append(dest.getSigningPublicKey().getType());
-                } else {
-                    // encrypted, show blinded key type
-                    buf.append(ls.getSigningKey().getType());
-                }
-                if (type == DatabaseEntry.KEY_TYPE_LEASESET) {
-                    buf.append("</td></tr>\n<tr><td colspan=\"2\"><b>Encryption Key:</b> ELGAMAL_2048 ")
-                       .append(ls.getEncryptionKey().toBase64(), 0, 20)
-                       .append("&hellip;");
-                } else if (type == DatabaseEntry.KEY_TYPE_LS2) {
-                    LeaseSet2 ls2 = (LeaseSet2) ls;
-                    for (PublicKey pk : ls2.getEncryptionKeys()) {
-                        buf.append("</td></tr>\n<tr><td colspan=\"2\"><b>Encryption Key:</b> ");
-                        EncType etype = pk.getType();
-                        if (etype != null)
-                            buf.append(etype);
-                        else
-                            buf.append("Unsupported type ").append(pk.getUnknownTypeCode());
-                        buf.append(' ')
-                           .append(pk.toBase64(), 0, 20)
-                           .append("&hellip;");
-                    }
-                }
-                buf.append("</td></tr>\n<tr><td colspan=\"2\">");
-                buf.append("<b>Routing Key:</b> ").append(ls.getRoutingKey().toBase64());
-                buf.append("</td></tr>");
+                buf.append(">");
+                String b32 = key.toBase32();
+                buf.append("<a href=\"http://").append(b32).append("\">").append(b32).append("</a></td>");
+                if (linkSusi && !unpublished && host == null) {
+                    buf.append("<td class=\"addtobook\" colspan=\"2\">").append("<a title=\"").append(_t("Add to address book"))
+                    .append("\" href=\"/susidns/addressbook.jsp?book=private&amp;destination=")
+                    .append(dest.toBase64()).append("#add\">").append(_t("Add to local address book")).append("</a></td>");
+                } // else probably a client
             }
-
-            buf.append("\n<tr><td colspan=\"2\"><ul class=\"netdb_leases\">");
-            boolean isMeta = ls.getType() == DatabaseEntry.KEY_TYPE_META_LS2;
-            for (int i = 0; i < ls.getLeaseCount(); i++) {
-                Lease lease = ls.getLease(i);
-                buf.append("<li><b>").append(_t("Lease")).append(' ').append(i + 1).append(":</b> <span class=\"tunnel_peer\">");
-                buf.append(_context.commSystem().renderPeerHTML(lease.getGateway()));
-                buf.append("</span> ");
-                if (!isMeta) {
-                    buf.append("<span class=\"netdb_tunnel\">").append(_t("Tunnel")).append(" <span class=\"tunnel_id\">")
-                       .append(lease.getTunnelId().getTunnelId()).append("</span></span> ");
+        } else {
+            buf.append("<th><b>").append(_t("Destination")).append(":</b> ");
+            String host = (dest != null) ? _context.namingService().reverseLookup(dest) : null;
+            if (host != null) {
+                buf.append("<a href=\"http://").append(host).append("/\">").append(host).append("</a></th>");
+            } else {
+                String b32 = key.toBase32();
+                buf.append("<code>");
+                if (dest != null)
+                    buf.append(dest.toBase64(), 0, 6);
+                else
+                    buf.append("n/a");
+                buf.append("</code></th>" +
+                           "</tr>\n<tr><td");
+                if (!linkSusi)
+                    buf.append(" colspan=\"2\"");
+                buf.append("><a href=\"http://").append(b32).append("\">").append(b32).append("</a></td>\n");
+                if (linkSusi && dest != null) {
+                    buf.append("<td class=\"addtobook\"><a title=\"").append(_t("Add to address book"))
+                    .append("\" href=\"/susidns/addressbook.jsp?book=private&amp;destination=")
+                    .append(dest.toBase64()).append("#add\">").append(_t("Add to local address book")).append("</a></td>");
                 }
-                if (debug) {
-                    long exl = lease.getEndTime() - now;
-                    buf.append("<b class=\"netdb_expiry\">");
-                    if (exl > 0)
-                        buf.append(_t("Expires in {0}", DataHelper.formatDuration2(exl)));
+            }
+        }
+        long exp;
+        if (type == DatabaseEntry.KEY_TYPE_LEASESET) {
+            exp = ls.getLatestLeaseDate() - now;
+        } else {
+            LeaseSet2 ls2 = (LeaseSet2) ls;
+            long pub = now - ls2.getPublished();
+            buf.append("</tr>\n<tr><td colspan=\"2\">\n<b>")
+            .append(_t("Published {0} ago", DataHelper.formatDuration2(pub)))
+            .append("</b>");
+            exp = ((LeaseSet2)ls).getExpires()-now;
+        }
+        buf.append("</tr>\n<tr><td colspan=\"2\">\n<b>");
+        if (exp > 0)
+            buf.append(_t("Expires in {0}", DataHelper.formatDuration2(exp)));
+        else
+            buf.append(_t("Expired {0} ago", DataHelper.formatDuration2(0-exp)));
+        buf.append("</b></td></tr>\n");
+        if (debug) {
+            buf.append("<tr><td colspan=\"2\">");
+            buf.append("<b>RAP?</b> ").append(ls.getReceivedAsPublished());
+            buf.append("&nbsp;&nbsp;<b>RAR?</b> ").append(ls.getReceivedAsReply());
+            buf.append("&nbsp;&nbsp;<b>Distance: </b>").append(distance);
+            buf.append("&nbsp;&nbsp;<b>").append(_t("Type")).append(": </b>").append(type);
+            byte[] padding = dest.getPadding();
+            if (padding != null && padding.length >= 64) {
+                if (DataHelper.eq(padding, 0, padding, 32, 32))
+                    buf.append("&nbsp;&nbsp;<b>Compressible?</b> true");
+            }
+            if (type != DatabaseEntry.KEY_TYPE_LEASESET) {
+                LeaseSet2 ls2 = (LeaseSet2) ls;
+                buf.append("&nbsp;&nbsp;<b>Unpublished? </b>").append(ls2.isUnpublished());
+                if (ls2.isOffline()) {
+                    buf.append("&nbsp;&nbsp;<b>Offline signed: </b>");
+                    exp = ls2.getTransientExpiration() - now;
+                    if (exp > 0)
+                        buf.append(_t("Expires in {0}", DataHelper.formatDuration2(exp)));
                     else
-                        buf.append(_t("Expired {0} ago", DataHelper.formatDuration2(0-exl)));
-                    buf.append("</b>");
+                        buf.append(_t("Expired {0} ago", DataHelper.formatDuration2(0-exp)));
+                    buf.append("&nbsp;&nbsp;<b>Type: </b>").append(ls2.getTransientSigningKey().getType());
                 }
-                buf.append("</li>");
             }
-            buf.append("</ul></td></tr>\n" +
-                       "</table>\n");
+            buf.append("</td></tr>\n<tr><td colspan=\"2\">");
+            //buf.append(dest.toBase32()).append("<br>");
+            buf.append("<b>Signature type:</b> ");
+            if (dest != null && type != DatabaseEntry.KEY_TYPE_ENCRYPTED_LS2) {
+                buf.append(dest.getSigningPublicKey().getType());
+            } else {
+                // encrypted, show blinded key type
+                buf.append(ls.getSigningKey().getType());
+            }
+            if (type == DatabaseEntry.KEY_TYPE_LEASESET) {
+                buf.append("</td></tr>\n<tr><td colspan=\"2\"><b>Encryption Key:</b> ELGAMAL_2048 ")
+                .append(ls.getEncryptionKey().toBase64(), 0, 20)
+                .append("&hellip;");
+            } else if (type == DatabaseEntry.KEY_TYPE_LS2) {
+                LeaseSet2 ls2 = (LeaseSet2) ls;
+                for (PublicKey pk : ls2.getEncryptionKeys()) {
+                    buf.append("</td></tr>\n<tr><td colspan=\"2\"><b>Encryption Key:</b> ");
+                    EncType etype = pk.getType();
+                    if (etype != null)
+                        buf.append(etype);
+                    else
+                        buf.append("Unsupported type ").append(pk.getUnknownTypeCode());
+                    buf.append(' ')
+                    .append(pk.toBase64(), 0, 20)
+                    .append("&hellip;");
+                }
+            }
+            buf.append("</td></tr>\n<tr><td colspan=\"2\">");
+            buf.append("<b>Routing Key:</b> ").append(ls.getRoutingKey().toBase64());
+            buf.append("</td></tr>");
+        }
+
+        buf.append("\n<tr><td colspan=\"2\"><ul class=\"netdb_leases\">");
+        boolean isMeta = ls.getType() == DatabaseEntry.KEY_TYPE_META_LS2;
+        for (int i = 0; i < ls.getLeaseCount(); i++) {
+            Lease lease = ls.getLease(i);
+            buf.append("<li><b>").append(_t("Lease")).append(' ').append(i + 1).append(":</b> <span class=\"tunnel_peer\">");
+            buf.append(_context.commSystem().renderPeerHTML(lease.getGateway()));
+            buf.append("</span> ");
+            if (!isMeta) {
+                buf.append("<span class=\"netdb_tunnel\">").append(_t("Tunnel")).append(" <span class=\"tunnel_id\">")
+                .append(lease.getTunnelId().getTunnelId()).append("</span></span> ");
+            }
+            if (debug) {
+                long exl = lease.getEndTime() - now;
+                buf.append("<b class=\"netdb_expiry\">");
+                if (exl > 0)
+                    buf.append(_t("Expires in {0}", DataHelper.formatDuration2(exl)));
+                else
+                    buf.append(_t("Expired {0} ago", DataHelper.formatDuration2(0-exl)));
+                buf.append("</b>");
+            }
+            buf.append("</li>");
+        }
+        buf.append("</ul></td></tr>\n" +
+                   "</table>\n");
     }
 
     /**
@@ -1103,14 +1113,14 @@ class NetDbRenderer {
             buf.append("<div class=\"netdbnotfound\">");
             if (page > 0) {
                 buf.append("<a href=\"/netdb?f=").append(mode).append("&amp;pg=").append(page)
-                   .append("&amp;ps=").append(pageSize).append("\">");
+                .append("&amp;ps=").append(pageSize).append("\">");
                 buf.append(_t("Previous Page"));
                 buf.append("</a>&nbsp;&nbsp;&nbsp;");
             }
             buf.append(_t("Page")).append(' ').append(page + 1);
             if (nextpg) {
                 buf.append("&nbsp;&nbsp;&nbsp;<a href=\"/netdb?f=").append(mode).append("&amp;pg=").append(page + 2)
-                   .append("&amp;ps=").append(pageSize).append("\">");
+                .append("&amp;ps=").append(pageSize).append("\">");
                 buf.append(_t("Next Page"));
                 buf.append("</a>");
             }
@@ -1177,113 +1187,113 @@ class NetDbRenderer {
             start = end;
         }
 
-     //
-     // don't bother to reindent
-     //
-     if (!showStats) {
+        //
+        // don't bother to reindent
+        //
+        if (!showStats) {
 
-        // the summary table
-        buf.append("<table id=\"netdboverview\" border=\"0\" cellspacing=\"30\"><tr><th colspan=\"3\">");
-        buf.append(_t("Network Database Router Statistics"));
-        buf.append("</th></tr><tr><td style=\"vertical-align: top;\">");
-        // versions table
-        List<String> versionList = new ArrayList<String>(versions.objects());
-        if (!versionList.isEmpty()) {
-            Collections.sort(versionList, Collections.reverseOrder(new VersionComparator()));
-            buf.append("<table id=\"netdbversions\">\n");
-            buf.append("<tr><th>" + _t("Version") + "</th><th>" + _t("Count") + "</th></tr>\n");
-            for (String routerVersion : versionList) {
-                int num = versions.count(routerVersion);
-                String ver = DataHelper.stripHTML(routerVersion);
-                buf.append("<tr><td align=\"center\"><a href=\"/netdb?v=").append(ver).append("\">").append(ver);
-                buf.append("</a></td><td align=\"center\">").append(num).append("</td></tr>\n");
-            }
-            buf.append("</table>\n");
-        }
-        buf.append("</td><td style=\"vertical-align: top;\">");
-        out.write(buf.toString());
-        buf.setLength(0);
-        if (log.shouldWarn()) {
-            long end = System.currentTimeMillis();
-            log.warn("part 2 took " + (end - start));
-            start = end;
-        }
-
-        // transports table
-        boolean showTransports = _context.getBooleanProperty(HelperBase.PROP_ADVANCED);
-        if (showTransports) {
-            buf.append("<table id=\"netdbtransports\">\n");
-            buf.append("<tr><th align=\"left\">" + _t("Transports") + "</th><th>" + _t("Count") + "</th></tr>\n");
-            for (int i = 0; i < TNAMES.length; i++) {
-                int num = transportCount[i];
-                if (num > 0) {
-                    buf.append("<tr><td>").append(_t(TNAMES[i]));
-                    buf.append("</td><td align=\"center\">").append(num).append("</td></tr>\n");
+            // the summary table
+            buf.append("<table id=\"netdboverview\" border=\"0\" cellspacing=\"30\"><tr><th colspan=\"3\">");
+            buf.append(_t("Network Database Router Statistics"));
+            buf.append("</th></tr><tr><td style=\"vertical-align: top;\">");
+            // versions table
+            List<String> versionList = new ArrayList<String>(versions.objects());
+            if (!versionList.isEmpty()) {
+                Collections.sort(versionList, Collections.reverseOrder(new VersionComparator()));
+                buf.append("<table id=\"netdbversions\">\n");
+                buf.append("<tr><th>" + _t("Version") + "</th><th>" + _t("Count") + "</th></tr>\n");
+                for (String routerVersion : versionList) {
+                    int num = versions.count(routerVersion);
+                    String ver = DataHelper.stripHTML(routerVersion);
+                    buf.append("<tr><td align=\"center\"><a href=\"/netdb?v=").append(ver).append("\">").append(ver);
+                    buf.append("</a></td><td align=\"center\">").append(num).append("</td></tr>\n");
                 }
+                buf.append("</table>\n");
             }
-            buf.append("</table>\n");
             buf.append("</td><td style=\"vertical-align: top;\">");
             out.write(buf.toString());
             buf.setLength(0);
             if (log.shouldWarn()) {
                 long end = System.currentTimeMillis();
-                log.warn("part 3 took " + (end - start));
+                log.warn("part 2 took " + (end - start));
                 start = end;
             }
-        }
 
-        // country table
-        List<String> countryList = new ArrayList<String>(countries.objects());
-        if (!countryList.isEmpty()) {
-            if (mode == 3)
-                Collections.sort(countryList, new CountryCountComparator(countries));
-            else
-                Collections.sort(countryList, new CountryComparator());
-            buf.append("<table id=\"netdbcountrylist\">\n");
-            buf.append("<tr><th align=\"left\">");
-            if (mode == 3)
-                buf.append("<a href=\"/netdb\" title=\"").append(_t("Sort by country")).append("\">");
-            buf.append(_t("Country"));
-            if (mode == 3)
-                buf.append("</a>");
-            buf.append("</th><th>");
-            if (mode == 0)
-                buf.append("<a href=\"/netdb?s=1\" title=\"").append(_t("Sort by count")).append("\">");
-            buf.append(_t("Count"));
-            if (mode == 0)
-                buf.append("</a>");
-            buf.append("</th></tr>\n");
-            for (String country : countryList) {
-                int num = countries.count(country);
-                buf.append("<tr><td><a href=\"/netdb?c=").append(country).append("\">");
-                buf.append("<img height=\"11\" width=\"16\" alt=\"").append(country.toUpperCase(Locale.US)).append("\"");
-                buf.append(" src=\"/flags.jsp?c=").append(country).append("\">");
-                buf.append(getTranslatedCountry(country));
-                buf.append("</a></td><td align=\"center\">").append(num).append("</td></tr>\n");
+            // transports table
+            boolean showTransports = _context.getBooleanProperty(HelperBase.PROP_ADVANCED);
+            if (showTransports) {
+                buf.append("<table id=\"netdbtransports\">\n");
+                buf.append("<tr><th align=\"left\">" + _t("Transports") + "</th><th>" + _t("Count") + "</th></tr>\n");
+                for (int i = 0; i < TNAMES.length; i++) {
+                    int num = transportCount[i];
+                    if (num > 0) {
+                        buf.append("<tr><td>").append(_t(TNAMES[i]));
+                        buf.append("</td><td align=\"center\">").append(num).append("</td></tr>\n");
+                    }
+                }
+                buf.append("</table>\n");
+                buf.append("</td><td style=\"vertical-align: top;\">");
+                out.write(buf.toString());
+                buf.setLength(0);
+                if (log.shouldWarn()) {
+                    long end = System.currentTimeMillis();
+                    log.warn("part 3 took " + (end - start));
+                    start = end;
+                }
             }
-            // https://db-ip.com/db/download/ip-to-country-lite
-            String geoDir = _context.getProperty(GeoIP.PROP_GEOIP_DIR, GeoIP.GEOIP_DIR_DEFAULT);
-            File geoFile = new File(geoDir);
-            if (!geoFile.isAbsolute())
-                geoFile = new File(_context.getBaseDir(), geoDir);
-            geoFile = new File(geoFile, GeoIP.GEOIP2_FILE_DEFAULT);
-            if (geoFile.exists()) {
-                // we'll assume we are using it, ignore case where Debian file is newer
-                buf.append("<tr><td colspan=\"2\"><font size=\"-2\"><a href=\"https://db-ip.com/\">IP Geolocation by DB-IP</a></font></td></tr>");
+
+            // country table
+            List<String> countryList = new ArrayList<String>(countries.objects());
+            if (!countryList.isEmpty()) {
+                if (mode == 3)
+                    Collections.sort(countryList, new CountryCountComparator(countries));
+                else
+                    Collections.sort(countryList, new CountryComparator());
+                buf.append("<table id=\"netdbcountrylist\">\n");
+                buf.append("<tr><th align=\"left\">");
+                if (mode == 3)
+                    buf.append("<a href=\"/netdb\" title=\"").append(_t("Sort by country")).append("\">");
+                buf.append(_t("Country"));
+                if (mode == 3)
+                    buf.append("</a>");
+                buf.append("</th><th>");
+                if (mode == 0)
+                    buf.append("<a href=\"/netdb?s=1\" title=\"").append(_t("Sort by count")).append("\">");
+                buf.append(_t("Count"));
+                if (mode == 0)
+                    buf.append("</a>");
+                buf.append("</th></tr>\n");
+                for (String country : countryList) {
+                    int num = countries.count(country);
+                    buf.append("<tr><td><a href=\"/netdb?c=").append(country).append("\">");
+                    buf.append("<img height=\"11\" width=\"16\" alt=\"").append(country.toUpperCase(Locale.US)).append("\"");
+                    buf.append(" src=\"/flags.jsp?c=").append(country).append("\">");
+                    buf.append(getTranslatedCountry(country));
+                    buf.append("</a></td><td align=\"center\">").append(num).append("</td></tr>\n");
+                }
+                // https://db-ip.com/db/download/ip-to-country-lite
+                String geoDir = _context.getProperty(GeoIP.PROP_GEOIP_DIR, GeoIP.GEOIP_DIR_DEFAULT);
+                File geoFile = new File(geoDir);
+                if (!geoFile.isAbsolute())
+                    geoFile = new File(_context.getBaseDir(), geoDir);
+                geoFile = new File(geoFile, GeoIP.GEOIP2_FILE_DEFAULT);
+                if (geoFile.exists()) {
+                    // we'll assume we are using it, ignore case where Debian file is newer
+                    buf.append("<tr><td colspan=\"2\"><font size=\"-2\"><a href=\"https://db-ip.com/\">IP Geolocation by DB-IP</a></font></td></tr>");
+                }
+                buf.append("</table>\n");
             }
-            buf.append("</table>\n");
-        }
 
-        buf.append("</td></tr></table>");
-        if (log.shouldWarn()) {
-            long end = System.currentTimeMillis();
-            log.warn("part 4 took " + (end - start));
-        }
+            buf.append("</td></tr></table>");
+            if (log.shouldWarn()) {
+                long end = System.currentTimeMillis();
+                log.warn("part 4 took " + (end - start));
+            }
 
-     //
-     // don't bother to reindent
-     //
-     } // if !showStats
+            //
+            // don't bother to reindent
+            //
+        } // if !showStats
 
         out.write(buf.toString());
         out.flush();
@@ -1304,17 +1314,17 @@ class NetDbRenderer {
      *  Inner class, can't be Serializable
      */
     private class CountryComparator implements Comparator<String> {
-         private static final long serialVersionUID = 1L;
-         private final Collator coll;
+        private static final long serialVersionUID = 1L;
+        private final Collator coll;
 
-         public CountryComparator() {
-             super();
-             coll = Collator.getInstance(new Locale(Messages.getLanguage(_context)));
-         }
+        public CountryComparator() {
+            super();
+            coll = Collator.getInstance(new Locale(Messages.getLanguage(_context)));
+        }
 
-         public int compare(String l, String r) {
-             return coll.compare(getTranslatedCountry(l),
-                                 getTranslatedCountry(r));
+        public int compare(String l, String r) {
+            return coll.compare(getTranslatedCountry(l),
+                                getTranslatedCountry(r));
         }
     }
 
@@ -1324,22 +1334,22 @@ class NetDbRenderer {
      *  @since 0.9.57
      */
     private class CountryCountComparator implements Comparator<String> {
-         private static final long serialVersionUID = 1L;
-         private final ObjectCounterUnsafe<String> counts;
-         private final Collator coll;
+        private static final long serialVersionUID = 1L;
+        private final ObjectCounterUnsafe<String> counts;
+        private final Collator coll;
 
-         public CountryCountComparator(ObjectCounterUnsafe<String> counts) {
-             super();
-             this.counts = counts;
-             coll = Collator.getInstance(new Locale(Messages.getLanguage(_context)));
-         }
+        public CountryCountComparator(ObjectCounterUnsafe<String> counts) {
+            super();
+            this.counts = counts;
+            coll = Collator.getInstance(new Locale(Messages.getLanguage(_context)));
+        }
 
-         public int compare(String l, String r) {
-             int rv = counts.count(r) - counts.count(l);
-             if (rv != 0)
-                 return rv;
-             return coll.compare(getTranslatedCountry(l),
-                                 getTranslatedCountry(r));
+        public int compare(String l, String r) {
+            int rv = counts.count(r) - counts.count(l);
+            if (rv != 0)
+                return rv;
+            return coll.compare(getTranslatedCountry(l),
+                                getTranslatedCountry(r));
         }
     }
 
@@ -1348,19 +1358,19 @@ class NetDbRenderer {
      *  @since 0.9.38
      */
     static class RAComparator implements Comparator<RouterAddress> {
-         private static final long serialVersionUID = 1L;
+        private static final long serialVersionUID = 1L;
 
-         public int compare(RouterAddress l, RouterAddress r) {
-             int rv = l.getTransportStyle().compareTo(r.getTransportStyle());
-             if (rv != 0)
-                 return rv;
-             String lh = l.getHost();
-             String rh = r.getHost();
-             if (lh == null)
-                 return (rh == null) ? 0 : -1;
-             if (rh == null)
-                 return 1;
-             return lh.compareTo(rh);
+        public int compare(RouterAddress l, RouterAddress r) {
+            int rv = l.getTransportStyle().compareTo(r.getTransportStyle());
+            if (rv != 0)
+                return rv;
+            String lh = l.getHost();
+            String rh = r.getHost();
+            if (lh == null)
+                return (rh == null) ? 0 : -1;
+            if (rh == null)
+                return 1;
+            return lh.compareTo(rh);
         }
     }
 
@@ -1374,10 +1384,10 @@ class NetDbRenderer {
                    "<tr id=\"").append(hash, 0, 6).append("\"><th colspan=\"2\"");
         if (isUs) {
             buf.append(" id=\"our-info\"><b>").append(_t("Our Router Identity")).append(":</b> <code>")
-               .append(hash).append("</code></th><th>");
+            .append(hash).append("</code></th><th>");
         } else {
             buf.append("><b>").append(_t("Router")).append(":</b> <code>")
-               .append(hash).append("</code></th><th>");
+            .append(hash).append("</code></th><th>");
             String country = _context.commSystem().getCountry(info.getIdentity().getHash());
             if (country != null) {
                 buf.append("<a href=\"/netdb?c=").append(country).append("\">");
@@ -1387,33 +1397,33 @@ class NetDbRenderer {
             }
             if (!full) {
                 buf.append("<a title=\"").append(_t("View extended router info"))
-                   .append("\" class=\"viewfullentry\" href=\"netdb?r=").append(hash, 0, 6)
-                   .append("\" >[").append(_t("Full entry")).append("]</a>");
+                .append("\" class=\"viewfullentry\" href=\"netdb?r=").append(hash, 0, 6)
+                .append("\" >[").append(_t("Full entry")).append("]</a>");
             }
         }
         buf.append("</th></tr>\n<tr>");
         long age = _context.clock().now() - info.getPublished();
         if (isUs && _context.router().isHidden()) {
             buf.append("<td><b>").append(_t("Hidden")).append(", ").append(_t("Updated")).append(":</b></td>" +
-                       "<td colspan=\"2\"><span class=\"netdb_info\">")
-               .append(_t("{0} ago", DataHelper.formatDuration2(age)))
-               .append("</span>");
+                    "<td colspan=\"2\"><span class=\"netdb_info\">")
+            .append(_t("{0} ago", DataHelper.formatDuration2(age)))
+            .append("</span>");
         } else if (age > 0) {
             buf.append("<td><b>").append(_t("Published")).append(":</b></td>" +
-                       "<td colspan=\"2\"><span class=\"netdb_info\">")
-               .append(_t("{0} ago", DataHelper.formatDuration2(age)))
-               .append("</span>");
+                    "<td colspan=\"2\"><span class=\"netdb_info\">")
+            .append(_t("{0} ago", DataHelper.formatDuration2(age)))
+            .append("</span>");
         } else {
             // published slightly in the future
             buf.append("<td><b>").append(_t("Published")).append(":</b></td><td colspan=\"2\"><span class=\"netdb_info\">")
-               .append(DataHelper.formatDuration2(0-age)).append(" from now???</span>");
+            .append(DataHelper.formatDuration2(0-age)).append(" from now???</span>");
         }
         boolean debug = _context.getBooleanProperty(HelperBase.PROP_ADVANCED);
         if (full) {
             buf.append("</td></tr><tr><td><b>").append(_t("Signing Key")).append(":</b></td><td colspan=\"2\">")
-               .append(info.getIdentity().getSigningPublicKey().getType());
+            .append(info.getIdentity().getSigningPublicKey().getType());
             buf.append("</td></tr><tr><td><b>").append(_t("Encryption Key")).append(":</b></td><td colspan=\"2\">")
-               .append(info.getIdentity().getPublicKey().getType());
+            .append(info.getIdentity().getPublicKey().getType());
             if (debug) {
                 buf.append("</td></tr>\n<tr><td><b>Routing Key:</b></td><td colspan=\"2\">").append(info.getRoutingKey().toBase64());
                 buf.append("</td></tr>");
@@ -1425,7 +1435,7 @@ class NetDbRenderer {
             }
         }
         buf.append("</td></tr>\n<tr>")
-           .append("<td><b>").append(_t("Addresses")).append(":</b></td><td colspan=\"2\"");
+        .append("<td><b>").append(_t("Addresses")).append(":</b></td><td colspan=\"2\"");
         Collection<RouterAddress> addrs = info.getAddresses();
         if (addrs.isEmpty()) {
             buf.append('>').append(_t("none"));
@@ -1452,7 +1462,7 @@ class NetDbRenderer {
                     if (name.equals("host"))
                         val = Addresses.toCanonicalString(val);
                     buf.append(" <span class=\"nowrap\"><span class=\"netdb_name\">").append(_t(DataHelper.stripHTML(name)))
-                       .append(":</span> <span class=\"netdb_info\">").append(DataHelper.stripHTML(val)).append("</span></span>&nbsp;");
+                    .append(":</span> <span class=\"netdb_info\">").append(DataHelper.stripHTML(val)).append("</span></span>&nbsp;");
                 }
             }
         }
@@ -1472,13 +1482,13 @@ class NetDbRenderer {
                 if (fkc != null) {
                     String f = DataHelper.stripHTML(family);
                     buf.append("<tr><td><b>").append(_t("Family"))
-                       .append(":</b><td colspan=\"2\"><span class=\"netdb_info\">")
-                       .append(fkc.verify(info) == FamilyKeyCrypto.Result.STORED_KEY ? "Verified" : "Unverified")
-                       .append(" <a href=\"/netdb?fam=")
-                       .append(f)
-                       .append("\">")
-                       .append(f)
-                       .append("</a></span></td></tr>\n");
+                    .append(":</b><td colspan=\"2\"><span class=\"netdb_info\">")
+                    .append(fkc.verify(info) == FamilyKeyCrypto.Result.STORED_KEY ? "Verified" : "Unverified")
+                    .append(" <a href=\"/netdb?fam=")
+                    .append(f)
+                    .append("\">")
+                    .append(f)
+                    .append("</a></span></td></tr>\n");
                 }
             }
         }
@@ -1490,9 +1500,10 @@ class NetDbRenderer {
     private static final int NTCP = 4;
     private static final int IPV6 = 8;
     private static final String[] TNAMES = { _x("Hidden or starting up"), _x("SSU"), _x("SSU with introducers"), "",
-                                  _x("NTCP"), _x("NTCP and SSU"), _x("NTCP and SSU with introducers"), "",
-                                  "", _x("IPv6 SSU"), _x("IPv6 Only SSU, introducers"), _x("IPv6 SSU, introducers"),
-                                  _x("IPv6 NTCP"), _x("IPv6 NTCP, SSU"), _x("IPv6 Only NTCP, SSU, introducers"), _x("IPv6 NTCP, SSU, introducers") };
+                                             _x("NTCP"), _x("NTCP and SSU"), _x("NTCP and SSU with introducers"), "",
+                                             "", _x("IPv6 SSU"), _x("IPv6 Only SSU, introducers"), _x("IPv6 SSU, introducers"),
+                                             _x("IPv6 NTCP"), _x("IPv6 NTCP, SSU"), _x("IPv6 Only NTCP, SSU, introducers"), _x("IPv6 NTCP, SSU, introducers")
+                                           };
     /**
      *  what transport types
      */

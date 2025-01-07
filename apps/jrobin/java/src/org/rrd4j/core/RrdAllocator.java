@@ -7,7 +7,7 @@ package org.rrd4j.core;
  */
 public class RrdAllocator {
     private long allocationPointer = 0L;
-    
+
     RrdAllocator() {
         super();
     }

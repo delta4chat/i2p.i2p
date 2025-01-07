@@ -1,9 +1,9 @@
 package net.i2p.router;
 /*
  * free (adj.): unencumbered; not under the control of others
- * Written by jrandom in 2003 and released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
- * It probably won't make your computer catch on fire, or eat 
+ * Written by jrandom in 2003 and released into the public domain
+ * with no warranty of any kind, either expressed or implied.
+ * It probably won't make your computer catch on fire, or eat
  * your children, but it might.  Use at your own risk.
  *
  */
@@ -102,22 +102,26 @@ public class LeaseSetKeys {
      *
      * Deprecated, unused
      */
-    public SigningPrivateKey getRevocationKey() { return _revocationKey; }
+    public SigningPrivateKey getRevocationKey() {
+        return _revocationKey;
+    }
 
     /**
-     * Decryption key which can open up garlic messages encrypted to the 
+     * Decryption key which can open up garlic messages encrypted to the
      * LeaseSet's public key.  This is used because the general public does not
-     * know on what router the destination is connected and as such can't encrypt 
+     * know on what router the destination is connected and as such can't encrypt
      * to that router's normal public key.
      *
      * @return ElGamal key or null if the LS does not support ElGamal
      */
-    public PrivateKey getDecryptionKey() { return _decryptionKey; }
+    public PrivateKey getDecryptionKey() {
+        return _decryptionKey;
+    }
 
     /**
-     * Decryption key which can open up garlic messages encrypted to the 
+     * Decryption key which can open up garlic messages encrypted to the
      * LeaseSet's public key.  This is used because the general public does not
-     * know on what router the destination is connected and as such can't encrypt 
+     * know on what router the destination is connected and as such can't encrypt
      * to that router's normal public key.
      *
      * @return key of the specified type or null if the LS does not support that type

@@ -77,7 +77,10 @@ class FileFilterDefinitionElement extends FilterDefinitionElement {
             }
         } finally {
             if (reader != null) {
-                try { reader.close(); } catch (IOException ignored) {}
+                try {
+                    reader.close();
+                }
+                catch (IOException ignored) {}
             }
         }
     }

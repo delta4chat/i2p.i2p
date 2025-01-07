@@ -45,8 +45,8 @@ public class I2PTunnelClient extends I2PTunnelClientBase {
      * @throws IllegalArgumentException if the I2PTunnel does not contain
      *                                  valid config to contact the router
      */
-    public I2PTunnelClient(int localPort, String destinations, Logging l, 
-                           boolean ownDest, EventDispatcher notifyThis, 
+    public I2PTunnelClient(int localPort, String destinations, Logging l,
+                           boolean ownDest, EventDispatcher notifyThis,
                            I2PTunnel tunnel, String pkf) throws IllegalArgumentException {
         super(localPort, ownDest, l, notifyThis,
               "Standard client on " + tunnel.listenHost + ':' + localPort,
@@ -102,7 +102,7 @@ public class I2PTunnelClient extends I2PTunnelClientBase {
                         dests.add(addr.getAddress());
                     }
                 } catch (IllegalArgumentException iae) {
-                     l.log("Bad destination " + destination + " - " + iae);
+                    l.log("Bad destination " + destination + " - " + iae);
                 }
             }
         }
@@ -124,7 +124,9 @@ public class I2PTunnelClient extends I2PTunnelClientBase {
      *
      *  @param ms in ms
      */
-    public void setReadTimeout(long ms) { readTimeout = ms; }
+    public void setReadTimeout(long ms) {
+        readTimeout = ms;
+    }
 
     /**
      *  Get the read idle timeout for newly-created connections (in
@@ -138,8 +140,10 @@ public class I2PTunnelClient extends I2PTunnelClientBase {
      *
      *  @return in ms
      */
-    public long getReadTimeout() { return readTimeout; }
-    
+    public long getReadTimeout() {
+        return readTimeout;
+    }
+
     protected void clientConnectionRun(Socket s) {
         I2PSocket i2ps = null;
         try {
@@ -153,7 +157,7 @@ public class I2PTunnelClient extends I2PTunnelClientBase {
             i2ps = createI2PSocket(clientDest, port);
             i2ps.setReadTimeout(readTimeout);
             I2PTunnelRunner t = new I2PTunnelRunner(s, i2ps, sockLock, null, null, mySockets,
-                                (I2PTunnelRunner.FailCallback) null);
+                                                    (I2PTunnelRunner.FailCallback) null);
             // we are called from an unlimited thread pool, so run inline
             //t.start();
             t.run();
@@ -167,14 +171,17 @@ public class I2PTunnelClient extends I2PTunnelClientBase {
             // only because we are running it inline
             closeSocket(s);
             if (i2ps != null) {
-                try { i2ps.close(); } catch (IOException ioe) {}
+                try {
+                    i2ps.close();
+                }
+                catch (IOException ioe) {}
                 synchronized (sockLock) {
                     mySockets.remove(i2ps);
                 }
             }
         }
     }
-    
+
     private final I2PSocketAddress pickDestination() {
         synchronized(_addrs) {
             int size = _addrs.size();

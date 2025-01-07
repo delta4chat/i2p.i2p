@@ -33,7 +33,7 @@
 *		- Error :  the other xml nodes of the message are ignored
 *		- Fix : add two methods to the NotifyRequest for extracting the property array
 *                and modify the httpRequestRecieved method in ControlPoint
-*	
+*
 ******************************************************************/
 
 package org.cybergarage.upnp.event;
@@ -46,160 +46,160 @@ import org.cybergarage.upnp.device.*;
 
 public class NotifyRequest extends SOAPRequest
 {
-	private final static String XMLNS = "e";
-	private final static String PROPERTY = "property";
-	private final static String PROPERTYSET = "propertyset";
-	 
-	////////////////////////////////////////////////
-	//	Constructor
-	////////////////////////////////////////////////
-	
-	public NotifyRequest()
-	{
-	}
+    private final static String XMLNS = "e";
+    private final static String PROPERTY = "property";
+    private final static String PROPERTYSET = "propertyset";
 
-	public NotifyRequest(HTTPRequest httpReq)
-	{
-		set(httpReq);
-	}
+    ////////////////////////////////////////////////
+    //	Constructor
+    ////////////////////////////////////////////////
 
-	////////////////////////////////////////////////
-	//	NT
-	////////////////////////////////////////////////
+    public NotifyRequest()
+    {
+    }
 
-	public void setNT(String value)
-	{
-		setHeader(HTTP.NT, value);
-	}
+    public NotifyRequest(HTTPRequest httpReq)
+    {
+        set(httpReq);
+    }
 
-	////////////////////////////////////////////////
-	//	NTS
-	////////////////////////////////////////////////
+    ////////////////////////////////////////////////
+    //	NT
+    ////////////////////////////////////////////////
 
-	public void setNTS(String value)
-	{
-		setHeader(HTTP.NTS, value);
-	}
+    public void setNT(String value)
+    {
+        setHeader(HTTP.NT, value);
+    }
 
-	////////////////////////////////////////////////
-	//	SID
-	////////////////////////////////////////////////
+    ////////////////////////////////////////////////
+    //	NTS
+    ////////////////////////////////////////////////
 
-	public void setSID(String id)
-	{
-		setHeader(HTTP.SID, Subscription.toSIDHeaderString(id));
-	}
+    public void setNTS(String value)
+    {
+        setHeader(HTTP.NTS, value);
+    }
 
-	public String getSID()
-	{
-		return Subscription.getSID(getHeaderValue(HTTP.SID));
-	}
+    ////////////////////////////////////////////////
+    //	SID
+    ////////////////////////////////////////////////
 
-	////////////////////////////////////////////////
-	//	SEQ
-	////////////////////////////////////////////////
+    public void setSID(String id)
+    {
+        setHeader(HTTP.SID, Subscription.toSIDHeaderString(id));
+    }
 
-	public void setSEQ(long value)
-	{
-		setHeader(HTTP.SEQ, Long.toString(value));
-	}
+    public String getSID()
+    {
+        return Subscription.getSID(getHeaderValue(HTTP.SID));
+    }
 
-	public long getSEQ()
-	{
-		return getLongHeaderValue(HTTP.SEQ);
-	}
+    ////////////////////////////////////////////////
+    //	SEQ
+    ////////////////////////////////////////////////
 
-	////////////////////////////////////////////////
-	//	Constructor
-	////////////////////////////////////////////////
+    public void setSEQ(long value)
+    {
+        setHeader(HTTP.SEQ, Long.toString(value));
+    }
 
-	public boolean setRequest(Subscriber sub, String varName, String value)
-	{
-		String callback = sub.getDeliveryURL();
-		String sid = sub.getSID();
-		long notifyCnt = sub.getNotifyCount();
-		String host = sub.getDeliveryHost();
-		String path = sub.getDeliveryPath();
-		int port = sub.getDeliveryPort();
-		
-		setMethod(HTTP.NOTIFY);
-		setURI(path);
-		setHost(host, port);
-		setNT(NT.EVENT);
-		setNTS(NTS.PROPCHANGE);
-		setSID(sid);
-		setSEQ(notifyCnt);
+    public long getSEQ()
+    {
+        return getLongHeaderValue(HTTP.SEQ);
+    }
 
-		setContentType(XML.DEFAULT_CONTENT_TYPE);
-		Node propSetNode = createPropertySetNode(varName, value);
-		setContent(propSetNode);		
+    ////////////////////////////////////////////////
+    //	Constructor
+    ////////////////////////////////////////////////
 
-		return true;			
-	}
-	
-	private Node createPropertySetNode(String varName, String value)
-	{
-		Node propSetNode = new Node(/*XMLNS + SOAP.DELIM + */PROPERTYSET);
-		
-		propSetNode.setNameSpace(XMLNS, Subscription.XMLNS);
+    public boolean setRequest(Subscriber sub, String varName, String value)
+    {
+        String callback = sub.getDeliveryURL();
+        String sid = sub.getSID();
+        long notifyCnt = sub.getNotifyCount();
+        String host = sub.getDeliveryHost();
+        String path = sub.getDeliveryPath();
+        int port = sub.getDeliveryPort();
 
-		Node propNode = new Node(/*XMLNS + SOAP.DELIM + */PROPERTY);
-		propSetNode.addNode(propNode);
-		
-		// Thanks for Giordano Sassaroli <sassarol@cefriel.it> (05/22/03)
-		//Node varNameNode = new Node(XMLNS + SOAP.DELIM + varName);
-		Node varNameNode = new Node(varName);
-		varNameNode.setValue(value);
-		propNode.addNode(varNameNode);
-		
-		return propSetNode;
-	}
-	
-	private Node getVariableNode()
-	{
-		Node rootNode = getEnvelopeNode();
-		if (rootNode == null)
-			return null;
-		if (rootNode.hasNodes() == false)
-			return null;
-		Node propNode = rootNode.getNode(0);
-		if (propNode.hasNodes() == false)
-			return null;
-		return propNode.getNode(0);
-	}
+        setMethod(HTTP.NOTIFY);
+        setURI(path);
+        setHost(host, port);
+        setNT(NT.EVENT);
+        setNTS(NTS.PROPCHANGE);
+        setSID(sid);
+        setSEQ(notifyCnt);
 
-	// Thanks for Giordano Sassaroli <sassarol@cefriel.it> (09/08/03)
-	private Property getProperty(Node varNode) 
-	{
-		Property prop = new Property();
-		if (varNode == null)
-			return prop;
-		// remove the event namespace
-		String variableName = varNode.getName();
-		int index = variableName.lastIndexOf(':');
-		if (index != -1)
-			variableName = variableName.substring(index + 1);
-		prop.setName(variableName);
-		prop.setValue(varNode.getValue());
-		return prop;
-	}
+        setContentType(XML.DEFAULT_CONTENT_TYPE);
+        Node propSetNode = createPropertySetNode(varName, value);
+        setContent(propSetNode);
 
-	// Thanks for Giordano Sassaroli <sassarol@cefriel.it> (09/08/03)
-	public PropertyList getPropertyList() {
-		PropertyList properties = new PropertyList();
-		Node varSetNode = getEnvelopeNode();
-		// I2P change: ParserException caught in getRootNode() causes
-		// getEnvelopeNode() to return null
-		if (varSetNode == null)
-			return properties;
-		for (int i = 0; i<varSetNode.getNNodes(); i++){
-			Node propNode = varSetNode.getNode(i);
-			if (propNode == null)
-				continue;
-			Property prop = getProperty(propNode.getNode(0));
-			properties.add(prop);
-		}
-		return properties;
-	}
-	
-}	
+        return true;
+    }
+
+    private Node createPropertySetNode(String varName, String value)
+    {
+        Node propSetNode = new Node(/*XMLNS + SOAP.DELIM + */PROPERTYSET);
+
+        propSetNode.setNameSpace(XMLNS, Subscription.XMLNS);
+
+        Node propNode = new Node(/*XMLNS + SOAP.DELIM + */PROPERTY);
+        propSetNode.addNode(propNode);
+
+        // Thanks for Giordano Sassaroli <sassarol@cefriel.it> (05/22/03)
+        //Node varNameNode = new Node(XMLNS + SOAP.DELIM + varName);
+        Node varNameNode = new Node(varName);
+        varNameNode.setValue(value);
+        propNode.addNode(varNameNode);
+
+        return propSetNode;
+    }
+
+    private Node getVariableNode()
+    {
+        Node rootNode = getEnvelopeNode();
+        if (rootNode == null)
+            return null;
+        if (rootNode.hasNodes() == false)
+            return null;
+        Node propNode = rootNode.getNode(0);
+        if (propNode.hasNodes() == false)
+            return null;
+        return propNode.getNode(0);
+    }
+
+    // Thanks for Giordano Sassaroli <sassarol@cefriel.it> (09/08/03)
+    private Property getProperty(Node varNode)
+    {
+        Property prop = new Property();
+        if (varNode == null)
+            return prop;
+        // remove the event namespace
+        String variableName = varNode.getName();
+        int index = variableName.lastIndexOf(':');
+        if (index != -1)
+            variableName = variableName.substring(index + 1);
+        prop.setName(variableName);
+        prop.setValue(varNode.getValue());
+        return prop;
+    }
+
+    // Thanks for Giordano Sassaroli <sassarol@cefriel.it> (09/08/03)
+    public PropertyList getPropertyList() {
+        PropertyList properties = new PropertyList();
+        Node varSetNode = getEnvelopeNode();
+        // I2P change: ParserException caught in getRootNode() causes
+        // getEnvelopeNode() to return null
+        if (varSetNode == null)
+            return properties;
+        for (int i = 0; i<varSetNode.getNNodes(); i++) {
+            Node propNode = varSetNode.getNode(i);
+            if (propNode == null)
+                continue;
+            Property prop = getProperty(propNode.getNode(0));
+            properties.add(prop);
+        }
+        return properties;
+    }
+
+}

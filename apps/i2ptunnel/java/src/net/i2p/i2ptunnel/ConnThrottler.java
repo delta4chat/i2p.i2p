@@ -120,9 +120,9 @@ class ConnThrottler {
                     long until = now + _throttlePeriod;
                     String date = DataHelper.formatTime(until);
                     _log.logAlways(Log.WARN, "Throttling " + _action + " until " + date +
-                                             " after exceeding max of " + _max +
-                                             " in " + DataHelper.formatDuration(_checkPeriod) +
-                                             ": " + h.toBase64());
+                                   " after exceeding max of " + _max +
+                                   " in " + DataHelper.formatDuration(_checkPeriod) +
+                                   ": " + h.toBase64());
                     rec.ban(until);
                     return true;
                 }
@@ -135,8 +135,8 @@ class ConnThrottler {
                 _totalThrottleUntil = Clock.getInstance().now() + _totalThrottlePeriod;
                 String date = DataHelper.formatTime(_totalThrottleUntil);
                 _log.logAlways(Log.WARN, "*** Throttling " + _action + " from ALL peers until " + date +
-                                         " after exceeding max of " + _max +
-                                         " in " + DataHelper.formatDuration(_checkPeriod));
+                               " after exceeding max of " + _max +
+                               " in " + DataHelper.formatDuration(_checkPeriod));
             }
             return true;
         }

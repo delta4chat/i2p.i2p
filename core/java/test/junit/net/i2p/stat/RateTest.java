@@ -10,9 +10,9 @@ import junit.framework.TestCase;
 
 
 public class RateTest extends TestCase {
-    
+
     @Test
-    public void testRate() throws Exception{
+    public void testRate() throws Exception {
         Rate rate = new Rate(5000);
         for (int i = 0; i < 50; i++) {
             Thread.sleep(20);
@@ -20,7 +20,7 @@ public class RateTest extends TestCase {
         }
         rate.coalesce();
         StringBuilder buf = new StringBuilder(1024);
-        
+
         rate.store("rate.test", buf);
         byte data[] = DataHelper.getUTF8(buf.toString());
 

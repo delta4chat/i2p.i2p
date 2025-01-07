@@ -27,7 +27,7 @@ public class Clock implements Timestamper.UpdateListener {
     protected volatile long _offset;
     protected boolean _alreadyChanged;
     private final Set<ClockUpdateListener> _listeners;
-    
+
     public Clock(I2PAppContext context) {
         _context = context;
         _listeners = new CopyOnWriteArraySet<ClockUpdateListener>();
@@ -58,14 +58,18 @@ public class Clock implements Timestamper.UpdateListener {
     public static Clock getInstance() {
         return I2PAppContext.getGlobalContext().clock();
     }
-    
+
     /**
      *  This is a dummy, see RouterClock and RouterTimestamper for the real thing
      */
-    public Timestamper getTimestamper() { return new Timestamper(); }
-    
+    public Timestamper getTimestamper() {
+        return new Timestamper();
+    }
+
     /** we fetch it on demand to avoid circular dependencies (logging uses the clock) */
-    protected Log getLog() { return _context.logManager().getLog(Clock.class); }
+    protected Log getLog() {
+        return _context.logManager().getLog(Clock.class);
+    }
 
     /** if the clock is skewed by 3+ days, forget it */
     public final static long MAX_OFFSET = 3 * 24 * 60 * 60 * 1000;
@@ -81,9 +85,9 @@ public class Clock implements Timestamper.UpdateListener {
      * @param offsetMs the delta from System.currentTimeMillis() (NOT the delta from now())
      */
     public void setOffset(long offsetMs) {
-        setOffset(offsetMs, false);        
+        setOffset(offsetMs, false);
     }
-    
+
     /**
      * Specify how far away from the "correct" time the computer is - a positive
      * value means that the system time is slow, while a negative value means the system time is fast.
@@ -101,18 +105,18 @@ public class Clock implements Timestamper.UpdateListener {
                     log.warn("Maximum offset shift exceeded [" + offsetMs + "], NOT HONORING IT");
                 return;
             }
-            
+
             // only allow substantial modifications before the first 10 minutes
             if (_alreadyChanged && (System.currentTimeMillis() - _startedOn > 10 * 60 * 1000)) {
                 if ( (delta > MAX_LIVE_OFFSET) || (delta < 0 - MAX_LIVE_OFFSET) ) {
                     Log log = getLog();
                     if (log.shouldLog(Log.WARN))
                         log.warn("The clock has already been updated, but you want to change it by "
-                                           + delta + " to " + offsetMs + "?  Did something break?");
+                                 + delta + " to " + offsetMs + "?  Did something break?");
                     return;
                 }
             }
-            
+
             if ((delta < MIN_OFFSET_CHANGE) && (delta > 0 - MIN_OFFSET_CHANGE)) {
                 Log log = getLog();
                 if (log.shouldLog(Log.DEBUG))
@@ -126,7 +130,7 @@ public class Clock implements Timestamper.UpdateListener {
                 getLog().log(Log.CRIT, "Updating clock offset to " + offsetMs + "ms from " + _offset + "ms");
             else if (getLog().shouldLog(Log.INFO))
                 getLog().info("Updating clock offset to " + offsetMs + "ms from " + _offset + "ms");
-            
+
             if (!_statCreated) {
                 _context.statManager().createRateStat("clock.skew", "Clock step adjustment (ms)", "Clock", new long[] { 60*60*1000 });
                 _statCreated = true;
@@ -148,10 +152,12 @@ public class Clock implements Timestamper.UpdateListener {
     public synchronized long getOffset() {
         return _offset;
     }
-    
-    public boolean getUpdatedSuccessfully() { return _alreadyChanged; }
-    
-    
+
+    public boolean getUpdatedSuccessfully() {
+        return _alreadyChanged;
+    }
+
+
     public void setNow(long realTime) {
         if (realTime < BuildTime.getEarliestTime() || realTime > BuildTime.getLatestTime()) {
             Log log = getLog();
@@ -186,17 +192,17 @@ public class Clock implements Timestamper.UpdateListener {
     }
 
     public void addUpdateListener(ClockUpdateListener lsnr) {
-            _listeners.add(lsnr);
+        _listeners.add(lsnr);
     }
 
     public void removeUpdateListener(ClockUpdateListener lsnr) {
-            _listeners.remove(lsnr);
+        _listeners.remove(lsnr);
     }
 
     protected void fireOffsetChanged(long delta) {
-            for (ClockUpdateListener lsnr : _listeners) {
-                lsnr.offsetChanged(delta);
-            }
+        for (ClockUpdateListener lsnr : _listeners) {
+            lsnr.offsetChanged(delta);
+        }
     }
 
     public interface ClockUpdateListener {

@@ -51,7 +51,7 @@ public class I2PSocketEepGet extends EepGet {
     private final I2PSocketManager _socketManager;
     /** this replaces _proxy in the superclass. Sadly, I2PSocket does not extend Socket. */
     private I2PSocket _socket;
-    
+
     /** from ConnectionOptions */
     private static final String PROP_CONNECT_DELAY = "i2p.streaming.connectDelay";
     private static final String CONNECT_DELAY = "500";
@@ -67,7 +67,7 @@ public class I2PSocketEepGet extends EepGet {
         super(ctx, false, null, -1, numRetries, minSize, maxSize, outputFile, outputStream, url, true, null, null);
         _socketManager = mgr;
     }
-   
+
     /**
      *  We have to override this to close _socket, since we can't use _proxy in super as the I2PSocket.
      */
@@ -75,8 +75,8 @@ public class I2PSocketEepGet extends EepGet {
     public boolean fetch(long fetchHeaderTimeout, long totalTimeout, long inactivityTimeout) {
         boolean rv = super.fetch(fetchHeaderTimeout, totalTimeout, inactivityTimeout);
         if (_socket != null) {
-            try { 
-                _socket.close(); 
+            try {
+                _socket.close();
                 _socket = null;
             } catch (IOException ioe) {}
         }
@@ -100,7 +100,7 @@ public class I2PSocketEepGet extends EepGet {
      *  Look up the address, get a socket from the I2PSocketManager supplied in the constructor,
      *  and send the request.
      *
-     *  @param timeout ignored 
+     *  @param timeout ignored
      */
     @Override
     protected void sendRequest(SocketTimeout timeout) throws IOException {
@@ -110,9 +110,18 @@ public class I2PSocketEepGet extends EepGet {
                 _alreadyTransferred = outFile.length();
         }
 
-        if (_proxyIn != null) try { _proxyIn.close(); } catch (IOException ioe) {}
-        if (_proxyOut != null) try { _proxyOut.close(); } catch (IOException ioe) {}
-        if (_socket != null) try { _socket.close(); } catch (IOException ioe) {}
+        if (_proxyIn != null) try {
+                _proxyIn.close();
+            }
+            catch (IOException ioe) {}
+        if (_proxyOut != null) try {
+                _proxyOut.close();
+            }
+            catch (IOException ioe) {}
+        if (_socket != null) try {
+                _socket.close();
+            }
+            catch (IOException ioe) {}
 
         try {
             URI url = new URI(_actualURL);
@@ -213,11 +222,11 @@ public class I2PSocketEepGet extends EepGet {
 
         _proxyIn = _socket.getInputStream();
         _proxyOut = _socket.getOutputStream();
-        
+
         // SocketTimeout doesn't take an I2PSocket, but no matter, because we
         // always close our socket in fetch() above.
         //timeout.setSocket(_socket);
-        
+
         String req = getRequest();
         _proxyOut.write(DataHelper.getUTF8(req));
         _proxyOut.flush();
@@ -246,9 +255,9 @@ public class I2PSocketEepGet extends EepGet {
         if (query != null)
             path = path + '?' + query;
         if (!path.startsWith("/"))
-	    path = '/' + path;
+            path = '/' + path;
         buf.append("GET ").append(path).append(" HTTP/1.1\r\n" +
-                   "Host: ").append(url.getHost()).append("\r\n");
+                                               "Host: ").append(url.getHost()).append("\r\n");
         if (_alreadyTransferred > 0) {
             buf.append("Range: bytes=");
             buf.append(_alreadyTransferred);
@@ -282,59 +291,59 @@ public class I2PSocketEepGet extends EepGet {
      * This is just for testing.
      * Real command line apps should use EepGet.main(),
      * which has more options, and you don't have to wait for tunnels to be built.
-     */ 
-/****
-    public static void main(String args[]) {
-        int numRetries = 0;
-        long inactivityTimeout = INACTIVITY_TIMEOUT;
-        String url = null;
-        try {
-            for (int i = 0; i < args.length; i++) {
-                if (args[i].equals("-n")) {
-                    numRetries = Integer.parseInt(args[i+1]);
-                    i++;
-                } else if (args[i].equals("-t")) {
-                    inactivityTimeout = 1000 * Integer.parseInt(args[i+1]);
-                    i++;
-                } else if (args[i].startsWith("-")) {
-                    usage();
-                    return;
-                } else {
-                    url = args[i];
+     */
+    /****
+        public static void main(String args[]) {
+            int numRetries = 0;
+            long inactivityTimeout = INACTIVITY_TIMEOUT;
+            String url = null;
+            try {
+                for (int i = 0; i < args.length; i++) {
+                    if (args[i].equals("-n")) {
+                        numRetries = Integer.parseInt(args[i+1]);
+                        i++;
+                    } else if (args[i].equals("-t")) {
+                        inactivityTimeout = 1000 * Integer.parseInt(args[i+1]);
+                        i++;
+                    } else if (args[i].startsWith("-")) {
+                        usage();
+                        return;
+                    } else {
+                        url = args[i];
+                    }
                 }
+            } catch (RuntimeException e) {
+                e.printStackTrace();
+                usage();
+                return;
             }
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-            usage();
-            return;
-        }
-        
-        if (url == null) {
-            usage();
-            return;
+
+            if (url == null) {
+                usage();
+                return;
+            }
+
+            Properties opts = new Properties();
+            opts.setProperty("i2cp.dontPublishLeaseSet", "true");
+            opts.setProperty("inbound.quantity", "1");
+            opts.setProperty("outbound.quantity", "1");
+            opts.setProperty("inbound.length", "1");
+            opts.setProperty("outbound.length", "1");
+            opts.setProperty("inbound.nickname", "I2PSocketEepGet");
+            I2PSocketManager mgr = I2PSocketManagerFactory.createManager(opts);
+            if (mgr == null) {
+                System.err.println("Error creating the socket manager");
+                return;
+            }
+            I2PSocketEepGet get = new I2PSocketEepGet(I2PAppContext.getGlobalContext(),
+                                                      mgr, numRetries, suggestName(url), url);
+            get.addStatusListener(get.new CLIStatusListener(1024, 40));
+            get.fetch(inactivityTimeout, -1, inactivityTimeout);
+            mgr.destroySocketManager();
         }
 
-        Properties opts = new Properties();
-        opts.setProperty("i2cp.dontPublishLeaseSet", "true");
-        opts.setProperty("inbound.quantity", "1");
-        opts.setProperty("outbound.quantity", "1");
-        opts.setProperty("inbound.length", "1");
-        opts.setProperty("outbound.length", "1");
-        opts.setProperty("inbound.nickname", "I2PSocketEepGet");
-        I2PSocketManager mgr = I2PSocketManagerFactory.createManager(opts);
-        if (mgr == null) {
-            System.err.println("Error creating the socket manager");
-            return;
+        private static void usage() {
+            System.err.println("I2PSocketEepGet [-n #retries] [-t timeout] url");
         }
-        I2PSocketEepGet get = new I2PSocketEepGet(I2PAppContext.getGlobalContext(),
-                                                  mgr, numRetries, suggestName(url), url);
-        get.addStatusListener(get.new CLIStatusListener(1024, 40));
-        get.fetch(inactivityTimeout, -1, inactivityTimeout);
-        mgr.destroySocketManager();
-    }
-    
-    private static void usage() {
-        System.err.println("I2PSocketEepGet [-n #retries] [-t timeout] url");
-    }
-****/
+    ****/
 }

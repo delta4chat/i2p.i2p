@@ -27,7 +27,7 @@ public class RrdSafeFileBackend extends RrdRandomAccessFileBackend {
      * @throws java.io.IOException Thrown in case of I/O error.
      */
     public RrdSafeFileBackend(String path, long lockWaitTime, long lockRetryPeriod)
-            throws IOException {
+    throws IOException {
         super(path, false);
         try {
             lockFile(lockWaitTime, lockRetryPeriod);
@@ -63,7 +63,7 @@ public class RrdSafeFileBackend extends RrdRandomAccessFileBackend {
         while (System.currentTimeMillis() - entryTime <= lockWaitTime);
         counters.registerError();
         throw new RrdBackendException("Could not obtain exclusive lock on file: " + getPath() +
-                "] after " + lockWaitTime + " milliseconds");
+                                      "] after " + lockWaitTime + " milliseconds");
     }
 
     /**
@@ -123,8 +123,8 @@ public class RrdSafeFileBackend extends RrdRandomAccessFileBackend {
 
         String getInfo() {
             return "LOCKS=" + locks + ", " + "UNLOCKS=" + unlocks + ", " +
-                    "DELAYED_LOCKS=" + (locks.get() - quickLocks.get()) + ", " + "LOCKED=" + locked + ", " +
-                    "ERRORS=" + errors;
+                   "DELAYED_LOCKS=" + (locks.get() - quickLocks.get()) + ", " + "LOCKED=" + locked + ", " +
+                   "ERRORS=" + errors;
         }
     }
 }

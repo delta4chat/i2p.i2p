@@ -2,9 +2,9 @@ package net.i2p.data;
 
 /*
  * free (adj.): unencumbered; not under the control of others
- * Written by jrandom in 2003 and released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
- * It probably won't make your computer catch on fire, or eat 
+ * Written by jrandom in 2003 and released into the public domain
+ * with no warranty of any kind, either expressed or implied.
+ * It probably won't make your computer catch on fire, or eat
  * your children, but it might.  Use at your own risk.
  *
  */
@@ -231,7 +231,7 @@ public abstract class DatabaseEntry extends DataStructureImpl {
         if (bytes == null) throw new DataFormatException("Not enough data to sign");
         if (key == null)
             throw new DataFormatException("No signing key");
-        // now sign with the key 
+        // now sign with the key
         _signature = DSAEngine.getInstance().sign(bytes, key);
         if (_signature == null)
             throw new DataFormatException("Signature failed with " + key.getType() + " key");
@@ -277,7 +277,7 @@ public abstract class DatabaseEntry extends DataStructureImpl {
             return false;
         return DSAEngine.getInstance().verifySignature(_signature, data, spk);
     }
-    
+
     /**
      * If true, we received this LeaseSet by a remote peer publishing it to
      * us, rather than by searching for it ourselves or locally creating it.
@@ -285,19 +285,19 @@ public abstract class DatabaseEntry extends DataStructureImpl {
      *
      * @since 0.9.58 moved up from LeaseSet
      */
-    public boolean getReceivedAsPublished() { 
+    public boolean getReceivedAsPublished() {
         return _receivedAsPublished;
     }
 
     /**
      * @since 0.9.58 moved up from LeaseSet
-     * 
+     *
      * use this carefully, when updating the flags make sure the old and new
      * leaseSet are actually equivalent, or simply copy over the reply value,
      * see KademliaNetworkDatabaseFacade.java line 997 for more information.
      */
     public void setReceivedAsPublished() {
-        _receivedAsPublished = true; 
+        _receivedAsPublished = true;
     }
 
     /**
@@ -307,7 +307,7 @@ public abstract class DatabaseEntry extends DataStructureImpl {
      * @since 0.7.14, moved up from LeaseSet in 0.9.58
      */
     public boolean getReceivedAsReply() {
-        return _receivedAsReply; 
+        return _receivedAsReply;
     }
 
     /**

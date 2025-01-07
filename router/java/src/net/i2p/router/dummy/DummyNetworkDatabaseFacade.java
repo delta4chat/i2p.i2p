@@ -1,9 +1,9 @@
 package net.i2p.router.dummy;
 /*
  * free (adj.): unencumbered; not under the control of others
- * Written by jrandom in 2003 and released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
- * It probably won't make your computer catch on fire, or eat 
+ * Written by jrandom in 2003 and released into the public domain
+ * with no warranty of any kind, either expressed or implied.
+ * It probably won't make your computer catch on fire, or eat
  * your children, but it might.  Use at your own risk.
  *
  */
@@ -26,7 +26,7 @@ import net.i2p.router.RouterContext;
 public class DummyNetworkDatabaseFacade extends NetworkDatabaseFacade {
     private final Map<Hash, RouterInfo> _routers;
     private final RouterContext _context;
-    
+
     public DummyNetworkDatabaseFacade(RouterContext ctx) {
         _routers = Collections.synchronizedMap(new HashMap<Hash, RouterInfo>());
         _context = ctx;
@@ -38,33 +38,45 @@ public class DummyNetworkDatabaseFacade extends NetworkDatabaseFacade {
         RouterInfo info = _context.router().getRouterInfo();
         _routers.put(info.getIdentity().getHash(), info);
     }
-    
-    public DatabaseEntry lookupLocally(Hash key) { return null; }
-    public DatabaseEntry lookupLocallyWithoutValidation(Hash key) { return null; }
+
+    public DatabaseEntry lookupLocally(Hash key) {
+        return null;
+    }
+    public DatabaseEntry lookupLocallyWithoutValidation(Hash key) {
+        return null;
+    }
     public void lookupLeaseSet(Hash key, Job onFindJob, Job onFailedLookupJob, long timeoutMs) {}
     public void lookupLeaseSet(Hash key, Job onFindJob, Job onFailedLookupJob, long timeoutMs, Hash fromLocalDest) {}
-    public LeaseSet lookupLeaseSetLocally(Hash key) { return null; }
+    public LeaseSet lookupLeaseSetLocally(Hash key) {
+        return null;
+    }
     public void lookupLeaseSetRemotely(Hash key, Hash fromLocalDest) {}
     public void lookupLeaseSetRemotely(Hash key, Job onFindJob, Job onFailedLookupJob,
                                        long timeoutMs, Hash fromLocalDest) {}
 
     public void lookupDestination(Hash key, Job onFinishedJob, long timeoutMs, Hash fromLocalDest) {}
 
-    public Destination lookupDestinationLocally(Hash key) { return null; }
+    public Destination lookupDestinationLocally(Hash key) {
+        return null;
+    }
 
     public void lookupRouterInfo(Hash key, Job onFindJob, Job onFailedLookupJob, long timeoutMs) {
         RouterInfo info = lookupRouterInfoLocally(key);
-        if (info == null) 
+        if (info == null)
             _context.jobQueue().addJob(onFailedLookupJob);
         else
             _context.jobQueue().addJob(onFindJob);
     }
-    public RouterInfo lookupRouterInfoLocally(Hash key) { return _routers.get(key); }
+    public RouterInfo lookupRouterInfoLocally(Hash key) {
+        return _routers.get(key);
+    }
 
     public void publish(LeaseSet localLeaseSet) {}
     public void publish(RouterInfo localRouterInfo) {}
 
-    public LeaseSet store(Hash key, LeaseSet leaseSet) { return leaseSet; }
+    public LeaseSet store(Hash key, LeaseSet leaseSet) {
+        return leaseSet;
+    }
     public RouterInfo store(Hash key, RouterInfo routerInfo) {
         RouterInfo rv = _routers.put(key, routerInfo);
         return rv;
@@ -74,7 +86,11 @@ public class DummyNetworkDatabaseFacade extends NetworkDatabaseFacade {
     public void fail(Hash dbEntry) {
         _routers.remove(dbEntry);
     }
-    
-    public Set<Hash> getAllRouters() { return new HashSet<Hash>(_routers.keySet()); }
-    public Set<Hash> findNearestRouters(Hash key, int maxNumRouters, Set<Hash> peersToIgnore) { return getAllRouters(); }
+
+    public Set<Hash> getAllRouters() {
+        return new HashSet<Hash>(_routers.keySet());
+    }
+    public Set<Hash> findNearestRouters(Hash key, int maxNumRouters, Set<Hash> peersToIgnore) {
+        return getAllRouters();
+    }
 }

@@ -38,28 +38,28 @@ public class NewsXMLParser {
     private XHTMLMode _mode;
 
     private static final Set<String> xhtmlWhitelist = new HashSet<String>(Arrays.asList(new String[] {
-        "a", "b", "br", "div", "i", "p", "span", "font", "blockquote", "hr",
-        "del", "ins", "em", "strong", "mark", "sub", "sup", "tt", "code", "strike", "s", "u",
-        "h4", "h5", "h6",
-        "ol", "ul", "li", "dl", "dt", "dd",
-        "table", "tr", "td", "th",
-        // put in by parser
-        XMLParser.TEXT_NAME
-    }));
+                "a", "b", "br", "div", "i", "p", "span", "font", "blockquote", "hr",
+                "del", "ins", "em", "strong", "mark", "sub", "sup", "tt", "code", "strike", "s", "u",
+                "h4", "h5", "h6",
+                "ol", "ul", "li", "dl", "dt", "dd",
+                "table", "tr", "td", "th",
+                // put in by parser
+                XMLParser.TEXT_NAME
+            }));
 
     // http://www.w3.org/TR/html-markup/global-attributes.html#common.attrs.event-handler
     private static final Set<String> attributeBlacklist = new HashSet<String>(Arrays.asList(new String[] {
-        "onabort", "onblur", "oncanplay", "oncanplaythrough", "onchange", "onclick",
-        "oncontextmenu", "ondblclick", "ondrag", "ondragend", "ondragenter", "ondragleave",
-        "ondragover", "ondragstart", "ondrop", "ondurationchange", "onemptied",
-        "onended", "onerror", "onfocus", "oninput", "onivalid", "onkeydown", "onkeypress",
-        "onkeyup", "onload", "onloadeddata", "onloadedmetadata", "onloadstart",
-        "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup",
-        "onmousewheel", "onpause", "onplay", "onplaying", "onprogress", "onratechange",
-        "onreadystatechange", "onreset", "onscroll", "onseeked", "onseeking", "onselect",
-        "onshow", "onstalled", "onsubmit", "onsuspend",
-        "ontimeupdate", "onvolumechange", "onwaiting"
-    }));
+                "onabort", "onblur", "oncanplay", "oncanplaythrough", "onchange", "onclick",
+                "oncontextmenu", "ondblclick", "ondrag", "ondragend", "ondragenter", "ondragleave",
+                "ondragover", "ondragstart", "ondrop", "ondurationchange", "onemptied",
+                "onended", "onerror", "onfocus", "oninput", "onivalid", "onkeydown", "onkeypress",
+                "onkeyup", "onload", "onloadeddata", "onloadedmetadata", "onloadstart",
+                "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup",
+                "onmousewheel", "onpause", "onplay", "onplaying", "onprogress", "onratechange",
+                "onreadystatechange", "onreset", "onscroll", "onseeked", "onseeking", "onselect",
+                "onshow", "onstalled", "onsubmit", "onsuspend",
+                "ontimeupdate", "onvolumechange", "onwaiting"
+            }));
 
     /**
      *  The action taken when encountering a non-whitelisted
@@ -78,7 +78,7 @@ public class NewsXMLParser {
         ALLOW_ALL
     }
 
-    public NewsXMLParser(I2PAppContext ctx) { 
+    public NewsXMLParser(I2PAppContext ctx) {
         _context = ctx;
         _log = ctx.logManager().getLog(NewsXMLParser.class);
         _mode = XHTMLMode.REMOVE_ELEMENT;
@@ -375,20 +375,20 @@ public class NewsXMLParser {
                         }
                     } catch (I2PParserException ipe) {
                         switch (_mode) {
-                          case ABORT:
+                        case ABORT:
                             throw ipe;
-                          case SKIP_ENTRY:
+                        case SKIP_ENTRY:
                             if (_log.shouldLog(Log.WARN))
                                 _log.warn("Skipping entry", ipe);
                             e = null;
                             break;
-                          case REMOVE_ATTRIBUTE:
-                          case REMOVE_ELEMENT:
+                        case REMOVE_ATTRIBUTE:
+                        case REMOVE_ELEMENT:
                             if (_log.shouldLog(Log.WARN))
                                 _log.warn("Removing element", ipe);
                             continue;
-                          case ALLOW_ALL:
-                          default:
+                        case ALLOW_ALL:
+                        default:
                             break;
                         }
                     }
@@ -516,16 +516,16 @@ public class NewsXMLParser {
         //    _log.debug("Validating element: " + name);
         if (!xhtmlWhitelist.contains(name.toLowerCase(Locale.US))) {
             switch (_mode) {
-              case ABORT:
-              case SKIP_ENTRY:
+            case ABORT:
+            case SKIP_ENTRY:
                 throw new I2PParserException("Invalid XHTML element \"" + name + '"');
-              case REMOVE_ATTRIBUTE:
-              case REMOVE_ELEMENT:
+            case REMOVE_ATTRIBUTE:
+            case REMOVE_ELEMENT:
                 if (_log.shouldLog(Log.WARN))
                     _log.warn("Removing element: " + node);
                 node.getParentNode().removeNode(node);
                 return true;
-              case ALLOW_ALL:
+            case ALLOW_ALL:
                 if (_log.shouldLog(Log.WARN))
                     _log.warn("Allowing non-whitelisted element by configuration: " + node);
                 break;
@@ -536,22 +536,22 @@ public class NewsXMLParser {
             String aname = attr.getName();
             if (attributeBlacklist.contains(aname.toLowerCase(Locale.US))) {
                 switch (_mode) {
-                  case ABORT:
-                  case SKIP_ENTRY:
+                case ABORT:
+                case SKIP_ENTRY:
                     throw new I2PParserException("Invalid XHTML element \"" + name + "\" due to attribute " + aname);
-                  case REMOVE_ELEMENT:
+                case REMOVE_ELEMENT:
                     if (_log.shouldLog(Log.WARN))
                         _log.warn("Removing element: " + node + " due to attribute " + aname);
                     node.getParentNode().removeNode(node);
                     return true;
-                  case REMOVE_ATTRIBUTE:
+                case REMOVE_ATTRIBUTE:
                     if (_log.shouldLog(Log.WARN))
                         _log.warn("Removing attribute: " + aname + " from " + node);
                     // sadly, no removeAttribute(int)
                     if (node.removeAttribute(attr))
                         i--;
                     break;
-                  case ALLOW_ALL:
+                case ALLOW_ALL:
                     if (_log.shouldLog(Log.WARN))
                         _log.warn("Allowing blacklisted attribute by configuration: " + node);
                     break;

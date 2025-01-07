@@ -41,10 +41,12 @@ public class RouterIdentityTest extends StructureTest {
         ident.setSigningPublicKey(k);
         return ident;
     }
-    public DataStructure createStructureToRead() { return new RouterIdentity(); }
+    public DataStructure createStructureToRead() {
+        return new RouterIdentity();
+    }
 
     @Test
-    public void testNullCert() throws Exception{
+    public void testNullCert() throws Exception {
         RouterIdentity ident = new RouterIdentity();
         ident.setCertificate(null);
         PublicKey pk = (PublicKey)(new PublicKeyTest()).createDataStructure();
@@ -61,7 +63,7 @@ public class RouterIdentityTest extends StructureTest {
     }
 
     @Test
-    public void testNullPublicKey() throws Exception{
+    public void testNullPublicKey() throws Exception {
         RouterIdentity ident = new RouterIdentity();
         Certificate cert = (Certificate)(new CertificateTest()).createDataStructure();
         ident.setCertificate(cert);
@@ -78,7 +80,7 @@ public class RouterIdentityTest extends StructureTest {
     }
 
     @Test
-    public void testNullSigningKey() throws Exception{
+    public void testNullSigningKey() throws Exception {
         RouterIdentity ident = new RouterIdentity();
         Certificate cert = (Certificate)(new CertificateTest()).createDataStructure();
         ident.setCertificate(cert);
@@ -95,13 +97,13 @@ public class RouterIdentityTest extends StructureTest {
     }
 
     @Test
-    public void testNullEquals() throws Exception{
+    public void testNullEquals() throws Exception {
         RouterIdentity ident = new RouterIdentity();
         assertFalse(ident.equals(null));
     }
 
     @Test
-    public void testCalculatedHash() throws Exception{
+    public void testCalculatedHash() throws Exception {
         RouterIdentity ident = new RouterIdentity();
         Certificate cert = (Certificate)(new CertificateTest()).createDataStructure();
         ident.setCertificate(cert);

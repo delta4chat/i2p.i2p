@@ -163,8 +163,8 @@ public class PortMapper {
         if (service.equals(SVC_EEPSITE) || service.equals(SVC_HTTPS_EEPSITE)) {
             String end = ":" + port + '/';
             for (Iterator<String> iter = _eepsites.iterator(); iter.hasNext(); ) {
-                 if (iter.next().endsWith(end))
-                     iter.remove();
+                if (iter.next().endsWith(end))
+                    iter.remove();
             }
         }
         // not synched
@@ -361,8 +361,8 @@ public class PortMapper {
         if (host.contains(":"))
             buf.append(']');
         buf.append(':')
-           .append(port)
-           .append('/');
+        .append(port)
+        .append('/');
         return buf.toString();
     }
 

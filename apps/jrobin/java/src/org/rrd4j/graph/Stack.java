@@ -19,12 +19,12 @@ class Stack extends SourcedPlotElement {
             if (Double.isNaN(parentValues[i])) {
                 values[i] = procValues[i];
             }
-            else if (Double.isNaN(procValues[i])){
+            else if (Double.isNaN(procValues[i])) {
                 values[i] = parentValues[i];
             }
             else {
                 values[i] = parentValues[i] + procValues[i];
-                
+
             }
         }
     }
@@ -36,7 +36,7 @@ class Stack extends SourcedPlotElement {
         else if (parent instanceof Area) {
             return -1F;
         }
-        else /* if(parent instanceof Stack) */ {
+        else { /* if(parent instanceof Stack) */
             return ((Stack) parent).getParentLineWidth();
         }
     }

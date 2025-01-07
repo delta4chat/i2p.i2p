@@ -56,22 +56,30 @@ public class ConfigNetHandler extends FormHandler {
     private boolean _ipv6Firewalled;
     private final Map<String, String> changes = new HashMap<String, String>();
     private static final String PROP_HIDDEN = Router.PROP_HIDDEN_HIDDEN; // see Router for other choice
-    
+
     @Override
     protected void processForm() {
         if (_saveRequested || ( (_action != null) && (_t("Save changes").equals(_action)) )) {
             saveChanges();
-        //} else if (_recheckReachabilityRequested) {
-        //    recheckReachability();
+            //} else if (_recheckReachabilityRequested) {
+            //    recheckReachability();
         } else {
             // noop
         }
     }
-    
-    public void setSave(String moo) { _saveRequested = true; }
-    public void setRecheckReachability(String moo) { _recheckReachabilityRequested = true; }
-    public void setRequireIntroductions(String moo) { _requireIntroductions = true; }
-    public void setDynamicKeys(String moo) { _dynamicKeys = true; }
+
+    public void setSave(String moo) {
+        _saveRequested = true;
+    }
+    public void setRecheckReachability(String moo) {
+        _recheckReachabilityRequested = true;
+    }
+    public void setRequireIntroductions(String moo) {
+        _requireIntroductions = true;
+    }
+    public void setDynamicKeys(String moo) {
+        _dynamicKeys = true;
+    }
     public void setEnableloadtesting(String moo) { }
     public void setUdpAutoIP(String mode) {
         _udpAutoIP = mode;
@@ -84,20 +92,28 @@ public class ConfigNetHandler extends FormHandler {
         _ntcpAutoPort = mode.equals("2");
     }
 
-    public void setUpnp(String moo) { _upnp = true; }
-    public void setLaptop(String moo) { _laptop = true; }
+    public void setUpnp(String moo) {
+        _upnp = true;
+    }
+    public void setLaptop(String moo) {
+        _laptop = true;
+    }
 
     /** @since 0.9.20 */
-    public void setIPv4Firewalled(String moo) { _ipv4Firewalled = true; }
+    public void setIPv4Firewalled(String moo) {
+        _ipv4Firewalled = true;
+    }
 
     /** @since 0.9.28 */
-    public void setIPv6Firewalled(String moo) { _ipv6Firewalled = true; }
-    
-    public void setHostname(String hostname) { 
-        _hostname = (hostname != null ? hostname.trim() : null); 
+    public void setIPv6Firewalled(String moo) {
+        _ipv6Firewalled = true;
     }
-    public void setTcpPort(String port) { 
-        _tcpPort = (port != null ? port.trim() : null); 
+
+    public void setHostname(String hostname) {
+        _hostname = (hostname != null ? hostname.trim() : null);
+    }
+    public void setTcpPort(String port) {
+        _tcpPort = (port != null ? port.trim() : null);
     }
     public void setNtcphost(String host) {
         _ntcpHostname = (host != null ? host.trim() : null);
@@ -105,64 +121,64 @@ public class ConfigNetHandler extends FormHandler {
     public void setNtcpport(String port) {
         _ntcpPort = (port != null ? port.trim() : null);
     }
-    public void setUdpHost1(String host) { 
-        _udpHost1 = (host != null ? host.trim() : null); 
+    public void setUdpHost1(String host) {
+        _udpHost1 = (host != null ? host.trim() : null);
     }
-    public void setUdpPort(String port) { 
-        _udpPort = (port != null ? port.trim() : null); 
+    public void setUdpPort(String port) {
+        _udpPort = (port != null ? port.trim() : null);
     }
-    public void setInboundrate(String rate) { 
-        _inboundRate = (rate != null ? rate.trim() : null); 
-    }
-
-/*
-    public void setInboundburstrate(String rate) { 
-        _inboundBurstRate = (rate != null ? rate.trim() : null); 
-    }
-    public void setInboundburstfactor(String factor) { 
-        _inboundBurst = (factor != null ? factor.trim() : null); 
-    }
-****/
-
-    public void setOutboundrate(String rate) { 
-        _outboundRate = (rate != null ? rate.trim() : null); 
+    public void setInboundrate(String rate) {
+        _inboundRate = (rate != null ? rate.trim() : null);
     }
 
-/*
-    public void setOutboundburstrate(String rate) { 
-        _outboundBurstRate = (rate != null ? rate.trim() : null); 
+    /*
+        public void setInboundburstrate(String rate) {
+            _inboundBurstRate = (rate != null ? rate.trim() : null);
+        }
+        public void setInboundburstfactor(String factor) {
+            _inboundBurst = (factor != null ? factor.trim() : null);
+        }
+    ****/
+
+    public void setOutboundrate(String rate) {
+        _outboundRate = (rate != null ? rate.trim() : null);
     }
-    public void setOutboundburstfactor(String factor) { 
-        _outboundBurst = (factor != null ? factor.trim() : null); 
-    }
-****/
+
+    /*
+        public void setOutboundburstrate(String rate) {
+            _outboundBurstRate = (rate != null ? rate.trim() : null);
+        }
+        public void setOutboundburstfactor(String factor) {
+            _outboundBurst = (factor != null ? factor.trim() : null);
+        }
+    ****/
 
     public void setSharePercentage(String pct) {
         _sharePct = (pct != null ? pct.trim() : null);
     }
-    
+
     /** @since 0.8.12 */
     public void setRatesOnly(String foo) {
         _ratesOnly = true;
     }
-    
+
     /** @since 0.8.13 */
     public void setDisableUDP(String foo) {
         _udpDisabled = "disabled".equals(foo);
     }
-    
+
     /** @since IPv6 */
     public void setIpv6(String mode) {
         _ipv6Mode = mode;
     }
-    
-/****
-    private void recheckReachability() {
-        _context.commSystem().recheckReachability();
-        addFormNotice(_t("Rechecking router reachability..."));
-    }
-****/
-    
+
+    /****
+        private void recheckReachability() {
+            _context.commSystem().recheckReachability();
+            addFormNotice(_t("Rechecking router reachability..."));
+        }
+    ****/
+
     /**
      * The user made changes to the network config and wants to save them, so
      * lets go ahead and do so.
@@ -173,7 +189,7 @@ public class ConfigNetHandler extends FormHandler {
         boolean fullRestartRequired = false;
         boolean error = false;
         List<String> removes = new ArrayList<String>();
-        
+
         if (!_ratesOnly) {
             // IP Settings
             String oldUdp = _context.getProperty(UDPTransport.PROP_SOURCES,
@@ -226,8 +242,8 @@ public class ConfigNetHandler extends FormHandler {
                 }
                 changes.put(UDPTransport.PROP_SOURCES, _udpAutoIP);
                 if ((!oldUdp.equals(_udpAutoIP)) || (!oldUHost.equals(uhost))) {
-                   addFormNotice(_t("Updating IP address"));
-                   restartRequired = true;
+                    addFormNotice(_t("Updating IP address"));
+                    restartRequired = true;
                 }
             }
             if (_ipv6Mode != null) {
@@ -336,9 +352,9 @@ public class ConfigNetHandler extends FormHandler {
             }
 
         }
-        
+
         boolean ratesUpdated = updateRates();
-        
+
         boolean switchRequired = false;
         if (!_ratesOnly) {
             // If hidden mode value changes, restart is required
@@ -355,7 +371,7 @@ public class ConfigNetHandler extends FormHandler {
             changes.put(Router.PROP_DYNAMIC_KEYS, Boolean.toString(_dynamicKeys));
 
             if (_context.getBooleanPropertyDefaultTrue(TransportManager.PROP_ENABLE_UPNP) !=
-                _upnp) {
+                    _upnp) {
                 // This is minor, don't set restartRequired
                 if (_upnp)
                     addFormNotice(_t("Enabling UPnP"));
@@ -366,7 +382,7 @@ public class ConfigNetHandler extends FormHandler {
             changes.put(TransportManager.PROP_ENABLE_UPNP, Boolean.toString(_upnp));
 
             if (Boolean.parseBoolean(_context.getProperty(UDPTransport.PROP_LAPTOP_MODE)) !=
-                _laptop) {
+                    _laptop) {
                 // This is minor, don't set restartRequired
                 if (_laptop)
                     addFormNotice(_t("Enabling laptop mode"));
@@ -376,7 +392,7 @@ public class ConfigNetHandler extends FormHandler {
             changes.put(UDPTransport.PROP_LAPTOP_MODE, Boolean.toString(_laptop));
 
             if (Boolean.parseBoolean(_context.getProperty(TransportUtil.PROP_IPV4_FIREWALLED)) !=
-                _ipv4Firewalled) {
+                    _ipv4Firewalled) {
                 if (_ipv4Firewalled)
                     addFormNotice(_t("Disabling inbound IPv4"));
                 else
@@ -386,7 +402,7 @@ public class ConfigNetHandler extends FormHandler {
             changes.put(TransportUtil.PROP_IPV4_FIREWALLED, Boolean.toString(_ipv4Firewalled));
 
             if (Boolean.parseBoolean(_context.getProperty(TransportUtil.PROP_IPV6_FIREWALLED)) !=
-                _ipv6Firewalled) {
+                    _ipv6Firewalled) {
                 if (_ipv6Firewalled)
                     addFormNotice(_t("Disabling inbound IPv6"));
                 else
@@ -396,7 +412,7 @@ public class ConfigNetHandler extends FormHandler {
             changes.put(TransportUtil.PROP_IPV6_FIREWALLED, Boolean.toString(_ipv6Firewalled));
 
             if (_context.getBooleanPropertyDefaultTrue(TransportManager.PROP_ENABLE_UDP) !=
-                !_udpDisabled) {
+                    !_udpDisabled) {
                 if (_udpDisabled)
                     addFormNotice(_t("Disabling UDP"));
                 else
@@ -415,9 +431,9 @@ public class ConfigNetHandler extends FormHandler {
             // Hidden in the GUI
             //LoadTestManager.setEnableLoadTesting(_context, _enableLoadTesting);
         }
-        
+
         boolean saved = _context.router().saveConfig(changes, removes);
-        if (saved) 
+        if (saved)
             addFormNotice(_t("Configuration saved successfully"));
         else
             addFormError(_t("Error saving the configuration (applied but not saved) - please see the error logs"));
@@ -425,14 +441,14 @@ public class ConfigNetHandler extends FormHandler {
         // this has to be after the save
         if (ratesUpdated)
             _context.bandwidthLimiter().reinitialize();
-        
+
         if (saved && !error) {
             if (switchRequired) {
                 hiddenSwitch();
             } else if (fullRestartRequired) {
                 addFormNotice(_t("Restart required to take effect"));
             } else if (restartRequired) {
-              //if (_context.hasWrapper()) {
+                //if (_context.hasWrapper()) {
                 // Wow this dumps all conns immediately and really isn't nice
                 addFormNotice("Performing a soft restart");
                 _context.router().restart();
@@ -447,12 +463,12 @@ public class ConfigNetHandler extends FormHandler {
                 // So don't do this...
                 //_context.router().rebuildRouterInfo();
                 //addFormNotice("Router Info rebuilt");
-              //} else {
+                //} else {
                 // There's a few changes that don't really require restart (e.g. enabling inbound TCP)
                 // But it would be hard to get right, so just do a restart.
                 //addFormError(_t("Gracefully restarting I2P to change published router address"));
                 //_context.router().shutdownGracefully(Router.EXIT_GRACEFUL_RESTART);
-              //}
+                //}
             }
         }
     }
@@ -483,7 +499,7 @@ public class ConfigNetHandler extends FormHandler {
         ConfigServiceHandler.registerWrapperNotifier(_context, Router.EXIT_GRACEFUL_RESTART, false);
         _context.router().shutdownGracefully(Router.EXIT_GRACEFUL_RESTART);
     }
-    
+
     static final int DEF_BURST_PCT = 10;
     static final int DEF_BURST_TIME = 20;
 
@@ -507,8 +523,8 @@ public class ConfigNetHandler extends FormHandler {
         // As of 0.9.33, we set strict bandwidth limits. Specified rate is the burst rate,
         // and we set the standard rate to 50KB or 10% lower (whichever is less).
         if ( (_inboundRate != null) && (_inboundRate.length() > 0) &&
-            !_inboundRate.equals(_context.getProperty(FIFOBandwidthRefiller.PROP_INBOUND_BURST_BANDWIDTH,
-                                                      Integer.toString(FIFOBandwidthRefiller.DEFAULT_INBOUND_BURST_BANDWIDTH)))) {
+                !_inboundRate.equals(_context.getProperty(FIFOBandwidthRefiller.PROP_INBOUND_BURST_BANDWIDTH,
+                                     Integer.toString(FIFOBandwidthRefiller.DEFAULT_INBOUND_BURST_BANDWIDTH)))) {
             try {
                 float rate = Integer.parseInt(_inboundRate) / 1.024f;
                 float kb = DEF_BURST_TIME * rate;
@@ -516,14 +532,14 @@ public class ConfigNetHandler extends FormHandler {
                 changes.put(FIFOBandwidthRefiller.PROP_INBOUND_BANDWIDTH_PEAK, Integer.toString(Math.round(kb)));
                 rate -= Math.min(rate * DEF_BURST_PCT / 100, 50);
                 changes.put(FIFOBandwidthRefiller.PROP_INBOUND_BANDWIDTH, Integer.toString(Math.round(rate)));
-	        bwUpdated = true;
+                bwUpdated = true;
             } catch (NumberFormatException nfe) {
                 addFormError(_t("Invalid bandwidth"));
             }
         }
         if ( (_outboundRate != null) && (_outboundRate.length() > 0) &&
-            !_outboundRate.equals(_context.getProperty(FIFOBandwidthRefiller.PROP_OUTBOUND_BURST_BANDWIDTH,
-                                                       Integer.toString(FIFOBandwidthRefiller.DEFAULT_OUTBOUND_BURST_BANDWIDTH)))) {
+                !_outboundRate.equals(_context.getProperty(FIFOBandwidthRefiller.PROP_OUTBOUND_BURST_BANDWIDTH,
+                                      Integer.toString(FIFOBandwidthRefiller.DEFAULT_OUTBOUND_BURST_BANDWIDTH)))) {
             try {
                 float rate = Integer.parseInt(_outboundRate) / 1.024f;
                 float kb = DEF_BURST_TIME * rate;
@@ -531,7 +547,7 @@ public class ConfigNetHandler extends FormHandler {
                 changes.put(FIFOBandwidthRefiller.PROP_OUTBOUND_BANDWIDTH_PEAK, Integer.toString(Math.round(kb)));
                 rate -= Math.min(rate * DEF_BURST_PCT / 100, 50);
                 changes.put(FIFOBandwidthRefiller.PROP_OUTBOUND_BANDWIDTH, Integer.toString(Math.round(rate)));
-	        bwUpdated = true;
+                bwUpdated = true;
             } catch (NumberFormatException nfe) {
                 addFormError(_t("Invalid bandwidth"));
             }
@@ -542,57 +558,57 @@ public class ConfigNetHandler extends FormHandler {
             updated = true;
         }
 
-/******* These aren't in the GUI for now
+        /******* These aren't in the GUI for now
 
-        if ( (_inboundBurstRate != null) && (_inboundBurstRate.length() > 0) &&
-            !_inboundBurstRate.equals(_context.getProperty(FIFOBandwidthRefiller.PROP_INBOUND_BURST_BANDWIDTH, "" + FIFOBandwidthRefiller.DEFAULT_INBOUND_BURST_BANDWIDTH))) {
-            changes.put(FIFOBandwidthRefiller.PROP_INBOUND_BURST_BANDWIDTH, _inboundBurstRate);
-            updated = true;
-        }
-        if ( (_outboundBurstRate != null) && (_outboundBurstRate.length() > 0) &&
-            !_outboundBurstRate.equals(_context.getProperty(FIFOBandwidthRefiller.PROP_OUTBOUND_BURST_BANDWIDTH, "" + FIFOBandwidthRefiller.DEFAULT_OUTBOUND_BURST_BANDWIDTH))) {
-            changes.put(FIFOBandwidthRefiller.PROP_OUTBOUND_BURST_BANDWIDTH, _outboundBurstRate);
-            updated = true;
-        }
-        
-        String inBurstRate = _context.router().getConfigSetting(FIFOBandwidthRefiller.PROP_INBOUND_BURST_BANDWIDTH);
-        
-        if (_inboundBurst != null) {
-            int rateKBps = 0;
-            int burstSeconds = 0;
-            try {
-                rateKBps = Integer.parseInt(inBurstRate);
-                burstSeconds = Integer.parseInt(_inboundBurst);
-            } catch (NumberFormatException nfe) {
-                // ignore
-            }
-            if ( (rateKBps > 0) && (burstSeconds > 0) ) {
-                int kb = rateKBps * burstSeconds;
-                changes.put(FIFOBandwidthRefiller.PROP_INBOUND_BANDWIDTH_PEAK, "" + kb);
-                updated = true;
-            }
-        }
-        
-        String outBurstRate = _context.router().getConfigSetting(FIFOBandwidthRefiller.PROP_OUTBOUND_BURST_BANDWIDTH);
-        
-        if (_outboundBurst != null) {
-            int rateKBps = 0;
-            int burstSeconds = 0;
-            try {
-                rateKBps = Integer.parseInt(outBurstRate);
-                burstSeconds = Integer.parseInt(_outboundBurst);
-            } catch (NumberFormatException nfe) {
-                // ignore
-            }
-            if ( (rateKBps > 0) && (burstSeconds > 0) ) {
-                int kb = rateKBps * burstSeconds;
-                changes.put(FIFOBandwidthRefiller.PROP_OUTBOUND_BANDWIDTH_PEAK, "" + kb);
-                updated = true;
-            }
-        }
+                if ( (_inboundBurstRate != null) && (_inboundBurstRate.length() > 0) &&
+                    !_inboundBurstRate.equals(_context.getProperty(FIFOBandwidthRefiller.PROP_INBOUND_BURST_BANDWIDTH, "" + FIFOBandwidthRefiller.DEFAULT_INBOUND_BURST_BANDWIDTH))) {
+                    changes.put(FIFOBandwidthRefiller.PROP_INBOUND_BURST_BANDWIDTH, _inboundBurstRate);
+                    updated = true;
+                }
+                if ( (_outboundBurstRate != null) && (_outboundBurstRate.length() > 0) &&
+                    !_outboundBurstRate.equals(_context.getProperty(FIFOBandwidthRefiller.PROP_OUTBOUND_BURST_BANDWIDTH, "" + FIFOBandwidthRefiller.DEFAULT_OUTBOUND_BURST_BANDWIDTH))) {
+                    changes.put(FIFOBandwidthRefiller.PROP_OUTBOUND_BURST_BANDWIDTH, _outboundBurstRate);
+                    updated = true;
+                }
 
-***********/
+                String inBurstRate = _context.router().getConfigSetting(FIFOBandwidthRefiller.PROP_INBOUND_BURST_BANDWIDTH);
 
-        return updated; 
+                if (_inboundBurst != null) {
+                    int rateKBps = 0;
+                    int burstSeconds = 0;
+                    try {
+                        rateKBps = Integer.parseInt(inBurstRate);
+                        burstSeconds = Integer.parseInt(_inboundBurst);
+                    } catch (NumberFormatException nfe) {
+                        // ignore
+                    }
+                    if ( (rateKBps > 0) && (burstSeconds > 0) ) {
+                        int kb = rateKBps * burstSeconds;
+                        changes.put(FIFOBandwidthRefiller.PROP_INBOUND_BANDWIDTH_PEAK, "" + kb);
+                        updated = true;
+                    }
+                }
+
+                String outBurstRate = _context.router().getConfigSetting(FIFOBandwidthRefiller.PROP_OUTBOUND_BURST_BANDWIDTH);
+
+                if (_outboundBurst != null) {
+                    int rateKBps = 0;
+                    int burstSeconds = 0;
+                    try {
+                        rateKBps = Integer.parseInt(outBurstRate);
+                        burstSeconds = Integer.parseInt(_outboundBurst);
+                    } catch (NumberFormatException nfe) {
+                        // ignore
+                    }
+                    if ( (rateKBps > 0) && (burstSeconds > 0) ) {
+                        int kb = rateKBps * burstSeconds;
+                        changes.put(FIFOBandwidthRefiller.PROP_OUTBOUND_BANDWIDTH_PEAK, "" + kb);
+                        updated = true;
+                    }
+                }
+
+        ***********/
+
+        return updated;
     }
 }

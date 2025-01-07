@@ -3,7 +3,7 @@
 // ------------------------------------------------------------------------
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at 
+// You may obtain a copy of the License at
 // http://www.apache.org/licenses/LICENSE-2.0
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -30,33 +30,33 @@ import org.eclipse.jetty.util.log.Logger;
  * @since Jetty 6
  */
 public class I2PLogger implements Logger
-{    
+{
     private final Log _log;
-    
+
     private final StringBuilder _buffer = new StringBuilder();
-    
+
     //static {
-        // So people don't wonder where the logs went
-        //System.out.println("INFO: Jetty " + Server.getVersion() + " logging to I2P logs using class " + Server.class.getName());
+    // So people don't wonder where the logs went
+    //System.out.println("INFO: Jetty " + Server.getVersion() + " logging to I2P logs using class " + Server.class.getName());
     //}
 
     public I2PLogger()
     {
         this(I2PAppContext.getGlobalContext());
     }
-    
+
     public I2PLogger(I2PAppContext ctx)
     {
         _log = ctx.logManager().getLog(Server.class);
         if (System.getProperty("DEBUG") != null)
             setDebugEnabled(true);
     }
-    
+
     public boolean isDebugEnabled()
     {
         return _log.shouldLog(Log.DEBUG);
     }
-    
+
     public void setDebugEnabled(boolean enabled)
     {
         if (enabled)
@@ -65,7 +65,7 @@ public class I2PLogger implements Logger
             // LogManager.getDefaultLimit() returns a String, not worth it
             _log.setMinimumPriority(Log.ERROR);
     }
-    
+
     public void info(String msg,Object arg0, Object arg1)
     {
         if (arg0 == null && arg1 == null) {
@@ -82,12 +82,12 @@ public class I2PLogger implements Logger
             }
         }
     }
-    
+
     public void debug(String msg,Throwable th)
     {
         _log.debug(msg,th);
     }
-    
+
     public void debug(String msg,Object arg0, Object arg1)
     {
         if (arg0 == null && arg1 == null) {
@@ -104,7 +104,7 @@ public class I2PLogger implements Logger
             }
         }
     }
-    
+
     public void warn(String msg,Object arg0, Object arg1)
     {
         if (arg0 == null && arg1 == null) {
@@ -121,7 +121,7 @@ public class I2PLogger implements Logger
             }
         }
     }
-    
+
     public void warn(String msg, Throwable th)
     {
         // some of these are serious, some aren't
@@ -135,18 +135,18 @@ public class I2PLogger implements Logger
             _log.logAlways(Log.WARN, msg);
         }
     }
-    
+
     private void format(String msg, Object arg0, Object arg1)
     {
         _buffer.setLength(0);
         int i0=msg==null?-1:msg.indexOf("{}");
         int i1=i0<0?-1:msg.indexOf("{}",i0+2);
-        
+
         if (i0>=0)
         {
             format(msg.substring(0,i0));
             format(String.valueOf(arg0==null?"null":arg0));
-            
+
             if (i1>=0)
             {
                 format(msg.substring(i0+2,i1));
@@ -178,7 +178,7 @@ public class I2PLogger implements Logger
             }
         }
     }
-    
+
     private void format(String msg)
     {
         if (msg == null)
@@ -189,59 +189,59 @@ public class I2PLogger implements Logger
 
     public Logger getLogger(String name)
     {
-            return this;
+        return this;
     }
-    
+
     @Override
     public String toString()
     {
         return "I2PLogger";
     }
-    
+
     /**
      *  @since Jetty 7
      */
     public void ignore(Throwable ignored)
     {
-            debug("IGNORED", ignored);
+        debug("IGNORED", ignored);
     }
-    
+
     /**
      *  @since Jetty 7
      */
     public void debug(Throwable thrown)
     {
-            debug("", thrown);
+        debug("", thrown);
     }
-    
+
     /**
      *  @since Jetty 7
      */
     public void debug(String msg, Object... args)
     {
-            Object a1 = args.length > 0 ? args[0] : null;
-            Object a2 = args.length > 1 ? args[1] : null;
-            debug(msg, a1, a2);
+        Object a1 = args.length > 0 ? args[0] : null;
+        Object a2 = args.length > 1 ? args[1] : null;
+        debug(msg, a1, a2);
     }
-    
+
     /**
      *  @since Jetty 7
      */
     public void info(Throwable thrown)
     {
-            info("", thrown);
+        info("", thrown);
     }
-    
+
     /**
      *  @since Jetty 7
      */
     public void info(String msg, Object... args)
     {
-            Object a1 = args.length > 0 ? args[0] : null;
-            Object a2 = args.length > 1 ? args[1] : null;
-            info(msg, a1, a2);
+        Object a1 = args.length > 0 ? args[0] : null;
+        Object a2 = args.length > 1 ? args[1] : null;
+        info(msg, a1, a2);
     }
-    
+
     /**
      *  @since Jetty 7
      */
@@ -255,17 +255,17 @@ public class I2PLogger implements Logger
      */
     public void warn(Throwable thrown)
     {
-            warn("", thrown);
+        warn("", thrown);
     }
-    
+
     /**
      *  @since Jetty 7
      */
     public void warn(String msg, Object... args)
     {
-            Object a1 = args.length > 0 ? args[0] : null;
-            Object a2 = args.length > 1 ? args[1] : null;
-            warn(msg, a1, a2);
+        Object a1 = args.length > 0 ? args[0] : null;
+        Object a2 = args.length > 1 ? args[1] : null;
+        warn(msg, a1, a2);
     }
 
     /**

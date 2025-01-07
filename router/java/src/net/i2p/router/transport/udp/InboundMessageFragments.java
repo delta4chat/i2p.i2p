@@ -18,7 +18,7 @@ import net.i2p.util.Log;
  * basic line of defense here).
  *
  */
-class InboundMessageFragments /*implements UDPTransport.PartialACKSource */{
+class InboundMessageFragments { /*implements UDPTransport.PartialACKSource */
     private final RouterContext _context;
     private final Log _log;
     /** list of message IDs recently received, so we can ignore in flight dups */
@@ -27,10 +27,10 @@ class InboundMessageFragments /*implements UDPTransport.PartialACKSource */{
     private final UDPTransport _transport;
     private final MessageReceiver _messageReceiver;
     private volatile boolean _alive;
-    
+
     /** decay the recently completed every 20 seconds */
     private static final int DECAY_PERIOD = 10*1000;
-        
+
     public InboundMessageFragments(RouterContext ctx, OutboundMessageFragments outbound, UDPTransport transport) {
         _context = ctx;
         _log = ctx.logManager().getLog(InboundMessageFragments.class);
@@ -46,11 +46,11 @@ class InboundMessageFragments /*implements UDPTransport.PartialACKSource */{
         //_context.statManager().createRateStat("udp.receiveACKPeriod", "How long it takes to pull the ACKs out of a packet", "udp", UDPTransport.RATES);
         _context.statManager().createRateStat("udp.receivePiggyback", "How many acks were included in a packet with data fragments (time == # data fragments)", "udp", UDPTransport.RATES);
     }
-    
-    public synchronized void startup() { 
-        _alive = true; 
-        // may want to extend the DecayingBloomFilter so we can use a smaller 
-        // array size (currently its tuned for 10 minute rates for the 
+
+    public synchronized void startup() {
+        _alive = true;
+        // may want to extend the DecayingBloomFilter so we can use a smaller
+        // array size (currently its tuned for 10 minute rates for the
         // messageValidator)
         _recentlyCompletedMessages = new DecayingHashSet(_context, DECAY_PERIOD, 4, "UDPIMF");
         _messageReceiver.startup();
@@ -64,7 +64,9 @@ class InboundMessageFragments /*implements UDPTransport.PartialACKSource */{
         _messageReceiver.shutdown();
     }
 
-    public boolean isAlive() { return _alive; }
+    public boolean isAlive() {
+        return _alive;
+    }
 
     /**
      * This message was received.
@@ -98,6 +100,8 @@ class InboundMessageFragments /*implements UDPTransport.PartialACKSource */{
      */
     public static class ModifiableLong {
         public long value;
-        public ModifiableLong(long val) { value = val; }
+        public ModifiableLong(long val) {
+            value = val;
+        }
     }
 }

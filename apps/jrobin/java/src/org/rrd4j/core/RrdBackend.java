@@ -58,8 +58,8 @@ public abstract class RrdBackend {
 
     private static final char STARTPRIVATEAREA = '\ue000';
     private static final char ENDPRIVATEAREA = '\uf8ff';
-    private static final int STARTPRIVATEAREACODEPOINT = Character.codePointAt(new char[]{STARTPRIVATEAREA}, 0);
-    private static final int ENDPRIVATEAREACODEPOINT = Character.codePointAt(new char[]{ENDPRIVATEAREA}, 0);
+    private static final int STARTPRIVATEAREACODEPOINT = Character.codePointAt(new char[] {STARTPRIVATEAREA}, 0);
+    private static final int ENDPRIVATEAREACODEPOINT = Character.codePointAt(new char[] {ENDPRIVATEAREA}, 0);
     private static final int PRIVATEAREASIZE = ENDPRIVATEAREACODEPOINT - STARTPRIVATEAREACODEPOINT + 1;
     private static final int MAXUNSIGNEDSHORT = Short.MAX_VALUE - Short.MIN_VALUE;
 
@@ -108,7 +108,7 @@ public abstract class RrdBackend {
 
     /**
      * Return the URI associated to this backend, using the factory to generate it from the path.
-     * 
+     *
      * @return URI to this backend's rrd.
      */
     public URI getUri() {
@@ -260,7 +260,7 @@ public abstract class RrdBackend {
         value = value.trim();
         // Over-sized string are appended at the end of the RRD
         // The real position is encoded in the "short" ds name, using the private use area from Unicode
-        // This area span the range E000-F8FF, that' a 6400 char area, 
+        // This area span the range E000-F8FF, that' a 6400 char area,
         if (value.length() > RrdPrimitive.STRING_LENGTH) {
             String bigString = value;
             int byteStringLength = Math.min(MAXUNSIGNEDSHORT, bigString.length());
@@ -327,9 +327,9 @@ public abstract class RrdBackend {
         double[] values = new double[count];
         int k = -1;
         for (int i = 0; i < count; i++) {
-            byte[] b = new byte[]{
-                    image[++k], image[++k], image[++k], image[++k],
-                    image[++k], image[++k], image[++k], image[++k]
+            byte[] b = new byte[] {
+                image[++k], image[++k], image[++k], image[++k],
+                image[++k], image[++k], image[++k], image[++k]
             };
             values[i] = getDouble(b);
         }
@@ -338,7 +338,7 @@ public abstract class RrdBackend {
 
     /**
      * Extract a CharBuffer from the backend, used by readString
-     * 
+     *
      * @param offset the offset in the rrd
      * @param size the size of the buffer, in character
      * @return a new CharBuffer
@@ -409,13 +409,13 @@ public abstract class RrdBackend {
     private static int getInt(byte[] b) {
         assert b.length == 4 : "Invalid number of bytes for integer conversion";
         return ((b[0] << 24) & 0xFF000000) + ((b[1] << 16) & 0x00FF0000) +
-                ((b[2] << 8) & 0x0000FF00) + (b[3] & 0x000000FF);
+               ((b[2] << 8) & 0x0000FF00) + (b[3] & 0x000000FF);
     }
 
     private static long getLong(byte[] b) {
         assert b.length == 8 : "Invalid number of bytes for long conversion";
-        int high = getInt(new byte[]{b[0], b[1], b[2], b[3]});
-        int low = getInt(new byte[]{b[4], b[5], b[6], b[7]});
+        int high = getInt(new byte[] {b[0], b[1], b[2], b[3]});
+        int low = getInt(new byte[] {b[4], b[5], b[6], b[7]});
         return ((long) (high) << 32) + (low & 0xFFFFFFFFL);
     }
 

@@ -23,12 +23,14 @@ public class LeaseSetTest extends StructureTest {
         LeaseSet leaseSet = new LeaseSet();
         leaseSet.setDestination((Destination)(new DestinationTest()).createDataStructure());
         leaseSet.setEncryptionKey((PublicKey)(new PublicKeyTest()).createDataStructure());
-	leaseSet.setSignature((Signature)(new SignatureTest()).createDataStructure());
-	leaseSet.setSigningKey((SigningPublicKey)(new SigningPublicKeyTest()).createDataStructure());
-	//leaseSet.setVersion(42l);
+        leaseSet.setSignature((Signature)(new SignatureTest()).createDataStructure());
+        leaseSet.setSigningKey((SigningPublicKey)(new SigningPublicKeyTest()).createDataStructure());
+        //leaseSet.setVersion(42l);
         return leaseSet;
     }
-    public DataStructure createStructureToRead() { return new LeaseSet(); }
+    public DataStructure createStructureToRead() {
+        return new LeaseSet();
+    }
 
     @Test
     public void failsToGetLeaseWhenEmpty() {

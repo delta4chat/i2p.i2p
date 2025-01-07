@@ -76,7 +76,7 @@ class NTCP2Payload {
      */
     public static int processPayload(I2PAppContext ctx, PayloadCallback cb,
                                      byte[] payload, int off, int length, boolean isHandshake)
-                                    throws IOException, DataFormatException, I2NPMessageException {
+    throws IOException, DataFormatException, I2NPMessageException {
         int blocks = 0;
         boolean gotPadding = false;
         boolean gotTermination = false;
@@ -98,61 +98,61 @@ class NTCP2Payload {
                                       '\n' + net.i2p.util.HexDump.dump(payload, off, length));
             }
             switch (type) {
-                // don't modify i inside switch
+            // don't modify i inside switch
 
-                case BLOCK_DATETIME:
-                    if (isHandshake)
-                        throw new IOException("Illegal block in handshake: " + type);
-                    if (len != 4)
-                        throw new IOException("Bad length for DATETIME: " + len);
-                    long time = DataHelper.fromLong(payload, i, 4) * 1000;
-                    cb.gotDateTime(time);
-                    break;
+            case BLOCK_DATETIME:
+                if (isHandshake)
+                    throw new IOException("Illegal block in handshake: " + type);
+                if (len != 4)
+                    throw new IOException("Bad length for DATETIME: " + len);
+                long time = DataHelper.fromLong(payload, i, 4) * 1000;
+                cb.gotDateTime(time);
+                break;
 
-                case BLOCK_OPTIONS:
-                    byte[] options = new byte[len];
-                    System.arraycopy(payload, i, options, 0, len);
-                    cb.gotOptions(options, isHandshake);
-                    break;
+            case BLOCK_OPTIONS:
+                byte[] options = new byte[len];
+                System.arraycopy(payload, i, options, 0, len);
+                cb.gotOptions(options, isHandshake);
+                break;
 
-                case BLOCK_ROUTERINFO:
-                    int flag = payload[i] & 0xff;
-                    if (len - 1 > RouterInfo.MAX_UNCOMPRESSED_SIZE)
-                        throw new DataFormatException("RI too big: " + (len - 1));
-                    RouterInfo alice = new RouterInfo();
-                    ByteArrayInputStream bais = new ByteArrayInputStream(payload, i + 1, len - 1);
-                    alice.readBytes(bais, true);
-                    cb.gotRI(alice, isHandshake, (flag & 0x01) != 0 && len < 3*1024);
-                    break;
+            case BLOCK_ROUTERINFO:
+                int flag = payload[i] & 0xff;
+                if (len - 1 > RouterInfo.MAX_UNCOMPRESSED_SIZE)
+                    throw new DataFormatException("RI too big: " + (len - 1));
+                RouterInfo alice = new RouterInfo();
+                ByteArrayInputStream bais = new ByteArrayInputStream(payload, i + 1, len - 1);
+                alice.readBytes(bais, true);
+                cb.gotRI(alice, isHandshake, (flag & 0x01) != 0 && len < 3*1024);
+                break;
 
-                case BLOCK_I2NP:
-                    if (isHandshake)
-                        throw new IOException("Illegal block in handshake: " + type);
-                    I2NPMessage msg = I2NPMessageImpl.fromRawByteArrayNTCP2(ctx, payload, i, len, null);
-                    cb.gotI2NP(msg);
-                    break;
+            case BLOCK_I2NP:
+                if (isHandshake)
+                    throw new IOException("Illegal block in handshake: " + type);
+                I2NPMessage msg = I2NPMessageImpl.fromRawByteArrayNTCP2(ctx, payload, i, len, null);
+                cb.gotI2NP(msg);
+                break;
 
-                case BLOCK_TERMINATION:
-                    if (isHandshake)
-                        throw new IOException("Illegal block in handshake: " + type);
-                    if (len < 9)
-                        throw new IOException("Bad length for TERMINATION: " + len);
-                    long last = DataHelper.fromLong8(payload, i);
-                    int rsn = payload[i + 8] & 0xff;
-                    cb.gotTermination(rsn, last);
-                    gotTermination = true;
-                    break;
+            case BLOCK_TERMINATION:
+                if (isHandshake)
+                    throw new IOException("Illegal block in handshake: " + type);
+                if (len < 9)
+                    throw new IOException("Bad length for TERMINATION: " + len);
+                long last = DataHelper.fromLong8(payload, i);
+                int rsn = payload[i + 8] & 0xff;
+                cb.gotTermination(rsn, last);
+                gotTermination = true;
+                break;
 
-                case BLOCK_PADDING:
-                    gotPadding = true;
-                    cb.gotPadding(len, length);
-                    break;
+            case BLOCK_PADDING:
+                gotPadding = true;
+                cb.gotPadding(len, length);
+                break;
 
-                default:
-                    if (isHandshake)
-                        throw new IOException("Illegal block in handshake: " + type);
-                    cb.gotUnknown(type, len);
-                    break;
+            default:
+                if (isHandshake)
+                    throw new IOException("Illegal block in handshake: " + type);
+                cb.gotUnknown(type, len);
+                break;
 
             }
             i += len;

@@ -68,7 +68,7 @@ public class FrequencyStat {
     /**
      * @return lifetime event count
      * @since 0.8.2
-     */	
+     */
     public long getEventCount() {
         if ( (_frequencies == null) || (_frequencies.length <= 0) ) return 0;
         return _frequencies[0].getEventCount();
@@ -77,7 +77,7 @@ public class FrequencyStat {
     /**
      * @return lifetime average frequency in millisedonds, i.e. the average time between events, or Long.MAX_VALUE if no events ever
      * @since 0.8.2
-     */	
+     */
     public long getFrequency() {
         if ( (_frequencies == null) || (_frequencies.length <= 0) ) return Long.MAX_VALUE;
         double d = _frequencies[0].getStrictAverageInterval();
@@ -97,9 +97,9 @@ public class FrequencyStat {
         if ((obj == null) || !(obj instanceof FrequencyStat)) return false;
         return _statName.equals(((FrequencyStat)obj)._statName);
     }
-    
+
     private final static String NL = System.getProperty("line.separator");
-    
+
     /**
      * Serializes this FrequencyStat to the provided OutputStream
      * @param out to write to
@@ -116,10 +116,10 @@ public class FrequencyStat {
         buf.append("# ").append(NL).append(NL);
         out.write(buf.toString().getBytes("UTF-8"));
         buf.setLength(0);
-        for (Frequency r: _frequencies){
+        for (Frequency r: _frequencies) {
             buf.append("#######").append(NL);
             buf.append("# Period : ").append(DataHelper.formatDuration(r.getPeriod())).append(" for rate ")
-                .append(_groupName).append(" - ").append(_statName).append(NL);
+            .append(_groupName).append(" - ").append(_statName).append(NL);
             buf.append(NL);
             r.store(buf);
             out.write(buf.toString().getBytes("UTF-8"));

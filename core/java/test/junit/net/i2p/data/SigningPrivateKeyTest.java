@@ -31,10 +31,12 @@ public class SigningPrivateKeyTest extends StructureTest {
         signingPrivateKey.setData(data);
         return signingPrivateKey;
     }
-    public DataStructure createStructureToRead() { return new SigningPrivateKey(); }
+    public DataStructure createStructureToRead() {
+        return new SigningPrivateKey();
+    }
 
     @Test
-    public void testBase64Constructor() throws Exception{
+    public void testBase64Constructor() throws Exception {
         SigningPrivateKey signingPrivateKey = new SigningPrivateKey();
         byte data[] = new byte[SigningPrivateKey.KEYSIZE_BYTES];
         for (int i = 0; i < data.length; i++)
@@ -46,7 +48,7 @@ public class SigningPrivateKeyTest extends StructureTest {
     }
 
     @Test
-    public void testNullEquals(){
+    public void testNullEquals() {
         SigningPrivateKey signingPrivateKey = new SigningPrivateKey();
         byte data[] = new byte[SigningPrivateKey.KEYSIZE_BYTES];
         for (int i = 0; i < data.length; i++)
@@ -57,7 +59,7 @@ public class SigningPrivateKeyTest extends StructureTest {
     }
 
     @Test
-    public void testNullData() throws Exception{
+    public void testNullData() throws Exception {
         SigningPrivateKey signingPrivateKey = new SigningPrivateKey();
         signingPrivateKey.toString();
 
@@ -70,7 +72,7 @@ public class SigningPrivateKeyTest extends StructureTest {
     }
 
     @Test
-    public void testShortData() throws Exception{
+    public void testShortData() throws Exception {
         SigningPrivateKey signingPrivateKey = new SigningPrivateKey();
         byte data[] = new byte[56];
         for (int i = 0; i < data.length; i++)
@@ -86,7 +88,7 @@ public class SigningPrivateKeyTest extends StructureTest {
     }
 
     @Test
-    public void testShortRead() throws Exception{
+    public void testShortRead() throws Exception {
         SigningPrivateKey signingPrivateKey = new SigningPrivateKey();
         ByteArrayInputStream in = new ByteArrayInputStream(DataHelper.getASCII("short"));
 

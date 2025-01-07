@@ -104,7 +104,7 @@ public class ShellService implements ClientApp {
 
         String tmp_name = this.getName();
         File pluginDir = new File(_context.getConfigDir(), PLUGIN_DIR + '/' + tmp_name);
-        if (!pluginDir.exists()){
+        if (!pluginDir.exists()) {
             pluginDir = new File(_context.getConfigDir(), PLUGIN_DIR + '/' + tmp_name+"-"+SystemVersion.getOS()+"-"+SystemVersion.getArch());
             if (!pluginDir.exists()) {
                 pluginDir = new File(_context.getConfigDir(), PLUGIN_DIR + '/' + tmp_name+"-"+SystemVersion.getOS());
@@ -163,7 +163,7 @@ public class ShellService implements ClientApp {
         }
         if (getName() == null)
             throw new IllegalArgumentException(
-                    "ShellService: ShellService passed with args=" + Arrays.toString(args) + " must have a name");
+                "ShellService: ShellService passed with args=" + Arrays.toString(args) + " must have a name");
         if (getDisplayName() == null)
             displayName = name;
         return newargs;

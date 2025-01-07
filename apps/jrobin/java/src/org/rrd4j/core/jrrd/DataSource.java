@@ -110,13 +110,13 @@ public class DataSource {
         s.print(sb);
         s.print("].min = ");
         s.println(Double.isNaN(minimum)
-                ? "NaN"
-                        : numberFormat.format(minimum));
+                  ? "NaN"
+                  : numberFormat.format(minimum));
         s.print(sb);
         s.print("].max = ");
         s.println(Double.isNaN(maximum)
-                ? "NaN"
-                        : numberFormat.format(maximum));
+                  ? "NaN"
+                  : numberFormat.format(maximum));
         s.print(sb);
         s.print("].last_ds = ");
         s.println(pdpStatusBlock.lastReading);
@@ -126,8 +126,8 @@ public class DataSource {
         double value = pdpStatusBlock.value;
 
         s.println(Double.isNaN(value)
-                ? "NaN"
-                        : numberFormat.format(value));
+                  ? "NaN"
+                  : numberFormat.format(value));
         s.print(sb);
         s.print("].unknown_sec = ");
         s.println(pdpStatusBlock.unknownSeconds);

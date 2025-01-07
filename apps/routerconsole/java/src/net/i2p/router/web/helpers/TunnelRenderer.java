@@ -64,7 +64,7 @@ class TunnelRenderer {
                 continue;
             TunnelPool outPool = tm.getOutboundPool(client);
             if (in.getSettings().getAliasOf() != null ||
-                (outPool != null && outPool.getSettings().getAliasOf() != null)) {
+                    (outPool != null && outPool.getSettings().getAliasOf() != null)) {
                 // skip aliases, we will print a header under the main tunnel pool below
                 continue;
             }
@@ -80,25 +80,25 @@ class TunnelRenderer {
                 out.write(" (" + _t("dead") + ")</h3>\n");
             }
 
-                // list aliases
-                Set<Hash> aliases = in.getSettings().getAliases();
-                if (aliases != null) {
-                    for (Hash a : aliases) {
-                        TunnelPool ain = clientInboundPools.get(a);
-                        if (ain != null) {
-                            String aname = ain.getSettings().getDestinationNickname();
-                            String ab64 = a.toBase64().substring(0, 4);
-                            if (aname == null)
-                                aname = ab64;
-                            out.write("<h3 class=\"tabletitle\" id=\"" + ab64
-                                      + "\" >" + _t("Client tunnels for {0}", DataHelper.escapeHTML(_t(aname))));
-                            if (isLocal)
-                                out.write(" <a href=\"/configtunnels#" + b64 + "\" title=\"" + _t("Configure tunnels for session") + "\">[" + _t("configure") + "]</a></h3>\n");
-                            else
-                                out.write(" (" + _t("dead") + ")</h3>\n");
-                        }
+            // list aliases
+            Set<Hash> aliases = in.getSettings().getAliases();
+            if (aliases != null) {
+                for (Hash a : aliases) {
+                    TunnelPool ain = clientInboundPools.get(a);
+                    if (ain != null) {
+                        String aname = ain.getSettings().getDestinationNickname();
+                        String ab64 = a.toBase64().substring(0, 4);
+                        if (aname == null)
+                            aname = ab64;
+                        out.write("<h3 class=\"tabletitle\" id=\"" + ab64
+                                  + "\" >" + _t("Client tunnels for {0}", DataHelper.escapeHTML(_t(aname))));
+                        if (isLocal)
+                            out.write(" <a href=\"/configtunnels#" + b64 + "\" title=\"" + _t("Configure tunnels for session") + "\">[" + _t("configure") + "]</a></h3>\n");
+                        else
+                            out.write(" (" + _t("dead") + ")</h3>\n");
                     }
-                }     
+                }
+            }
 
             renderPool(out, in, outPool);
         }
@@ -107,83 +107,83 @@ class TunnelRenderer {
         out.write("<h3 class=\"tabletitle\" id=\"participating\">" + _t("Participating tunnels") + "</h3>\n");
         int bwShare = getShareBandwidth();
         if (bwShare > 12) {
-        // Don't bother re-indenting
-        if (!participating.isEmpty()) {
-            DataHelper.sort(participating, new TunnelComparator());
-            out.write("<table class=\"tunneldisplay tunnels_participating\"><tr><th>" + _t("Receive on") + "</th><th>" + _t("From") + "</th><th>"
-                  + _t("Send on") + "</th><th>" + _t("To") + "</th><th>" + _t("Expiration") + "</th>"
-                  + "<th>" + _t("Usage") + "</th><th>" + _t("Rate") + "</th><th>" + _t("Role") + "</th></tr>\n");
-        }
-        long processed = 0;
-        RateStat rs = _context.statManager().getRate("tunnel.participatingMessageCount");
-        if (rs != null)
-            processed = (long)rs.getRate(10*60*1000).getLifetimeTotalValue();
-        int inactive = 0;
-        int displayed = 0;
-        long now = _context.clock().now();
-        for (int i = 0; i < participating.size(); i++) {
-            HopConfig cfg = participating.get(i);
-            int count = cfg.getProcessedMessagesCount();
-            if (count <= 0) {
-                inactive++;
-                continue;
+            // Don't bother re-indenting
+            if (!participating.isEmpty()) {
+                DataHelper.sort(participating, new TunnelComparator());
+                out.write("<table class=\"tunneldisplay tunnels_participating\"><tr><th>" + _t("Receive on") + "</th><th>" + _t("From") + "</th><th>"
+                          + _t("Send on") + "</th><th>" + _t("To") + "</th><th>" + _t("Expiration") + "</th>"
+                          + "<th>" + _t("Usage") + "</th><th>" + _t("Rate") + "</th><th>" + _t("Role") + "</th></tr>\n");
             }
-            // everything that isn't 'recent' is already in the tunnel.participatingMessageCount stat
-            processed += cfg.getRecentMessagesCount();
-            if (++displayed > DISPLAY_LIMIT)
-                continue;
-            out.write("<tr>");
-            long recv = cfg.getReceiveTunnelId();
-            if (recv != 0)
-                out.write("<td class=\"cells\" align=\"center\" title=\"" + _t("Tunnel identity") + "\"><span class=\"tunnel_id\">" +
-                          recv + "</span></td>");
-            else
-                out.write("<td class=\"cells\" align=\"center\">n/a</td>");
-            Hash from = cfg.getReceiveFrom();
-            if (from != null)
-                out.write("<td class=\"cells\" align=\"center\"><span class=\"tunnel_peer\">" + netDbLink(from) +"</span></td>");
-            else
-                out.write("<td class=\"cells\">&nbsp;</td>");
-            long send = cfg.getSendTunnelId();
-            if (send != 0)
-                out.write("<td class=\"cells\" align=\"center\" title=\"" + _t("Tunnel identity") + "\"><span class=\"tunnel_id\">" + send +"</span></td>");
-            else
-                out.write("<td class=\"cells\">&nbsp;</td>");
-            Hash to = cfg.getSendTo();
-            if (to != null)
-                out.write("<td class=\"cells\" align=\"center\"><span class=\"tunnel_peer\">" + netDbLink(to) +"</span></td>");
-            else
-                out.write("<td class=\"cells\">&nbsp;</td>");
-            long timeLeft = cfg.getExpiration() - now;
-            if (timeLeft > 0)
-                out.write("<td class=\"cells\" align=\"center\">" + DataHelper.formatDuration2(timeLeft) + "</td>");
-            else
-                out.write("<td class=\"cells\" align=\"center\">(" + _t("grace period") + ")</td>");
-            out.write("<td class=\"cells\" align=\"center\">" + DataHelper.formatSize2(count * 1024) + "B</td>");
-            int lifetime = (int) ((now - cfg.getCreation()) / 1000);
-            if (lifetime <= 0)
-                lifetime = 1;
-            if (lifetime > 10*60)
-                lifetime = 10*60;
-            long bps = 1024L * count / lifetime;
-            out.write("<td class=\"cells\" align=\"center\">" + DataHelper.formatSize2Decimal(bps) + "Bps</td>");
-            if (to == null)
-                out.write("<td class=\"cells\" align=\"center\">" + _t("Outbound Endpoint") + "</td>");
-            else if (from == null)
-                out.write("<td class=\"cells\" align=\"center\">" + _t("Inbound Gateway") + "</td>");
-            else
-                out.write("<td class=\"cells\" align=\"center\">" + _t("Participant") + "</td>");
-            out.write("</tr>\n");
-        }
-        if (!participating.isEmpty())
-            out.write("</table>\n");
-        if (displayed > DISPLAY_LIMIT)
-            out.write("<div class=\"statusnotes\"><b>" + _t("Limited display to the {0} tunnels with the highest usage", DISPLAY_LIMIT)  + "</b></div>\n");
-        if (inactive > 0)
-            out.write("<div class=\"statusnotes\"><b>" + _t("Inactive participating tunnels") + ":&nbsp;&nbsp;" + inactive + "</b></div>\n");
-        else if (displayed <= 0)
-            out.write("<div class=\"statusnotes\"><b>" + _t("none") + "</b></div>\n");
-        out.write("<div class=\"statusnotes\"><b>" + _t("Lifetime bandwidth usage") + ":&nbsp;&nbsp;" + DataHelper.formatSize2(processed*1024) + "B</b></div>\n");
+            long processed = 0;
+            RateStat rs = _context.statManager().getRate("tunnel.participatingMessageCount");
+            if (rs != null)
+                processed = (long)rs.getRate(10*60*1000).getLifetimeTotalValue();
+            int inactive = 0;
+            int displayed = 0;
+            long now = _context.clock().now();
+            for (int i = 0; i < participating.size(); i++) {
+                HopConfig cfg = participating.get(i);
+                int count = cfg.getProcessedMessagesCount();
+                if (count <= 0) {
+                    inactive++;
+                    continue;
+                }
+                // everything that isn't 'recent' is already in the tunnel.participatingMessageCount stat
+                processed += cfg.getRecentMessagesCount();
+                if (++displayed > DISPLAY_LIMIT)
+                    continue;
+                out.write("<tr>");
+                long recv = cfg.getReceiveTunnelId();
+                if (recv != 0)
+                    out.write("<td class=\"cells\" align=\"center\" title=\"" + _t("Tunnel identity") + "\"><span class=\"tunnel_id\">" +
+                              recv + "</span></td>");
+                else
+                    out.write("<td class=\"cells\" align=\"center\">n/a</td>");
+                Hash from = cfg.getReceiveFrom();
+                if (from != null)
+                    out.write("<td class=\"cells\" align=\"center\"><span class=\"tunnel_peer\">" + netDbLink(from) +"</span></td>");
+                else
+                    out.write("<td class=\"cells\">&nbsp;</td>");
+                long send = cfg.getSendTunnelId();
+                if (send != 0)
+                    out.write("<td class=\"cells\" align=\"center\" title=\"" + _t("Tunnel identity") + "\"><span class=\"tunnel_id\">" + send +"</span></td>");
+                else
+                    out.write("<td class=\"cells\">&nbsp;</td>");
+                Hash to = cfg.getSendTo();
+                if (to != null)
+                    out.write("<td class=\"cells\" align=\"center\"><span class=\"tunnel_peer\">" + netDbLink(to) +"</span></td>");
+                else
+                    out.write("<td class=\"cells\">&nbsp;</td>");
+                long timeLeft = cfg.getExpiration() - now;
+                if (timeLeft > 0)
+                    out.write("<td class=\"cells\" align=\"center\">" + DataHelper.formatDuration2(timeLeft) + "</td>");
+                else
+                    out.write("<td class=\"cells\" align=\"center\">(" + _t("grace period") + ")</td>");
+                out.write("<td class=\"cells\" align=\"center\">" + DataHelper.formatSize2(count * 1024) + "B</td>");
+                int lifetime = (int) ((now - cfg.getCreation()) / 1000);
+                if (lifetime <= 0)
+                    lifetime = 1;
+                if (lifetime > 10*60)
+                    lifetime = 10*60;
+                long bps = 1024L * count / lifetime;
+                out.write("<td class=\"cells\" align=\"center\">" + DataHelper.formatSize2Decimal(bps) + "Bps</td>");
+                if (to == null)
+                    out.write("<td class=\"cells\" align=\"center\">" + _t("Outbound Endpoint") + "</td>");
+                else if (from == null)
+                    out.write("<td class=\"cells\" align=\"center\">" + _t("Inbound Gateway") + "</td>");
+                else
+                    out.write("<td class=\"cells\" align=\"center\">" + _t("Participant") + "</td>");
+                out.write("</tr>\n");
+            }
+            if (!participating.isEmpty())
+                out.write("</table>\n");
+            if (displayed > DISPLAY_LIMIT)
+                out.write("<div class=\"statusnotes\"><b>" + _t("Limited display to the {0} tunnels with the highest usage", DISPLAY_LIMIT)  + "</b></div>\n");
+            if (inactive > 0)
+                out.write("<div class=\"statusnotes\"><b>" + _t("Inactive participating tunnels") + ":&nbsp;&nbsp;" + inactive + "</b></div>\n");
+            else if (displayed <= 0)
+                out.write("<div class=\"statusnotes\"><b>" + _t("none") + "</b></div>\n");
+            out.write("<div class=\"statusnotes\"><b>" + _t("Lifetime bandwidth usage") + ":&nbsp;&nbsp;" + DataHelper.formatSize2(processed*1024) + "B</b></div>\n");
 
             if (debug && participating.size() > 1) {
                 // peer table sorted by number of tunnels
@@ -257,21 +257,21 @@ class TunnelRenderer {
     }
 
     private static class TunnelComparator implements Comparator<HopConfig>, Serializable {
-         public int compare(HopConfig l, HopConfig r) {
-             return (r.getProcessedMessagesCount() - l.getProcessedMessagesCount());
+        public int compare(HopConfig l, HopConfig r) {
+            return (r.getProcessedMessagesCount() - l.getProcessedMessagesCount());
         }
     }
 
     /** @since 0.9.35 */
     private static class TunnelInfoComparator implements Comparator<TunnelInfo>, Serializable {
-         public int compare(TunnelInfo l, TunnelInfo r) {
-             long le = l.getExpiration();
-             long re = r.getExpiration();
-             if (le < re)
-                 return -1;
-             if (le > re)
-                 return 1;
-             return 0;
+        public int compare(TunnelInfo l, TunnelInfo r) {
+            long le = l.getExpiration();
+            long re = r.getExpiration();
+            if (le < re)
+                return -1;
+            if (le > re)
+                return 1;
+            return 0;
         }
     }
 
@@ -280,12 +280,12 @@ class TunnelRenderer {
      *  @since 0.9.57
      */
     private class TPComparator implements Comparator<TunnelPool> {
-         private final Collator _comp = Collator.getInstance();
-         public int compare(TunnelPool l, TunnelPool r) {
-             int rv = _comp.compare(getTunnelName(l), getTunnelName(r));
-             if (rv != 0)
-                 return rv;
-             return l.getSettings().getDestination().toBase32().compareTo(r.getSettings().getDestination().toBase32());
+        private final Collator _comp = Collator.getInstance();
+        public int compare(TunnelPool l, TunnelPool r) {
+            int rv = _comp.compare(getTunnelName(l), getTunnelName(r));
+            if (rv != 0)
+                return rv;
+            return l.getSettings().getDestination().toBase32().compareTo(r.getSettings().getDestination().toBase32());
         }
     }
 
@@ -429,7 +429,7 @@ class TunnelRenderer {
             }
             out.write("</tr>\n");
 
-            if (info.isInbound()) 
+            if (info.isInbound())
                 processedIn += count;
             else
                 processedOut += count;
@@ -458,104 +458,104 @@ class TunnelRenderer {
                   DataHelper.formatSize2(processedOut*1024) + "B " + _t("out") + "</b></center></div>");
     }
 
-/****
-    private void renderPeers(Writer out) throws IOException {
-        // count up the peers in the local pools
-        ObjectCounter<Hash> lc = new ObjectCounter();
-        int tunnelCount = countTunnelsPerPeer(lc);
+    /****
+        private void renderPeers(Writer out) throws IOException {
+            // count up the peers in the local pools
+            ObjectCounter<Hash> lc = new ObjectCounter();
+            int tunnelCount = countTunnelsPerPeer(lc);
 
-        // count up the peers in the participating tunnels
-        ObjectCounter<Hash> pc = new ObjectCounter();
-        int partCount = countParticipatingPerPeer(pc);
+            // count up the peers in the participating tunnels
+            ObjectCounter<Hash> pc = new ObjectCounter();
+            int partCount = countParticipatingPerPeer(pc);
 
-        Set<Hash> peers = new HashSet(lc.objects());
-        peers.addAll(pc.objects());
-        List<Hash> peerList = new ArrayList(peers);
-        Collections.sort(peerList, new CountryComparator(this._context.commSystem()));
+            Set<Hash> peers = new HashSet(lc.objects());
+            peers.addAll(pc.objects());
+            List<Hash> peerList = new ArrayList(peers);
+            Collections.sort(peerList, new CountryComparator(this._context.commSystem()));
 
-        out.write("<h2><a name=\"peers\"></a>" + _t("Tunnel Counts By Peer") + "</h2>\n");
-        out.write("<table><tr><th>" + _t("Peer") + "</th><th>" + _t("Our Tunnels") + "</th><th>" + _t("% of total") + "</th><th>" + _t("Participating Tunnels") + "</th><th>" + _t("% of total") + "</th></tr>\n");
-        for (Hash h : peerList) {
-             out.write("<tr> <td class=\"cells\" align=\"center\">");
-             out.write(netDbLink(h));
-             out.write(" <td class=\"cells\" align=\"center\">" + lc.count(h));
-             out.write(" <td class=\"cells\" align=\"center\">");
-             if (tunnelCount > 0)
-                 out.write("" + (lc.count(h) * 100 / tunnelCount));
-             else
-                 out.write('0');
-             out.write(" <td class=\"cells\" align=\"center\">" + pc.count(h));
-             out.write(" <td class=\"cells\" align=\"center\">");
-             if (partCount > 0)
-                 out.write("" + (pc.count(h) * 100 / partCount));
-             else
-                 out.write('0');
-             out.write('\n');
+            out.write("<h2><a name=\"peers\"></a>" + _t("Tunnel Counts By Peer") + "</h2>\n");
+            out.write("<table><tr><th>" + _t("Peer") + "</th><th>" + _t("Our Tunnels") + "</th><th>" + _t("% of total") + "</th><th>" + _t("Participating Tunnels") + "</th><th>" + _t("% of total") + "</th></tr>\n");
+            for (Hash h : peerList) {
+                 out.write("<tr> <td class=\"cells\" align=\"center\">");
+                 out.write(netDbLink(h));
+                 out.write(" <td class=\"cells\" align=\"center\">" + lc.count(h));
+                 out.write(" <td class=\"cells\" align=\"center\">");
+                 if (tunnelCount > 0)
+                     out.write("" + (lc.count(h) * 100 / tunnelCount));
+                 else
+                     out.write('0');
+                 out.write(" <td class=\"cells\" align=\"center\">" + pc.count(h));
+                 out.write(" <td class=\"cells\" align=\"center\">");
+                 if (partCount > 0)
+                     out.write("" + (pc.count(h) * 100 / partCount));
+                 else
+                     out.write('0');
+                 out.write('\n');
+            }
+            out.write("<tr class=\"tablefooter\"> <td align=\"center\"><b>" + _t("Totals") + "</b> <td align=\"center\"><b>" + tunnelCount);
+            out.write("</b> <td>&nbsp;</td> <td align=\"center\"><b>" + partCount);
+            out.write("</b> <td>&nbsp;</td></tr></table></div>\n");
         }
-        out.write("<tr class=\"tablefooter\"> <td align=\"center\"><b>" + _t("Totals") + "</b> <td align=\"center\"><b>" + tunnelCount);
-        out.write("</b> <td>&nbsp;</td> <td align=\"center\"><b>" + partCount);
-        out.write("</b> <td>&nbsp;</td></tr></table></div>\n");
-    }
-****/
+    ****/
 
     /* duplicate of that in tunnelPoolManager for now */
     /** @return total number of non-fallback expl. + client tunnels */
-/****
-    private int countTunnelsPerPeer(ObjectCounter<Hash> lc) {
-        List<TunnelPool> pools = new ArrayList();
-        _context.tunnelManager().listPools(pools);
-        int tunnelCount = 0;
-        for (TunnelPool tp : pools) {
-            for (TunnelInfo info : tp.listTunnels()) {
-                if (info.getLength() > 1) {
-                    tunnelCount++;
-                    for (int j = 0; j < info.getLength(); j++) {
-                        Hash peer = info.getPeer(j);
-                        if (!_context.routerHash().equals(peer))
-                            lc.increment(peer);
+    /****
+        private int countTunnelsPerPeer(ObjectCounter<Hash> lc) {
+            List<TunnelPool> pools = new ArrayList();
+            _context.tunnelManager().listPools(pools);
+            int tunnelCount = 0;
+            for (TunnelPool tp : pools) {
+                for (TunnelInfo info : tp.listTunnels()) {
+                    if (info.getLength() > 1) {
+                        tunnelCount++;
+                        for (int j = 0; j < info.getLength(); j++) {
+                            Hash peer = info.getPeer(j);
+                            if (!_context.routerHash().equals(peer))
+                                lc.increment(peer);
+                        }
                     }
                 }
             }
+            return tunnelCount;
         }
-        return tunnelCount;
-    }
-****/
+    ****/
 
     /** @return total number of part. tunnels */
-/****
-    private int countParticipatingPerPeer(ObjectCounter<Hash> pc) {
-        List<HopConfig> participating = _context.tunnelDispatcher().listParticipatingTunnels();
-        for (HopConfig cfg : participating) {
-            Hash from = cfg.getReceiveFrom();
-            if (from != null)
-                pc.increment(from);
-            Hash to = cfg.getSendTo();
-            if (to != null)
-                pc.increment(to);
-        }
-        return participating.size();
-    }
-
-    private static class CountryComparator implements Comparator<Hash> {
-        public CountryComparator(CommSystemFacade comm) {
-            this.comm = comm;
-        }
-        public int compare(Hash l, Hash r) {
-            // get both countries
-            String lc = this.comm.getCountry(l);
-            String rc = this.comm.getCountry(r);
-
-            // make them non-null
-            lc = (lc == null) ? "zzzz" : lc;
-            rc = (rc == null) ? "zzzz" : rc;
-
-            // let String handle the rest
-            return lc.compareTo(rc);
+    /****
+        private int countParticipatingPerPeer(ObjectCounter<Hash> pc) {
+            List<HopConfig> participating = _context.tunnelDispatcher().listParticipatingTunnels();
+            for (HopConfig cfg : participating) {
+                Hash from = cfg.getReceiveFrom();
+                if (from != null)
+                    pc.increment(from);
+                Hash to = cfg.getSendTo();
+                if (to != null)
+                    pc.increment(to);
+            }
+            return participating.size();
         }
 
-        private CommSystemFacade comm;
-    }
-****/
+        private static class CountryComparator implements Comparator<Hash> {
+            public CountryComparator(CommSystemFacade comm) {
+                this.comm = comm;
+            }
+            public int compare(Hash l, Hash r) {
+                // get both countries
+                String lc = this.comm.getCountry(l);
+                String rc = this.comm.getCountry(r);
+
+                // make them non-null
+                lc = (lc == null) ? "zzzz" : lc;
+                rc = (rc == null) ? "zzzz" : rc;
+
+                // let String handle the rest
+                return lc.compareTo(rc);
+            }
+
+            private CommSystemFacade comm;
+        }
+    ****/
 
     /** @return cap char or ' ' */
     private char getCapacity(Hash peer) {

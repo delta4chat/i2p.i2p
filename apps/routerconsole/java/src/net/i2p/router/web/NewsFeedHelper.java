@@ -17,7 +17,7 @@ import net.i2p.util.SystemVersion;
  *  @since 0.9.23
  */
 public class NewsFeedHelper extends HelperBase {
-    
+
     private int _start;
     private int _limit = 2;
 
@@ -68,13 +68,13 @@ public class NewsFeedHelper extends HelperBase {
                 if (i < start)
                     continue;
                 if (i > start && entry.updated > 0 && ageLimit > 0 &&
-                    entry.updated < ctx.clock().now() - ageLimit)
+                        entry.updated < ctx.clock().now() - ageLimit)
                     break;
                 buf.append("<div class=\"newsentry\"><h3>");
                 if (entry.updated > 0) {
                     buf.append("<span class=\"newsDate\">")
-                       .append(DataHelper.formatDate(entry.updated))
-                       .append("</span> ");
+                    .append(DataHelper.formatDate(entry.updated))
+                    .append("</span> ");
                 }
                 if (entry.link != null)
                     buf.append("<a href=\"").append(DataHelper.escapeHTML(entry.link)).append("\">");
@@ -82,14 +82,14 @@ public class NewsFeedHelper extends HelperBase {
                 if (entry.link != null)
                     buf.append("</a>");
                 if (entry.authorName != null) {
-                                                              // FIXME translate
+                    // FIXME translate
                     buf.append(" <span class=\"newsAuthor\" title=\"Post author\"><i>")
-                       .append(DataHelper.escapeHTML(entry.authorName))
-                       .append("</i></span>\n");
+                    .append(DataHelper.escapeHTML(entry.authorName))
+                    .append("</i></span>\n");
                 }
                 buf.append("</h3>\n<div class=\"newscontent\">\n")
-                   .append(entry.content)
-                   .append("\n</div></div>\n");
+                .append(entry.content)
+                .append("\n</div></div>\n");
                 if (++i >= start + max)
                     break;
             }

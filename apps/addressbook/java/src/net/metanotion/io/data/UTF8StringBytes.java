@@ -36,15 +36,19 @@ import net.metanotion.io.Serializer;
  * Added by I2P
  */
 public class UTF8StringBytes implements Serializer<String> {
-	public byte[] getBytes(String o) {
-		try {
-			return o.getBytes("UTF-8");
-		} catch (UnsupportedEncodingException uee) { throw new Error("Unsupported Encoding"); }
-	}
+    public byte[] getBytes(String o) {
+        try {
+            return o.getBytes("UTF-8");
+        } catch (UnsupportedEncodingException uee) {
+            throw new Error("Unsupported Encoding");
+        }
+    }
 
-	public String construct(byte[] b) {
-		try {
-			return new String(b, "UTF-8");
-		} catch (UnsupportedEncodingException uee) { throw new Error("Unsupported Encoding"); }
-	}
+    public String construct(byte[] b) {
+        try {
+            return new String(b, "UTF-8");
+        } catch (UnsupportedEncodingException uee) {
+            throw new Error("Unsupported Encoding");
+        }
+    }
 }

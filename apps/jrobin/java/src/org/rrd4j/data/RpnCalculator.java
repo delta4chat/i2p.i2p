@@ -186,7 +186,7 @@ class RpnCalculator {
             @Override
             void do_method(RpnCalculator c, State s) {
                 c.push(Double.isInfinite(c.pop()) ? 1 : 0);
-            }            
+            }
         },
         TKN_LT("LT") {
             @Override
@@ -475,7 +475,7 @@ class RpnCalculator {
                 }
             }
         },
-        TKN_AVG("AVG"){
+        TKN_AVG("AVG") {
             @Override
             void do_method(RpnCalculator c, State s) {
                 int count = 0;
@@ -696,7 +696,7 @@ class RpnCalculator {
     private Token createToken(String parsedText) {
         Token token;
         int hash = perfect.hashAsInt(parsedText);
-        if (hash >= 0 ){
+        if (hash >= 0 ) {
             token = new Token(symbols[hash]);
         }
         else if (parsedText.equals("PREV")) {
@@ -709,7 +709,7 @@ class RpnCalculator {
         else if (Util.isDouble(parsedText)) {
             token = new Token(Token_Symbol.TKN_NUM, Util.parseDouble(parsedText));
         }
-        else if (sourcesNames.contains(parsedText)){
+        else if (sourcesNames.contains(parsedText)) {
             token = new Token(Token_Symbol.TKN_VAR, parsedText, dataProcessor.getValues(parsedText));
         }
         else {
@@ -734,7 +734,7 @@ class RpnCalculator {
             // check if stack is empty only on the first try
             if (slot == 0 && !isStackEmpty()) {
                 throw new IllegalArgumentException("Stack not empty at the end of calculation. " +
-                        "Probably bad RPN expression [" + rpnExpression + "]");
+                                                   "Probably bad RPN expression [" + rpnExpression + "]");
             }
         }
         return calculatedValues;

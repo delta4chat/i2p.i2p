@@ -9,7 +9,7 @@ import net.i2p.router.RouterContext;
 import net.i2p.util.Log;
 
 /**
- * Check to see the message is a reply from the peer regarding the current 
+ * Check to see the message is a reply from the peer regarding the current
  * store
  *
  */
@@ -25,7 +25,7 @@ class StoreMessageSelector implements MessageSelector {
      *  @param storeJobId just for logging
      *  @param peer just for logging
      */
-    public StoreMessageSelector(RouterContext ctx, long storeJobId, RouterInfo peer, long waitingForId, 
+    public StoreMessageSelector(RouterContext ctx, long storeJobId, RouterInfo peer, long waitingForId,
                                 long expiration) {
         _log = ctx.logManager().getLog(StoreMessageSelector.class);
         _peer = peer.getIdentity().getHash();
@@ -34,9 +34,13 @@ class StoreMessageSelector implements MessageSelector {
         _expiration = expiration;
     }
 
-    public boolean continueMatching() { return !_found; }
+    public boolean continueMatching() {
+        return !_found;
+    }
 
-    public long getExpiration() { return _expiration; }
+    public long getExpiration() {
+        return _expiration;
+    }
 
     public boolean isMatch(I2NPMessage message) {
         if (message.getType() == DeliveryStatusMessage.MESSAGE_TYPE) {

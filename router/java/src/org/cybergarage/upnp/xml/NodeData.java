@@ -19,25 +19,25 @@ import org.cybergarage.xml.*;
 
 public class NodeData
 {
-	public NodeData()
-	{
-		setNode(null);
-	}
+    public NodeData()
+    {
+        setNode(null);
+    }
 
-	////////////////////////////////////////////////
-	// Node
-	////////////////////////////////////////////////
+    ////////////////////////////////////////////////
+    // Node
+    ////////////////////////////////////////////////
 
-	private Node node;
-	
-	public void setNode(Node node)
-	{
-		this.node = node;
-	}
-	
-	public Node getNode()
-	{
-		return node;	
-	}
+    private Node node;
+
+    public void setNode(Node node)
+    {
+        this.node = node;
+    }
+
+    public Node getNode()
+    {
+        return node;
+    }
 }
 

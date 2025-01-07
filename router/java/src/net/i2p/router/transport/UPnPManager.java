@@ -94,7 +94,7 @@ class UPnPManager {
         _delayedCallback = (_scannerCallback != null) ? new DelayedCallback() : null;
         _rescanner = new Rescanner();
     }
-    
+
     /**
      *  Blocking, may take a while.
      *  May be called even if already running.
@@ -237,7 +237,7 @@ class UPnPManager {
         }
 
         public void timeReached() {
-             _scannerCallback.afterScan();
+            _scannerCallback.afterScan();
         }
 
         /**
@@ -250,7 +250,7 @@ class UPnPManager {
             reschedule((_upnp.getSearchMx() * 1000) + 500, false);
         }
     }
-    
+
     /**
      * Call when the ports might have changed
      * The transports can call this pretty quickly at startup,
@@ -262,13 +262,13 @@ class UPnPManager {
             _log.debug("UPnP Update with " + ports.size() + " ports", new Exception("I did it"));
 
         //synchronized(this) {
-            // TODO
-            // called too often and may block for too long
-            // may not have started if net was disconnected previously
-            //if (!_isRunning && !ports.isEmpty())
-            //    start();
-            if (!_isRunning)
-                return;
+        // TODO
+        // called too often and may block for too long
+        // may not have started if net was disconnected previously
+        //if (!_isRunning && !ports.isEmpty())
+        //    start();
+        if (!_isRunning)
+            return;
         //}
 
         Set<ForwardPort> forwards = new HashSet<ForwardPort>(ports.size());
@@ -304,11 +304,11 @@ class UPnPManager {
      *  It calls the TransportManager callbacks.
      */
     private class UPnPCallback implements ForwardPortCallback {
-	
+
         /** Called to indicate status on one or more forwarded ports. */
         public void portForwardStatus(Map<ForwardPort,ForwardPortStatus> statuses) {
             if (_log.shouldLog(Log.DEBUG))
-                 _log.debug("UPnP Callback: with " + statuses.size() + " statuses");
+                _log.debug("UPnP Callback: with " + statuses.size() + " statuses");
             // Let's not have two of these running at once.
             // Deadlock reported in ticket #1699
             // and the locking isn't foolproof in UDPTransport.

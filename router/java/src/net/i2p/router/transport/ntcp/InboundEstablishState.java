@@ -90,7 +90,7 @@ class InboundEstablishState extends EstablishBase implements NTCP2Payload.Payloa
         EnumSet.of(State.IB_NTCP2_INIT, State.IB_NTCP2_GOT_X, State.IB_NTCP2_GOT_PADDING,
                    State.IB_NTCP2_SENT_Y, State.IB_NTCP2_GOT_RI, State.IB_NTCP2_READ_RANDOM);
 
-    
+
     public InboundEstablishState(RouterContext ctx, NTCPTransport transport, NTCPConnection con) {
         super(ctx, transport, con);
         _state = State.IB_INIT;
@@ -122,8 +122,8 @@ class InboundEstablishState extends EstablishBase implements NTCP2Payload.Payloa
      *  @since 0.9.35
      */
     public int getVersion() {
-            return 2;
-    } 
+        return 2;
+    }
 
     /**
      *  we are Bob, so receive these bytes as part of an inbound connection
@@ -143,26 +143,26 @@ class InboundEstablishState extends EstablishBase implements NTCP2Payload.Payloa
         if (_state == State.IB_INIT && src.hasRemaining()) {
             int remaining = src.remaining();
 
-                if (remaining + _received < MSG1_SIZE) {
-                    // Less than 64 total received, so we defer the NTCP 1 or 2 decision.
-                    // Buffer in _X.
-                    // Stay in the IB_INIT state, and wait for more data.
-                    src.get(_X, _received, remaining);
-                    _received += remaining;
-                    if (_log.shouldWarn())
-                        _log.warn("Short buffer got " + remaining + " total now " + _received + " on " + this);
-                    return;
-                }
-                //if (remaining + _received < NTCP1_MSG1_SIZE ||
-                //    !_transport.isNTCP1Enabled()) {
-                    // Less than 288 total received, assume NTCP2
-                    // TODO can't change our mind later if we get more than 287
-                    _con.setVersion(2);
-                    changeState(State.IB_NTCP2_INIT);
-                    receiveInboundNTCP2(src);
-                    // releaseBufs() will return the unused DH
-                    return;
-                //}
+            if (remaining + _received < MSG1_SIZE) {
+                // Less than 64 total received, so we defer the NTCP 1 or 2 decision.
+                // Buffer in _X.
+                // Stay in the IB_INIT state, and wait for more data.
+                src.get(_X, _received, remaining);
+                _received += remaining;
+                if (_log.shouldWarn())
+                    _log.warn("Short buffer got " + remaining + " total now " + _received + " on " + this);
+                return;
+            }
+            //if (remaining + _received < NTCP1_MSG1_SIZE ||
+            //    !_transport.isNTCP1Enabled()) {
+            // Less than 288 total received, assume NTCP2
+            // TODO can't change our mind later if we get more than 287
+            _con.setVersion(2);
+            changeState(State.IB_NTCP2_INIT);
+            receiveInboundNTCP2(src);
+            // releaseBufs() will return the unused DH
+            return;
+            //}
 
         }
     }
@@ -186,7 +186,7 @@ class InboundEstablishState extends EstablishBase implements NTCP2Payload.Payloa
             // So next time we will not accept the con from this IP,
             // rather than doing the whole handshake
             if(ip != null)
-               _context.blocklist().add(ip);
+                _context.blocklist().add(ip);
             if (getVersion() < 2)
                 fail("Peer is banlisted forever: " + aliceHash);
             else if (_log.shouldWarn())
@@ -195,7 +195,7 @@ class InboundEstablishState extends EstablishBase implements NTCP2Payload.Payloa
             return false;
         }
         if(ip != null)
-           _transport.setIP(aliceHash, ip);
+            _transport.setIP(aliceHash, ip);
         if (_log.shouldLog(Log.DEBUG))
             _log.debug(prefix() + "verification successful for " + _con);
 
@@ -214,12 +214,12 @@ class InboundEstablishState extends EstablishBase implements NTCP2Payload.Payloa
             _peerSkew = 0;
             if (diff != 0)
                 _log.logAlways(Log.WARN, "NTP failure, NTCP adjusted clock by " + DataHelper.formatDuration(diff) +
-                                         " source router: " + aliceHash.toBase64());
+                               " source router: " + aliceHash.toBase64());
         } else if (!skewOK) {
             // Only banlist if we know what time it is
             _context.banlist().banlistRouter(DataHelper.formatDuration(diff),
                                              aliceHash,
-                                               _x("Excessive clock skew: {0}"));
+                                             _x("Excessive clock skew: {0}"));
             _transport.setLastBadSkew(_peerSkew);
             if (_log.shouldWarn())
                 _log.warn("Clocks too skewed (" + diff + " ms)");
@@ -314,7 +314,7 @@ class InboundEstablishState extends EstablishBase implements NTCP2Payload.Payloa
                 throw new IllegalStateException("bad proto", gse);
             }
             _handshakeState.getLocalKeyPair().setKeys(_transport.getNTCP2StaticPrivkey(), 0,
-                                                      _transport.getNTCP2StaticPubkey(), 0);
+                    _transport.getNTCP2StaticPubkey(), 0);
             byte options[] = new byte[OPTIONS1_SIZE];
             try {
                 _handshakeState.start();
@@ -365,7 +365,7 @@ class InboundEstablishState extends EstablishBase implements NTCP2Payload.Payloa
             long tsA = DataHelper.fromLong(options, 8, 4);
             long now = _context.clock().now();
             // Will be adjusted for RTT in verifyInbound()
-            _peerSkew = (now - (tsA * 1000) + 500) / 1000; 
+            _peerSkew = (now - (tsA * 1000) + 500) / 1000;
             if (_peerSkew > MAX_SKEW || _peerSkew < 0 - MAX_SKEW) {
                 long diff = 1000*Math.abs(_peerSkew);
                 _context.statManager().addRateData("ntcp.invalidInboundSkew", diff);
@@ -588,8 +588,8 @@ class InboundEstablishState extends EstablishBase implements NTCP2Payload.Payloa
         } else {
             if (_log.shouldDebug()) {
                 _log.debug("Finished establishment for " + this +
-                          "\nGenerated SipHash key for A->B: " + Base64.encode(sip_ab) +
-                          "\nGenerated SipHash key for B->A: " + Base64.encode(sip_ba));
+                           "\nGenerated SipHash key for A->B: " + Base64.encode(sip_ab) +
+                           "\nGenerated SipHash key for B->A: " + Base64.encode(sip_ba));
             }
             // skew in seconds
             _con.finishInboundEstablishment(sender, rcvr, sip_ba, sip_ab, _peerSkew, _hisPadding);
@@ -599,7 +599,7 @@ class InboundEstablishState extends EstablishBase implements NTCP2Payload.Payloa
                 // This is very likely for inbound, as data should come right after message 3
                 if (_log.shouldInfo())
                     _log.info("extra data " + buf.remaining() + " on " + this);
-                 _con.recvEncryptedI2NP(buf);
+                _con.recvEncryptedI2NP(buf);
             }
         }
         // zero out everything
@@ -634,8 +634,8 @@ class InboundEstablishState extends EstablishBase implements NTCP2Payload.Payloa
         for (RouterAddress addr : addrs) {
             String v = addr.getOption("v");
             if (v == null ||
-                (!v.equals(NTCPTransport.NTCP2_VERSION) && !v.startsWith(NTCPTransport.NTCP2_VERSION_ALT))) {
-                 continue;
+                    (!v.equals(NTCPTransport.NTCP2_VERSION) && !v.startsWith(NTCPTransport.NTCP2_VERSION_ALT))) {
+                continue;
             }
             if (s == null)
                 s = addr.getOption("s");

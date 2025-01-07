@@ -38,9 +38,9 @@ class MessageOutputStream extends OutputStream {
     private volatile long _lastBuffered;
     /** if we enqueue data but don't flush it in this period, flush it passively */
     private final int _passiveFlushDelay;
-    /** 
-     * if we are changing the buffer size during operation, set this to the new 
-     * buffer size, and next time we are flushing, update the _buf array to the new 
+    /**
+     * if we are changing the buffer size during operation, set this to the new
+     * buffer size, and next time we are flushing, update the _buf array to the new
      * size
      */
     private volatile int _nextBufferSize;
@@ -48,18 +48,18 @@ class MessageOutputStream extends OutputStream {
     //private long _sendPeriodBeginTime;
     //private long _sendPeriodBytes;
     //private int _sendBps;
-    
+
     /**
      *  Since this is less than i2ptunnel's i2p.streaming.connectDelay default of 1000,
      *  we only wait this long at the start. Guess that's ok, 1000 is too long anyway.
      */
     private static final int DEFAULT_PASSIVE_FLUSH_DELAY = SystemVersion.isSlow() ? 175 : 100;
 
-/****
-    public MessageOutputStream(I2PAppContext ctx, DataReceiver receiver) {
-        this(ctx, receiver, Packet.MAX_PAYLOAD_SIZE);
-    }
-****/
+    /****
+        public MessageOutputStream(I2PAppContext ctx, DataReceiver receiver) {
+            this(ctx, receiver, Packet.MAX_PAYLOAD_SIZE);
+        }
+    ****/
 
     /** */
     public MessageOutputStream(I2PAppContext ctx, SimpleTimer2 timer,
@@ -94,15 +94,17 @@ class MessageOutputStream extends OutputStream {
         //if (_log.shouldLog(Log.DEBUG))
         //    _log.debug("MessageOutputStream created");
     }
-    
-    public void setWriteTimeout(int ms) { 
+
+    public void setWriteTimeout(int ms) {
         if (_log.shouldLog(Log.DEBUG))
             _log.debug("Changing write timeout from " + _writeTimeout + " to " + ms);
 
-        _writeTimeout = ms; 
+        _writeTimeout = ms;
     }
 
-    public int getWriteTimeout() { return _writeTimeout; }
+    public int getWriteTimeout() {
+        return _writeTimeout;
+    }
 
     /**
      *  Caller should enforce a sane minimum.
@@ -114,12 +116,12 @@ class MessageOutputStream extends OutputStream {
             return;
         _nextBufferSize = size;
     }
-    
+
     @Override
     public void write(byte b[]) throws IOException {
         write(b, 0, b.length);
     }
-    
+
     @Override
     public void write(byte b[], int off, int len) throws IOException {
         if (_closed.get()) throw new IOException("Output stream closed");
@@ -132,8 +134,8 @@ class MessageOutputStream extends OutputStream {
             WriteStatus ws = null;
             if (_closed.get()) throw new IOException("Output stream closed");
             // we do any waiting outside the synchronized() block because we
-            // want to allow other threads to flushAvailable() whenever they want.  
-            // this is the only method that *adds* to the _buf, and all 
+            // want to allow other threads to flushAvailable() whenever they want.
+            // this is the only method that *adds* to the _buf, and all
             // code that reads from it is synchronized
             synchronized (_dataLock) {
                 // To simplify the code, and avoid losing data from shrinking the max size,
@@ -164,7 +166,7 @@ class MessageOutputStream extends OutputStream {
                         _log.info("write() direct valid = " + _valid);
                     ws = _dataReceiver.writeData(_buf, 0, _valid);
                     _written += _valid;
-                    _valid = 0;                       
+                    _valid = 0;
                     throwAnyError();
                 }
             }
@@ -172,7 +174,7 @@ class MessageOutputStream extends OutputStream {
                 if (_log.shouldLog(Log.INFO))
                     _log.info("Waiting " + _writeTimeout + "ms for accept of " + ws);
                 // ok, we've actually added a new packet - lets wait until
-                // its accepted into the queue before moving on (so that we 
+                // its accepted into the queue before moving on (so that we
                 // dont fill our buffer instantly)
                 try {
                     ws.waitForAccept(_writeTimeout);
@@ -205,29 +207,29 @@ class MessageOutputStream extends OutputStream {
         throwAnyError();
         //updateBps(len);
     }
-    
-/****
-    private void updateBps(int len) {
-        long now = _context.clock().now();
-        int periods = (int)Math.floor((now - _sendPeriodBeginTime) / 1000d);
-        if (periods > 0) {
-            // first term decays on slow transmission
-            _sendBps = (int)((0.9f*((float)_sendBps/(float)periods)) + (0.1f*((float)_sendPeriodBytes/(float)periods)));
-            _sendPeriodBytes = len;
-            _sendPeriodBeginTime = now;
-            _context.statManager().addRateData("stream.sendBps", _sendBps, 0);
-        } else {
-            _sendPeriodBytes += len;
+
+    /****
+        private void updateBps(int len) {
+            long now = _context.clock().now();
+            int periods = (int)Math.floor((now - _sendPeriodBeginTime) / 1000d);
+            if (periods > 0) {
+                // first term decays on slow transmission
+                _sendBps = (int)((0.9f*((float)_sendBps/(float)periods)) + (0.1f*((float)_sendPeriodBytes/(float)periods)));
+                _sendPeriodBytes = len;
+                _sendPeriodBeginTime = now;
+                _context.statManager().addRateData("stream.sendBps", _sendBps, 0);
+            } else {
+                _sendPeriodBytes += len;
+            }
         }
-    }
-****/
-    
+    ****/
+
     /** */
     public void write(int b) throws IOException {
         write(new byte[] { (byte)b }, 0, 1);
         throwAnyError();
     }
-    
+
     /**
      * If the other side requested we shrink our buffer, do so.
      *
@@ -247,20 +249,20 @@ class MessageOutputStream extends OutputStream {
         }
         return _currentBufferSize;
     }
-    
+
     /**
-     * Flush data that has been enqued but not flushed after a certain 
+     * Flush data that has been enqued but not flushed after a certain
      * period of inactivity
      */
     private class Flusher extends SimpleTimer2.TimedEvent {
         private boolean _enqueued;
 
-        public Flusher(SimpleTimer2 timer) { 
+        public Flusher(SimpleTimer2 timer) {
             super(timer);
         }
 
         public void enqueue() {
-            // no need to be overly worried about duplicates - it would just 
+            // no need to be overly worried about duplicates - it would just
             // push it further out
             if (!_enqueued) {
                 // Maybe we could just use schedule() here - or even SimpleTimer2 - not sure...
@@ -291,7 +293,7 @@ class MessageOutputStream extends OutputStream {
             else
                 doFlush();
         }
-        
+
         private void doFlush() {
             boolean sent = false;
             WriteStatus ws = null;
@@ -313,12 +315,12 @@ class MessageOutputStream extends OutputStream {
                 }
             }
             // ignore the ws
-            if (sent && _log.shouldLog(Log.INFO)) 
+            if (sent && _log.shouldLog(Log.INFO))
                 _log.info("Passive flush of " + ws);
         }
     }
-    
-    /** 
+
+    /**
      * Flush the data already queued up, blocking only if the outbound
      * window is full.
      *
@@ -336,9 +338,9 @@ class MessageOutputStream extends OutputStream {
      */
     @Override
     public void flush() throws IOException {
-     /* @throws InterruptedIOException if the write times out
-      * Documented here, but doesn't belong in the javadoc. 
-      */
+        /* @throws InterruptedIOException if the write times out
+         * Documented here, but doesn't belong in the javadoc.
+         */
         flush(true);
     }
 
@@ -369,7 +371,7 @@ class MessageOutputStream extends OutputStream {
                 _dataLock.notifyAll();
             }
         }
-        
+
         // Skip all the waitForCompletion() stuff below, which is insanity, as of 0.8.1
         // must do this outside the data lock
         if (wait_for_accept_only) {
@@ -381,9 +383,9 @@ class MessageOutputStream extends OutputStream {
         if (_log.shouldLog(Log.DEBUG))
             _log.debug("before waiting " + _writeTimeout + "ms for completion of " + ws);
         try {
-            if (_closed.get() && 
-                ( (_writeTimeout > Connection.DISCONNECT_TIMEOUT) ||
-                  (_writeTimeout <= 0) ) )
+            if (_closed.get() &&
+                    ( (_writeTimeout > Connection.DISCONNECT_TIMEOUT) ||
+                      (_writeTimeout <= 0) ) )
                 ws.waitForCompletion(Connection.DISCONNECT_TIMEOUT);
             else if ( (_writeTimeout <= 0) || (_writeTimeout > Connection.DISCONNECT_TIMEOUT) )
                 ws.waitForCompletion(Connection.DISCONNECT_TIMEOUT);
@@ -400,7 +402,7 @@ class MessageOutputStream extends OutputStream {
             throw new InterruptedIOException("Timed out during write");
         else if (ws.writeFailed())
             throw new IOException("Write failed");
-        
+
         if (_log.shouldDebug()) {
             long elapsed = _context.clock().now() - begin;
             if (elapsed > 10*1000)
@@ -408,7 +410,7 @@ class MessageOutputStream extends OutputStream {
         }
         throwAnyError();
     }
-    
+
     /**
      *  This does a flush, and BLOCKS until
      *  the CLOSE packet is acked.
@@ -416,7 +418,9 @@ class MessageOutputStream extends OutputStream {
     @Override
     public void close() throws IOException {
         if (!_closed.compareAndSet(false,true)) {
-            synchronized (_dataLock) { _dataLock.notifyAll(); }
+            synchronized (_dataLock) {
+                _dataLock.notifyAll();
+            }
             _log.logCloseLoop("MOS");
             return;
         }
@@ -461,7 +465,7 @@ class MessageOutputStream extends OutputStream {
         _streamError.compareAndSet(null, new IOException("Output stream closed"));
         clearData(true);
     }
-    
+
     private void clearData(boolean shouldFlush) {
         ByteArray ba = null;
         if (_log.shouldLog(Log.INFO) && _valid > 0)
@@ -473,7 +477,7 @@ class MessageOutputStream extends OutputStream {
                 _dataReceiver.writeData(_buf, 0, _valid);
             _written += _valid;
             _valid = 0;
-            
+
             if (_buf != null) {
                 ba = new ByteArray(_buf);
                 _buf = null;
@@ -485,9 +489,11 @@ class MessageOutputStream extends OutputStream {
             _dataCache.release(ba);
         }
     }
-    
-    public boolean getClosed() { return _closed.get(); }
-    
+
+    public boolean getClosed() {
+        return _closed.get();
+    }
+
     private void throwAnyError() throws IOException {
         IOException ioe = _streamError.getAndSet(null);
         if (ioe != null) {
@@ -497,13 +503,13 @@ class MessageOutputStream extends OutputStream {
             throw ioe2;
         }
     }
-    
+
     void streamErrorOccurred(IOException ioe) {
         _streamError.compareAndSet(null,ioe);
         clearData(false);
     }
-    
-    /** 
+
+    /**
      * called whenever the engine wants to push more data to the
      * peer
      */
@@ -529,7 +535,7 @@ class MessageOutputStream extends OutputStream {
         long afterBuild = System.currentTimeMillis();
         if ( (afterBuild - before > 1000) && (_log.shouldLog(Log.DEBUG)) )
             _log.debug("Took " + (afterBuild-before) + "ms to build a packet?  " + ws);
-        
+
         if (blocking && ws != null) {
             try {
                 ws.waitForAccept(_writeTimeout);
@@ -548,7 +554,7 @@ class MessageOutputStream extends OutputStream {
             _log.info("Took " + (afterAccept-afterBuild) + "ms to accept a packet? " + ws);
         return;
     }
-    
+
     void destroy() {
         if (!_closed.compareAndSet(false,true)) {
             _log.logCloseLoop("destroy()");
@@ -559,7 +565,7 @@ class MessageOutputStream extends OutputStream {
             _dataLock.notifyAll();
         }
     }
-    
+
     /** Define a component to receive data flushed from this stream */
     public interface DataReceiver {
         /**
@@ -568,7 +574,7 @@ class MessageOutputStream extends OutputStream {
         public WriteStatus writeData(byte buf[], int off, int size);
         public boolean writeInProcess();
     }
-    
+
     /** Define a way to detect the status of a write */
     public interface WriteStatus {
         /**
@@ -578,10 +584,10 @@ class MessageOutputStream extends OutputStream {
          */
         public void waitForCompletion(int maxWaitMs) throws IOException, InterruptedException;
 
-        /** 
+        /**
          * Wait until the data written is accepted into the outbound pool,
          * (i.e. the outbound window is not full)
-         * which we throttle rather than accept arbitrary data and queue 
+         * which we throttle rather than accept arbitrary data and queue
          * @param maxWaitMs -1 = forever
          */
         public void waitForAccept(int maxWaitMs) throws IOException, InterruptedException;

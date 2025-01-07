@@ -57,7 +57,7 @@ class KBucketImpl<T extends SimpleDataStructure> implements KBucket<T> {
     /** when did we last shake things up */
     private long _lastChanged;
     private final I2PAppContext _context;
-    
+
     /**
      *  All entries in this bucket will have at least one bit different
      *  from us in the range [begin, end] inclusive.
@@ -72,15 +72,19 @@ class KBucketImpl<T extends SimpleDataStructure> implements KBucket<T> {
         _max = max;
         _trimmer = trimmer;
     }
-    
-    public int getRangeBegin() { return _begin; }
 
-    public int getRangeEnd() { return _end; }
+    public int getRangeBegin() {
+        return _begin;
+    }
+
+    public int getRangeEnd() {
+        return _end;
+    }
 
     public int getKeyCount() {
         return _entries.size();
     }
-    
+
     /**
      *  @return an unmodifiable view; not a copy
      */
@@ -90,14 +94,14 @@ class KBucketImpl<T extends SimpleDataStructure> implements KBucket<T> {
 
     public void getEntries(SelectionCollector<T> collector) {
         for (T h : _entries) {
-             collector.add(h);
+            collector.add(h);
         }
     }
-    
+
     public void clear() {
         _entries.clear();
     }
-    
+
     /**
      *  Sets last-changed if rv is true OR if the peer is already present.
      *  Calls the trimmer if begin == end and we are full.
@@ -106,7 +110,7 @@ class KBucketImpl<T extends SimpleDataStructure> implements KBucket<T> {
      */
     public boolean add(T peer) {
         if (_begin != _end || _entries.size() < _max ||
-            _entries.contains(peer) || _trimmer.trim(this, peer)) {
+                _entries.contains(peer) || _trimmer.trim(this, peer)) {
             // do this even if already contains, to call setLastChanged()
             boolean rv = _entries.add(peer);
             setLastChanged();
@@ -114,7 +118,7 @@ class KBucketImpl<T extends SimpleDataStructure> implements KBucket<T> {
         }
         return false;
     }
-    
+
     /**
      *  @return if removed. Does NOT set lastChanged.
      */
@@ -124,7 +128,7 @@ class KBucketImpl<T extends SimpleDataStructure> implements KBucket<T> {
         //    setLastChanged();
         return rv;
     }
-    
+
     /**
      *  Update the last-changed timestamp to now.
      */
@@ -138,7 +142,7 @@ class KBucketImpl<T extends SimpleDataStructure> implements KBucket<T> {
     public long getLastChanged() {
         return _lastChanged;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder buf = new StringBuilder(1024);

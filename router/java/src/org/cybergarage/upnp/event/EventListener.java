@@ -10,12 +10,12 @@
 *
 *	11/18/02
 *		- first revision.
-*	
+*
 ******************************************************************/
 
 package org.cybergarage.upnp.event;
 
 public interface EventListener
 {
-	public void eventNotifyReceived(String uuid, long seq, String varName, String value);
+    public void eventNotifyReceived(String uuid, long seq, String varName, String value);
 }

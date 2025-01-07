@@ -31,10 +31,14 @@ public class ShortTunnelBuildReplyMessage extends TunnelBuildReplyMessage {
     }
 
     @Override
-    protected int calculateWrittenLength() { return 0; }
+    protected int calculateWrittenLength() {
+        return 0;
+    }
 
     @Override
-    public int getType() { return MESSAGE_TYPE; }
+    public int getType() {
+        return MESSAGE_TYPE;
+    }
 
     /**
      *  @throws UnsupportedOperationException always
@@ -43,7 +47,7 @@ public class ShortTunnelBuildReplyMessage extends TunnelBuildReplyMessage {
     public void readMessage(byte[] data, int offset, int dataSize, int type) throws I2NPMessageException {
         throw new UnsupportedOperationException();
     }
-    
+
     /**
      *  @throws UnsupportedOperationException always
      */
@@ -51,14 +55,14 @@ public class ShortTunnelBuildReplyMessage extends TunnelBuildReplyMessage {
     protected int writeMessageBody(byte[] out, int curIndex) throws I2NPMessageException {
         throw new UnsupportedOperationException();
     }
-    
+
     @Override
     public String toString() {
         StringBuilder buf = new StringBuilder(64);
         buf.append("[ShortTunnelBuildReplyMessage: " +
                    "\n\tID: ").append(getUniqueId())
-           .append("\n\tRecords: ").append(getRecordCount())
-           .append(']');
+        .append("\n\tRecords: ").append(getRecordCount())
+        .append(']');
         return buf.toString();
     }
 }

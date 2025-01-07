@@ -124,16 +124,17 @@ public class Base64 {
 
     /** The 64 valid Base64 values. */
     private final static byte[] ALPHABET = { (byte) 'A', (byte) 'B', (byte) 'C', (byte) 'D', (byte) 'E', (byte) 'F',
-                                            (byte) 'G', (byte) 'H', (byte) 'I', (byte) 'J', (byte) 'K', (byte) 'L',
-                                            (byte) 'M', (byte) 'N', (byte) 'O', (byte) 'P', (byte) 'Q', (byte) 'R',
-                                            (byte) 'S', (byte) 'T', (byte) 'U', (byte) 'V', (byte) 'W', (byte) 'X',
-                                            (byte) 'Y', (byte) 'Z', (byte) 'a', (byte) 'b', (byte) 'c', (byte) 'd',
-                                            (byte) 'e', (byte) 'f', (byte) 'g', (byte) 'h', (byte) 'i', (byte) 'j',
-                                            (byte) 'k', (byte) 'l', (byte) 'm', (byte) 'n', (byte) 'o', (byte) 'p',
-                                            (byte) 'q', (byte) 'r', (byte) 's', (byte) 't', (byte) 'u', (byte) 'v',
-                                            (byte) 'w', (byte) 'x', (byte) 'y', (byte) 'z', (byte) '0', (byte) '1',
-                                            (byte) '2', (byte) '3', (byte) '4', (byte) '5', (byte) '6', (byte) '7',
-                                            (byte) '8', (byte) '9', (byte) '+', (byte) '/'};
+                                             (byte) 'G', (byte) 'H', (byte) 'I', (byte) 'J', (byte) 'K', (byte) 'L',
+                                             (byte) 'M', (byte) 'N', (byte) 'O', (byte) 'P', (byte) 'Q', (byte) 'R',
+                                             (byte) 'S', (byte) 'T', (byte) 'U', (byte) 'V', (byte) 'W', (byte) 'X',
+                                             (byte) 'Y', (byte) 'Z', (byte) 'a', (byte) 'b', (byte) 'c', (byte) 'd',
+                                             (byte) 'e', (byte) 'f', (byte) 'g', (byte) 'h', (byte) 'i', (byte) 'j',
+                                             (byte) 'k', (byte) 'l', (byte) 'm', (byte) 'n', (byte) 'o', (byte) 'p',
+                                             (byte) 'q', (byte) 'r', (byte) 's', (byte) 't', (byte) 'u', (byte) 'v',
+                                             (byte) 'w', (byte) 'x', (byte) 'y', (byte) 'z', (byte) '0', (byte) '1',
+                                             (byte) '2', (byte) '3', (byte) '4', (byte) '5', (byte) '6', (byte) '7',
+                                             (byte) '8', (byte) '9', (byte) '+', (byte) '/'
+                                           };
 
     /**
      *  The I2P Alphabet.
@@ -144,43 +145,43 @@ public class Base64 {
     /** The 64 valid Base64 values for I2P. */
     private final static byte[] ALPHABET_ALT = DataHelper.getASCII(ALPHABET_I2P);
 
-    /** 
+    /**
      * Translates a Base64 value to either its 6-bit reconstruction value
      * or a negative number indicating some other meaning.
      * As of 0.9.14 this is the decoding for the I2P alphabet. See safeDecode().
      **/
     private final static byte[] DECODABET = { -9, -9, -9, -9, -9, -9, -9, -9, -9, // Decimal  0 -  8
-                                             -5, -5, // Whitespace: Tab and Linefeed
-                                             -9, -9, // Decimal 11 - 12
-                                             -5, // Whitespace: Carriage Return
-                                             -9, -9, -9, -9, -9, -9, -9, -9, -9, -9, -9, -9, -9, // Decimal 14 - 26
-                                             -9, -9, -9, -9, -9, // Decimal 27 - 31
-                                             -5, // Whitespace: Space
-                                             -9, -9, -9, -9, -9, -9, -9, -9, -9, -9, // Decimal 33 - 42
-                                             //62, -9, -9, -9, 63, // + , - . / (43-47) NON-I2P
-                                             -9, -9, 62, -9, -9,   // + , - . / (43-47) I2P
-                                             52, 53, 54, 55, 56, 57, 58, 59, 60, 61, // Numbers zero through nine
-                                             -9, -9, -9, // Decimal 58 - 60
-                                             -1, // Equals sign at decimal 61
-                                             -9, -9, -9, // Decimal 62 - 64
-                                             0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, // Letters 'A' through 'N'
-                                             14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, // Letters 'O' through 'Z'
-                                             -9, -9, -9, -9, -9, -9, // Decimal 91 - 96
-                                             26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, // Letters 'a' through 'm'
-                                             39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, // Letters 'n' through 'z'
-                                             //-9, -9, -9, -9 // Decimal 123 - 126 (126 is '~') NON-I2P
-                                             -9, -9, -9, 63   // Decimal 123 - 126 (126 is '~') I2P
-    ,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 127 - 139
-     -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 140 - 152
-     -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 153 - 165
-     -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 166 - 178
-     -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 179 - 191
-     -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 192 - 204
-     -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 205 - 217
-     -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 218 - 230
-     -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 231 - 243
-     -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9         // Decimal 244 - 255
-    };
+                                              -5, -5, // Whitespace: Tab and Linefeed
+                                              -9, -9, // Decimal 11 - 12
+                                              -5, // Whitespace: Carriage Return
+                                              -9, -9, -9, -9, -9, -9, -9, -9, -9, -9, -9, -9, -9, // Decimal 14 - 26
+                                              -9, -9, -9, -9, -9, // Decimal 27 - 31
+                                              -5, // Whitespace: Space
+                                              -9, -9, -9, -9, -9, -9, -9, -9, -9, -9, // Decimal 33 - 42
+                                              //62, -9, -9, -9, 63, // + , - . / (43-47) NON-I2P
+                                              -9, -9, 62, -9, -9,   // + , - . / (43-47) I2P
+                                              52, 53, 54, 55, 56, 57, 58, 59, 60, 61, // Numbers zero through nine
+                                              -9, -9, -9, // Decimal 58 - 60
+                                              -1, // Equals sign at decimal 61
+                                              -9, -9, -9, // Decimal 62 - 64
+                                              0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, // Letters 'A' through 'N'
+                                              14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, // Letters 'O' through 'Z'
+                                              -9, -9, -9, -9, -9, -9, // Decimal 91 - 96
+                                              26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, // Letters 'a' through 'm'
+                                              39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, // Letters 'n' through 'z'
+                                              //-9, -9, -9, -9 // Decimal 123 - 126 (126 is '~') NON-I2P
+                                              -9, -9, -9, 63   // Decimal 123 - 126 (126 is '~') I2P
+                                              ,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 127 - 139
+                                              -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 140 - 152
+                                              -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 153 - 165
+                                              -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 166 - 178
+                                              -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 179 - 191
+                                              -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 192 - 204
+                                              -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 205 - 217
+                                              -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 218 - 230
+                                              -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 231 - 243
+                                              -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9         // Decimal 244 - 255
+                                            };
 
 
     private final static byte WHITE_SPACE_ENC = -5; // Indicates white space in encoding
@@ -248,8 +249,14 @@ public class Base64 {
         } catch (IOException ioe) {
             ioe.printStackTrace(System.err);
         } finally {
-            try { in.close(); } catch (IOException e) {}
-            try { out.close(); } catch (IOException e) {}
+            try {
+                in.close();
+            }
+            catch (IOException e) {}
+            try {
+                out.close();
+            }
+            catch (IOException e) {}
         }
     }
 
@@ -286,29 +293,29 @@ public class Base64 {
         System.exit(1);
     }
 
-/*******
-    private static void test() {
-        String orig = "you smell";
-        String encoded = Base64.encode(orig.getBytes());
-        System.out.println("Encoded: [" + encoded + "]");
-        byte decoded[] = Base64.decode(encoded);
-        String transformed = new String(decoded);
-        if (orig.equals(transformed))
-            System.out.println("D(E('you smell')) == 'you smell'");
-        else
-            throw new RuntimeException("D(E('you smell')) != 'you smell'!!! transformed = [" + transformed + "]");
-        byte all[] = new byte[256];
-        for (int i = 0; i < all.length; i++)
-            all[i] = (byte) (0xFF & i);
-        encoded = Base64.encode(all);
-        System.out.println("Encoded: [" + encoded + "]");
-        decoded = Base64.decode(encoded);
-        if (DataHelper.eq(decoded, all))
-            System.out.println("D(E([all bytes])) == [all bytes]");
-        else
-            throw new RuntimeException("D(E([all bytes])) != [all bytes]!!!");
-    }
-*******/
+    /*******
+        private static void test() {
+            String orig = "you smell";
+            String encoded = Base64.encode(orig.getBytes());
+            System.out.println("Encoded: [" + encoded + "]");
+            byte decoded[] = Base64.decode(encoded);
+            String transformed = new String(decoded);
+            if (orig.equals(transformed))
+                System.out.println("D(E('you smell')) == 'you smell'");
+            else
+                throw new RuntimeException("D(E('you smell')) != 'you smell'!!! transformed = [" + transformed + "]");
+            byte all[] = new byte[256];
+            for (int i = 0; i < all.length; i++)
+                all[i] = (byte) (0xFF & i);
+            encoded = Base64.encode(all);
+            System.out.println("Encoded: [" + encoded + "]");
+            decoded = Base64.decode(encoded);
+            if (DataHelper.eq(decoded, all))
+                System.out.println("D(E([all bytes])) == [all bytes]");
+            else
+                throw new RuntimeException("D(E([all bytes])) != [all bytes]!!!");
+        }
+    *******/
 
     /* ********  E N C O D I N G   M E T H O D S  ******** */
 
@@ -320,11 +327,11 @@ public class Base64 {
      * @return four byte array in Base64 notation.
      * @since 1.3
      */
-/***** unused (standard alphabet)
-    private static byte[] encode3to4(byte[] threeBytes) {
-        return encode3to4(threeBytes, 3);
-    } // end encodeToBytes
-******/
+    /***** unused (standard alphabet)
+        private static byte[] encode3to4(byte[] threeBytes) {
+            return encode3to4(threeBytes, 3);
+        } // end encodeToBytes
+    ******/
 
     /**
      * Encodes up to the first three bytes of array <var>threeBytes</var>
@@ -339,19 +346,19 @@ public class Base64 {
      * @return four byte array in Base64 notation.
      * @since 1.3
      */
-/***** unused (standard alphabet)
-    private static byte[] encode3to4(byte[] threeBytes, int numSigBytes) {
-        byte[] dest = new byte[4];
-        encode3to4(threeBytes, 0, numSigBytes, dest, 0);
-        return dest;
-    }
-******/
+    /***** unused (standard alphabet)
+        private static byte[] encode3to4(byte[] threeBytes, int numSigBytes) {
+            byte[] dest = new byte[4];
+            encode3to4(threeBytes, 0, numSigBytes, dest, 0);
+            return dest;
+        }
+    ******/
 
     /**
      * Encodes up to three bytes of the array <var>source</var>
      * and writes the resulting four Base64 bytes to <var>destination</var>.
      * The source and destination arrays can be manipulated
-     * anywhere along their length by specifying 
+     * anywhere along their length by specifying
      * <var>srcOffset</var> and <var>destOffset</var>.
      * This method does not check to make sure your arrays
      * are large enough to accomodate <var>srcOffset</var> + 3 for
@@ -368,56 +375,56 @@ public class Base64 {
      * @return the <var>destination</var> array
      * @since 1.3
      */
-/***** unused (standard alphabet)
-    private static byte[] encode3to4(byte[] source, int srcOffset, int numSigBytes, byte[] destination, int destOffset) {
-        //           1         2         3  
-        // 01234567890123456789012345678901 Bit position
-        // --------000000001111111122222222 Array position from threeBytes
-        // --------|    ||    ||    ||    | Six bit groups to index ALPHABET
-        //          >>18  >>12  >> 6  >> 0  Right shift necessary
-        //                0x3f  0x3f  0x3f  Additional AND
+    /***** unused (standard alphabet)
+        private static byte[] encode3to4(byte[] source, int srcOffset, int numSigBytes, byte[] destination, int destOffset) {
+            //           1         2         3
+            // 01234567890123456789012345678901 Bit position
+            // --------000000001111111122222222 Array position from threeBytes
+            // --------|    ||    ||    ||    | Six bit groups to index ALPHABET
+            //          >>18  >>12  >> 6  >> 0  Right shift necessary
+            //                0x3f  0x3f  0x3f  Additional AND
 
-        // Create buffer with zero-padding if there are only one or two
-        // significant bytes passed in the array.
-        // We have to shift left 24 in order to flush out the 1's that appear
-        // when Java treats a value as negative that is cast from a byte to an int.
-        int inBuff = (numSigBytes > 0 ? ((source[srcOffset] << 24) >>> 8) : 0)
-                     | (numSigBytes > 1 ? ((source[srcOffset + 1] << 24) >>> 16) : 0)
-                     | (numSigBytes > 2 ? ((source[srcOffset + 2] << 24) >>> 24) : 0);
+            // Create buffer with zero-padding if there are only one or two
+            // significant bytes passed in the array.
+            // We have to shift left 24 in order to flush out the 1's that appear
+            // when Java treats a value as negative that is cast from a byte to an int.
+            int inBuff = (numSigBytes > 0 ? ((source[srcOffset] << 24) >>> 8) : 0)
+                         | (numSigBytes > 1 ? ((source[srcOffset + 1] << 24) >>> 16) : 0)
+                         | (numSigBytes > 2 ? ((source[srcOffset + 2] << 24) >>> 24) : 0);
 
-        switch (numSigBytes) {
-        case 3:
-            destination[destOffset] = ALPHABET[(inBuff >>> 18)];
-            destination[destOffset + 1] = ALPHABET[(inBuff >>> 12) & 0x3f];
-            destination[destOffset + 2] = ALPHABET[(inBuff >>> 6) & 0x3f];
-            destination[destOffset + 3] = ALPHABET[(inBuff) & 0x3f];
-            return destination;
+            switch (numSigBytes) {
+            case 3:
+                destination[destOffset] = ALPHABET[(inBuff >>> 18)];
+                destination[destOffset + 1] = ALPHABET[(inBuff >>> 12) & 0x3f];
+                destination[destOffset + 2] = ALPHABET[(inBuff >>> 6) & 0x3f];
+                destination[destOffset + 3] = ALPHABET[(inBuff) & 0x3f];
+                return destination;
 
-        case 2:
-            destination[destOffset] = ALPHABET[(inBuff >>> 18)];
-            destination[destOffset + 1] = ALPHABET[(inBuff >>> 12) & 0x3f];
-            destination[destOffset + 2] = ALPHABET[(inBuff >>> 6) & 0x3f];
-            destination[destOffset + 3] = EQUALS_SIGN;
-            return destination;
+            case 2:
+                destination[destOffset] = ALPHABET[(inBuff >>> 18)];
+                destination[destOffset + 1] = ALPHABET[(inBuff >>> 12) & 0x3f];
+                destination[destOffset + 2] = ALPHABET[(inBuff >>> 6) & 0x3f];
+                destination[destOffset + 3] = EQUALS_SIGN;
+                return destination;
 
-        case 1:
-            destination[destOffset] = ALPHABET[(inBuff >>> 18)];
-            destination[destOffset + 1] = ALPHABET[(inBuff >>> 12) & 0x3f];
-            destination[destOffset + 2] = EQUALS_SIGN;
-            destination[destOffset + 3] = EQUALS_SIGN;
-            return destination;
+            case 1:
+                destination[destOffset] = ALPHABET[(inBuff >>> 18)];
+                destination[destOffset + 1] = ALPHABET[(inBuff >>> 12) & 0x3f];
+                destination[destOffset + 2] = EQUALS_SIGN;
+                destination[destOffset + 3] = EQUALS_SIGN;
+                return destination;
 
-        default:
-            return destination;
-        } // end switch
-    } // end encode3to4
-******/
+            default:
+                return destination;
+            } // end switch
+        } // end encode3to4
+    ******/
 
     /**
      *  @param alpha alphabet
      */
     private static void encode3to4(byte[] source, int srcOffset, int numSigBytes, StringBuilder buf, byte alpha[]) {
-        //           1         2         3  
+        //           1         2         3
         // 01234567890123456789012345678901 Bit position
         // --------000000001111111122222222 Array position from threeBytes
         // --------|    ||    ||    ||    | Six bit groups to index ALPHABET
@@ -467,11 +474,11 @@ public class Base64 {
      * @param source The data to convert
      * @since 1.4
      */
-/***** unused
-    private static String encodeBytes(byte[] source) {
-        return encodeBytes(source, false); // don't add newlines
-    } // end encodeBytes
-******/
+    /***** unused
+        private static String encodeBytes(byte[] source) {
+            return encodeBytes(source, false); // don't add newlines
+        } // end encodeBytes
+    ******/
 
     /**
      * Same as encodeBytes, except uses a filesystem / URL friendly set of characters,
@@ -516,11 +523,11 @@ public class Base64 {
      * @param breakLines Break lines at 80 characters or less.
      * @since 1.4
      */
-/***** unused
-    private static String encodeBytes(byte[] source, boolean breakLines) {
-        return encodeBytes(source, 0, source.length, breakLines);
-    } // end encodeBytes
-******/
+    /***** unused
+        private static String encodeBytes(byte[] source, boolean breakLines) {
+            return encodeBytes(source, 0, source.length, breakLines);
+        } // end encodeBytes
+    ******/
 
     /**
      * Encodes a byte array into Base64 notation.
@@ -530,18 +537,18 @@ public class Base64 {
      * @param len Length of data to convert
      * @since 1.4
      */
-/***** unused
-    private static String encodeBytes(byte[] source, int off, int len) {
-        return encodeBytes(source, off, len, true);
-    } // end encodeBytes
+    /***** unused
+        private static String encodeBytes(byte[] source, int off, int len) {
+            return encodeBytes(source, off, len, true);
+        } // end encodeBytes
 
-    private static String encodeBytes(byte[] source, int off, int len, boolean breakLines) {
-        StringBuilder buf = new StringBuilder( (len*4)/3 );
-        encodeBytes(source, off, len, breakLines, buf, ALPHABET);
-        return buf.toString();
-    }
-******/
-        
+        private static String encodeBytes(byte[] source, int off, int len, boolean breakLines) {
+            StringBuilder buf = new StringBuilder( (len*4)/3 );
+            encodeBytes(source, off, len, breakLines, buf, ALPHABET);
+            return buf.toString();
+        }
+    ******/
+
     /**
      * Encodes a byte array into Base64 notation.
      *
@@ -555,7 +562,7 @@ public class Base64 {
         //int len43 = len * 4 / 3;
         //byte[] outBuff = new byte[(len43) // Main 4:3
         //                          + ((len % 3) > 0 ? 4 : 0) // Account for padding
-        //                          + (breakLines ? (len43 / MAX_LINE_LENGTH) : 0)]; // New lines      
+        //                          + (breakLines ? (len43 / MAX_LINE_LENGTH) : 0)]; // New lines
         int d = 0;
         int len2 = len - 2;
         int lineLength = 0;
@@ -588,13 +595,13 @@ public class Base64 {
      * @return the encoded string
      * @since 1.3
      */
-/***** unused
-    private static String encodeString(String s) {
-        return encodeString(s, true);
-    } // end encodeString
-******/
+    /***** unused
+        private static String encodeString(String s) {
+            return encodeString(s, true);
+        } // end encodeString
+    ******/
 
-    
+
 
     /* ********  D E C O D I N G   M E T H O D S  ******** */
 
@@ -607,33 +614,33 @@ public class Base64 {
      * @return array with decoded values
      * @since 1.3
      */
-/***** unused
-    private static byte[] decode4to3(byte[] fourBytes) {
-        byte[] outBuff1 = new byte[3];
-        int count = decode4to3(fourBytes, 0, outBuff1, 0);
-        byte[] outBuff2 = new byte[count];
+    /***** unused
+        private static byte[] decode4to3(byte[] fourBytes) {
+            byte[] outBuff1 = new byte[3];
+            int count = decode4to3(fourBytes, 0, outBuff1, 0);
+            byte[] outBuff2 = new byte[count];
 
-        for (int i = 0; i < count; i++)
-            outBuff2[i] = outBuff1[i];
+            for (int i = 0; i < count; i++)
+                outBuff2[i] = outBuff1[i];
 
-        return outBuff2;
-    }
-******/
+            return outBuff2;
+        }
+    ******/
 
     /**
      * Decodes four bytes from array <var>source</var>
      * and writes the resulting bytes (up to three of them)
      * to <var>destination</var>.
      * The source and destination arrays can be manipulated
-     * anywhere along their length by specifying 
+     * anywhere along their length by specifying
      * <var>srcOffset</var> and <var>destOffset</var>.
      * This method does not check to make sure your arrays
      * are large enough to accomodate <var>srcOffset</var> + 4 for
      * the <var>source</var> array or <var>destOffset</var> + 3 for
      * the <var>destination</var> array.
-     * This method returns the actual number of bytes that 
+     * This method returns the actual number of bytes that
      * were converted from the Base64 encoding.
-     * 
+     *
      *
      * @param source the array to convert
      * @param srcOffset the index where conversion begins

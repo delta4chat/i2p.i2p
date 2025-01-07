@@ -57,9 +57,9 @@ public class MessageWrapper {
             return null;
 
         PayloadGarlicConfig payload = new PayloadGarlicConfig(Certificate.NULL_CERT,
-                                                              ctx.random().nextLong(I2NPMessage.MAX_ID_VALUE),
-                                                              m.getMessageExpiration(),
-                                                              DeliveryInstructions.LOCAL, m);
+                ctx.random().nextLong(I2NPMessage.MAX_ID_VALUE),
+                m.getMessageExpiration(),
+                DeliveryInstructions.LOCAL, m);
         payload.setRecipient(to);
 
         SessionKeyManager skm;
@@ -71,8 +71,8 @@ public class MessageWrapper {
             return null;
         SessionKey sentKey = new SessionKey();
         Set<SessionTag> sentTags = new HashSet<SessionTag>(NETDB_TAGS_TO_DELIVER);
-        GarlicMessage msg = GarlicMessageBuilder.buildMessage(ctx, payload, sentKey, sentTags, 
-                                                              NETDB_TAGS_TO_DELIVER, NETDB_LOW_THRESHOLD, skm);
+        GarlicMessage msg = GarlicMessageBuilder.buildMessage(ctx, payload, sentKey, sentTags,
+                            NETDB_TAGS_TO_DELIVER, NETDB_LOW_THRESHOLD, skm);
         if (msg == null)
             return null;
         TagSetHandle tsh = null;
@@ -92,7 +92,7 @@ public class MessageWrapper {
         private SessionKeyManager skm;
         private PublicKey sentTo;
         private SessionKey sessionKey;
-        private TagSetHandle tsh;        
+        private TagSetHandle tsh;
 
         WrappedMessage(GarlicMessage msg, SessionKeyManager skm, PublicKey sentTo, SessionKey sentKey, TagSetHandle tsh) {
             this.msg = msg;
@@ -123,7 +123,7 @@ public class MessageWrapper {
                 //    _log.debug("Tags NOT acked for key: " + this.sessionKey);
             }
         }
-    }    
+    }
 
     /**
      *  Garlic wrap a message from nobody, destined for a router,
@@ -137,9 +137,9 @@ public class MessageWrapper {
     public static GarlicMessage wrap(RouterContext ctx, I2NPMessage m, RouterInfo to) {
 
         PayloadGarlicConfig payload = new PayloadGarlicConfig(Certificate.NULL_CERT,
-                                                              ctx.random().nextLong(I2NPMessage.MAX_ID_VALUE),
-                                                              m.getMessageExpiration(),
-                                                              DeliveryInstructions.LOCAL, m);
+                ctx.random().nextLong(I2NPMessage.MAX_ID_VALUE),
+                m.getMessageExpiration(),
+                DeliveryInstructions.LOCAL, m);
         payload.setRecipient(to);
 
         PublicKey key = to.getIdentity().getPublicKey();
@@ -175,13 +175,15 @@ public class MessageWrapper {
         public final RatchetSessionTag rtag;
 
         public OneTimeSession(SessionKey key, SessionTag tag) {
-            this.key = key; this.tag = tag;
+            this.key = key;
+            this.tag = tag;
             rtag = null;
         }
 
         /** @since 0.9.46 */
         public OneTimeSession(SessionKey key, RatchetSessionTag tag) {
-            this.key = key; rtag = tag;
+            this.key = key;
+            rtag = tag;
             this.tag = null;
         }
     }
@@ -210,11 +212,11 @@ public class MessageWrapper {
      *  @since 0.9.9
      */
     public static OneTimeSession generateSession(RouterContext ctx, Hash localDest,
-                                                 long expiration, boolean forceElG) {
-         SessionKeyManager skm = ctx.clientManager().getClientSessionKeyManager(localDest);
-         if (skm == null)
-             return null;
-         return generateSession(ctx, skm, expiration, forceElG);
+            long expiration, boolean forceElG) {
+        SessionKeyManager skm = ctx.clientManager().getClientSessionKeyManager(localDest);
+        if (skm == null)
+            return null;
+        return generateSession(ctx, skm, expiration, forceElG);
     }
 
     /**
@@ -228,7 +230,7 @@ public class MessageWrapper {
      *  @since 0.9.9
      */
     public static OneTimeSession generateSession(RouterContext ctx, SessionKeyManager skm,
-                                                 long expiration, boolean forceElG) {
+            long expiration, boolean forceElG) {
         SessionKey key = ctx.keyGenerator().generateSessionKey();
         if (forceElG || (skm instanceof TransientSessionKeyManager)) {
             SessionTag tag = new SessionTag(true);
@@ -283,11 +285,11 @@ public class MessageWrapper {
      */
     public static GarlicMessage wrap(RouterContext ctx, I2NPMessage m, SessionKey encryptKey, SessionTag encryptTag) {
         PayloadGarlicConfig payload = new PayloadGarlicConfig(Certificate.NULL_CERT,
-                                                              ctx.random().nextLong(I2NPMessage.MAX_ID_VALUE),
-                                                              m.getMessageExpiration(),
-                                                              DeliveryInstructions.LOCAL, m);
-        GarlicMessage msg = GarlicMessageBuilder.buildMessage(ctx, payload, null, 
-                                                              null, encryptKey, encryptTag);
+                ctx.random().nextLong(I2NPMessage.MAX_ID_VALUE),
+                m.getMessageExpiration(),
+                DeliveryInstructions.LOCAL, m);
+        GarlicMessage msg = GarlicMessageBuilder.buildMessage(ctx, payload, null,
+                            null, encryptKey, encryptTag);
         return msg;
     }
 
@@ -306,10 +308,10 @@ public class MessageWrapper {
      */
     public static GarlicMessage wrap(RouterContext ctx, I2NPMessage m, SessionKey encryptKey, RatchetSessionTag encryptTag) {
         PayloadGarlicConfig payload = new PayloadGarlicConfig(Certificate.NULL_CERT,
-                                                              ctx.random().nextLong(I2NPMessage.MAX_ID_VALUE),
-                                                              m.getMessageExpiration(),
-                                                              DeliveryInstructions.LOCAL, m);
+                ctx.random().nextLong(I2NPMessage.MAX_ID_VALUE),
+                m.getMessageExpiration(),
+                DeliveryInstructions.LOCAL, m);
         GarlicMessage msg = GarlicMessageBuilder.buildMessage(ctx, payload, encryptKey, encryptTag);
         return msg;
     }
-}    
+}

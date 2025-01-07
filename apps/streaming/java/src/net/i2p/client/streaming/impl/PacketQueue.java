@@ -19,9 +19,9 @@ import net.i2p.util.Log;
 import net.i2p.util.SimpleTimer2;
 
 /**
- * Queue out packets to be sent through the session.  
+ * Queue out packets to be sent through the session.
  * Well, thats the theory at least... in practice we just
- * send them immediately with no blocking, since the 
+ * send them immediately with no blocking, since the
  * mode=bestEffort doesnt block in the SDK.
  *<p>
  * MessageOutputStream -&gt; ConnectionDataReceiver -&gt; Connection -&gt; PacketQueue -&gt; I2PSession
@@ -32,11 +32,11 @@ class PacketQueue implements SendMessageStatusListener, Closeable {
     private final ByteCache _cache = ByteCache.getInstance(64, 36*1024);
     private final Map<Long, Connection> _messageStatusMap;
     private volatile boolean _dead;
-    
+
     private static final int FLAGS_INITIAL_TAGS = Packet.FLAG_SYNCHRONIZE;
     private static final int FLAGS_FINAL_TAGS = Packet.FLAG_CLOSE |
-                                              Packet.FLAG_RESET |
-                                              Packet.FLAG_ECHO;
+            Packet.FLAG_RESET |
+            Packet.FLAG_ECHO;
     private static final int INITIAL_TAGS_TO_SEND = 32;
     private static final int MIN_TAG_THRESHOLD = 20;
     private static final int TAG_WINDOW_FACTOR = 5;
@@ -63,7 +63,7 @@ class PacketQueue implements SendMessageStatusListener, Closeable {
         _dead = true;
         _messageStatusMap.clear();
     }
-    
+
     /**
      * Add a new packet to be sent out ASAP.
      * This updates the acks.
@@ -74,7 +74,7 @@ class PacketQueue implements SendMessageStatusListener, Closeable {
     public boolean enqueue(PacketLocal packet) {
         if (_dead)
             return false;
-        
+
         //SessionKey keyUsed = packet.getKeyUsed();
         //if (keyUsed == null)
         //    keyUsed = new SessionKey();
@@ -93,7 +93,7 @@ class PacketQueue implements SendMessageStatusListener, Closeable {
             // this updates the ack/nack fields
             con.getInputStream().updateAcks(packet);
         }
-    
+
         ByteArray ba = _cache.acquire();
         byte buf[] = ba.getData();
 
@@ -113,7 +113,7 @@ class PacketQueue implements SendMessageStatusListener, Closeable {
 
             // last chance to short circuit...
             if (packet.getAckTime() > 0) return false;
-            
+
             // this should not block!
             begin = _context.clock().now();
             long expires = 0;
@@ -200,24 +200,24 @@ class PacketQueue implements SendMessageStatusListener, Closeable {
             I2PSession session = packet.getSession();
             if (listenForStatus) {
                 long id = session.sendMessage(packet.getTo(), buf, 0, size,
-                                 I2PSession.PROTO_STREAMING, packet.getLocalPort(), packet.getRemotePort(),
-                                 options, this);
+                                              I2PSession.PROTO_STREAMING, packet.getLocalPort(), packet.getRemotePort(),
+                                              options, this);
                 _messageStatusMap.put(Long.valueOf(id), con);
                 sent = true;
             } else {
                 sent = session.sendMessage(packet.getTo(), buf, 0, size,
-                                 I2PSession.PROTO_STREAMING, packet.getLocalPort(), packet.getRemotePort(),
-                                 options);
+                                           I2PSession.PROTO_STREAMING, packet.getLocalPort(), packet.getRemotePort(),
+                                           options);
             }
             end = _context.clock().now();
-            
-            if ( (end-begin > 1000) && (_log.shouldLog(Log.WARN)) ) 
+
+            if ( (end-begin > 1000) && (_log.shouldLog(Log.WARN)) )
                 _log.warn("Took " + (end-begin) + "ms to sendMessage(...) " + packet);
-            
+
             _context.statManager().addRateData("stream.con.sendMessageSize", size, packet.getLifetime());
             if (packet.getNumSends() > 1)
                 _context.statManager().addRateData("stream.con.sendDuplicateSize", size, packet.getLifetime());
-            
+
             if (con != null) {
                 con.incrementBytesSent(size);
                 if (packet.getNumSends() > 1)
@@ -227,9 +227,9 @@ class PacketQueue implements SendMessageStatusListener, Closeable {
             if (_log.shouldLog(Log.WARN))
                 _log.warn("Unable to send the packet " + packet, ise);
         }
-        
+
         _cache.release(ba);
-        
+
         if (!sent) {
             if (_log.shouldLog(Log.WARN))
                 _log.warn("Send failed for " + packet);
@@ -244,10 +244,10 @@ class PacketQueue implements SendMessageStatusListener, Closeable {
                 con.getConnectionManager().getPacketHandler().displayPacket(packet, "SEND", suffix);
             }
             if (I2PSocketManagerFull.pcapWriter != null &&
-                _context.getBooleanProperty(I2PSocketManagerFull.PROP_PCAP))
+                    _context.getBooleanProperty(I2PSocketManagerFull.PROP_PCAP))
                 packet.logTCPDump();
         }
-        
+
         if ( (packet.getSequenceNum() == 0) && (!packet.isFlagSet(Packet.FLAG_SYNCHRONIZE)) ) {
             // ack only, so release it asap
             packet.releasePayload();
@@ -285,94 +285,94 @@ class PacketQueue implements SendMessageStatusListener, Closeable {
         }
 
         switch (status) {
-            case MessageStatusMessage.STATUS_SEND_BEST_EFFORT_FAILURE:
-            // not really guaranteed
-            case MessageStatusMessage.STATUS_SEND_GUARANTEED_FAILURE:
-            // no tunnels may fix itself, allow retx
-            case MessageStatusMessage.STATUS_SEND_FAILURE_NO_TUNNELS:
-            // probably took a long time to open the tunnel, allow retx
-            case MessageStatusMessage.STATUS_SEND_FAILURE_EXPIRED:
-            // overflow in router-side I2CP queue, sent as of 0.9.29, will be retried
-            case MessageStatusMessage.STATUS_SEND_FAILURE_LOCAL:
+        case MessageStatusMessage.STATUS_SEND_BEST_EFFORT_FAILURE:
+        // not really guaranteed
+        case MessageStatusMessage.STATUS_SEND_GUARANTEED_FAILURE:
+        // no tunnels may fix itself, allow retx
+        case MessageStatusMessage.STATUS_SEND_FAILURE_NO_TUNNELS:
+        // probably took a long time to open the tunnel, allow retx
+        case MessageStatusMessage.STATUS_SEND_FAILURE_EXPIRED:
+        // overflow in router-side I2CP queue, sent as of 0.9.29, will be retried
+        case MessageStatusMessage.STATUS_SEND_FAILURE_LOCAL:
+            if (_log.shouldLog(Log.WARN))
+                _log.warn("Rcvd soft failure status " + status + " for msg " + msgId + " on " + con);
+            _messageStatusMap.remove(id);
+            break;
+
+        case MessageStatusMessage.STATUS_SEND_FAILURE_NO_LEASESET:
+            // Ideally we would like to make this a hard failure,
+            // but it caused far too many fast-fails that were then
+            // resolved by the user clicking reload in his browser.
+            // Until the LS fetch is faster and more reliable,
+            // or we increase the timeout for it,
+            // we can't treat this one as a hard fail.
+            // Let the streaming retransmission paper over the problem.
+            if (_log.shouldLog(Log.WARN))
+                _log.warn("LS lookup (soft) failure for msg " + msgId + " on " + con);
+            _messageStatusMap.remove(id);
+            break;
+
+
+        case MessageStatusMessage.STATUS_SEND_FAILURE_ROUTER:
+        case MessageStatusMessage.STATUS_SEND_FAILURE_NETWORK:
+        case MessageStatusMessage.STATUS_SEND_FAILURE_BAD_SESSION:
+        case MessageStatusMessage.STATUS_SEND_FAILURE_BAD_MESSAGE:
+        case MessageStatusMessage.STATUS_SEND_FAILURE_BAD_OPTIONS:
+        case MessageStatusMessage.STATUS_SEND_FAILURE_OVERFLOW:
+        case MessageStatusMessage.STATUS_SEND_FAILURE_LOCAL_LEASESET:
+        case MessageStatusMessage.STATUS_SEND_FAILURE_UNSUPPORTED_ENCRYPTION:
+        case MessageStatusMessage.STATUS_SEND_FAILURE_DESTINATION:
+        case MessageStatusMessage.STATUS_SEND_FAILURE_BAD_LEASESET:
+        case MessageStatusMessage.STATUS_SEND_FAILURE_EXPIRED_LEASESET:
+        case MessageStatusMessage.STATUS_SEND_FAILURE_LOOPBACK:
+        case SendMessageStatusListener.STATUS_CANCELLED:
+            if (con.getHighestAckedThrough() >= 0) {
+                // a retxed SYN succeeded before the first SYN failed
                 if (_log.shouldLog(Log.WARN))
-                    _log.warn("Rcvd soft failure status " + status + " for msg " + msgId + " on " + con);
-                _messageStatusMap.remove(id);
-                break;
-
-            case MessageStatusMessage.STATUS_SEND_FAILURE_NO_LEASESET:
-                // Ideally we would like to make this a hard failure,
-                // but it caused far too many fast-fails that were then
-                // resolved by the user clicking reload in his browser.
-                // Until the LS fetch is faster and more reliable,
-                // or we increase the timeout for it,
-                // we can't treat this one as a hard fail.
-                // Let the streaming retransmission paper over the problem.
+                    _log.warn("Rcvd hard failure but already connected, status " + status + " for msg " + msgId + " on " + con);
+            } else if (!con.getIsConnected()) {
                 if (_log.shouldLog(Log.WARN))
-                    _log.warn("LS lookup (soft) failure for msg " + msgId + " on " + con);
-                _messageStatusMap.remove(id);
-                break;
-
-
-            case MessageStatusMessage.STATUS_SEND_FAILURE_ROUTER:
-            case MessageStatusMessage.STATUS_SEND_FAILURE_NETWORK:
-            case MessageStatusMessage.STATUS_SEND_FAILURE_BAD_SESSION:
-            case MessageStatusMessage.STATUS_SEND_FAILURE_BAD_MESSAGE:
-            case MessageStatusMessage.STATUS_SEND_FAILURE_BAD_OPTIONS:
-            case MessageStatusMessage.STATUS_SEND_FAILURE_OVERFLOW:
-            case MessageStatusMessage.STATUS_SEND_FAILURE_LOCAL_LEASESET:
-            case MessageStatusMessage.STATUS_SEND_FAILURE_UNSUPPORTED_ENCRYPTION:
-            case MessageStatusMessage.STATUS_SEND_FAILURE_DESTINATION:
-            case MessageStatusMessage.STATUS_SEND_FAILURE_BAD_LEASESET:
-            case MessageStatusMessage.STATUS_SEND_FAILURE_EXPIRED_LEASESET:
-            case MessageStatusMessage.STATUS_SEND_FAILURE_LOOPBACK:
-            case SendMessageStatusListener.STATUS_CANCELLED:
-                if (con.getHighestAckedThrough() >= 0) {
-                    // a retxed SYN succeeded before the first SYN failed
-                    if (_log.shouldLog(Log.WARN))
-                        _log.warn("Rcvd hard failure but already connected, status " + status + " for msg " + msgId + " on " + con);
-                } else if (!con.getIsConnected()) {
-                    if (_log.shouldLog(Log.WARN))
-                        _log.warn("Rcvd hard failure but already closed, status " + status + " for msg " + msgId + " on " + con);
-                } else {
-                    if (_log.shouldLog(Log.WARN))
-                        _log.warn("Rcvd hard failure status " + status + " for msg " + msgId + " on " + con);
-                    _messageStatusMap.remove(id);
-                    IOException ioe = new I2PSocketException(status);
-                    con.getOutputStream().streamErrorOccurred(ioe);
-                    con.getInputStream().streamErrorOccurred(ioe);
-                    con.setConnectionError(ioe.getLocalizedMessage());
-                    con.disconnect(false);
-                }
-                break;
-
-            case MessageStatusMessage.STATUS_SEND_FAILURE_META_LEASESET:
-                // TODO
+                    _log.warn("Rcvd hard failure but already closed, status " + status + " for msg " + msgId + " on " + con);
+            } else {
+                if (_log.shouldLog(Log.WARN))
+                    _log.warn("Rcvd hard failure status " + status + " for msg " + msgId + " on " + con);
                 _messageStatusMap.remove(id);
                 IOException ioe = new I2PSocketException(status);
                 con.getOutputStream().streamErrorOccurred(ioe);
                 con.getInputStream().streamErrorOccurred(ioe);
                 con.setConnectionError(ioe.getLocalizedMessage());
                 con.disconnect(false);
-                break;
+            }
+            break;
 
-            case MessageStatusMessage.STATUS_SEND_BEST_EFFORT_SUCCESS:
-            case MessageStatusMessage.STATUS_SEND_GUARANTEED_SUCCESS:
-            case MessageStatusMessage.STATUS_SEND_SUCCESS_LOCAL:
-                if (_log.shouldLog(Log.INFO))
-                    _log.info("Rcvd success status " + status + " for msg " + msgId + " on " + con);
-                _messageStatusMap.remove(id);
-                break;
+        case MessageStatusMessage.STATUS_SEND_FAILURE_META_LEASESET:
+            // TODO
+            _messageStatusMap.remove(id);
+            IOException ioe = new I2PSocketException(status);
+            con.getOutputStream().streamErrorOccurred(ioe);
+            con.getInputStream().streamErrorOccurred(ioe);
+            con.setConnectionError(ioe.getLocalizedMessage());
+            con.disconnect(false);
+            break;
 
-            case MessageStatusMessage.STATUS_SEND_ACCEPTED:
-                if (_log.shouldLog(Log.INFO))
-                    _log.info("Rcvd accept status " + status + " for msg " + msgId + " on " + con);
-                break;
+        case MessageStatusMessage.STATUS_SEND_BEST_EFFORT_SUCCESS:
+        case MessageStatusMessage.STATUS_SEND_GUARANTEED_SUCCESS:
+        case MessageStatusMessage.STATUS_SEND_SUCCESS_LOCAL:
+            if (_log.shouldLog(Log.INFO))
+                _log.info("Rcvd success status " + status + " for msg " + msgId + " on " + con);
+            _messageStatusMap.remove(id);
+            break;
 
-            default:
-                if (_log.shouldLog(Log.WARN))
-                    _log.warn("Rcvd unknown status " + status + " for msg " + msgId + " on " + con);
-                _messageStatusMap.remove(id);
-                break;
+        case MessageStatusMessage.STATUS_SEND_ACCEPTED:
+            if (_log.shouldLog(Log.INFO))
+                _log.info("Rcvd accept status " + status + " for msg " + msgId + " on " + con);
+            break;
+
+        default:
+            if (_log.shouldLog(Log.WARN))
+                _log.warn("Rcvd unknown status " + status + " for msg " + msgId + " on " + con);
+            _messageStatusMap.remove(id);
+            break;
         }
     }
 
@@ -382,9 +382,9 @@ class PacketQueue implements SendMessageStatusListener, Closeable {
      *  @since 0.9.14
      */
     private class RemoveExpired extends SimpleTimer2.TimedEvent {
-        
+
         public RemoveExpired(SimpleTimer2 timer) {
-             super(timer, REMOVE_EXPIRED_TIME);
+            super(timer, REMOVE_EXPIRED_TIME);
         }
 
         public void timeReached() {

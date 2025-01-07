@@ -83,7 +83,10 @@ class PersistNews {
                 if (log.shouldWarn())
                     log.warn("failed store to " + file, ioe);
             } finally {
-                if (out != null) try { out.close(); } catch (IOException ioe) {}
+                if (out != null) try {
+                        out.close();
+                    }
+                    catch (IOException ioe) {}
             }
         }
         return rv;
@@ -129,7 +132,10 @@ class PersistNews {
                     log.warn("load error from " + file, ioe);
                 error = true;
             } finally {
-                if (in != null) try { in.close(); } catch (IOException ioe) {}
+                if (in != null) try {
+                        in.close();
+                    }
+                    catch (IOException ioe) {}
             }
             if (error)
                 file.delete();
@@ -231,37 +237,37 @@ class PersistNews {
         return PFX + Base64.encode(hash) + SFX;
     }
 
-/****
-    public static void main(String[] args) {
-        if (args.length != 1) {
-            System.err.println("Usage: PersistNews file.xml");
-            System.exit(1);
+    /****
+        public static void main(String[] args) {
+            if (args.length != 1) {
+                System.err.println("Usage: PersistNews file.xml");
+                System.exit(1);
+            }
+            I2PAppContext ctx = new I2PAppContext();
+            Debug.initialize(ctx);
+            XMLParser parser = new XMLParser(ctx);
+            InputStream in = null;
+            try {
+                in = new FileInputStream(args[0]);
+                Node root = parser.parse(in);
+                List<Node> entries = NewsXMLParser.getNodes(root, "entry");
+                store(ctx, entries);
+                System.out.println("Stored " + entries.size() + " entries");
+            } catch (ParserException pe) {
+                System.out.println("load error from " + args[0]);
+                pe.printStackTrace();
+            } catch (IOException ioe) {
+                System.out.println("load error from " + args[0]);
+                ioe.printStackTrace();
+            } finally {
+                if (in != null) try { in.close(); } catch (IOException ioe) {}
+            }
+            List<NewsEntry> entries = load(ctx);
+            System.out.println("Loaded " + entries.size() + " news entries");
+            for (int i = 0; i < entries.size(); i++) {
+                NewsEntry e = entries.get(i);
+                System.out.println("\n****** News #" + (i+1) + ": " + e.title + '\n' + e.content);
+            }
         }
-        I2PAppContext ctx = new I2PAppContext();
-        Debug.initialize(ctx);
-        XMLParser parser = new XMLParser(ctx);
-        InputStream in = null;
-        try {
-            in = new FileInputStream(args[0]);
-            Node root = parser.parse(in);
-            List<Node> entries = NewsXMLParser.getNodes(root, "entry");
-            store(ctx, entries);
-            System.out.println("Stored " + entries.size() + " entries");
-        } catch (ParserException pe) {
-            System.out.println("load error from " + args[0]);
-            pe.printStackTrace();
-        } catch (IOException ioe) {
-            System.out.println("load error from " + args[0]);
-            ioe.printStackTrace();
-        } finally {
-            if (in != null) try { in.close(); } catch (IOException ioe) {}
-        }
-        List<NewsEntry> entries = load(ctx);
-        System.out.println("Loaded " + entries.size() + " news entries");
-        for (int i = 0; i < entries.size(); i++) {
-            NewsEntry e = entries.get(i);
-            System.out.println("\n****** News #" + (i+1) + ": " + e.title + '\n' + e.content);
-        }
-    }
-****/
+    ****/
 }

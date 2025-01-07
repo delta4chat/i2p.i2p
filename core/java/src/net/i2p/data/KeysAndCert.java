@@ -2,9 +2,9 @@ package net.i2p.data;
 
 /*
  * free (adj.): unencumbered; not under the control of others
- * Written by jrandom in 2003 and released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
- * It probably won't make your computer catch on fire, or eat 
+ * Written by jrandom in 2003 and released into the public domain
+ * with no warranty of any kind, either expressed or implied.
+ * It probably won't make your computer catch on fire, or eat
  * your children, but it might.  Use at your own risk.
  *
  */
@@ -122,7 +122,7 @@ public class KeysAndCert extends DataStructureImpl {
             throw new IllegalStateException();
         _signingKey = key;
     }
-    
+
     /**
      * @return the full padding, expanded if stored compressed
      * @since 0.9.16
@@ -136,7 +136,7 @@ public class KeysAndCert extends DataStructureImpl {
         }
         return rv;
     }
-    
+
     /**
      * @throws IllegalStateException if was already set
      * @since 0.9.12
@@ -147,7 +147,7 @@ public class KeysAndCert extends DataStructureImpl {
         _padding = padding;
         compressPadding();
     }
-    
+
     /**
      * @throws IllegalStateException if data already set
      */
@@ -243,25 +243,25 @@ public class KeysAndCert extends DataStructureImpl {
                 }
             }
         } else if (_signingKey.length() < SigningPublicKey.KEYSIZE_BYTES ||
-                 _publicKey.length() < PublicKey.KEYSIZE_BYTES) {
+                   _publicKey.length() < PublicKey.KEYSIZE_BYTES) {
             throw new DataFormatException("No padding set");
         }
         _signingKey.writeTruncatedBytes(out);
         _certificate.writeBytes(out);
     }
-    
+
     @Override
     public boolean equals(Object object) {
         if (object == this) return true;
         if ((object == null) || !(object instanceof KeysAndCert)) return false;
         KeysAndCert  ident = (KeysAndCert) object;
         return
-               DataHelper.eq(_signingKey, ident._signingKey)
-               && DataHelper.eq(_publicKey, ident._publicKey)
-               && Arrays.equals(_padding, ident._padding)
-               && DataHelper.eq(_certificate, ident._certificate);
+            DataHelper.eq(_signingKey, ident._signingKey)
+            && DataHelper.eq(_publicKey, ident._publicKey)
+            && Arrays.equals(_padding, ident._padding)
+            && DataHelper.eq(_certificate, ident._certificate);
     }
-    
+
     /** the signing key has enough randomness in it to use it by itself for speed */
     @Override
     public int hashCode() {
@@ -271,7 +271,7 @@ public class KeysAndCert extends DataStructureImpl {
             return 0;
         return _signingKey.hashCode();
     }
-    
+
     @Override
     public String toString() {
         StringBuilder buf = new StringBuilder(256);
@@ -284,7 +284,7 @@ public class KeysAndCert extends DataStructureImpl {
             buf.append(getHash().toBase64());
         buf.append("\n\tCertificate: ").append(_certificate);
         if ((_publicKey != null && _publicKey.getType() != EncType.ELGAMAL_2048) ||
-            !cls.equals("Destination")) {
+                !cls.equals("Destination")) {
             // router identities only
             buf.append("\n\tPublicKey: ").append(_publicKey);
         }
@@ -298,7 +298,7 @@ public class KeysAndCert extends DataStructureImpl {
         buf.append(']');
         return buf.toString();
     }
-    
+
     /**
      *  Throws IllegalStateException if keys and cert are not initialized,
      *  as of 0.9.12. Prior to that, returned null.

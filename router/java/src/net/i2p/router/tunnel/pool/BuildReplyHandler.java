@@ -19,7 +19,7 @@ import net.i2p.util.Log;
 import net.i2p.util.SimpleByteCache;
 
 /**
- * Decrypt the layers of a tunnel build reply message, determining whether the individual 
+ * Decrypt the layers of a tunnel build reply message, determining whether the individual
  * hops agreed to participate in the tunnel, or if not, why not.
  *
  * @since 0.9.51 moved to tunnel.pool package
@@ -127,7 +127,7 @@ class BuildReplyHandler {
             for (int j = start; j >= end; j--) {
                 byte[] replyKey = cfg.getChaChaReplyKey(j).getData();
                 if (log.shouldDebug()) {
-                    log.debug(reply.getUniqueId() + ": Decrypting ChaCha record " + recordNum + "/" + hop + "/" + j + " with replyKey " 
+                    log.debug(reply.getUniqueId() + ": Decrypting ChaCha record " + recordNum + "/" + hop + "/" + j + " with replyKey "
                               + Base64.encode(replyKey) + " : " + cfg);
                 }
                 // slot number, little endian
@@ -139,7 +139,7 @@ class BuildReplyHandler {
                 SessionKey replyKey = cfg.getAESReplyKey(j);
                 byte replyIV[] = cfg.getAESReplyIV(j);
                 if (log.shouldDebug()) {
-                    log.debug(reply.getUniqueId() + ": Decrypting AES record " + recordNum + "/" + hop + "/" + j + " with replyKey " 
+                    log.debug(reply.getUniqueId() + ": Decrypting AES record " + recordNum + "/" + hop + "/" + j + " with replyKey "
                               + replyKey.toBase64() + "/" + Base64.encode(replyIV) + ": " + cfg);
                     //log.debug(reply.getRawUniqueId() + ": before decrypt: " + Base64.encode(data));
                     //log.debug(reply.getRawUniqueId() + ": Full reply rec: sz=" + data.length + " data=" + Base64.encode(data));
@@ -149,7 +149,7 @@ class BuildReplyHandler {
                 //    log.debug(reply.getRawUniqueId() + ": after decrypt: " + Base64.encode(data));
             }
         }
-        // ok, all of the layered encryption is stripped, so lets verify it 
+        // ok, all of the layered encryption is stripped, so lets verify it
         // (formatted per BuildResponseRecord.create)
         int rv;
         if (isEC) {
@@ -157,7 +157,7 @@ class BuildReplyHandler {
             SessionKey replyKey = cfg.getChaChaReplyKey(hop);
             byte[] replyIV = cfg.getChaChaReplyAD(hop);
             if (log.shouldDebug())
-                log.debug(reply.getUniqueId() + ": Decrypting chacha/poly record " + recordNum + "/" + hop + " with replyKey " 
+                log.debug(reply.getUniqueId() + ": Decrypting chacha/poly record " + recordNum + "/" + hop + " with replyKey "
                           + replyKey.toBase64() + "/" + Base64.encode(replyIV) + ": " + cfg);
             boolean ok;
             if (isShort)

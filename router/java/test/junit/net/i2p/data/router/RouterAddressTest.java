@@ -35,11 +35,13 @@ public class RouterAddressTest extends StructureTest {
         RouterAddress addr = new RouterAddress("Blah", options, 42);
         return addr;
     }
-    public DataStructure createStructureToRead() { return new RouterAddress(); }
+    public DataStructure createStructureToRead() {
+        return new RouterAddress();
+    }
 
     @SuppressWarnings("deprecation")
     @Test
-    public void testSetNullOptions(){
+    public void testSetNullOptions() {
         RouterAddress addr = new RouterAddress();
 
         try {
@@ -50,7 +52,7 @@ public class RouterAddressTest extends StructureTest {
 
     @SuppressWarnings("deprecation")
     @Test
-    public void testSetOptionsAgain(){
+    public void testSetOptionsAgain() {
         OrderedProperties options = new OrderedProperties();
         options.setProperty("hostname", "localhost");
         options.setProperty("portnum", "1234");
@@ -64,7 +66,7 @@ public class RouterAddressTest extends StructureTest {
     }
 
     @Test
-    public void testBadWrite() throws Exception{
+    public void testBadWrite() throws Exception {
         RouterAddress addr = new RouterAddress();
 
         try {
@@ -76,7 +78,7 @@ public class RouterAddressTest extends StructureTest {
     }
 
     @Test
-    public void testNullEquals(){
+    public void testNullEquals() {
         //addr.setExpiration(new Date(1000*60*60*24)); // jan 2 1970
         OrderedProperties options = new OrderedProperties();
         options.setProperty("hostname", "localhost");
@@ -87,7 +89,7 @@ public class RouterAddressTest extends StructureTest {
     }
 
     @Test
-    public void testToString(){
+    public void testToString() {
         //addr.setExpiration(new Date(1000*60*60*24)); // jan 2 1970
         OrderedProperties options = new OrderedProperties();
         options.setProperty("hostname", "localhost");

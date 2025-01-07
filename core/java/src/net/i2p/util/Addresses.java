@@ -46,7 +46,7 @@ public abstract class Addresses {
     private static final File IF_INET6_FILE = new File("/proc/net/if_inet6");
     private static final long INET6_CACHE_EXPIRE = 10*60*1000;
     private static final boolean INET6_CACHE_ENABLED = !SystemVersion.isMac() && !SystemVersion.isWindows() &&
-                                                    !SystemVersion.isAndroid() && IF_INET6_FILE.exists();
+            !SystemVersion.isAndroid() && IF_INET6_FILE.exists();
     private static final int FLAG_PERMANENT = 0x80;
     private static final int FLAG_DEPRECATED = 0x20;
     private static final int FLAG_TEMPORARY = 0x01;
@@ -70,15 +70,15 @@ public abstract class Addresses {
      */
     public static boolean isConnected(AddressType type) {
         switch(type) {
-            case IPV6:
-                return isConnectedIPv6();
+        case IPV6:
+            return isConnectedIPv6();
 
-            case YGG:
-                return getYggdrasilAddress() != null;
+        case YGG:
+            return getYggdrasilAddress() != null;
 
-            case IPV4:
-            default:
-                return isConnected();
+        case IPV4:
+        default:
+            return isConnected();
         }
     }
 
@@ -179,8 +179,8 @@ public abstract class Addresses {
      *  @since 0.9.4
      */
     public static SortedSet<String> getAddresses(boolean includeSiteLocal,
-                                                 boolean includeLoopbackAndWildcard,
-                                                 boolean includeIPv6) {
+            boolean includeLoopbackAndWildcard,
+            boolean includeIPv6) {
         return getAddresses(includeSiteLocal, includeLoopbackAndWildcard, includeIPv6, includeIPv6);
     }
 
@@ -202,9 +202,9 @@ public abstract class Addresses {
      *  @since 0.9.46
      */
     public static SortedSet<String> getAddresses(boolean includeSiteLocal,
-                                                 boolean includeLoopbackAndWildcard,
-                                                 boolean includeIPv6,
-                                                 boolean includeIPv6Temporary) {
+            boolean includeLoopbackAndWildcard,
+            boolean includeIPv6,
+            boolean includeIPv6Temporary) {
         boolean haveIPv4 = false;
         boolean haveIPv6 = false;
         SortedSet<String> rv = new TreeSet<String>();
@@ -374,9 +374,9 @@ public abstract class Addresses {
             if (ip.length == 4) {
                 int i = ip[0] & 0xff;
                 if (i != 127 &&
-                    i != 192 &&
-                    i != 10 &&
-                    i != 0)
+                        i != 192 &&
+                        i != 10 &&
+                        i != 0)
                     return false;
             }
         }
@@ -770,45 +770,45 @@ public abstract class Addresses {
         return InetAddressUtils.isIPv4Address(host) || InetAddressUtils.isIPv6Address(host);
     }
 
-/*
-    private static byte[] oldGetIPv4(String host) {
-        String[] s = DataHelper.split(host, "\\.", 4);
-        if (s.length != 4)
-            return null;
-        byte[] rv = new byte[4];
-        try {
-            for (int i = 0; i < 4; i++) {
-                int b = Integer.parseInt(s[i]);
-                if (b < 0 || b > 255)
-                    return null;
-                rv[i] = (byte) b;
+    /*
+        private static byte[] oldGetIPv4(String host) {
+            String[] s = DataHelper.split(host, "\\.", 4);
+            if (s.length != 4)
+                return null;
+            byte[] rv = new byte[4];
+            try {
+                for (int i = 0; i < 4; i++) {
+                    int b = Integer.parseInt(s[i]);
+                    if (b < 0 || b > 255)
+                        return null;
+                    rv[i] = (byte) b;
+                }
+            } catch (NumberFormatException nfe) {
+                return null;
             }
-        } catch (NumberFormatException nfe) {
-            return null;
+            return rv;
         }
-        return rv;
-    }
 
-    private static byte[] oldGetIPv6(String host) {
-        String[] s = DataHelper.split(host, ":", 8);
-        if (s.length != 8)
-            return null;
-        byte[] rv = new byte[16];
-        try {
-            int j = 0;
-            for (int i = 0; i < 8; i++) {
-                int b = Integer.parseInt(s[i], 16);
-                if (b < 0 || b > 65535)
-                    return null;
-                rv[j++] = (byte) (b >> 8);
-                rv[j++] = (byte) b;
+        private static byte[] oldGetIPv6(String host) {
+            String[] s = DataHelper.split(host, ":", 8);
+            if (s.length != 8)
+                return null;
+            byte[] rv = new byte[16];
+            try {
+                int j = 0;
+                for (int i = 0; i < 8; i++) {
+                    int b = Integer.parseInt(s[i], 16);
+                    if (b < 0 || b > 65535)
+                        return null;
+                    rv[j++] = (byte) (b >> 8);
+                    rv[j++] = (byte) b;
+                }
+            } catch (NumberFormatException nfe) {
+                return null;
             }
-        } catch (NumberFormatException nfe) {
-            return null;
+            return rv;
         }
-        return rv;
-    }
-*/
+    */
 
     /**
      *  Because InetAddress.getByName() is slow, esp. on Windows.
@@ -826,15 +826,15 @@ public abstract class Addresses {
         for (int i = 0; i < len; i++) {
             char c = host.charAt(i);
             if (c == '.') {
-               if (i == 0 || i == len - 1 || dots == 3 || b > 255 || host.charAt(i - 1) == '.')
-                   return null;
-               rv[dots++] = (byte) b;
-               b = 0;
+                if (i == 0 || i == len - 1 || dots == 3 || b > 255 || host.charAt(i - 1) == '.')
+                    return null;
+                rv[dots++] = (byte) b;
+                b = 0;
             } else if (c >= '0' && c <= '9') {
-               b *= 10;
-               b += c - '0';
+                b *= 10;
+                b += c - '0';
             } else {
-               return null;
+                return null;
             }
         }
         if (dots != 3 || b > 255)
@@ -860,23 +860,23 @@ public abstract class Addresses {
         for (int i = 0; i < len; i++) {
             char c = host.charAt(i);
             if (c == ':') {
-               if (i == 0 || i == len - 1 || colons == 7 || b > 65535 || host.charAt(i - 1) == ':')
-                   return null;
-               rv[j++] = (byte) (b >> 8);
-               rv[j++] = (byte) b;
-               colons++;
-               b = 0;
+                if (i == 0 || i == len - 1 || colons == 7 || b > 65535 || host.charAt(i - 1) == ':')
+                    return null;
+                rv[j++] = (byte) (b >> 8);
+                rv[j++] = (byte) b;
+                colons++;
+                b = 0;
             } else if (c >= '0' && c <= '9') {
-               b <<= 4;
-               b |= c - '0';
+                b <<= 4;
+                b |= c - '0';
             } else if (c >= 'a' && c <= 'f') {
-               b <<= 4;
-               b |= 10 + c - 'a';
+                b <<= 4;
+                b |= 10 + c - 'a';
             } else if (c >= 'A' && c <= 'F') {
-               b <<= 4;
-               b |= 10 + c - 'A';
+                b <<= 4;
+                b |= 10 + c - 'A';
             } else {
-               return null;
+                return null;
             }
         }
         if (colons != 7 || b > 65535)
@@ -902,10 +902,18 @@ public abstract class Addresses {
             isTemp = (flags & FLAG_TEMPORARY) != 0;
         }
 
-        public Inet6Address getAddress() { return addr; }
-        public boolean isDynamic() { return isDyn; }
-        public boolean isDeprecated() { return isDep; }
-        public boolean isTemporary() { return isTemp; }
+        public Inet6Address getAddress() {
+            return addr;
+        }
+        public boolean isDynamic() {
+            return isDyn;
+        }
+        public boolean isDeprecated() {
+            return isDep;
+        }
+        public boolean isTemporary() {
+            return isTemp;
+        }
     }
 
     /**
@@ -956,7 +964,10 @@ public abstract class Addresses {
             }
         } catch (IOException ioe) {
         } finally {
-            if (in != null) try { in.close(); } catch (IOException ioe) {}
+            if (in != null) try {
+                    in.close();
+                }
+                catch (IOException ioe) {}
         }
         _ifCacheTime = now;
     }
@@ -1151,84 +1162,84 @@ public abstract class Addresses {
         System.out.println("scan time:    " + DataHelper.formatDuration(time));
     }
 
-/*
-    // test results (linux):
-    // new is about 10x faster than old
-    // InetAddress about the same as old for IPv4, about 4x slower for IPv6
-    private static void test() {
-        String[] tt = { "1.2.3.4", "0.0.0.0", "255.255.255.255", "", "a", "1", "1.2", "1.2.3",
-                        ".1.2.3", "1.2.3.", "266.1.2.3", "1.266.2.3", "1.2.3.266", "1.2.3.4.5" };
-        for (String t : tt) {
-            byte[] b = getIPv4(t);
-            System.out.println(t + " -> " + toString(b));
-        }
-        tt = new String[] { "a:B:c:D:e:f:1:2", "aaaa:bbbb:CCC:dd:e:f:111:2222", "a", "1", "1:2", "1::2:3:4:5:6:7:8",
-                            ":1:2:3:4:5:6:7", "2:3:4:5:6:7:8:", "x:2:3:4:5:6:7:8", "::1", "::", "",
-                            "99999:2:3:4:5:6:7:8" };
-        for (String t : tt) {
-            byte[] b = getIPv6(t);
-            System.out.println(t + " -> " + toString(b));
-        }
-        int runs = 1000;
-        for (int i = 0; i < runs; i++) {
-            try {
-                InetAddress.getByName("192.168.142.117").getAddress();
-                InetAddress.getByName("aaaa:bbbb:cccc:dddd:eeee:ffff:1111:2222").getAddress();
-            } catch (Exception e) {}
-            oldGetIPv4("192.168.142.117");
-            oldGetIPv6("aaaa:bbbb:cccc:dddd:eeee:ffff:1111:2222");
-            getIPv4("192.168.142.117");
-            getIPv6("aaaa:bbbb:cccc:dddd:eeee:ffff:1111:2222");
-        }
-        runs = 10*1000*1000;
-        long start = System.currentTimeMillis();
-        for (int i = 0; i < runs; i++) {
-            oldGetIPv4("192.168.142.117");
-        }
-        long end = System.currentTimeMillis();
-        System.out.println("old ipv4 took " + (end - start));
-        start = end;
+    /*
+        // test results (linux):
+        // new is about 10x faster than old
+        // InetAddress about the same as old for IPv4, about 4x slower for IPv6
+        private static void test() {
+            String[] tt = { "1.2.3.4", "0.0.0.0", "255.255.255.255", "", "a", "1", "1.2", "1.2.3",
+                            ".1.2.3", "1.2.3.", "266.1.2.3", "1.266.2.3", "1.2.3.266", "1.2.3.4.5" };
+            for (String t : tt) {
+                byte[] b = getIPv4(t);
+                System.out.println(t + " -> " + toString(b));
+            }
+            tt = new String[] { "a:B:c:D:e:f:1:2", "aaaa:bbbb:CCC:dd:e:f:111:2222", "a", "1", "1:2", "1::2:3:4:5:6:7:8",
+                                ":1:2:3:4:5:6:7", "2:3:4:5:6:7:8:", "x:2:3:4:5:6:7:8", "::1", "::", "",
+                                "99999:2:3:4:5:6:7:8" };
+            for (String t : tt) {
+                byte[] b = getIPv6(t);
+                System.out.println(t + " -> " + toString(b));
+            }
+            int runs = 1000;
+            for (int i = 0; i < runs; i++) {
+                try {
+                    InetAddress.getByName("192.168.142.117").getAddress();
+                    InetAddress.getByName("aaaa:bbbb:cccc:dddd:eeee:ffff:1111:2222").getAddress();
+                } catch (Exception e) {}
+                oldGetIPv4("192.168.142.117");
+                oldGetIPv6("aaaa:bbbb:cccc:dddd:eeee:ffff:1111:2222");
+                getIPv4("192.168.142.117");
+                getIPv6("aaaa:bbbb:cccc:dddd:eeee:ffff:1111:2222");
+            }
+            runs = 10*1000*1000;
+            long start = System.currentTimeMillis();
+            for (int i = 0; i < runs; i++) {
+                oldGetIPv4("192.168.142.117");
+            }
+            long end = System.currentTimeMillis();
+            System.out.println("old ipv4 took " + (end - start));
+            start = end;
 
-        for (int i = 0; i < runs; i++) {
-            getIPv4("192.168.142.117");
-        }
-        end = System.currentTimeMillis();
-        System.out.println("new ipv4 took " + (end - start));
-        start = end;
+            for (int i = 0; i < runs; i++) {
+                getIPv4("192.168.142.117");
+            }
+            end = System.currentTimeMillis();
+            System.out.println("new ipv4 took " + (end - start));
+            start = end;
 
-        for (int i = 0; i < runs; i++) {
-            try {
-                InetAddress.getByName("192.168.142.117").getAddress();
-                InetAddress.getByName("aaaa:bbbb:cccc:dddd:eeee:ffff:1111:2222").getAddress();
-            } catch (Exception e) {}
-        }
-        end = System.currentTimeMillis();
-        System.out.println("INA ipv4 took " + (end - start));
-        start = end;
+            for (int i = 0; i < runs; i++) {
+                try {
+                    InetAddress.getByName("192.168.142.117").getAddress();
+                    InetAddress.getByName("aaaa:bbbb:cccc:dddd:eeee:ffff:1111:2222").getAddress();
+                } catch (Exception e) {}
+            }
+            end = System.currentTimeMillis();
+            System.out.println("INA ipv4 took " + (end - start));
+            start = end;
 
-        for (int i = 0; i < runs; i++) {
-            oldGetIPv6("192.168.142.117");
-        }
-        end = System.currentTimeMillis();
-        System.out.println("old ipv6 took " + (end - start));
-        start = end;
+            for (int i = 0; i < runs; i++) {
+                oldGetIPv6("192.168.142.117");
+            }
+            end = System.currentTimeMillis();
+            System.out.println("old ipv6 took " + (end - start));
+            start = end;
 
-        for (int i = 0; i < runs; i++) {
-            getIPv6("192.168.142.117");
-        }
-        end = System.currentTimeMillis();
-        System.out.println("new ipv6 took " + (end - start));
+            for (int i = 0; i < runs; i++) {
+                getIPv6("192.168.142.117");
+            }
+            end = System.currentTimeMillis();
+            System.out.println("new ipv6 took " + (end - start));
 
-        for (int i = 0; i < runs; i++) {
-            try {
-                InetAddress.getByName("aaaa:bbbb:cccc:dddd:eeee:ffff:1111:2222").getAddress();
-            } catch (Exception e) {}
+            for (int i = 0; i < runs; i++) {
+                try {
+                    InetAddress.getByName("aaaa:bbbb:cccc:dddd:eeee:ffff:1111:2222").getAddress();
+                } catch (Exception e) {}
+            }
+            end = System.currentTimeMillis();
+            System.out.println("INA ipv6 took " + (end - start));
+            start = end;
         }
-        end = System.currentTimeMillis();
-        System.out.println("INA ipv6 took " + (end - start));
-        start = end;
-    }
-*/
+    */
 
     /** @since 0.9.34 */
     private static void print(Set<String> a) {
@@ -1310,7 +1321,10 @@ public abstract class Addresses {
                 }
             } catch (IOException ioe) {
             } finally {
-                if (in != null) try { in.close(); } catch (IOException ioe) {}
+                if (in != null) try {
+                        in.close();
+                    }
+                    catch (IOException ioe) {}
             }
         }
         return rv;

@@ -150,7 +150,10 @@ public class I2PTunnelServer extends I2PTunnelTask implements Runnable {
             throw new IllegalArgumentException("Error starting server", ioe);
         } finally {
             if (fis != null)
-                try { fis.close(); } catch (IOException ioe) {}
+                try {
+                    fis.close();
+                }
+                catch (IOException ioe) {}
         }
     }
 
@@ -245,7 +248,7 @@ public class I2PTunnelServer extends I2PTunnelTask implements Runnable {
 
         try {
             I2PSocketManager rv = I2PSocketManagerFactory.createDisconnectedManager(privData, getTunnel().host,
-                                                                                    portNum, props, filter);
+                                  portNum, props, filter);
             rv.setName("I2PTunnel Server");
             getTunnel().addSession(rv.getSession());
             String alt = props.getProperty(PROP_ALT_PKF);
@@ -255,7 +258,10 @@ public class I2PTunnelServer extends I2PTunnelTask implements Runnable {
         } catch (I2PSessionException ise) {
             throw new IllegalArgumentException("Can't create socket manager", ise);
         } finally {
-            try { privData.close(); } catch (IOException ioe) {}
+            try {
+                privData.close();
+            }
+            catch (IOException ioe) {}
         }
     }
 
@@ -313,7 +319,10 @@ public class I2PTunnelServer extends I2PTunnelTask implements Runnable {
             _log.error("Failed to add subssession", ise);
             return null;
         } finally {
-            if (privData != null) try { privData.close(); } catch (IOException ioe) {}
+            if (privData != null) try {
+                    privData.close();
+                }
+                catch (IOException ioe) {}
         }
     }
 
@@ -383,7 +392,7 @@ public class I2PTunnelServer extends I2PTunnelTask implements Runnable {
                     msg = "Unable to build tunnels for the server at " + remoteHost.getHostAddress() + ':' + remotePort;
                 else
                     msg = "Unable to connect to the router at " + getTunnel().host + ':' + portNum +
-                             " and build tunnels for the server at " + remoteHost.getHostAddress() + ':' + remotePort;
+                          " and build tunnels for the server at " + remoteHost.getHostAddress() + ':' + remotePort;
                 String exmsg = ise.getMessage();
                 boolean fail = exmsg != null && exmsg.contains("session limit exceeded");
                 if (!fail && ++retries < MAX_RETRIES) {
@@ -396,7 +405,10 @@ public class I2PTunnelServer extends I2PTunnelTask implements Runnable {
                     _log.log(Log.CRIT, msg, ise);
                     throw new IllegalArgumentException(msg, ise);
                 }
-                try { Thread.sleep(RETRY_DELAY); } catch (InterruptedException ie) {}
+                try {
+                    Thread.sleep(RETRY_DELAY);
+                }
+                catch (InterruptedException ie) {}
             }
         }
 
@@ -409,23 +421,23 @@ public class I2PTunnelServer extends I2PTunnelTask implements Runnable {
      *  Copy input stream to a byte array, so we can retry
      *  @since 0.7.10
      */
-/****
-    private static ByteArrayInputStream copyOfInputStream(InputStream is) throws IOException {
-        byte[] buf = new byte[128];
-        ByteArrayOutputStream os = new ByteArrayOutputStream(768);
-        try {
-            int read;
-            while ((read = is.read(buf)) >= 0) {
-                os.write(buf, 0, read);
+    /****
+        private static ByteArrayInputStream copyOfInputStream(InputStream is) throws IOException {
+            byte[] buf = new byte[128];
+            ByteArrayOutputStream os = new ByteArrayOutputStream(768);
+            try {
+                int read;
+                while ((read = is.read(buf)) >= 0) {
+                    os.write(buf, 0, read);
+                }
+            } finally {
+                 try { is.close(); } catch (IOException ioe) {}
+                 // don't need to close BAOS
             }
-        } finally {
-             try { is.close(); } catch (IOException ioe) {}
-             // don't need to close BAOS
+            return new ByteArrayInputStream(os.toByteArray());
         }
-        return new ByteArrayInputStream(os.toByteArray());
-    }
-****/
-    
+    ****/
+
     /**
      * Start running the I2PTunnelServer.
      * Warning, blocks while connecting to router and building tunnels;
@@ -463,7 +475,7 @@ public class I2PTunnelServer extends I2PTunnelTask implements Runnable {
     public void setReadTimeout(long ms) {
         readTimeout = ms;
     }
-    
+
     /**
      * Get the read idle timeout for newly-created connections (in
      * milliseconds).
@@ -606,7 +618,7 @@ public class I2PTunnelServer extends I2PTunnelTask implements Runnable {
         }
     }
 
-    protected int getHandlerCount() { 
+    protected int getHandlerCount() {
         int rv = DEFAULT_HANDLER_COUNT;
         String cnt = getTunnel().getClientOptions().getProperty(PROP_HANDLER_COUNT);
         if (cnt != null) {
@@ -618,7 +630,7 @@ public class I2PTunnelServer extends I2PTunnelTask implements Runnable {
         }
         return rv;
     }
-    
+
     /**
      *  If usePool is set, this starts the executor pool.
      *  Then, do the accept() loop, and either
@@ -658,14 +670,14 @@ public class I2PTunnelServer extends I2PTunnelTask implements Runnable {
                     try {
                         _executor.execute(new Handler(i2ps));
                     } catch (RejectedExecutionException ree) {
-                         try {
-                             i2ps.reset();
-                         } catch (IOException ioe) {}
-                         if (open)
-                             _log.logAlways(Log.WARN, "ServerHandler queue full, dropping incoming connection to " +
-                                        remoteHost + ':' + remotePort +
-                                        "; increase server max threads or " + PROP_HANDLER_COUNT +
-                                        "; current is " + getHandlerCount());
+                        try {
+                            i2ps.reset();
+                        } catch (IOException ioe) {}
+                        if (open)
+                            _log.logAlways(Log.WARN, "ServerHandler queue full, dropping incoming connection to " +
+                                           remoteHost + ':' + remotePort +
+                                           "; increase server max threads or " + PROP_HANDLER_COUNT +
+                                           "; current is " + getHandlerCount());
                     }
                 } else {
                     // use only for standard servers that can't get slowlorissed! Not for http or irc
@@ -674,7 +686,10 @@ public class I2PTunnelServer extends I2PTunnelTask implements Runnable {
             } catch (RouterRestartException rre) {
                 // Delay and loop if router is soft restarting
                 _log.logAlways(Log.WARN, "Waiting for router restart");
-                if (i2ps != null) try { i2ps.close(); } catch (IOException ioe) {}
+                if (i2ps != null) try {
+                        i2ps.close();
+                    }
+                    catch (IOException ioe) {}
                 try {
                     Thread.sleep(2*60*1000);
                 } catch (InterruptedException ie) {}
@@ -692,10 +707,16 @@ public class I2PTunnelServer extends I2PTunnelTask implements Runnable {
                     tc.stopTunnel();
                 else
                     close(true);
-                if (i2ps != null) try { i2ps.close(); } catch (IOException ioe) {}
+                if (i2ps != null) try {
+                        i2ps.close();
+                    }
+                    catch (IOException ioe) {}
                 break;
             } catch (ConnectException ce) {
-                if (i2ps != null) try { i2ps.close(); } catch (IOException ioe) {}
+                if (i2ps != null) try {
+                        i2ps.close();
+                    }
+                    catch (IOException ioe) {}
                 if (!open)
                     break;
                 if (_log.shouldLog(Log.ERROR))
@@ -708,12 +729,18 @@ public class I2PTunnelServer extends I2PTunnelTask implements Runnable {
                 i2pss = sockMgr.getServerSocket();
             } catch(SocketTimeoutException ste) {
                 // ignored, we never set the timeout
-                if (i2ps != null) try { i2ps.close(); } catch (IOException ioe) {}
+                if (i2ps != null) try {
+                        i2ps.close();
+                    }
+                    catch (IOException ioe) {}
             } catch (RuntimeException e) {
                 // streaming borkage
                 if (_log.shouldLog(Log.ERROR))
                     _log.error("Uncaught exception accepting", e);
-                if (i2ps != null) try { i2ps.close(); } catch (IOException ioe) {}
+                if (i2ps != null) try {
+                        i2ps.close();
+                    }
+                    catch (IOException ioe) {}
                 // not killing the server..
                 try {
                     Thread.sleep(500);
@@ -723,14 +750,14 @@ public class I2PTunnelServer extends I2PTunnelTask implements Runnable {
         if (_executor != null && !_executor.isTerminating() && !_executor.isShutdown())
             _executor.shutdownNow();
     }
-    
+
     /**
      * Not really needed for now but in case we want to add some hooks like afterExecute().
      */
     private static class CustomThreadPoolExecutor extends ThreadPoolExecutor {
         public CustomThreadPoolExecutor(int max, String name) {
-             super(MIN_HANDLERS, max, HANDLER_KEEPALIVE_MS, TimeUnit.MILLISECONDS,
-                   new SynchronousQueue<Runnable>(), new CustomThreadFactory(name));
+            super(MIN_HANDLERS, max, HANDLER_KEEPALIVE_MS, TimeUnit.MILLISECONDS,
+                  new SynchronousQueue<Runnable>(), new CustomThreadFactory(name));
         }
     }
 
@@ -751,12 +778,14 @@ public class I2PTunnelServer extends I2PTunnelTask implements Runnable {
         }
     }
 
-    public boolean shouldUsePool() { return _usePool; }
-    
+    public boolean shouldUsePool() {
+        return _usePool;
+    }
+
     /**
      * Run the blockingHandler.
      */
-    private class Handler implements Runnable { 
+    private class Handler implements Runnable {
         private final I2PSocket _i2ps;
 
         public Handler(I2PSocket socket) {
@@ -765,13 +794,13 @@ public class I2PTunnelServer extends I2PTunnelTask implements Runnable {
 
         public void run() {
             try {
-                blockingHandle(_i2ps);   
+                blockingHandle(_i2ps);
             } catch (Throwable t) {
                 _log.error("Uncaught error in i2ptunnel server", t);
             }
         }
     }
-    
+
     /**
      *  This is run in a thread from a limited-size thread pool via Handler.run(),
      *  except for a standard server (this class, no extension, as determined in getUsePool()),
@@ -883,7 +912,7 @@ public class I2PTunnelServer extends I2PTunnelTask implements Runnable {
                 if (_sslFactory == null) {
                     try {
                         _sslFactory = new I2PSSLSocketFactory(getTunnel().getContext(),
-                                                               true, "certificates/i2ptunnel");
+                                                              true, "certificates/i2ptunnel");
                     } catch (GeneralSecurityException gse) {
                         IOException ioe = new IOException("SSL Fail");
                         ioe.initCause(gse);

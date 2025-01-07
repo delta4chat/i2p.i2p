@@ -26,87 +26,87 @@ import org.cybergarage.upnp.event.*;
 
 public class ServiceData extends NodeData
 {
-	public ServiceData() 
-	{
-	}
+    public ServiceData()
+    {
+    }
 
-	////////////////////////////////////////////////
-	// controlActionListenerList
-	////////////////////////////////////////////////
+    ////////////////////////////////////////////////
+    // controlActionListenerList
+    ////////////////////////////////////////////////
 
-	private ListenerList controlActionListenerList = new ListenerList();
+    private ListenerList controlActionListenerList = new ListenerList();
 
-	public ListenerList getControlActionListenerList() {
-		return controlActionListenerList;
-	}
+    public ListenerList getControlActionListenerList() {
+        return controlActionListenerList;
+    }
 
-	////////////////////////////////////////////////
-	// scpdNode
-	////////////////////////////////////////////////
+    ////////////////////////////////////////////////
+    // scpdNode
+    ////////////////////////////////////////////////
 
-	private Node scpdNode = null;
+    private Node scpdNode = null;
 
-	public Node getSCPDNode() {
-		return scpdNode;
-	}
+    public Node getSCPDNode() {
+        return scpdNode;
+    }
 
-	public void setSCPDNode(Node node) {
-		scpdNode = node;
-	}
+    public void setSCPDNode(Node node) {
+        scpdNode = node;
+    }
 
-	////////////////////////////////////////////////
-	// SubscriberList
-	////////////////////////////////////////////////
+    ////////////////////////////////////////////////
+    // SubscriberList
+    ////////////////////////////////////////////////
 
-	private SubscriberList subscriberList = new SubscriberList();
-	
-	public SubscriberList getSubscriberList() {
-		return subscriberList;
-	}
+    private SubscriberList subscriberList = new SubscriberList();
 
-	////////////////////////////////////////////////
-	// SID
-	////////////////////////////////////////////////
+    public SubscriberList getSubscriberList() {
+        return subscriberList;
+    }
+
+    ////////////////////////////////////////////////
+    // SID
+    ////////////////////////////////////////////////
 
     private String descriptionURL = "";
 
     public String getDescriptionURL() {
-            return descriptionURL;
+        return descriptionURL;
     }
 
     public void setDescriptionURL(String descriptionURL) {
-            this.descriptionURL = descriptionURL;
+        this.descriptionURL = descriptionURL;
     }
-	
-	////////////////////////////////////////////////
-	// SID
-	////////////////////////////////////////////////
 
-	private String sid = "";
-	
-	public String getSID() {
-		return sid;
-	}
+    ////////////////////////////////////////////////
+    // SID
+    ////////////////////////////////////////////////
 
-	public void setSID(String id) {
-		sid = id;
-	}
+    private String sid = "";
 
-	////////////////////////////////////////////////
-	// Timeout
-	////////////////////////////////////////////////
+    public String getSID() {
+        return sid;
+    }
 
-	private long timeout = 0;
+    public void setSID(String id) {
+        sid = id;
+    }
 
-	public long getTimeout() 
-	{
-		return timeout;
-	}
+    ////////////////////////////////////////////////
+    // Timeout
+    ////////////////////////////////////////////////
 
-	public void setTimeout(long value) 
-	{
-		timeout = value;
-	}
+    private long timeout = 0;
+
+    public long getTimeout()
+    {
+        return timeout;
+    }
+
+    public void setTimeout(long value)
+    {
+        timeout = value;
+    }
 
 }
 

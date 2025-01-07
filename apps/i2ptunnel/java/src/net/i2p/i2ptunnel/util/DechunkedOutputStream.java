@@ -20,7 +20,7 @@ public class DechunkedOutputStream extends LimitOutputStream {
     private int _remaining;
 
     private static final byte[] CRLF = DataHelper.getASCII("\r\n");
-    
+
     private enum State { LEN, CR, LF, DATA, DATACR, DATALF, TRAILER, DONE }
 
     public DechunkedOutputStream(OutputStream raw, DoneCallback callback, boolean strip) {
@@ -37,177 +37,177 @@ public class DechunkedOutputStream extends LimitOutputStream {
             // _state is what we are expecting next
             //System.err.println("State: " + _state + " i=" + i + " len=" + len + " remaining=" + _remaining + " char=0x" + Integer.toHexString(buf[off + i] & 0xff));
             switch (_state) {
-                // collect chunk len and possible ';' then wait for extension if any and CRLF
-                case LEN: {
-                    int c = buf[off + i] & 0xff;
-                    if (c >= '0' && c <= '9') {
-                        if (_remaining >= 0x8000000)
-                            throw new IOException("Chunk length too big");
-                        _remaining <<= 4;
-                        _remaining |= c - '0';
-                    } else if (c >= 'a' && c <= 'f') {
-                        if (_remaining >= 0x800000)
-                            throw new IOException("Chunk length too big");
-                        _remaining <<= 4;
-                        _remaining |= 10 + c - 'a';
-                    } else if (c >= 'A' && c <= 'F') {
-                        if (_remaining >= 0x800000)
-                            throw new IOException("Chunk length too big");
-                        _remaining <<= 4;
-                        _remaining |= 10 + c - 'A';
-                    } else if (c == ';') {
-                        _state = State.CR;
-                    } else if (c == '\r') {
-                        _state = State.LF;
-                    } else if (c == '\n') {
-                        if (_remaining > 0)
-                            _state = State.DATA;
-                        else
-                            _state = State.TRAILER;
-                    } else {
-                        throw new IOException("Unexpected length char 0x" + Integer.toHexString(c));
-                    }
-                    if (!_strip)
-                        out.write(buf, off + i, 1);
-                    break;
+            // collect chunk len and possible ';' then wait for extension if any and CRLF
+            case LEN: {
+                int c = buf[off + i] & 0xff;
+                if (c >= '0' && c <= '9') {
+                    if (_remaining >= 0x8000000)
+                        throw new IOException("Chunk length too big");
+                    _remaining <<= 4;
+                    _remaining |= c - '0';
+                } else if (c >= 'a' && c <= 'f') {
+                    if (_remaining >= 0x800000)
+                        throw new IOException("Chunk length too big");
+                    _remaining <<= 4;
+                    _remaining |= 10 + c - 'a';
+                } else if (c >= 'A' && c <= 'F') {
+                    if (_remaining >= 0x800000)
+                        throw new IOException("Chunk length too big");
+                    _remaining <<= 4;
+                    _remaining |= 10 + c - 'A';
+                } else if (c == ';') {
+                    _state = State.CR;
+                } else if (c == '\r') {
+                    _state = State.LF;
+                } else if (c == '\n') {
+                    if (_remaining > 0)
+                        _state = State.DATA;
+                    else
+                        _state = State.TRAILER;
+                } else {
+                    throw new IOException("Unexpected length char 0x" + Integer.toHexString(c));
                 }
- 
-                // collect any chunk extension and CR then wait for LF
-                case CR: {
-                    int c = buf[off + i] & 0xff;
-                    if (c == '\r') {
-                        _state = State.LF;
-                    } else if (c == '\n') {
-                        if (_remaining > 0)
-                            _state = State.DATA;
-                        else
-                            _state = State.TRAILER;
-                    } else {
-                        // chunk extension between the ';' and the CR
-                    }
-                    if (!_strip)
-                        out.write(buf, off + i, 1);
-                    break;
-                }
- 
-                // collect LF then wait for DATA
-                case LF: {
-                    int c = buf[off + i] & 0xff;
-                    if (c == '\n') {
-                        if (_remaining > 0)
-                            _state = State.DATA;
-                        else
-                            _state = State.TRAILER;
-                    } else {
-                        throw new IOException("no LF after CR");
-                    }
-                    if (!_strip)
-                        out.write(buf, off + i, 1);
-                    break;
-                }
- 
-                // collect DATA then wait for LEN
-                case DATA: {
-                    int towrite = Math.min(_remaining, len - i);
-                    out.write(buf, off + i, towrite);
-                    // loop will increment
-                    i += towrite - 1;
-                    _remaining -= towrite;
-                    if (_remaining <= 0)
-                        _state = State.DATACR;
-                    break;
-                }
+                if (!_strip)
+                    out.write(buf, off + i, 1);
+                break;
+            }
 
-                // after DATA, collect CR then wait for LF
-                case DATACR: {
-                    int c = buf[off + i] & 0xff;
-                    if (c == '\r')
-                        _state = State.DATALF;
-                    else if (c == '\n')
-                        _state = State.LEN;
-                    // else no CRLF?
-                    if (!_strip)
-                        out.write(buf, off + i, 1);
-                    break;
+            // collect any chunk extension and CR then wait for LF
+            case CR: {
+                int c = buf[off + i] & 0xff;
+                if (c == '\r') {
+                    _state = State.LF;
+                } else if (c == '\n') {
+                    if (_remaining > 0)
+                        _state = State.DATA;
+                    else
+                        _state = State.TRAILER;
+                } else {
+                    // chunk extension between the ';' and the CR
                 }
- 
-                // after DATA, collect LF then wait for LEN
-                case DATALF: {
-                    int c = buf[off + i] & 0xff;
-                    if (c == '\n')
-                        _state = State.LEN;
-                    // else no CRLF?
-                    if (!_strip)
-                        out.write(buf, off + i, 1);
-                    break;
+                if (!_strip)
+                    out.write(buf, off + i, 1);
+                break;
+            }
+
+            // collect LF then wait for DATA
+            case LF: {
+                int c = buf[off + i] & 0xff;
+                if (c == '\n') {
+                    if (_remaining > 0)
+                        _state = State.DATA;
+                    else
+                        _state = State.TRAILER;
+                } else {
+                    throw new IOException("no LF after CR");
                 }
- 
- 
-                // swallow and discard the Trailer headers until we find a plain CRLF
-                // we reuse _remaining here to count the size of the header
-                case TRAILER: {
-                    int c = buf[off + i] & 0xff;
-                    if (c == '\r') {
+                if (!_strip)
+                    out.write(buf, off + i, 1);
+                break;
+            }
+
+            // collect DATA then wait for LEN
+            case DATA: {
+                int towrite = Math.min(_remaining, len - i);
+                out.write(buf, off + i, towrite);
+                // loop will increment
+                i += towrite - 1;
+                _remaining -= towrite;
+                if (_remaining <= 0)
+                    _state = State.DATACR;
+                break;
+            }
+
+            // after DATA, collect CR then wait for LF
+            case DATACR: {
+                int c = buf[off + i] & 0xff;
+                if (c == '\r')
+                    _state = State.DATALF;
+                else if (c == '\n')
+                    _state = State.LEN;
+                // else no CRLF?
+                if (!_strip)
+                    out.write(buf, off + i, 1);
+                break;
+            }
+
+            // after DATA, collect LF then wait for LEN
+            case DATALF: {
+                int c = buf[off + i] & 0xff;
+                if (c == '\n')
+                    _state = State.LEN;
+                // else no CRLF?
+                if (!_strip)
+                    out.write(buf, off + i, 1);
+                break;
+            }
+
+
+            // swallow and discard the Trailer headers until we find a plain CRLF
+            // we reuse _remaining here to count the size of the header
+            case TRAILER: {
+                int c = buf[off + i] & 0xff;
+                if (c == '\r') {
+                    // stay here
+                } else if (c == '\n') {
+                    if (_remaining <= 0) {
+                        // that's it!
+                        if (!_strip)
+                            out.write(buf, off + i, 1);
+                        _state = State.DONE;
+                        setDone();
+                        return;
+                    } else {
                         // stay here
-                    } else if (c == '\n') {
-                        if (_remaining <= 0) {
-                            // that's it!
-                            if (!_strip)
-                                out.write(buf, off + i, 1);
-                            _state = State.DONE;
-                            setDone();
-                            return;
-                        } else {
-                            // stay here
-                            _remaining = 0;
-                        }
-                    } else {
-                        _remaining++;
+                        _remaining = 0;
                     }
-                    if (!_strip)
-                        out.write(buf, off + i, 1);
-                    break;
+                } else {
+                    _remaining++;
                 }
+                if (!_strip)
+                    out.write(buf, off + i, 1);
+                break;
+            }
 
-                case DONE: {
-                    throw new EOFException((len - i) + " extra bytes written after chunking done");
-                }
+            case DONE: {
+                throw new EOFException((len - i) + " extra bytes written after chunking done");
+            }
             }
         }
     }
 
-/*
-    public static void main(String[] args) throws Exception {
-        if (args.length != 1) {
-            System.err.println("Usage: DechunkedOutputStream true/false < in > out");
-            System.exit(1);
+    /*
+        public static void main(String[] args) throws Exception {
+            if (args.length != 1) {
+                System.err.println("Usage: DechunkedOutputStream true/false < in > out");
+                System.exit(1);
+            }
+            Test test = new Test();
+            boolean strip = Boolean.parseBoolean(args[0]);
+            test.test(strip);
         }
-        Test test = new Test();
-        boolean strip = Boolean.parseBoolean(args[0]);
-        test.test(strip);
-    }
 
-    static class Test implements DoneCallback {
-        private boolean run = true;
+        static class Test implements DoneCallback {
+            private boolean run = true;
 
-        public void test(boolean strip) throws Exception {
-            LimitOutputStream cout = new DechunkedOutputStream(System.out, this, strip);
-            final byte buf[] = new byte[4096];
-            try {
-                int read;
-                while (run && (read = System.in.read(buf)) != -1) {
-                    cout.write(buf, 0, read);
-                }   
-            } finally {   
-                cout.close();
-            }   
-        }   
+            public void test(boolean strip) throws Exception {
+                LimitOutputStream cout = new DechunkedOutputStream(System.out, this, strip);
+                final byte buf[] = new byte[4096];
+                try {
+                    int read;
+                    while (run && (read = System.in.read(buf)) != -1) {
+                        cout.write(buf, 0, read);
+                    }
+                } finally {
+                    cout.close();
+                }
+            }
 
-        public void streamDone() {
-            System.err.println("Done");
-            run = false;
+            public void streamDone() {
+                System.err.println("Done");
+                run = false;
+            }
         }
-    }
-*/
+    */
 
 }

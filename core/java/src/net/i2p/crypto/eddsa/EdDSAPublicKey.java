@@ -191,21 +191,21 @@ public class EdDSAPublicKey implements EdDSAKey, PublicKey {
             //
             int idx = 0;
             if (d[idx++] != 0x30 ||
-                d[idx++] != (totlen - 2) ||
-                d[idx++] != 0x30 ||
-                d[idx++] != idlen ||
-                d[idx++] != 0x06 ||
-                d[idx++] != 3 ||
-                d[idx++] != (1 * 40) + 3 ||
-                d[idx++] != 101) {
+                    d[idx++] != (totlen - 2) ||
+                    d[idx++] != 0x30 ||
+                    d[idx++] != idlen ||
+                    d[idx++] != 0x06 ||
+                    d[idx++] != 3 ||
+                    d[idx++] != (1 * 40) + 3 ||
+                    d[idx++] != 101) {
                 throw new InvalidKeySpecException("unsupported key spec");
             }
             idx++; // OID, checked above
             // parameters only with old OID
             if (doid == OID_OLD) {
                 if (d[idx++] != 0x0a ||
-                    d[idx++] != 1 ||
-                    d[idx++] != 1) {
+                        d[idx++] != 1 ||
+                        d[idx++] != 1) {
                     throw new InvalidKeySpecException("unsupported key spec");
                 }
             } else {
@@ -225,14 +225,14 @@ public class EdDSAPublicKey implements EdDSAKey, PublicKey {
                 // re-encoding to pass on), so we must accept it.
                 if (idlen == 7) {
                     if (d[idx++] != 0x05 ||
-                        d[idx++] != 0) {
+                            d[idx++] != 0) {
                         throw new InvalidKeySpecException("unsupported key spec");
                     }
                 }
             }
             if (d[idx++] != 0x03 ||
-                d[idx++] != 33 ||
-                d[idx++] != 0) {
+                    d[idx++] != 33 ||
+                    d[idx++] != 0) {
                 throw new InvalidKeySpecException("unsupported key spec");
             }
             byte[] rv = new byte[32];

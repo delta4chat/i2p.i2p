@@ -5,7 +5,7 @@ import java.util.Properties;
 
 import net.i2p.router.RouterContext;
 
-/** 
+/**
  * Honor the 'batchFrequency' tunnel pool setting or the 'router.batchFrequency'
  * router config setting, and track fragmentation.
  *
@@ -14,8 +14,8 @@ class BatchedRouterPreprocessor extends BatchedPreprocessor {
     private final TunnelCreatorConfig _config;
     protected final HopConfig _hopConfig;
     private final long _sendDelay;
-    
-    /** 
+
+    /**
      * How frequently should we flush non-full messages, in milliseconds
      * This goes in I2CP custom options for the pool.
      * Only applies to OBGWs.
@@ -29,7 +29,7 @@ class BatchedRouterPreprocessor extends BatchedPreprocessor {
     public static final int OB_EXPL_BATCH_FREQ = 100;
     /** for IBGWs for efficiency (not our data) */
     public static final int DEFAULT_BATCH_FREQUENCY = 75;
-    
+
     /** for OBGWs */
     public BatchedRouterPreprocessor(RouterContext ctx, TunnelCreatorConfig cfg) {
         super(ctx, getName(cfg));
@@ -45,7 +45,7 @@ class BatchedRouterPreprocessor extends BatchedPreprocessor {
         _hopConfig = cfg;
         _sendDelay = initialSendDelay();
     }
-    
+
     private static String getName(HopConfig cfg) {
         if (cfg == null) return "IB??";
         long id = cfg.getReceiveTunnelId();
@@ -57,7 +57,7 @@ class BatchedRouterPreprocessor extends BatchedPreprocessor {
         else
             return "IB??";
     }
-    
+
     private static String getName(TunnelCreatorConfig cfg) {
         if (cfg == null) return "OB??";
         long id = cfg.getConfig(0).getReceiveTunnelId();
@@ -74,7 +74,9 @@ class BatchedRouterPreprocessor extends BatchedPreprocessor {
      *  how long should we wait before flushing
      */
     @Override
-    protected long getSendDelay() { return _sendDelay; }
+    protected long getSendDelay() {
+        return _sendDelay;
+    }
 
     /*
      *  Extend the batching time for exploratory OBGWs, they have a lot of small
@@ -108,7 +110,7 @@ class BatchedRouterPreprocessor extends BatchedPreprocessor {
         }
         return _context.getProperty(PROP_ROUTER_BATCH_FREQUENCY, def);
     }
-    
+
     @Override
     protected void notePreprocessing(long messageId, int numFragments, int totalLength, List<Long> messageIds, String msg) {
         if (_config != null)

@@ -30,7 +30,7 @@ public class TunnelHistory {
     private final RateStat _failRate;
     private final String _statGroup;
     static final long[] RATES = new long[] { 10*60*1000l, 60*60*1000l, 24*60*60*1000l };
-    
+
     /** probabalistic tunnel rejection due to a flood of requests - infrequent */
     public static final int TUNNEL_REJECT_PROBABALISTIC_REJECT = 10;
     /** tunnel rejection due to temporary cpu/job/tunnel overload - rare */
@@ -39,7 +39,7 @@ public class TunnelHistory {
     public static final int TUNNEL_REJECT_BANDWIDTH = 30;
     /** tunnel rejection due to system failure - not currently used */
     public static final int TUNNEL_REJECT_CRIT = 50;
-    
+
     public TunnelHistory(RouterContext context, String statGroup) {
         _context = context;
         _log = context.logManager().getLog(TunnelHistory.class);
@@ -47,37 +47,55 @@ public class TunnelHistory {
         _rejectRate = new RateStat("tunnelHistory.rejectRate", "How often does this peer reject a tunnel request?", statGroup, RATES);
         _failRate = new RateStat("tunnelHistory.failRate", "How often do tunnels this peer accepts fail?", statGroup, RATES);
     }
-    
+
     /** total tunnels the peer has agreed to participate in */
-    public long getLifetimeAgreedTo() { return _lifetimeAgreedTo.get(); }
+    public long getLifetimeAgreedTo() {
+        return _lifetimeAgreedTo.get();
+    }
     /** total tunnels the peer has refused to participate in */
-    public long getLifetimeRejected() { return _lifetimeRejected.get(); }
+    public long getLifetimeRejected() {
+        return _lifetimeRejected.get();
+    }
     /** total tunnels the peer has agreed to participate in that were later marked as failed prematurely */
-    public long getLifetimeFailed() { return _lifetimeFailed.get(); }
+    public long getLifetimeFailed() {
+        return _lifetimeFailed.get();
+    }
     /** when the peer last agreed to participate in a tunnel */
-    public long getLastAgreedTo() { return _lastAgreedTo; }
+    public long getLastAgreedTo() {
+        return _lastAgreedTo;
+    }
     /** when the peer last refused to participate in a tunnel with level of critical */
-    public long getLastRejectedCritical() { return _lastRejectedCritical; }
+    public long getLastRejectedCritical() {
+        return _lastRejectedCritical;
+    }
     /** when the peer last refused to participate in a tunnel complaining of bandwidth overload */
-    public long getLastRejectedBandwidth() { return _lastRejectedBandwidth; }
+    public long getLastRejectedBandwidth() {
+        return _lastRejectedBandwidth;
+    }
     /** when the peer last refused to participate in a tunnel complaining of transient overload */
-    public long getLastRejectedTransient() { return _lastRejectedTransient; }
+    public long getLastRejectedTransient() {
+        return _lastRejectedTransient;
+    }
     /** when the peer last refused to participate in a tunnel probabalistically */
-    public long getLastRejectedProbabalistic() { return _lastRejectedProbabalistic; }
+    public long getLastRejectedProbabalistic() {
+        return _lastRejectedProbabalistic;
+    }
     /** when the last tunnel the peer participated in failed */
-    public long getLastFailed() { return _lastFailed; }
-    
-    public void incrementProcessed(int processedSuccessfully, int failedProcessing) { 
+    public long getLastFailed() {
+        return _lastFailed;
+    }
+
+    public void incrementProcessed(int processedSuccessfully, int failedProcessing) {
         // old strict speed calculator
     }
-    
+
     public void incrementAgreedTo() {
         _lifetimeAgreedTo.incrementAndGet();
         _lastAgreedTo = _context.clock().now();
     }
-    
+
     /**
-     * @param severity how much the peer doesnt want to participate in the 
+     * @param severity how much the peer doesnt want to participate in the
      *                 tunnel (large == more severe)
      */
     public void incrementRejected(int severity) {
@@ -106,31 +124,35 @@ public class TunnelHistory {
         _failRate.addData(pct);
         _lastFailed = _context.clock().now();
     }
-    
-/*****  all unused
-    public void setLifetimeAgreedTo(long num) { _lifetimeAgreedTo = num; }
-    public void setLifetimeRejected(long num) { _lifetimeRejected = num; }
-    public void setLifetimeFailed(long num) { _lifetimeFailed = num; }
-    public void setLastAgreedTo(long when) { _lastAgreedTo = when; }
-    public void setLastRejectedCritical(long when) { _lastRejectedCritical = when; }
-    public void setLastRejectedBandwidth(long when) { _lastRejectedBandwidth = when; }
-    public void setLastRejectedTransient(long when) { _lastRejectedTransient = when; }
-    public void setLastRejectedProbabalistic(long when) { _lastRejectedProbabalistic = when; }
-    public void setLastFailed(long when) { _lastFailed = when; }
-******/
-    
-    public RateStat getRejectionRate() { return _rejectRate; }
-    public RateStat getFailedRate() { return _failRate; }
-    
+
+    /*****  all unused
+        public void setLifetimeAgreedTo(long num) { _lifetimeAgreedTo = num; }
+        public void setLifetimeRejected(long num) { _lifetimeRejected = num; }
+        public void setLifetimeFailed(long num) { _lifetimeFailed = num; }
+        public void setLastAgreedTo(long when) { _lastAgreedTo = when; }
+        public void setLastRejectedCritical(long when) { _lastRejectedCritical = when; }
+        public void setLastRejectedBandwidth(long when) { _lastRejectedBandwidth = when; }
+        public void setLastRejectedTransient(long when) { _lastRejectedTransient = when; }
+        public void setLastRejectedProbabalistic(long when) { _lastRejectedProbabalistic = when; }
+        public void setLastFailed(long when) { _lastFailed = when; }
+    ******/
+
+    public RateStat getRejectionRate() {
+        return _rejectRate;
+    }
+    public RateStat getFailedRate() {
+        return _failRate;
+    }
+
     public void coalesceStats() {
         if (_log.shouldLog(Log.DEBUG))
             _log.debug("Coallescing stats");
         _rejectRate.coalesceStats();
         _failRate.coalesceStats();
     }
-    
+
     private final static String NL = System.getProperty("line.separator");
-    
+
     public void store(OutputStream out) throws IOException {
         store(out, true);
     }
@@ -161,7 +183,7 @@ public class TunnelHistory {
         _rejectRate.store(out, "tunnelHistory.rejectRate", addComments);
         _failRate.store(out, "tunnelHistory.failRate", addComments);
     }
-    
+
     private static void addDate(StringBuilder buf, boolean addComments, String name, long val, String description) {
         if (addComments) {
             String when = val > 0 ? (new Date(val)).toString() : "Never";
@@ -170,7 +192,7 @@ public class TunnelHistory {
             add(buf, false, name, val, description);
         }
     }
-    
+
     private static void add(StringBuilder buf, boolean addComments, String name, long val, String description) {
         if (addComments)
             buf.append("# ").append(name).append(NL).append("# ").append(description).append(NL);
@@ -178,7 +200,7 @@ public class TunnelHistory {
         if (addComments)
             buf.append(NL);
     }
-    
+
     public void load(Properties props) {
         _lastAgreedTo = getLong(props, "tunnels.lastAgreedTo");
         _lastFailed = getLong(props, "tunnels.lastFailed");
@@ -196,7 +218,7 @@ public class TunnelHistory {
             _log.warn("TunnelHistory rates are corrupt", iae);
         }
     }
-    
+
     private final static long getLong(Properties props, String key) {
         return ProfilePersistenceHelper.getLong(props, key);
     }

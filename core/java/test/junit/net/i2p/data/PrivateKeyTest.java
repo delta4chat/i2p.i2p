@@ -31,10 +31,12 @@ public class PrivateKeyTest extends StructureTest {
         privateKey.setData(data);
         return privateKey;
     }
-    public DataStructure createStructureToRead() { return new PrivateKey(); }
+    public DataStructure createStructureToRead() {
+        return new PrivateKey();
+    }
 
     @Test
-    public void testBase64Constructor() throws Exception{
+    public void testBase64Constructor() throws Exception {
         PrivateKey privateKey = new PrivateKey();
         byte data[] = new byte[PrivateKey.KEYSIZE_BYTES];
         for (int i = 0; i < data.length; i++)
@@ -46,7 +48,7 @@ public class PrivateKeyTest extends StructureTest {
     }
 
     @Test
-    public void testNullEquals(){
+    public void testNullEquals() {
         PrivateKey privateKey = new PrivateKey();
         byte data[] = new byte[PrivateKey.KEYSIZE_BYTES];
         for (int i = 0; i < data.length; i++)
@@ -57,7 +59,7 @@ public class PrivateKeyTest extends StructureTest {
     }
 
     @Test
-    public void testNullData() throws Exception{
+    public void testNullData() throws Exception {
         PrivateKey privateKey = new PrivateKey();
         privateKey.toString();
 
@@ -70,7 +72,7 @@ public class PrivateKeyTest extends StructureTest {
     }
 
     @Test
-    public void testShortData() throws Exception{
+    public void testShortData() throws Exception {
         PrivateKey privateKey = new PrivateKey();
         byte data[] = new byte[56];
         for (int i = 0; i < data.length; i++)
@@ -85,7 +87,7 @@ public class PrivateKeyTest extends StructureTest {
     }
 
     @Test
-    public void testShortRead() throws Exception{
+    public void testShortRead() throws Exception {
         PrivateKey privateKey = new PrivateKey();
         ByteArrayInputStream in = new ByteArrayInputStream(DataHelper.getASCII("six times nine equals forty-two"));
 

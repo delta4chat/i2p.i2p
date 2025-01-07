@@ -34,10 +34,14 @@ class DirectLookupJob extends FloodOnlySearchJob {
     }
 
     @Override
-    public String getName() { return "NetDb direct RI request"; }
+    public String getName() {
+        return "NetDb direct RI request";
+    }
 
     @Override
-    public boolean shouldProcessDSRM() { return false; } // don't loop
+    public boolean shouldProcessDSRM() {
+        return false;    // don't loop
+    }
 
     @Override
     public void runJob() {

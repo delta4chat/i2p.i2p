@@ -44,8 +44,8 @@ class PluginStopper extends PluginStarter {
                         log.info("Stopping plugin: " + app);
                     stopPlugin(_context, _server, app);
                 } catch (Throwable e) {
-                   if (log.shouldLog(Log.WARN))
-                       log.warn("Failed to stop plugin: " + app, e);
+                    if (log.shouldLog(Log.WARN))
+                        log.warn("Failed to stop plugin: " + app, e);
                 }
             } else {
                 if (log.shouldInfo())

@@ -166,9 +166,9 @@ public class RrdDefTemplate extends XmlTemplate {
         if (!"rrd_def".equals(root.getTagName())) {
             throw new IllegalArgumentException("XML definition must start with <rrd_def>");
         }
-        validateTagsOnlyOnce(root, new String[]{
-                "path*", "uri*", "start", "step", "datasource*", "archive*"
-        });
+        validateTagsOnlyOnce(root, new String[] {
+                                 "path*", "uri*", "start", "step", "datasource*", "archive*"
+                             });
         // PATH must be supplied or exception is thrown
         RrdDef rrdDef;
         if (hasChildNode(root, "path")) {
@@ -202,9 +202,9 @@ public class RrdDefTemplate extends XmlTemplate {
         // datsources
         Node[] dsNodes = getChildNodes(root, "datasource");
         for (Node dsNode : dsNodes) {
-            validateTagsOnlyOnce(dsNode, new String[]{
-                    "name", "type", "heartbeat", "min", "max"
-            });
+            validateTagsOnlyOnce(dsNode, new String[] {
+                                     "name", "type", "heartbeat", "min", "max"
+                                 });
             String name = getChildValue(dsNode, "name");
             DsType type = DsType.valueOf(getChildValue(dsNode, "type"));
             long heartbeat = getChildValueAsLong(dsNode, "heartbeat");
@@ -215,9 +215,9 @@ public class RrdDefTemplate extends XmlTemplate {
         // archives
         Node[] arcNodes = getChildNodes(root, "archive");
         for (Node arcNode : arcNodes) {
-            validateTagsOnlyOnce(arcNode, new String[]{
-                    "cf", "xff", "steps", "rows"
-            });
+            validateTagsOnlyOnce(arcNode, new String[] {
+                                     "cf", "xff", "steps", "rows"
+                                 });
             ConsolFun consolFun = ConsolFun.valueOf(getChildValue(arcNode, "cf"));
             double xff = getChildValueAsDouble(arcNode, "xff");
             int steps = getChildValueAsInt(arcNode, "steps");

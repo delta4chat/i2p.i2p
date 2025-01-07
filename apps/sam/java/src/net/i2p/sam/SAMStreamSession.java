@@ -1,9 +1,9 @@
 package net.i2p.sam;
 /*
  * free (adj.): unencumbered; not under the control of others
- * Written by human in 2004 and released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
- * It probably won't  make your computer catch on fire, or eat 
+ * Written by human in 2004 and released into the public domain
+ * with no warranty of any kind, either expressed or implied.
+ * It probably won't  make your computer catch on fire, or eat
  * your children, but it might.  Use at your own risk.
  *
  */
@@ -72,15 +72,15 @@ class SAMStreamSession implements SAMMessageSess {
     private final int listenPort;
     protected final boolean _isOwnSession;
 
-    /** 
+    /**
      * should we flush every time we get a STREAM SEND, or leave that up to
-     * the streaming lib to decide? 
+     * the streaming lib to decide?
      */
     protected final boolean forceFlush;
 
     public static final String PROP_FORCE_FLUSH = "sam.forceFlush";
     public static final String DEFAULT_FORCE_FLUSH = "false";
-    
+
     /**
      * Create a new SAM STREAM session.
      *
@@ -93,7 +93,7 @@ class SAMStreamSession implements SAMMessageSess {
      * @param recv Object that will receive incoming data
      * @throws IOException
      * @throws DataFormatException
-     * @throws SAMException 
+     * @throws SAMException
      */
     public SAMStreamSession(String dest, String dir, Properties props,
                             SAMStreamReceiver recv) throws IOException, DataFormatException, SAMException {
@@ -112,7 +112,7 @@ class SAMStreamSession implements SAMMessageSess {
      * @param recv Object that will receive incoming data
      * @throws IOException
      * @throws DataFormatException
-     * @throws SAMException 
+     * @throws SAMException
      */
     protected SAMStreamSession(InputStream destStream, String dir,
                                Properties props,  SAMStreamReceiver recv) throws IOException, DataFormatException, SAMException {
@@ -177,16 +177,16 @@ class SAMStreamSession implements SAMMessageSess {
         try {
             // we do it this way so we get exceptions
             socketMgr = I2PSocketManagerFactory.createDisconnectedManager(destStream,
-                                                            i2cpHost, i2cpPort, allprops);
+                        i2cpHost, i2cpPort, allprops);
             socketMgr.getSession().connect();
         } catch (I2PSessionException ise) {
             throw new SAMException("Error creating I2PSocketManager: " + ise.getMessage(), ise);
         }
-        
+
         socketMgr.addDisconnectListener(new DisconnectListener());
 
         forceFlush = Boolean.parseBoolean(allprops.getProperty(PROP_FORCE_FLUSH, DEFAULT_FORCE_FLUSH));
-        
+
         if (Boolean.parseBoolean(props.getProperty("i2p.streaming.enforceProtocol")))
             listenProtocol = I2PSession.PROTO_STREAMING;
         else
@@ -209,11 +209,11 @@ class SAMStreamSession implements SAMMessageSess {
      * @param recv Object that will receive incoming data
      * @throws IOException
      * @throws DataFormatException
-     * @throws SAMException 
+     * @throws SAMException
      * @since 0.9.25
      */
     protected SAMStreamSession(I2PSocketManager mgr, Properties props, SAMStreamReceiver recv, int listenport)
-                               throws IOException, DataFormatException, SAMException {
+    throws IOException, DataFormatException, SAMException {
         this.recv = recv;
         _log = I2PAppContext.getGlobalContext().logManager().getLog(getClass());
         if (_log.shouldLog(Log.DEBUG))
@@ -253,7 +253,7 @@ class SAMStreamSession implements SAMMessageSess {
     public int getListenPort() {
         return listenPort;
     }
-    
+
     protected class DisconnectListener implements I2PSocketManager.DisconnectListener {
         public void sessionDisconnected() {
             close();
@@ -284,7 +284,7 @@ class SAMStreamSession implements SAMMessageSess {
      * @throws NoRouteToHostException if the destination can't be reached
      * @throws InterruptedIOException if the connection timeouts
      * @throws I2PException if there's another I2P-related error
-     * @throws IOException 
+     * @throws IOException
      */
     public boolean connect ( int id, String dest, Properties props ) throws I2PException, ConnectException, NoRouteToHostException, DataFormatException, InterruptedIOException, SAMInvalidDirectionException, IOException {
         if (!canCreate) {
@@ -308,13 +308,13 @@ class SAMStreamSession implements SAMMessageSess {
         if (_log.shouldLog(Log.DEBUG))
             _log.debug("Connecting new I2PSocket...");
 
-	// blocking connection (SAMv1)
+        // blocking connection (SAMv1)
 
         I2PSocket i2ps = socketMgr.connect(d, opts);
 
         createSocketHandler(i2ps, id);
 
-	recv.notifyStreamOutgoingConnection ( id, "OK", null );
+        recv.notifyStreamOutgoingConnection ( id, "OK", null );
 
         return true;
     }
@@ -326,15 +326,15 @@ class SAMStreamSession implements SAMMessageSess {
      * @param in Datastream input
      * @param size Count of bytes to send
      * @return True if the data was queued for sending, false otherwise
-     * @throws IOException 
+     * @throws IOException
      */
-    public boolean sendBytes(int id, InputStream in, int size) throws IOException { 
+    public boolean sendBytes(int id, InputStream in, int size) throws IOException {
         StreamSender sender = getSender(id);
-        
+
         if (sender == null) {
             if (_log.shouldLog(Log.WARN))
                 _log.warn("Trying to send bytes through nonexistent handler " +id);
-            // even though it failed, we need to read those bytes! 
+            // even though it failed, we need to read those bytes!
             for (int i = 0; i < size; i++) {
                 int c = in.read();
                 if (c == -1)
@@ -366,7 +366,9 @@ class SAMStreamSession implements SAMMessageSess {
      *
      * @since 0.9.61
      */
-    public boolean isDestroyed() { return socketMgr.isDestroyed(); }
+    public boolean isDestroyed() {
+        return socketMgr.isDestroyed();
+    }
 
     /**
      * Close a connection managed by the SAM STREAM session.
@@ -402,11 +404,11 @@ class SAMStreamSession implements SAMMessageSess {
     public boolean sendBytes(String s, byte[] b, int pr, int fp, int tp,
                              boolean sendLeaseSet, int sendTags,
                              int tagThreshold, int expiration)
-                                 throws I2PSessionException {
+    throws I2PSessionException {
         throw new I2PSessionException("Unsupported in STREAM or PRIMARY session");
     }
 
-    /** 
+    /**
      * Create a new SAM STREAM session socket handler, detaching its thread.
      *
      * @param s Socket to be handled
@@ -508,9 +510,9 @@ class SAMStreamSession implements SAMMessageSess {
     private void removeAllSocketHandlers() {
         synchronized (handlersMap) {
             for (Map.Entry<Integer, SAMStreamSessionSocketReader> e : handlersMap.entrySet()) {
-                 Integer id = e.getKey();
-                 e.getValue().stopRunning();
-                 sendersMap.get(id).shutDownGracefully();
+                Integer id = e.getKey();
+                e.getValue().stopRunning();
+                sendersMap.get(id).shutDownGracefully();
             }
             handlersMap.clear();
             sendersMap.clear();
@@ -571,7 +573,7 @@ class SAMStreamSession implements SAMMessageSess {
                     if (i2ps == null)
                         break;
 
-                   if (_log.shouldLog(Log.DEBUG))
+                    if (_log.shouldLog(Log.DEBUG))
                         _log.debug("New incoming connection");
 
                     int id = createSocketHandler(i2ps, 0);
@@ -602,13 +604,13 @@ class SAMStreamSession implements SAMMessageSess {
                 if (_log.shouldLog(Log.DEBUG))
                     _log.debug("Caught I2PException", e);
             }
-            
+
             close();
 
             if (_log.shouldLog(Log.DEBUG))
                 _log.debug("Shutting down SAM STREAM session server");
         }
-                
+
     }
 
 
@@ -616,7 +618,7 @@ class SAMStreamSession implements SAMMessageSess {
     {
         if (_log.shouldLog(Log.DEBUG))
             _log.debug ( "Protocol v1 does not support a receive limit for streams" );
-	return false ;
+        return false ;
     }
 
     /**
@@ -626,7 +628,7 @@ class SAMStreamSession implements SAMMessageSess {
      * @author human
      */
     public class SAMStreamSessionSocketReader implements Runnable {
-        
+
         protected final I2PSocket i2pSocket;
 
         protected final Object runningLock = new Object();
@@ -639,13 +641,13 @@ class SAMStreamSession implements SAMMessageSess {
          * Create a new SAM STREAM session socket reader
          *
          * @param s Socket to be handled
-	 * @param id Unique id assigned to the handler
-	 * @throws IOException 
-         */
+        * @param id Unique id assigned to the handler
+         * @throws IOException
+               */
         public SAMStreamSessionSocketReader ( I2PSocket s, int id ) throws IOException {
             i2pSocket = s;
             this.id = id;
-	}
+        }
 
         /**
          * Stop a SAM STREAM session socket reader thread immediately.
@@ -657,18 +659,18 @@ class SAMStreamSession implements SAMMessageSess {
     }
 
     protected SAMStreamSessionSocketReader
-      newSAMStreamSessionSocketReader ( I2PSocket s, int id ) throws IOException {
+    newSAMStreamSessionSocketReader ( I2PSocket s, int id ) throws IOException {
         return new SAMv1StreamSessionSocketReader ( s, id );
     }
-                
+
     public class SAMv1StreamSessionSocketReader extends SAMStreamSessionSocketReader {
         /**
          * Create a new SAM STREAM session socket reader
          *
          * @param s Socket to be handled
-	 * @param id Unique id assigned to the handler
-	 * @throws IOException 
-         */
+        * @param id Unique id assigned to the handler
+         * @throws IOException
+               */
 
         public SAMv1StreamSessionSocketReader ( I2PSocket s, int id ) throws IOException {
             super(s, id);
@@ -719,7 +721,7 @@ class SAMStreamSession implements SAMMessageSess {
                 if (_log.shouldLog(Log.DEBUG))
                     _log.debug("Caught IOException", e);
             }
-            
+
             try {
                 i2pSocket.close();
             } catch (IOException e) {
@@ -735,7 +737,7 @@ class SAMStreamSession implements SAMMessageSess {
                 } catch (IOException e) {
                     if (_log.shouldLog(Log.DEBUG))
                         _log.debug("Error sending disconnection notice for handler "
-                               + id, e);
+                                   + id, e);
                 }
             }
 
@@ -743,8 +745,8 @@ class SAMStreamSession implements SAMMessageSess {
                 _log.debug("Shutting down SAM STREAM session socket handler " +id);
         }
     }
-    
-    
+
+
     /**
      * Lets us push data through the stream without blocking, (even after exceeding
      * the I2PSocket's buffer)
@@ -757,47 +759,47 @@ class SAMStreamSession implements SAMMessageSess {
         public StreamSender ( I2PSocket s, int id ) throws IOException {
             _id = id;
             i2pSocket = s;
-	}
-        
+        }
+
         /**
-	 * Send bytes through the SAM STREAM session socket sender
-	 *
-	 * @param in Data input stream
-	 * @param size Count of bytes to send
-	 * @throws IOException if the client didnt provide enough data
-	 */
+        * Send bytes through the SAM STREAM session socket sender
+         *
+         * @param in Data input stream
+         * @param size Count of bytes to send
+         * @throws IOException if the client didnt provide enough data
+         */
         public abstract void sendBytes ( InputStream in, int size ) throws IOException;
 
-	
+
         /**
-	 * Stop a SAM STREAM session socket sender thread immediately
-	 *
-	 */
+        * Stop a SAM STREAM session socket sender thread immediately
+         *
+         */
         public abstract void stopRunning();
 
         /**
-	 * Stop a SAM STREAM session socket sender gracefully: stop the
-	 * sender thread once all pending data has been sent.
-	 */
+        * Stop a SAM STREAM session socket sender gracefully: stop the
+         * sender thread once all pending data has been sent.
+         */
         public abstract void shutDownGracefully();
 
         public abstract void run();
     }
 
     protected StreamSender newStreamSender ( I2PSocket s, int id ) throws IOException {
-      return new V1StreamSender ( s, id ) ;
+        return new V1StreamSender ( s, id ) ;
     }
 
     private class V1StreamSender extends StreamSender
-      {
+    {
         private final List<ByteArray> _data;
         private final ByteCache _cache;
         private final OutputStream _out;
         private volatile boolean _stillRunning, _shuttingDownGracefully;
         private final Object runningLock = new Object();
-        
-	public V1StreamSender ( I2PSocket s, int id ) throws IOException {
-	    super ( s, id );
+
+        public V1StreamSender ( I2PSocket s, int id ) throws IOException {
+            super ( s, id );
             _data = new ArrayList<ByteArray>(1);
             _cache = ByteCache.getInstance(4, 32*1024);
             _out = s.getOutputStream();
@@ -813,10 +815,10 @@ class SAMStreamSession implements SAMMessageSess {
         public void sendBytes(InputStream in, int size) throws IOException {
             if (_log.shouldLog(Log.DEBUG))
                 _log.debug("Handler " + _id + ": sending " + size + " bytes");
-            
+
             ByteArray ba = _cache.acquire();
             int read = DataHelper.read(in, ba.getData(), 0, size);
-            if (read != size) 
+            if (read != size)
                 throw new IOException("Insufficient data from the SAM client (" + read + "/" + size + ")");
 
             ba.setValid(read);

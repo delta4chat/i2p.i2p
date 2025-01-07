@@ -60,8 +60,8 @@ public class AESBench {
 
     public static void main(String args[]) throws RunnerException {
         Options opt = new OptionsBuilder()
-                .include(AESBench.class.getSimpleName())
-                .build();
+        .include(AESBench.class.getSimpleName())
+        .build();
 
         new Runner(opt).run();
     }

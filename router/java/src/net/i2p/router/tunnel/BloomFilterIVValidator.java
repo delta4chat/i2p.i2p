@@ -13,16 +13,16 @@ import net.i2p.util.SystemVersion;
 
 /**
  * Manage the IV validation for all of the router's tunnels by way of a big
- * decaying bloom filter.  
+ * decaying bloom filter.
  *
  */
 class BloomFilterIVValidator implements IVValidator {
     private final RouterContext _context;
     private final DecayingBloomFilter _filter;
-    
+
     /**
      * After 2*halflife, an entry is completely forgotten from the bloom filter.
-     * To avoid the issue of overlap within different tunnels, this is set 
+     * To avoid the issue of overlap within different tunnels, this is set
      * higher than it needs to be.
      *
      */
@@ -79,16 +79,16 @@ class BloomFilterIVValidator implements IVValidator {
                 warn(maxMemory, KBps, MIN_MEM_FOR_BIG_BLOOM, MIN_SHARE_KBPS_FOR_BIG_BLOOM);
             _filter = new DecayingBloomFilter(ctx, HALFLIFE_MS, 16, "TunnelIVV");  // 2MB fixed
         }
-        ctx.statManager().createRateStat("tunnel.duplicateIV", "Note that a duplicate IV was received", "Tunnels", 
+        ctx.statManager().createRateStat("tunnel.duplicateIV", "Note that a duplicate IV was received", "Tunnels",
                                          new long[] { 60*60*1000l });
     }
-    
+
     public boolean receiveIV(byte ivData[], int ivOffset, byte payload[], int payloadOffset) {
         if (_filter == null)  // testing only
             return true;
         byte[] buf = SimpleByteCache.acquire(HopProcessor.IV_LENGTH);
         DataHelper.xor(ivData, ivOffset, payload, payloadOffset, buf, 0, HopProcessor.IV_LENGTH);
-        boolean dup = _filter.add(buf); 
+        boolean dup = _filter.add(buf);
         SimpleByteCache.release(buf);
         if (dup) _context.statManager().addRateData("tunnel.duplicateIV", 1);
         return !dup; // return true if it is OK, false if it isn't

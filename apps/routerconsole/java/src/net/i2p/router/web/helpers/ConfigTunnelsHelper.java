@@ -47,16 +47,16 @@ public class ConfigTunnelsHelper extends HelperBase {
         buf.append("<table id=\"tunnelconfig\">\n");
         TunnelPoolSettings exploratoryIn = mgr.getInboundSettings();
         TunnelPoolSettings exploratoryOut = mgr.getOutboundSettings();
-        
+
         renderForm(buf, 0, "exploratory", _t("Exploratory tunnels"), exploratoryIn, exploratoryOut);
-        
+
         cur = 1;
         for (TunnelPoolSettings in : sorted) {
             Hash h = in.getDestination();
             TunnelPoolSettings out = mgr.getOutboundSettings(h);
 
             if (in.getAliasOf() != null ||
-                out == null || out.getAliasOf() != null) {
+                    out == null || out.getAliasOf() != null) {
                 cur++;
                 continue;
             }
@@ -75,12 +75,12 @@ public class ConfigTunnelsHelper extends HelperBase {
      *  @since 0.9.57
      */
     private class TPComparator implements Comparator<TunnelPoolSettings> {
-         private final Collator _comp = Collator.getInstance();
-         public int compare(TunnelPoolSettings l, TunnelPoolSettings r) {
-             int rv = _comp.compare(getTunnelName(l), getTunnelName(r));
-             if (rv != 0)
-                 return rv;
-             return l.getDestination().toBase32().compareTo(r.getDestination().toBase32());
+        private final Collator _comp = Collator.getInstance();
+        public int compare(TunnelPoolSettings l, TunnelPoolSettings r) {
+            int rv = _comp.compare(getTunnelName(l), getTunnelName(r));
+            if (rv != 0)
+                return rv;
+            return l.getDestination().toBase32().compareTo(r.getDestination().toBase32());
         }
     }
 
@@ -118,36 +118,36 @@ public class ConfigTunnelsHelper extends HelperBase {
         buf.append("<tr><th colspan=\"3\" class=\"th_title\"><a name=\"").append(prefix).append("\">");
         buf.append(name).append("</a></th></tr>\n");
         if (in.getLength() <= 0 ||
-            in.getLength() + in.getLengthVariance() <= 0 ||
-            out.getLength() <= 0 ||
-            out.getLength() + out.getLengthVariance() <= 0) {
+                in.getLength() + in.getLengthVariance() <= 0 ||
+                out.getLength() <= 0 ||
+                out.getLength() + out.getLengthVariance() <= 0) {
             buf.append("<tr><th colspan=\"3\"><font color=\"red\">" + _t("ANONYMITY WARNING - Settings include 0-hop tunnels.") + "</font></th></tr>");
             if (TransportUtil.getIPv6Config(_context, "SSU") == TransportUtil.IPv6Config.IPV6_ONLY) {
                 // rare, don't bother translating
                 buf.append("<tr><th colspan=\"3\"><font color=\"red\">WARNING - 0-hop tunnels not recommended for IPv6-only routers.</font></th></tr>");
             }
             if ((in.getLength() <= 0 || in.getLength() + in.getLengthVariance() <= 0) &&
-                _context.router().isHidden()) {
+                    _context.router().isHidden()) {
                 // rare, don't bother translating
                 buf.append("<tr><th colspan=\"3\"><font color=\"red\">WARNING - Inbound 0-hop tunnels not recommended for hidden routers.</font></th></tr>");
             }
         } else if (in.getLength() <= 1 ||
-            in.getLength() + in.getLengthVariance() <= 1 ||
-            out.getLength() <= 1 ||
-            out.getLength() + out.getLengthVariance() <= 1) {
+                   in.getLength() + in.getLengthVariance() <= 1 ||
+                   out.getLength() <= 1 ||
+                   out.getLength() + out.getLengthVariance() <= 1) {
             buf.append("<tr><th colspan=\"3\"><font color=\"red\">" + _t("ANONYMITY WARNING - Settings include 1-hop tunnels.") + "</font></th></tr>");
         }
         if (in.getLength() + Math.abs(in.getLengthVariance()) >= WARN_LENGTH ||
-            out.getLength() + Math.abs(out.getLengthVariance()) >= WARN_LENGTH)
+                out.getLength() + Math.abs(out.getLengthVariance()) >= WARN_LENGTH)
             buf.append("<tr><th colspan=\"3\"><font color=\"red\">" + _t("PERFORMANCE WARNING - Settings include very long tunnels.") + "</font></th></tr>");
         if (in.getTotalQuantity() >= WARN_QUANTITY ||
-            out.getTotalQuantity() >= WARN_QUANTITY)
+                out.getTotalQuantity() >= WARN_QUANTITY)
             buf.append("<tr><th colspan=\"3\"><font color=\"red\">" + _t("PERFORMANCE WARNING - Settings include high tunnel quantities.") + "</font></th></tr>");
 
         buf.append("<tr><th></th><th><img src=\"/themes/console/images/inbound.png\" alt=\"Inbound\" title=\"Inbound Tunnels\">&nbsp;&nbsp;" + _t("Inbound") + "</th><th><img src=\"/themes/console/images/outbound.png\" alt=\"Outbound Tunnels\" title=\"Outbound\">&nbsp;&nbsp;" + _t("Outbound") + "</th></tr>\n");
 
 //        buf.append("<tr><th></th><th>Inbound</th><th>Outbound</th></tr>\n");
-        
+
         // tunnel depth
         int maxLength = advanced ? MAX_ADVANCED_LENGTH : MAX_LENGTH;
         buf.append("<tr><td align=\"right\"><b>" + _t("Length") + ":</b></td>\n");

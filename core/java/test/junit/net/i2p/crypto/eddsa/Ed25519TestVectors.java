@@ -55,7 +55,10 @@ public class Ed25519TestVectors {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            if (file != null) try { file.close(); } catch (IOException e) {}
+            if (file != null) try {
+                    file.close();
+                }
+                catch (IOException e) {}
         }
         return testCases;
     }

@@ -22,11 +22,11 @@ import net.i2p.data.SigningPrivateKey;
  *  @since 0.9.16
  */
 public class RouterPrivateKeyFile extends PrivateKeyFile {
-    
+
     public RouterPrivateKeyFile(File file) {
         super(file);
     }
-    
+
     /**
      *  Read it in from the file.
      *  Also sets the local privKey and signingPrivKey.
@@ -59,7 +59,10 @@ public class RouterPrivateKeyFile extends PrivateKeyFile {
             return ri;
         } finally {
             if (in != null) {
-                try { in.close(); } catch (IOException ioe) {}
+                try {
+                    in.close();
+                }
+                catch (IOException ioe) {}
             }
         }
     }

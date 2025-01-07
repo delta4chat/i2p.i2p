@@ -60,7 +60,9 @@ abstract class FloodSearchJob extends JobImpl {
     }
 
     /** System time, NOT context time */
-    public long getCreated() { return _created; }
+    public long getCreated() {
+        return _created;
+    }
 
     /**
      *  Add jobs to an existing search
@@ -89,7 +91,9 @@ abstract class FloodSearchJob extends JobImpl {
     }
 
     /** using context clock */
-    public long getExpiration() { return _expiration; }
+    public long getExpiration() {
+        return _expiration;
+    }
 
     protected static final int CONCURRENT_SEARCHES = 2;
     private static final int FLOOD_SEARCH_TIME_FACTOR = 2;
@@ -98,61 +102,65 @@ abstract class FloodSearchJob extends JobImpl {
      */
     public void runJob() {
         throw new UnsupportedOperationException("use override");
-/****
-        // pick some floodfill peers and send out the searches
-        List floodfillPeers = _facade.getFloodfillPeers();
-        FloodLookupSelector replySelector = new FloodLookupSelector(getContext(), this);
-        ReplyJob onReply = new FloodLookupMatchJob(getContext(), this);
-        Job onTimeout = new FloodLookupTimeoutJob(getContext(), this);
-        OutNetMessage out = getContext().messageRegistry().registerPending(replySelector, onReply, onTimeout, _timeoutMs);
+        /****
+                // pick some floodfill peers and send out the searches
+                List floodfillPeers = _facade.getFloodfillPeers();
+                FloodLookupSelector replySelector = new FloodLookupSelector(getContext(), this);
+                ReplyJob onReply = new FloodLookupMatchJob(getContext(), this);
+                Job onTimeout = new FloodLookupTimeoutJob(getContext(), this);
+                OutNetMessage out = getContext().messageRegistry().registerPending(replySelector, onReply, onTimeout, _timeoutMs);
 
-        for (int i = 0; _lookupsRemaining < CONCURRENT_SEARCHES && i < floodfillPeers.size(); i++) {
-            Hash peer = (Hash)floodfillPeers.get(i);
-            if (peer.equals(getContext().routerHash()))
-                continue;
-            
-            DatabaseLookupMessage dlm = new DatabaseLookupMessage(getContext(), true);
-            TunnelInfo replyTunnel = getContext().tunnelManager().selectInboundTunnel();
-            TunnelInfo outTunnel = getContext().tunnelManager().selectOutboundTunnel();
-            if ( (replyTunnel == null) || (outTunnel == null) ) {
-                _dead = true;
-                List<Job> removed = null;
-                synchronized (_onFailed) {
-                    removed = new ArrayList(_onFailed);
-                    _onFailed.clear();
+                for (int i = 0; _lookupsRemaining < CONCURRENT_SEARCHES && i < floodfillPeers.size(); i++) {
+                    Hash peer = (Hash)floodfillPeers.get(i);
+                    if (peer.equals(getContext().routerHash()))
+                        continue;
+
+                    DatabaseLookupMessage dlm = new DatabaseLookupMessage(getContext(), true);
+                    TunnelInfo replyTunnel = getContext().tunnelManager().selectInboundTunnel();
+                    TunnelInfo outTunnel = getContext().tunnelManager().selectOutboundTunnel();
+                    if ( (replyTunnel == null) || (outTunnel == null) ) {
+                        _dead = true;
+                        List<Job> removed = null;
+                        synchronized (_onFailed) {
+                            removed = new ArrayList(_onFailed);
+                            _onFailed.clear();
+                        }
+                        while (!removed.isEmpty())
+                            getContext().jobQueue().addJob(removed.remove(0));
+                        getContext().messageRegistry().unregisterPending(out);
+                        return;
+                    }
+                    dlm.setFrom(replyTunnel.getPeer(0));
+                    dlm.setMessageExpiration(getContext().clock().now()+10*1000);
+                    dlm.setReplyTunnel(replyTunnel.getReceiveTunnelId(0));
+                    dlm.setSearchKey(_key);
+
+                    if (_log.shouldLog(Log.INFO))
+                        _log.info(getJobId() + ": Floodfill search for " + _key.toBase64() + " to " + peer.toBase64());
+                    getContext().tunnelDispatcher().dispatchOutbound(dlm, outTunnel.getSendTunnelId(0), peer);
+                    _lookupsRemaining++;
                 }
-                while (!removed.isEmpty())
-                    getContext().jobQueue().addJob(removed.remove(0));
-                getContext().messageRegistry().unregisterPending(out);
-                return;
-            }
-            dlm.setFrom(replyTunnel.getPeer(0));
-            dlm.setMessageExpiration(getContext().clock().now()+10*1000);
-            dlm.setReplyTunnel(replyTunnel.getReceiveTunnelId(0));
-            dlm.setSearchKey(_key);
-            
-            if (_log.shouldLog(Log.INFO))
-                _log.info(getJobId() + ": Floodfill search for " + _key.toBase64() + " to " + peer.toBase64());
-            getContext().tunnelDispatcher().dispatchOutbound(dlm, outTunnel.getSendTunnelId(0), peer);
-            _lookupsRemaining++;
-        }
-        
-        if (_lookupsRemaining <= 0) {
-            if (_log.shouldLog(Log.INFO))
-                _log.info(getJobId() + ": Floodfill search for " + _key.toBase64() + " had no peers to send to");
-            // no floodfill peers, go to the normal ones
-            getContext().messageRegistry().unregisterPending(out);
-            _facade.searchFull(_key, _onFind, _onFailed, _timeoutMs*FLOOD_SEARCH_TIME_FACTOR, _isLease);
-        }
-****/
+
+                if (_lookupsRemaining <= 0) {
+                    if (_log.shouldLog(Log.INFO))
+                        _log.info(getJobId() + ": Floodfill search for " + _key.toBase64() + " had no peers to send to");
+                    // no floodfill peers, go to the normal ones
+                    getContext().messageRegistry().unregisterPending(out);
+                    _facade.searchFull(_key, _onFind, _onFailed, _timeoutMs*FLOOD_SEARCH_TIME_FACTOR, _isLease);
+                }
+        ****/
     }
 
     /**
      *  Deprecated, unused, see FOSJ override
      */
-    public String getName() { return "NetDb search (phase 1)"; }
-    
-    public Hash getKey() { return _key; }
+    public String getName() {
+        return "NetDb search (phase 1)";
+    }
+
+    public Hash getKey() {
+        return _key;
+    }
 
     /**
      *  @return number remaining after decrementing
@@ -168,31 +176,33 @@ abstract class FloodSearchJob extends JobImpl {
         }
     }
 
-    protected int getLookupsRemaining() { return _lookupsRemaining.get(); }
-    
+    protected int getLookupsRemaining() {
+        return _lookupsRemaining.get();
+    }
+
     /**
      *  Deprecated, unused, see FOSJ override
      */
     void failed() {
         throw new UnsupportedOperationException("use override");
-/****
-        if (_dead) return;
-        _dead = true;
-        int timeRemaining = (int)(_expiration - getContext().clock().now());
-        if (_log.shouldLog(Log.INFO))
-            _log.info(getJobId() + ": Floodfill search for " + _key.toBase64() + " failed with " + timeRemaining);
-        if (timeRemaining > 0) {
-            _facade.searchFull(_key, _onFind, _onFailed, timeRemaining, _isLease);
-        } else {
-            List<Job> removed = null;
-            synchronized (_onFailed) {
-                removed = new ArrayList(_onFailed);
-                _onFailed.clear();
-            }
-            while (!removed.isEmpty())
-                getContext().jobQueue().addJob(removed.remove(0));
-        }
-****/
+        /****
+                if (_dead) return;
+                _dead = true;
+                int timeRemaining = (int)(_expiration - getContext().clock().now());
+                if (_log.shouldLog(Log.INFO))
+                    _log.info(getJobId() + ": Floodfill search for " + _key.toBase64() + " failed with " + timeRemaining);
+                if (timeRemaining > 0) {
+                    _facade.searchFull(_key, _onFind, _onFailed, timeRemaining, _isLease);
+                } else {
+                    List<Job> removed = null;
+                    synchronized (_onFailed) {
+                        removed = new ArrayList(_onFailed);
+                        _onFailed.clear();
+                    }
+                    while (!removed.isEmpty())
+                        getContext().jobQueue().addJob(removed.remove(0));
+                }
+        ****/
     }
 
     /**
@@ -202,103 +212,103 @@ abstract class FloodSearchJob extends JobImpl {
         synchronized(this) {
             _success = true;
         }
-/****
-        throw new UnsupportedOperationException("use override");
-        if (_dead) return;
-        if (_log.shouldLog(Log.INFO))
-            _log.info(getJobId() + ": Floodfill search for " + _key.toBase64() + " successful");
-        _dead = true;
-        _facade.complete(_key);
-        List<Job> removed = null;
-        synchronized (_onFind) {
-            removed = new ArrayList(_onFind);
-            _onFind.clear();
-        }
-        while (!removed.isEmpty())
-            getContext().jobQueue().addJob(removed.remove(0));
-****/
-    }
-
-    /**
-     *  Deprecated, unused, see FOSJ override
-     */
-/****
-    private static class FloodLookupTimeoutJob extends JobImpl {
-        private FloodSearchJob _search;
-        public FloodLookupTimeoutJob(RouterContext ctx, FloodSearchJob job) {
-            super(ctx);
-            _search = job;
-        }
-        public void runJob() {
-            int remaining = _search.decrementRemaining();
-            if (remaining <= 0)
-                _search.failed(); 
-        }
-        public String getName() { return "NetDb search (phase 1) timeout"; }
-    }
-****/
-
-    /**
-     *  Deprecated, unused, see FOSJ override
-     */
-/****
-    private static class FloodLookupMatchJob extends JobImpl implements ReplyJob {
-        private Log _log;
-        private FloodSearchJob _search;
-        public FloodLookupMatchJob(RouterContext ctx, FloodSearchJob job) {
-            super(ctx);
-            _log = ctx.logManager().getLog(FloodLookupMatchJob.class);
-            _search = job;
-        }
-        public void runJob() { 
-            if (getContext().netDbSegmentor().lookupLocally(_search.getKey()) != null) {
-                _search.success();
-            } else {
-                int remaining = _search.getLookupsRemaining();
+        /****
+                throw new UnsupportedOperationException("use override");
+                if (_dead) return;
                 if (_log.shouldLog(Log.INFO))
-                    _log.info(getJobId() + "/" + _search.getJobId() + ": got a reply looking for " 
-                              + _search.getKey().toBase64() + ", with " + remaining + " outstanding searches");
-                // netDb reply pointing us at other people
+                    _log.info(getJobId() + ": Floodfill search for " + _key.toBase64() + " successful");
+                _dead = true;
+                _facade.complete(_key);
+                List<Job> removed = null;
+                synchronized (_onFind) {
+                    removed = new ArrayList(_onFind);
+                    _onFind.clear();
+                }
+                while (!removed.isEmpty())
+                    getContext().jobQueue().addJob(removed.remove(0));
+        ****/
+    }
+
+    /**
+     *  Deprecated, unused, see FOSJ override
+     */
+    /****
+        private static class FloodLookupTimeoutJob extends JobImpl {
+            private FloodSearchJob _search;
+            public FloodLookupTimeoutJob(RouterContext ctx, FloodSearchJob job) {
+                super(ctx);
+                _search = job;
+            }
+            public void runJob() {
+                int remaining = _search.decrementRemaining();
                 if (remaining <= 0)
                     _search.failed();
             }
+            public String getName() { return "NetDb search (phase 1) timeout"; }
         }
-        public String getName() { return "NetDb search (phase 1) match"; }
-        public void setMessage(I2NPMessage message) {}
-    }
-****/
+    ****/
 
     /**
      *  Deprecated, unused, see FOSJ override
      */
-/****
-    private static class FloodLookupSelector implements MessageSelector {
-        private RouterContext _context;
-        private FloodSearchJob _search;
-        public FloodLookupSelector(RouterContext ctx, FloodSearchJob search) {
-            _context = ctx;
-            _search = search;
-        }
-        public boolean continueMatching() { return _search.getLookupsRemaining() > 0; }
-        public long getExpiration() { return _search.getExpiration(); }
-        public boolean isMatch(I2NPMessage message) {
-            if (message == null) return false;
-            if (message instanceof DatabaseStoreMessage) {
-                DatabaseStoreMessage dsm = (DatabaseStoreMessage)message;
-                // is it worth making sure the reply came in on the right tunnel?
-                if (_search.getKey().equals(dsm.getKey())) {
-                    _search.decrementRemaining();
-                    return true;
-                }
-            } else if (message instanceof DatabaseSearchReplyMessage) {
-                DatabaseSearchReplyMessage dsrm = (DatabaseSearchReplyMessage)message;
-                if (_search.getKey().equals(dsrm.getSearchKey())) {
-                    _search.decrementRemaining();
-                    return true;
+    /****
+        private static class FloodLookupMatchJob extends JobImpl implements ReplyJob {
+            private Log _log;
+            private FloodSearchJob _search;
+            public FloodLookupMatchJob(RouterContext ctx, FloodSearchJob job) {
+                super(ctx);
+                _log = ctx.logManager().getLog(FloodLookupMatchJob.class);
+                _search = job;
+            }
+            public void runJob() {
+                if (getContext().netDbSegmentor().lookupLocally(_search.getKey()) != null) {
+                    _search.success();
+                } else {
+                    int remaining = _search.getLookupsRemaining();
+                    if (_log.shouldLog(Log.INFO))
+                        _log.info(getJobId() + "/" + _search.getJobId() + ": got a reply looking for "
+                                  + _search.getKey().toBase64() + ", with " + remaining + " outstanding searches");
+                    // netDb reply pointing us at other people
+                    if (remaining <= 0)
+                        _search.failed();
                 }
             }
-            return false;
-        }   
-    }
-****/
+            public String getName() { return "NetDb search (phase 1) match"; }
+            public void setMessage(I2NPMessage message) {}
+        }
+    ****/
+
+    /**
+     *  Deprecated, unused, see FOSJ override
+     */
+    /****
+        private static class FloodLookupSelector implements MessageSelector {
+            private RouterContext _context;
+            private FloodSearchJob _search;
+            public FloodLookupSelector(RouterContext ctx, FloodSearchJob search) {
+                _context = ctx;
+                _search = search;
+            }
+            public boolean continueMatching() { return _search.getLookupsRemaining() > 0; }
+            public long getExpiration() { return _search.getExpiration(); }
+            public boolean isMatch(I2NPMessage message) {
+                if (message == null) return false;
+                if (message instanceof DatabaseStoreMessage) {
+                    DatabaseStoreMessage dsm = (DatabaseStoreMessage)message;
+                    // is it worth making sure the reply came in on the right tunnel?
+                    if (_search.getKey().equals(dsm.getKey())) {
+                        _search.decrementRemaining();
+                        return true;
+                    }
+                } else if (message instanceof DatabaseSearchReplyMessage) {
+                    DatabaseSearchReplyMessage dsrm = (DatabaseSearchReplyMessage)message;
+                    if (_search.getKey().equals(dsrm.getSearchKey())) {
+                        _search.decrementRemaining();
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
+    ****/
 }

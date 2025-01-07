@@ -22,7 +22,7 @@ class RrdDoubleMatrix<U extends RrdUpdater<U>> extends RrdPrimitive<U> {
     void set(int column, int index, double value, int count) throws IOException {
         // rollovers not allowed!
         assert index + count <= rows : "Invalid robin index supplied: index=" + index +
-                ", count=" + count + LENGTH + rows;
+        ", count=" + count + LENGTH + rows;
         for (int i = columns * index + column, c = 0; c < count; i += columns, c++)
             writeDouble(i, value);
     }
@@ -39,7 +39,7 @@ class RrdDoubleMatrix<U extends RrdUpdater<U>> extends RrdPrimitive<U> {
         int count = newValues.length;
         // rollovers not allowed!
         assert index + count <= rows : "Invalid robin index supplied: index=" + index +
-                ", count=" + count + LENGTH + rows;
+        ", count=" + count + LENGTH + rows;
         for (int i = columns * index + column, c = 0; c < count; i += columns, c++)
             writeDouble(i, newValues[c]);
     }
@@ -51,7 +51,7 @@ class RrdDoubleMatrix<U extends RrdUpdater<U>> extends RrdPrimitive<U> {
 
     double[] get(int column, int index, int count) throws IOException {
         assert index + count <= rows : "Invalid index/count supplied: " + index +
-                "/" + count + " (length=" + rows + ")";
+        "/" + count + " (length=" + rows + ")";
         double[] values = new double[count];
         for (int i = columns * index + column, c = 0; c < count; i += columns, c++) {
             values[c] = readDouble(i);

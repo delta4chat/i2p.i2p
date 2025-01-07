@@ -38,7 +38,7 @@ public class DatabaseStoreMessageTest extends StructureTest {
     }
 
     public DataStructure createStructureToRead() {
-    	return new DSMStructure(I2PAppContext.getGlobalContext());
+        return new DSMStructure(I2PAppContext.getGlobalContext());
     }
 
     @Override
@@ -51,10 +51,16 @@ public class DatabaseStoreMessageTest extends StructureTest {
     }
 
     private static class DSMStructure extends DatabaseStoreMessage implements DataStructure {
-        public DSMStructure(I2PAppContext ctx) { super(ctx); }
-        public Hash calculateHash() { return null; }
+        public DSMStructure(I2PAppContext ctx) {
+            super(ctx);
+        }
+        public Hash calculateHash() {
+            return null;
+        }
         public void fromByteArray(byte[] b) {}
         public void fromBase64(String s) {}
-        public String toBase64() { return null; }
+        public String toBase64() {
+            return null;
+        }
     }
 }

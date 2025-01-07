@@ -88,14 +88,14 @@ public class SybilRenderer {
     }
 
     private static class PointsComparator implements Comparator<Hash>, Serializable {
-         private final Map<Hash, Points> _points;
+        private final Map<Hash, Points> _points;
 
-         public PointsComparator(Map<Hash, Points> points) {
-             _points = points;
-         }
-         public int compare(Hash l, Hash r) {
-             // reverse
-             return _points.get(r).compareTo(_points.get(l));
+        public PointsComparator(Map<Hash, Points> points) {
+            _points = points;
+        }
+        public int compare(Hash l, Hash r) {
+            // reverse
+            return _points.get(r).compareTo(_points.get(l));
         }
     }
 
@@ -104,22 +104,22 @@ public class SybilRenderer {
      *  @since 0.9.38
      */
     private static class ReasonComparator implements Comparator<String>, Serializable {
-         public int compare(String l, String r) {
-             int lc = l.indexOf(':');
-             int rc = r.indexOf(':');
-             if (lc <= 0 || rc <= 0)
-                 return 0;
-             double ld, rd;
-             try {
-                 ld = Double.parseDouble(l.substring(0, lc));
-                 rd = Double.parseDouble(r.substring(0, rc));
-             } catch (NumberFormatException nfe) {
-                 return 0;
-             }
-             int rv = Double.compare(rd, ld);
-             if (rv != 0)
-                 return rv;
-             return l.compareTo(r);
+        public int compare(String l, String r) {
+            int lc = l.indexOf(':');
+            int rc = r.indexOf(':');
+            if (lc <= 0 || rc <= 0)
+                return 0;
+            double ld, rd;
+            try {
+                ld = Double.parseDouble(l.substring(0, lc));
+                rd = Double.parseDouble(r.substring(0, rc));
+            } catch (NumberFormatException nfe) {
+                return 0;
+            }
+            int rv = Double.compare(rd, ld);
+            if (rv != 0)
+                return rv;
+            return l.compareTo(r);
         }
     }
 
@@ -259,8 +259,8 @@ public class SybilRenderer {
                        "<input type=\"hidden\" name=\"f\" value=\"3\">\n" +
                        "<input type=\"hidden\" name=\"m\" value=\"12\">\n" +
                        "<input type=\"hidden\" name=\"nonce\" value=\"").append(nonce).append("\" >\n" +
-                       "Select stored analysis: " +
-                       "<select name=\"date\">\n");
+                               "Select stored analysis: " +
+                               "<select name=\"date\">\n");
             boolean first = true;
             for (Long date : dates) {
                 buf.append("<option value=\"").append(date).append('\"');
@@ -269,11 +269,11 @@ public class SybilRenderer {
                     first = false;
                 }
                 buf.append('>').append(DataHelper.formatTime(date.longValue())).append("</option>\n");
-            }        
+            }
             buf.append("</select>\n" +
                        "<input type=\"submit\" name=\"action\" class=\"go\" value=\"Review analysis\" />" +
                        "</form>\n");
-        }        
+        }
         writeBuf(out, buf);
     }
 
@@ -285,16 +285,16 @@ public class SybilRenderer {
                    "<input type=\"hidden\" name=\"f\" value=\"3\">\n" +
                    "<input type=\"hidden\" name=\"m\" value=\"13\">\n" +
                    "<input type=\"hidden\" name=\"nonce\" value=\"").append(nonce).append("\" >\n" +
-                   "<input type=\"submit\" name=\"action\" class=\"go\" value=\"Run new analysis\" />" +
-                   "(floodfills only)" +
-                   "</form><br>\n");
+                           "<input type=\"submit\" name=\"action\" class=\"go\" value=\"Run new analysis\" />" +
+                           "(floodfills only)" +
+                           "</form><br>\n");
         buf.append("<form action=\"netdb\" method=\"POST\">\n" +
                    "<input type=\"hidden\" name=\"f\" value=\"3\">\n" +
                    "<input type=\"hidden\" name=\"m\" value=\"16\">\n" +
                    "<input type=\"hidden\" name=\"nonce\" value=\"").append(nonce).append("\" >\n" +
-                   "<input type=\"submit\" name=\"action\" class=\"go\" value=\"Run new analysis\" />" +
-                   "(all routers)" +
-                   "</form>\n");
+                           "<input type=\"submit\" name=\"action\" class=\"go\" value=\"Run new analysis\" />" +
+                           "(all routers)" +
+                           "</form>\n");
         writeBuf(out, buf);
     }
 
@@ -307,7 +307,7 @@ public class SybilRenderer {
                    "<input type=\"hidden\" name=\"f\" value=\"3\">\n" +
                    "<input type=\"hidden\" name=\"m\" value=\"15\">\n" +
                    "<input type=\"hidden\" name=\"nonce\" value=\"").append(nonce).append("\" >\n" +
-                   "<table><tr><td>Background analysis run frequency:</td><td><select name=\"runFrequency\">");
+                           "<table><tr><td>Background analysis run frequency:</td><td><select name=\"runFrequency\">");
         for (int i = 0; i < HOURS.length; i++) {
             buf.append("<option value=\"");
             buf.append(HOURS[i]);
@@ -336,8 +336,8 @@ public class SybilRenderer {
             buf.append(HelperBase.CHECKED);
         buf.append("></td></tr>\n<tr><td>" +
                    "Minimum threat points to block:</td><td><input type=\"text\" name=\"threshold\" value=\"").append(thresh).append("\"></td></tr>\n<tr><td>" +
-                   "Days to block:</td><td><input type=\"text\" name=\"days\" value=\"").append(days).append("\"></td></tr>\n<tr><td>" +
-                   "Delete stored analysis older than:</td><td><select name=\"deleteAge\">");
+                           "Days to block:</td><td><input type=\"text\" name=\"days\" value=\"").append(days).append("\"></td></tr>\n<tr><td>" +
+                                   "Delete stored analysis older than:</td><td><select name=\"deleteAge\">");
         long age = _context.getProperty(Analysis.PROP_REMOVETIME, Analysis.DEFAULT_REMOVE_TIME);
         for (int i = 0; i <DAYS.length; i++) {
             buf.append("<option value=\"");
@@ -367,11 +367,11 @@ public class SybilRenderer {
         buf.append("<h3 id=\"known\" class=\"sybils\">Known Floodfills: ").append(ris.size()).append("</h3>");
         buf.append("<div id=\"sybils_summary\">\n" +
                    "<b>Average closest floodfill distance:</b> ").append(fmt.format(avgMinDist)).append("<br>\n" +
-                   "<b>Routing Data:</b> \"").append(DataHelper.getUTF8(_context.routerKeyGenerator().getModData()))
-           .append("\" <b>Last Changed:</b> ").append(DataHelper.formatTime(_context.routerKeyGenerator().getLastChanged())).append("<br>\n" +
-                   "<b>Next Routing Data:</b> \"").append(DataHelper.getUTF8(_context.routerKeyGenerator().getNextModData()))
-           .append("\" <b>Rotates in:</b> ").append(DataHelper.formatDuration(_context.routerKeyGenerator().getTimeTillMidnight())).append("\n" +
-                   "</div>\n");
+                           "<b>Routing Data:</b> \"").append(DataHelper.getUTF8(_context.routerKeyGenerator().getModData()))
+        .append("\" <b>Last Changed:</b> ").append(DataHelper.formatTime(_context.routerKeyGenerator().getLastChanged())).append("<br>\n" +
+                "<b>Next Routing Data:</b> \"").append(DataHelper.getUTF8(_context.routerKeyGenerator().getNextModData()))
+        .append("\" <b>Rotates in:</b> ").append(DataHelper.formatDuration(_context.routerKeyGenerator().getTimeTillMidnight())).append("\n" +
+                "</div>\n");
         writeBuf(out, buf);
     }
 
@@ -492,8 +492,8 @@ public class SybilRenderer {
         for (Iterator<Hash> iter = destinations.iterator(); iter.hasNext(); ) {
             Hash client = iter.next();
             if (!_context.clientManager().isLocal(client) ||
-                !_context.clientManager().shouldPublishLeaseSet(client) ||
-                _context.netDb().lookupLeaseSetLocally(client) == null) {
+                    !_context.clientManager().shouldPublishLeaseSet(client) ||
+                    _context.netDb().lookupLeaseSetLocally(client) == null) {
                 iter.remove();
             }
         }
@@ -559,8 +559,8 @@ public class SybilRenderer {
                 } else {
                     String hash = h.toBase64();
                     buf.append("<a name=\"").append(hash, 0, 6).append("\"></a><table class=\"sybil_routerinfo\"><tr>" +
-                               "<th><b>" + _t("Router") + ":</b> <code>").append(hash).append("</code></th>" +
-                               "<th><b>Router info not available</b></th><th></th></tr></table>\n");
+                            "<th><b>" + _t("Router") + ":</b> <code>").append(hash).append("</code></th>" +
+                                    "<th><b>Router info not available</b></th><th></th></tr></table>\n");
                 }
             }
         }
@@ -572,7 +572,7 @@ public class SybilRenderer {
      */
     private void renderPairDistance(Writer out, StringBuilder buf, List<Pair> pairs, double avg) throws IOException {
         buf.append("<h3 class=\"sybils\">Average Floodfill Distance is ").append(fmt.format(avg)).append("</h3>" +
-                   "<h3 id=\"pairs\" class=\"sybils\">Closest Floodfill Pairs by Hash</h3>");
+                "<h3 id=\"pairs\" class=\"sybils\">Closest Floodfill Pairs by Hash</h3>");
 
         for (Pair p : pairs) {
             double distance = biLog2(p.dist);
@@ -581,7 +581,7 @@ public class SybilRenderer {
             if (point < 2)
                 break;  // sorted;
             buf.append("<p class=\"hashdist\"><b>Hash Distance: ").append(fmt.format(distance)).append("</b>" +
-                       "</p>");
+                    "</p>");
             renderRouterInfo(buf, p.r1, null, false, false);
             renderRouterInfo(buf, p.r2, null, false, false);
         }
@@ -589,30 +589,34 @@ public class SybilRenderer {
     }
 
     private static class FooComparator<K extends Comparable> implements Comparator<K>, Serializable {
-         private final Map<K, List<RouterInfo>> _o;
-         public FooComparator(Map<K, List<RouterInfo>> o) { _o = o;}
-         @SuppressWarnings("unchecked")
-         public int compare(K l, K r) {
-             // reverse by count
-             int rv = _o.get(r).size() - _o.get(l).size();
-             if (rv != 0)
-                 return rv;
-             // forward by IP
-             return l.compareTo(r);
+        private final Map<K, List<RouterInfo>> _o;
+        public FooComparator(Map<K, List<RouterInfo>> o) {
+            _o = o;
+        }
+        @SuppressWarnings("unchecked")
+        public int compare(K l, K r) {
+            // reverse by count
+            int rv = _o.get(r).size() - _o.get(l).size();
+            if (rv != 0)
+                return rv;
+            // forward by IP
+            return l.compareTo(r);
         }
     }
 
     private static class FoofComparator implements Comparator<String>, Serializable {
-         private final Map<String, List<RouterInfo>> _o;
-         private final Collator _comp = Collator.getInstance();
-         public FoofComparator(Map<String, List<RouterInfo>> o) { _o = o;}
-         public int compare(String l, String r) {
-             // reverse by count
-             int rv = _o.get(r).size() - _o.get(l).size();
-             if (rv != 0)
-                 return rv;
-             // forward by name
-             return _comp.compare(l, r);
+        private final Map<String, List<RouterInfo>> _o;
+        private final Collator _comp = Collator.getInstance();
+        public FoofComparator(Map<String, List<RouterInfo>> o) {
+            _o = o;
+        }
+        public int compare(String l, String r) {
+            // reverse by count
+            int rv = _o.get(r).size() - _o.get(l).size();
+            if (rv != 0)
+                return rv;
+            // forward by name
+            return _comp.compare(l, r);
         }
     }
 
@@ -625,39 +629,39 @@ public class SybilRenderer {
         buf.append("<h3 id=\"ourIP\" class=\"sybils\">Routers close to Our IP</h3>");
         boolean found = false;
         for (RouterInfo info : ri32) {
-             buf.append("<p id=\"sybil_info\"><b>");
-             buf.append("Same IP as us");
-             buf.append(":</b></p>");
-             renderRouterInfo(buf, info, null, false, false);
-             found = true;
+            buf.append("<p id=\"sybil_info\"><b>");
+            buf.append("Same IP as us");
+            buf.append(":</b></p>");
+            renderRouterInfo(buf, info, null, false, false);
+            found = true;
         }
         for (RouterInfo info : ri24) {
-             buf.append("<p id=\"sybil_info\"><b>");
-             buf.append("Same IPv4 /24 as us");
-             buf.append(":</b></p>");
-             renderRouterInfo(buf, info, null, false, false);
-             found = true;
+            buf.append("<p id=\"sybil_info\"><b>");
+            buf.append("Same IPv4 /24 as us");
+            buf.append(":</b></p>");
+            renderRouterInfo(buf, info, null, false, false);
+            found = true;
         }
         for (RouterInfo info : ri16) {
-             buf.append("<p id=\"sybil_info\"><b>");
-             buf.append("Same IPv4 /16 as us");
-             buf.append(":</b></p>");
-             renderRouterInfo(buf, info, null, false, false);
-             found = true;
+            buf.append("<p id=\"sybil_info\"><b>");
+            buf.append("Same IPv4 /16 as us");
+            buf.append(":</b></p>");
+            renderRouterInfo(buf, info, null, false, false);
+            found = true;
         }
         for (RouterInfo info : ri64) {
-             buf.append("<p id=\"sybil_info\"><b>");
-             buf.append("Same IPv6 /64 as us");
-             buf.append(":</b></p>");
-             renderRouterInfo(buf, info, null, false, false);
-             found = true;
+            buf.append("<p id=\"sybil_info\"><b>");
+            buf.append("Same IPv6 /64 as us");
+            buf.append(":</b></p>");
+            renderRouterInfo(buf, info, null, false, false);
+            found = true;
         }
         for (RouterInfo info : ri48) {
-             buf.append("<p id=\"sybil_info\"><b>");
-             buf.append("Same IPv6 /48 as us");
-             buf.append(":</b></p>");
-             renderRouterInfo(buf, info, null, false, false);
-             found = true;
+            buf.append("<p id=\"sybil_info\"><b>");
+            buf.append("Same IPv6 /48 as us");
+            buf.append(":</b></p>");
+            renderRouterInfo(buf, info, null, false, false);
+            found = true;
         }
         if (!found)
             buf.append("<p class=\"notfound\">None</p>");
@@ -682,8 +686,8 @@ public class SybilRenderer {
             int i3 = i & 0xff;
             String sip = i0 + "." + i1 + '.' + i2 + '.' + i3;
             buf.append("<p class=\"sybil_info\"><b>").append(count).append(" routers with IP <a href=\"/netdb?ip=")
-               .append(sip).append("&amp;sybil\">").append(sip)
-               .append("</a>:</b></p>");
+            .append(sip).append("&amp;sybil\">").append(sip)
+            .append("</a>:</b></p>");
             for (RouterInfo info : ris) {
                 found = true;
                 renderRouterInfo(buf, info, null, false, false);
@@ -711,8 +715,8 @@ public class SybilRenderer {
             int i2 = i & 0xff;
             String sip = i0 + "." + i1 + '.' + i2 + ".0/24";
             buf.append("<p class=\"sybil_info\"><b>").append(count).append(" routers with IP <a href=\"/netdb?ip=")
-               .append(sip).append("&amp;sybil\">").append(sip)
-               .append("</a>:</b></p>");
+            .append(sip).append("&amp;sybil\">").append(sip)
+            .append("</a>:</b></p>");
             for (RouterInfo info : ris) {
                 found = true;
                 renderRouterInfo(buf, info, null, false, false);
@@ -739,8 +743,8 @@ public class SybilRenderer {
             int i1 = i & 0xff;
             String sip = i0 + "." + i1 + ".0.0/16";
             buf.append("<p class=\"sybil_info\"><b>").append(count).append(" routers with IP <a href=\"/netdb?ip=")
-               .append(sip).append("&amp;sybil\">").append(sip)
-               .append("</a></b></p>");
+            .append(sip).append("&amp;sybil\">").append(sip)
+            .append("</a></b></p>");
             for (RouterInfo info : ris) {
                 found = true;
                 renderRouterInfo(buf, info, null, false, false);
@@ -770,8 +774,8 @@ public class SybilRenderer {
             String sip = Integer.toString(i0, 16) + ":" + Integer.toString(i2, 16) + ':' +
                          Integer.toString(i4, 16) + ':' + Integer.toString(i6, 16) + "::";
             buf.append("<p class=\"sybil_info\"><b>").append(count).append(" routers with IP <a href=\"/netdb?ip=")
-               .append(sip).append("&amp;sybil\">").append(sip)
-               .append("</a></b></p>");
+            .append(sip).append("&amp;sybil\">").append(sip)
+            .append("</a></b></p>");
             for (RouterInfo info : ris) {
                 found = true;
                 renderRouterInfo(buf, info, null, false, false);
@@ -800,8 +804,8 @@ public class SybilRenderer {
             String sip = Integer.toString(i0, 16) + ":" + Integer.toString(i2, 16) + ':' +
                          Integer.toString(i4, 16) + "::";
             buf.append("<p class=\"sybil_info\"><b>").append(count).append(" routers with IP <a href=\"/netdb?ip=")
-               .append(sip).append("&amp;sybil\">").append(sip)
-               .append("</a></b></p>");
+            .append(sip).append("&amp;sybil\">").append(sip)
+            .append("</a></b></p>");
             for (RouterInfo info : ris) {
                 found = true;
                 renderRouterInfo(buf, info, null, false, false);
@@ -828,12 +832,12 @@ public class SybilRenderer {
             String ss = DataHelper.escapeHTML(s);
             if (count > 1) {
                 buf.append("<p class=\"family\"><b>").append(count).append(" routers in family: &nbsp;<a href=\"/netdb?fam=")
-                   .append(ss).append("&amp;sybil\">").append(ss).append("</a></b></p>");
+                .append(ss).append("&amp;sybil\">").append(ss).append("</a></b></p>");
                 found = true;
             }
             //for (RouterInfo info : ris) {
-                // limit display
-                //renderRouterInfo(buf, info, null, false, false);
+            // limit display
+            //renderRouterInfo(buf, info, null, false, false);
             //}
         }
         if (!found)
@@ -924,7 +928,7 @@ public class SybilRenderer {
         double distance = 0;
         if (isUs) {
             buf.append("<th colspan=\"2\"><a name=\"our-info\" ></a><b>" + _t("Our info") + ":</b> <code>").append(hash)
-               .append("</code></th></tr>\n<tr><td class=\"sybilinfo_params\" colspan=\"2\"><div class=\"sybilinfo_container\">");
+            .append("</code></th></tr>\n<tr><td class=\"sybilinfo_params\" colspan=\"2\"><div class=\"sybilinfo_container\">");
         } else {
             buf.append("<th><b>" + _t("Router") + ":</b> <a href=\"netdb?r=").append(hash).append("\"><code>").append(hash).append("</code></a>\n");
 
@@ -932,17 +936,17 @@ public class SybilRenderer {
             buf.append("</th><th>");
             if(country != null) {
                 buf.append("<a href=\"/netdb?c=").append(country).append("\">" +
-                           "<img height=\"11\" width=\"16\" alt=\"").append(country.toUpperCase(Locale.US)).append('\"' +
-                           " title=\"").append(getTranslatedCountry(country)).append('\"' +
-                           " src=\"/flags.jsp?c=").append(country).append("\"> ").append("</a>");
+                        "<img height=\"11\" width=\"16\" alt=\"").append(country.toUpperCase(Locale.US)).append('\"' +
+                                " title=\"").append(getTranslatedCountry(country)).append('\"' +
+                                        " src=\"/flags.jsp?c=").append(country).append("\"> ").append("</a>");
             }
             if (!full) {
                 buf.append("<a title=\"").append(_t("View extended router info")).append("\" class=\"viewfullentry\" href=\"netdb?r=")
-                   .append(hash).append("\" >[").append(_t("Full entry")).append("]</a>");
+                .append(hash).append("\" >[").append(_t("Full entry")).append("]</a>");
                 buf.append("<a title=\"View profile data\" class=\"viewfullentry\" href=\"viewprofile?peer=")
-                   .append(hash).append("\" >[").append(_t("profile")).append("]</a>");
+                .append(hash).append("\" >[").append(_t("profile")).append("]</a>");
                 buf.append("<a title=\"").append(_t("Configure peer")).append("\" class=\"viewfullentry\" href=\"configpeer?peer=")
-                   .append(hash).append("\" >+-</a></th><th>");
+                .append(hash).append("\" >+-</a></th><th>");
             }
             if (_context.portMapper().isRegistered("imagegen"))
                 buf.append("<img src=\"/imagegen/id?s=32&amp;c=" + hash.replace("=", "%3d") + "\" height=\"32\" width=\"32\"> ");
@@ -954,19 +958,19 @@ public class SybilRenderer {
             }
         }
         buf.append("<p><b>").append(_t("Version")).append(":</b> ").append(DataHelper.stripHTML(info.getVersion())).append("</p>\n" +
-                   "<p><b>").append("Caps").append(":</b> ").append(DataHelper.stripHTML(info.getCapabilities())).append("</p>\n");
+                "<p><b>").append("Caps").append(":</b> ").append(DataHelper.stripHTML(info.getCapabilities())).append("</p>\n");
         String kr = info.getOption("netdb.knownRouters");
-;
+        ;
         if (kr != null) {
             buf.append("<p><b>Routers:</b> ").append(DataHelper.stripHTML(kr)).append("</p>");
-        //} else {
-        //    buf.append("<p class=\"sybil_filler\"><b>Routers:</b> ").append(_t("n/a")).append("</p>");
+            //} else {
+            //    buf.append("<p class=\"sybil_filler\"><b>Routers:</b> ").append(_t("n/a")).append("</p>");
         }
         String kls = info.getOption("netdb.knownLeaseSets");
         if (kls != null) {
             buf.append("<p class=\"sybilinfo_leasesets\"><b>").append(_t("LeaseSets")).append(":</b> ").append(DataHelper.stripHTML(kls)).append("</p>\n");
-        //} else {
-        //    buf.append("<p class=\"sybilinfo_leasesets filler\"><b>").append(_t("LeaseSets")).append(":</b> ").append(_t("n/a")).append("</p>");
+            //} else {
+            //    buf.append("<p class=\"sybilinfo_leasesets filler\"><b>").append(_t("LeaseSets")).append(":</b> ").append(_t("n/a")).append("</p>");
         }
         String fam = info.getOption("family");
         if (fam != null) {
@@ -1003,29 +1007,29 @@ public class SybilRenderer {
                     if (heard > 0) {
                         long age = Math.max(now - heard, 1);
                         buf.append("<p><b>").append(_t("Last Good Lookup")).append(":</b> ").append(_t("{0} ago", DataHelper.formatDuration2(age))).append("</p>");
-                    //} else {
-                    //    buf.append("<p class=\"sybil_filler\"><b>").append(_t("Last Good Lookup")).append(":</b> ").append(_t("n/a")).append("</p>");
+                        //} else {
+                        //    buf.append("<p class=\"sybil_filler\"><b>").append(_t("Last Good Lookup")).append(":</b> ").append(_t("n/a")).append("</p>");
                     }
                     heard = dbh.getLastLookupFailed();
                     if (heard > 0) {
                         long age = Math.max(now - heard, 1);
                         buf.append("<p><b>").append(_t("Last Bad Lookup")).append(":</b> ").append(_t("{0} ago", DataHelper.formatDuration2(age))).append("</p>");
-                    //} else {
-                    //    buf.append("<p class=\"sybil_filler\"><b>").append(_t("Last Bad Lookup")).append(":</b> ").append(_t("n/a")).append("</p>");
+                        //} else {
+                        //    buf.append("<p class=\"sybil_filler\"><b>").append(_t("Last Bad Lookup")).append(":</b> ").append(_t("n/a")).append("</p>");
                     }
                     heard = dbh.getLastStoreSuccessful();
                     if (heard > 0) {
                         long age = Math.max(now - heard, 1);
                         buf.append("<p><b>").append(_t("Last Good Store")).append(":</b> ").append(_t("{0} ago", DataHelper.formatDuration2(age))).append("</p>");
-                    //} else {
-                    //    buf.append("<p class=\"sybil_filler\"><b>").append(_t("Last Good Store")).append(":</b> ").append(_t("n/a")).append("</p>");
+                        //} else {
+                        //    buf.append("<p class=\"sybil_filler\"><b>").append(_t("Last Good Store")).append(":</b> ").append(_t("n/a")).append("</p>");
                     }
                     heard = dbh.getLastStoreFailed();
                     if (heard > 0) {
                         long age = Math.max(now - heard, 1);
                         buf.append("<p><b>").append(_t("Last Bad Store")).append(":</b> ").append(_t("{0} ago", DataHelper.formatDuration2(age))).append("</p>");
-                    //} else {
-                    //    buf.append("<p class=\"sybil_filler\"><b>").append(_t("Last Bad Store")).append(":</b> ").append(_t("n/a")).append("</p>");
+                        //} else {
+                        //    buf.append("<p class=\"sybil_filler\"><b>").append(_t("Last Bad Store")).append(":</b> ").append(_t("n/a")).append("</p>");
                     }
                 }
                 // any other profile stuff?
@@ -1034,12 +1038,12 @@ public class SybilRenderer {
         long age = Math.max(now - info.getPublished(), 1);
         if (isUs && _context.router().isHidden()) {
             buf.append("<p><b>").append(_t("Hidden")).append(", ").append(_t("Updated")).append(":</b> ")
-               .append(_t("{0} ago", DataHelper.formatDuration2(age))).append("</p>\n");
+            .append(_t("{0} ago", DataHelper.formatDuration2(age))).append("</p>\n");
         } else {
             buf.append("<p><b>").append(_t("Published")).append(":</b> ").append(_t("{0} ago", DataHelper.formatDuration2(age))).append("</p>\n");
         }
         buf.append("<p><b>").append(_t("Signing Key")).append(":</b> ")
-           .append(info.getIdentity().getSigningPublicKey().getType().toString()).append("</p>\n");
+        .append(info.getIdentity().getSigningPublicKey().getType().toString()).append("</p>\n");
         buf.append("<p class=\"sybil_filler\">&nbsp;</p>" +
                    "</div></td></tr><tr><td class=\"sybil_addresses\" colspan=\"3\"><table><tr><td><b>" + _t("Addresses") + ":</b></td><td>");
         Collection<RouterAddress> addrs = info.getAddresses();
@@ -1056,7 +1060,7 @@ public class SybilRenderer {
             for (Map.Entry<Object, Object> e : p.entrySet()) {
                 String name = (String) e.getKey();
                 if (name.equals("key") || name.startsWith("ikey") || name.startsWith("itag") ||
-                    name.startsWith("iport") || name.equals("mtu"))
+                        name.startsWith("iport") || name.equals("mtu"))
                     continue;
                 String val = (String) e.getValue();
                 buf.append(" <span class=\"nowrap\"><span class=\"netdb_name\">").append(_t(DataHelper.stripHTML(name))).append(":</span> <span class=\"netdb_info\">");

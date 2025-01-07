@@ -34,9 +34,9 @@ public class BigIntegerFieldElementTest extends AbstractFieldElementTest {
     static final byte[] BYTES_TEN = Utils.hexToBytes("0a00000000000000000000000000000000000000000000000000000000000000");
 
     static final Field ed25519Field = new Field(
-            256, // b
-            Utils.hexToBytes("edffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7f"), // q
-            new BigIntegerLittleEndianEncoding());
+        256, // b
+        Utils.hexToBytes("edffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7f"), // q
+        new BigIntegerLittleEndianEncoding());
 
     static final FieldElement ZERO = new BigIntegerFieldElement(ed25519Field, BigInteger.ZERO);
     static final FieldElement ONE = new BigIntegerFieldElement(ed25519Field, BigInteger.ONE);

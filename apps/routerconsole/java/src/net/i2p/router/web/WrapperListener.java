@@ -31,7 +31,7 @@ class WrapperListener {
     public WrapperListener(RouterContext ctx) {
         _listener = new SignalHandler(ctx);
         long mask = SystemVersion.isWindows() ? WrapperEventListener.EVENT_FLAG_SERVICE :
-                                                WrapperEventListener.EVENT_FLAG_CONTROL;
+                    WrapperEventListener.EVENT_FLAG_CONTROL;
 
         WrapperManager.addWrapperEventListener(_listener, mask);
     }
@@ -64,21 +64,21 @@ class WrapperListener {
                 WrapperServiceControlEvent wcse = (WrapperServiceControlEvent) event;
                 int code = wcse.getServiceControlCode();
                 switch (code) {
-                  case WrapperManager.SERVICE_CONTROL_CODE_STOP:       // 1
-                  case WrapperManager.SERVICE_CONTROL_CODE_SHUTDOWN:   // 5
+                case WrapperManager.SERVICE_CONTROL_CODE_STOP:       // 1
+                case WrapperManager.SERVICE_CONTROL_CODE_SHUTDOWN:   // 5
                     log.log(Log.CRIT, "Hard shutdown initiated by Windows service control: " + code);
                     // JVM will call ShutdownHook if we don't do it ourselves
                     ConfigServiceHandler.registerWrapperNotifier(_ctxt, Router.EXIT_HARD, false);
                     _ctxt.router().shutdown(Router.EXIT_HARD);
                     break;
 
-                  // TODO Power suspend/resume?
-                  // Warning, definitions not available in 3.2.0, use integers
-                  // Tanuki doesn't usually mark things with @since, sadly
-                  // case 35xx // WrapperManager.SERVICE_CONTROL_POWEREVENT_ ...
-                  //  break;
+                // TODO Power suspend/resume?
+                // Warning, definitions not available in 3.2.0, use integers
+                // Tanuki doesn't usually mark things with @since, sadly
+                // case 35xx // WrapperManager.SERVICE_CONTROL_POWEREVENT_ ...
+                //  break;
 
-                  default:
+                default:
                     if (log.shouldWarn())
                         log.warn("Unhandled control event code: " + code);
                     break;
@@ -94,11 +94,11 @@ class WrapperListener {
                 log.warn("Got signal: " + wce.getControlEventName());
             int sig = wce.getControlEvent();
             switch (sig) {
-              case WrapperManager.WRAPPER_CTRL_HUP_EVENT:
+            case WrapperManager.WRAPPER_CTRL_HUP_EVENT:
                 if (_ctxt.getBooleanPropertyDefaultTrue(PROP_GRACEFUL_HUP)) {
                     wce.consume();
                     if (!(_ctxt.router().gracefulShutdownInProgress() ||
-                          _ctxt.router().isFinalShutdownInProgress())) {
+                            _ctxt.router().isFinalShutdownInProgress())) {
                         System.err.println("WARN: Graceful shutdown initiated by SIGHUP");
                         log.logAlways(Log.WARN, "Graceful shutdown initiated by SIGHUP");
                         ConfigServiceHandler.registerWrapperNotifier(_ctxt, Router.EXIT_GRACEFUL, false);

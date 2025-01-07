@@ -71,7 +71,7 @@ abstract class TrayManager {
         _useSwing = useSwing;
         _menus = new ArrayList<MenuInternal>();
     }
-    
+
     /**
      * Add the tray icon to the system tray and start everything up.
      */
@@ -101,8 +101,12 @@ abstract class TrayManager {
             public void mouseClicked(MouseEvent m)  {}
             public void mouseEntered(MouseEvent m)  {}
             public void mouseExited(MouseEvent m)   {}
-            public void mousePressed(MouseEvent m)  { updateMenu(); }
-            public void mouseReleased(MouseEvent m) { updateMenu(); }
+            public void mousePressed(MouseEvent m)  {
+                updateMenu();
+            }
+            public void mouseReleased(MouseEvent m) {
+                updateMenu();
+            }
         });
         return ti;
     }
@@ -126,8 +130,12 @@ abstract class TrayManager {
             public void mouseClicked(MouseEvent e)  {}
             public void mouseEntered(MouseEvent e)  {}
             public void mouseExited(MouseEvent e)   {}
-            public void mousePressed(MouseEvent e)  { handle(e); }
-            public void mouseReleased(MouseEvent e) { handle(e); }
+            public void mousePressed(MouseEvent e)  {
+                handle(e);
+            }
+            public void mouseReleased(MouseEvent e) {
+                handle(e);
+            }
             private void handle(MouseEvent e) {
                 //System.out.println("Button " + e.getButton() + " Frame was visible? " +
                 //                   frame.isVisible() + " menu was visible? " + menu.isVisible() +
@@ -144,14 +152,18 @@ abstract class TrayManager {
         });
         menu.addPopupMenuListener(new PopupMenuListener() {
             public void popupMenuCanceled(PopupMenuEvent e)            { /* frame.setVisible(false); */ }
-            public void popupMenuWillBecomeInvisible(PopupMenuEvent e) { frame.setVisible(false); }
+            public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+                frame.setVisible(false);
+            }
             public void popupMenuWillBecomeVisible(PopupMenuEvent e)   {}
         });
         // this is to make it go away when we click elsewhere
         // doesn't do anything
         menu.addFocusListener(new FocusListener() {
             public void focusGained(FocusEvent e) {}
-            public void focusLost(FocusEvent e)   { frame.setVisible(false); }
+            public void focusLost(FocusEvent e)   {
+                frame.setVisible(false);
+            }
         });
         // this is to make it go away when we hit escape
         // doesn't do anything
@@ -178,7 +190,7 @@ abstract class TrayManager {
             trayIcon = null;
         }
     }
-    
+
     public synchronized void languageChanged() {
         if (trayIcon != null) {
             if (!_useSwing)
@@ -186,26 +198,26 @@ abstract class TrayManager {
             // else TODO
         }
     }
-    
+
     /**
      * Build a popup menu, adding callbacks to the different items.
      * @return popup menu
      */
     protected abstract PopupMenu getMainMenu();
-    
+
     /**
      * Build a popup menu, adding callbacks to the different items.
      * @return popup menu
      * @since 0.9.26
      */
     protected abstract JPopupMenu getSwingMainMenu();
-    
+
     /**
      * Update the menu
      * @since 0.9.26
      */
     protected abstract void updateMenu();
-    
+
     /**
      * Get tray icon image from the desktopgui resources in the jar file.
      * @return image used for the tray icon
@@ -233,7 +245,7 @@ abstract class TrayManager {
         Image image = Toolkit.getDefaultToolkit().getImage(url);
         return image;
     }
-    
+
     /**
      *  Send a notification to the user.
      *
@@ -258,47 +270,47 @@ abstract class TrayManager {
         else
             type = TrayIcon.MessageType.ERROR;
         ti.displayMessage(title, message, type);
-/*
- * There's apparently no way to bind a particular message to an action
-   that comes back. We can't keep a queue because we don't get
-   an action back when the message is removed via timeout or user x-out.
-   On OSX, new messages dismiss previous ones.
-   On LXDE (and Gnome?), new messages go under previous ones. Timeout is only 10 seconds.
-   Message timeout is platform-dependent.
-   So the order of events is unknowable.
-   This only works if there is only one message ever.
+        /*
+         * There's apparently no way to bind a particular message to an action
+           that comes back. We can't keep a queue because we don't get
+           an action back when the message is removed via timeout or user x-out.
+           On OSX, new messages dismiss previous ones.
+           On LXDE (and Gnome?), new messages go under previous ones. Timeout is only 10 seconds.
+           Message timeout is platform-dependent.
+           So the order of events is unknowable.
+           This only works if there is only one message ever.
 
-        if (path != null && path.length() > 0) {
-            if (path.charAt(0) == '/');
-                path = path.substring(1);
-            final String url = _appContext.portMapper().getConsoleURL() + path;
-            ti.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent arg0) {
-                    ti.removeActionListener(this);
-                    new SwingWorker<Object, Object>() {
+                if (path != null && path.length() > 0) {
+                    if (path.charAt(0) == '/');
+                        path = path.substring(1);
+                    final String url = _appContext.portMapper().getConsoleURL() + path;
+                    ti.addActionListener(new ActionListener() {
                         @Override
-                        protected Object doInBackground() throws Exception {
-                            System.out.println("DIB " + arg0);
-                            UrlLauncher launcher = new UrlLauncher(_appContext, null, null);
-                            try {
-                                launcher.openUrl(url);
-                                System.out.println("DIB success " + url);
-                            } catch (IOException e1) {
-                                System.out.println("DIB fail " + url);
-                            }
-                            return null;
-                        }
+                        public void actionPerformed(ActionEvent arg0) {
+                            ti.removeActionListener(this);
+                            new SwingWorker<Object, Object>() {
+                                @Override
+                                protected Object doInBackground() throws Exception {
+                                    System.out.println("DIB " + arg0);
+                                    UrlLauncher launcher = new UrlLauncher(_appContext, null, null);
+                                    try {
+                                        launcher.openUrl(url);
+                                        System.out.println("DIB success " + url);
+                                    } catch (IOException e1) {
+                                        System.out.println("DIB fail " + url);
+                                    }
+                                    return null;
+                                }
 
-                        @Override
-                        protected void done() {
-                            System.out.println("done " + arg0);
+                                @Override
+                                protected void done() {
+                                    System.out.println("done " + arg0);
+                                }
+                            }.execute();
                         }
-                    }.execute();
+                    });
                 }
-            });
-        }
-*/
+        */
         return 0;
     }
 
@@ -327,7 +339,7 @@ abstract class TrayManager {
                         configureNotifications(true);
                         return null;
                     }
-                }.execute();
+                } .execute();
             }
         });
         _notificationItem2 = notificationItem2;
@@ -342,7 +354,7 @@ abstract class TrayManager {
                         configureNotifications(false);
                         return null;
                     }
-                }.execute();
+                } .execute();
             }
         });
         _notificationItem1 = notificationItem1;
@@ -364,7 +376,7 @@ abstract class TrayManager {
                         configureNotifications(true);
                         return null;
                     }
-                }.execute();
+                } .execute();
             }
         });
         _jnotificationItem2 = notificationItem2;
@@ -379,7 +391,7 @@ abstract class TrayManager {
                         configureNotifications(false);
                         return null;
                     }
-                }.execute();
+                } .execute();
             }
         });
         _jnotificationItem1 = notificationItem1;
@@ -406,7 +418,7 @@ abstract class TrayManager {
                             rv.cb.clicked(rv);
                             return null;
                         }
-                    }.execute();
+                    } .execute();
                 }
             });
             _jPopupMenu.add(m);
@@ -422,7 +434,7 @@ abstract class TrayManager {
                             rv.cb.clicked(rv);
                             return null;
                         }
-                    }.execute();
+                    } .execute();
                 }
             });
             trayIcon.getPopupMenu().add(m);
@@ -500,8 +512,8 @@ abstract class TrayManager {
     private MenuInternal getMenu(int id) {
         synchronized(_menus) {
             for (MenuInternal mi : _menus) {
-                 if (mi.getID() == id)
-                     return mi;
+                if (mi.getID() == id)
+                    return mi;
             }
         }
         return null;
@@ -517,10 +529,15 @@ abstract class TrayManager {
         private final int id;
 
         public MenuInternal(MenuItem mm, JMenuItem jmm, MenuCallback cbb, int idd) {
-            m = mm; jm = jmm; cb = cbb; id = idd;
+            m = mm;
+            jm = jmm;
+            cb = cbb;
+            id = idd;
         }
 
-        public int getID() { return id; }
+        public int getID() {
+            return id;
+        }
 
         private void setEnabled(boolean yes) {
             if (m != null)
@@ -547,7 +564,7 @@ abstract class TrayManager {
     protected String _t(String s) {
         return DesktopguiTranslator._t(_appContext, s);
     }
-    
+
     /**
      * @since 0.9.26
      */

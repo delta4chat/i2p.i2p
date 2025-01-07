@@ -1,9 +1,9 @@
 package net.i2p.data.i2cp;
 /*
  * free (adj.): unencumbered; not under the control of others
- * Written by jrandom in 2003 and released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
- * It probably won't make your computer catch on fire, or eat 
+ * Written by jrandom in 2003 and released into the public domain
+ * with no warranty of any kind, either expressed or implied.
+ * It probably won't make your computer catch on fire, or eat
  * your children, but it might.  Use at your own risk.
  *
  */
@@ -24,11 +24,13 @@ import net.i2p.data.LeaseSetTest;
 public class CreateLeaseSetMessageTest extends I2CPTstBase {
     public I2CPMessageImpl createDataStructure() throws DataFormatException {
         CreateLeaseSetMessage msg = new CreateLeaseSetMessage();
-    	msg.setPrivateKey((PrivateKey)(new PrivateKeyTest()).createDataStructure());
-    	msg.setSigningPrivateKey((SigningPrivateKey)(new SigningPrivateKeyTest()).createDataStructure());
-    	msg.setLeaseSet((LeaseSet)(new LeaseSetTest()).createDataStructure());
+        msg.setPrivateKey((PrivateKey)(new PrivateKeyTest()).createDataStructure());
+        msg.setSigningPrivateKey((SigningPrivateKey)(new SigningPrivateKeyTest()).createDataStructure());
+        msg.setLeaseSet((LeaseSet)(new LeaseSetTest()).createDataStructure());
         msg.setSessionId((SessionId)(new SessionIdTest()).createDataStructure());
-        return msg; 
+        return msg;
     }
-    public I2CPMessageImpl createStructureToRead() { return new CreateLeaseSetMessage(); }
+    public I2CPMessageImpl createStructureToRead() {
+        return new CreateLeaseSetMessage();
+    }
 }

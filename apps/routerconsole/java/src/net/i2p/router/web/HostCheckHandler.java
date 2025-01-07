@@ -45,11 +45,11 @@ public class HostCheckHandler extends GzipHandler
         setMinGzipSize(32*1024);
         if (_context.getBooleanPropertyDefaultTrue(PROP_GZIP)) {
             addIncludedMimeTypes(
-                                 "application/javascript", "application/x-javascript",
-                                 "application/xhtml+xml", "application/xml",
-                                 "image/svg+xml",
-                                 "text/css", "text/html", "text/plain"
-                                );
+                "application/javascript", "application/x-javascript",
+                "application/xhtml+xml", "application/xml",
+                "image/svg+xml",
+                "text/css", "text/html", "text/plain"
+            );
         } else {
             // poorly documented, but we must put something in,
             // if empty all are matched,
@@ -57,7 +57,7 @@ public class HostCheckHandler extends GzipHandler
             addIncludedMimeTypes("xyzzy");
         }
     }
-    
+
     /**
      *  Set the legal hosts.
      *  Not synched. Call this BEFORE starting.
@@ -79,7 +79,7 @@ public class HostCheckHandler extends GzipHandler
                        Request baseRequest,
                        HttpServletRequest httpRequest,
                        HttpServletResponse httpResponse)
-         throws IOException, ServletException
+    throws IOException, ServletException
     {
 
         String host = httpRequest.getHeader("Host");
@@ -105,7 +105,7 @@ public class HostCheckHandler extends GzipHandler
             if (httpsPort > 0 && httpRequest.getLocalPort() != httpsPort) {
                 String redir = _context.getProperty(PROP_REDIRECT);
                 if (Boolean.parseBoolean(redir) ||
-                    (redir == null && "1".equals(httpRequest.getHeader("Upgrade-Insecure-Requests")))) {
+                        (redir == null && "1".equals(httpRequest.getHeader("Upgrade-Insecure-Requests")))) {
                     sendRedirect(httpsPort, httpRequest, httpResponse);
                     baseRequest.setHandled(true);
                     return;
@@ -129,11 +129,11 @@ public class HostCheckHandler extends GzipHandler
             return true;
         // common cases
         if (host.equals("127.0.0.1:7657") ||
-            host.equals("localhost:7657") ||
-            host.equals("[::1]:7657") ||
-            host.equals("127.0.0.1:7667") ||
-            host.equals("localhost:7667") ||
-            host.equals("[::1]:7667"))
+                host.equals("localhost:7657") ||
+                host.equals("[::1]:7657") ||
+                host.equals("127.0.0.1:7667") ||
+                host.equals("localhost:7667") ||
+                host.equals("[::1]:7667"))
             return true;
         // all allowed?
         if (_listenHosts.isEmpty())
@@ -184,7 +184,7 @@ public class HostCheckHandler extends GzipHandler
         if (ipv6)
             buf.append(']');
         buf.append(':').append(httpsPort)
-           .append(httpRequest.getRequestURI());
+        .append(httpRequest.getRequestURI());
         String q = httpRequest.getQueryString();
         if (q != null)
             buf.append('?').append(q);

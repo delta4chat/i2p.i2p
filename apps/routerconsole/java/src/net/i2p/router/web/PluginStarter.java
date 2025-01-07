@@ -62,12 +62,14 @@ public class PluginStarter implements Runnable {
     public static final String DELETED = "deleted";
     public static final String PLUGIN_DIR = "plugins";
     private static final String[] STANDARD_WEBAPPS = { "i2psnark", "i2ptunnel", "imagegen", "susidns",
-                                                       "susimail", "addressbook", "routerconsole" };
+                                                       "susimail", "addressbook", "routerconsole"
+                                                     };
     private static final String[] STANDARD_THEMES = { "images", "light", "dark", "classic",
-                                                      "midnight" };
+                                                      "midnight"
+                                                    };
     private static Map<String, ThreadGroup> pluginThreadGroups = new ConcurrentHashMap<String, ThreadGroup>();   // one thread group per plugin (map key=plugin name)
     private static Map<String, Collection<SimpleTimer2.TimedEvent>> _pendingPluginClients =
-                   new ConcurrentHashMap<String, Collection<SimpleTimer2.TimedEvent>>();
+        new ConcurrentHashMap<String, Collection<SimpleTimer2.TimedEvent>>();
     private static Map<String, ClassLoader> _clCache = new ConcurrentHashMap<String, ClassLoader>();
     private static Map<String, Collection<String>> pluginWars = new ConcurrentHashMap<String, Collection<String>>();
 
@@ -111,17 +113,17 @@ public class PluginStarter implements Runnable {
      *  @since public since 0.9.33, was package private
      */
     public static boolean pluginsEnabled(I2PAppContext ctx) {
-         return ctx.getBooleanPropertyDefaultTrue("router.enablePlugins");
+        return ctx.getBooleanPropertyDefaultTrue("router.enablePlugins");
     }
 
     public void run() {
         deferredDeletePlugins(_context);
         if (_context.getBooleanPropertyDefaultTrue("plugins.autoUpdate") &&
-            !NewsHelper.isUpdateInProgress() &&
-            !_context.commSystem().isDummy()) {
+                !NewsHelper.isUpdateInProgress() &&
+                !_context.commSystem().isDummy()) {
             String prev = _context.getProperty("router.previousVersion");
             if (prev != null &&
-                VersionComparator.comp(RouterVersion.VERSION, prev) > 0) {
+                    VersionComparator.comp(RouterVersion.VERSION, prev) > 0) {
                 updateAll(_context, true);
             }
         }
@@ -182,7 +184,9 @@ public class PluginStarter implements Runnable {
             while (!ctx.router().isRunning()) {
                 try {
                     Thread.sleep(10*1000);
-                } catch (InterruptedException ie) { return; }
+                } catch (InterruptedException ie) {
+                    return;
+                }
                 // 30 minutes
                 if (loop++ > 180) return;
             }
@@ -193,7 +197,9 @@ public class PluginStarter implements Runnable {
             do {
                 try {
                     Thread.sleep(5*1000);
-                } catch (InterruptedException ie) { break; }
+                } catch (InterruptedException ie) {
+                    break;
+                }
                 if (loop++ > 40) break;
             } while (mgr.isUpdateInProgress(TYPE_DUMMY));
         }
@@ -201,17 +207,17 @@ public class PluginStarter implements Runnable {
         String proxyHost = ctx.getProperty(ConfigUpdateHandler.PROP_PROXY_HOST, ConfigUpdateHandler.DEFAULT_PROXY_HOST);
         int proxyPort = ConfigUpdateHandler.proxyPort(ctx);
         if (proxyPort == ConfigUpdateHandler.DEFAULT_PROXY_PORT_INT &&
-            proxyHost.equals(ConfigUpdateHandler.DEFAULT_PROXY_HOST) &&
-            !ctx.portMapper().isRegistered(PortMapper.SVC_HTTP_PROXY)) {
+                proxyHost.equals(ConfigUpdateHandler.DEFAULT_PROXY_HOST) &&
+                !ctx.portMapper().isRegistered(PortMapper.SVC_HTTP_PROXY)) {
             mgr.notifyComplete(null, Messages.getString("Plugin update check failed", ctx) +
-                                     " - " +
-                                     Messages.getString("HTTP client proxy tunnel must be running", ctx));
+                               " - " +
+                               Messages.getString("HTTP client proxy tunnel must be running", ctx));
             return;
         }
         if (ctx.commSystem().isDummy()) {
             mgr.notifyComplete(null, Messages.getString("Plugin update check failed", ctx) +
-                                     " - " +
-                                     "VM Comm System");
+                               " - " +
+                               "VM Comm System");
             return;
         }
 
@@ -352,7 +358,7 @@ public class PluginStarter implements Runnable {
 
         String minVersion = stripHTML(props, "min-i2p-version");
         if (minVersion != null &&
-            VersionComparator.comp(CoreVersion.VERSION, minVersion) < 0) {
+                VersionComparator.comp(CoreVersion.VERSION, minVersion) < 0) {
             String foo = "Plugin " + appName + " requires I2P version " + minVersion + " or higher";
             log.error(foo);
             disablePlugin(appName);
@@ -372,7 +378,7 @@ public class PluginStarter implements Runnable {
         String jVersion = RouterConsoleRunner.jettyVersion();
         minVersion = stripHTML(props, "min-jetty-version");
         if (minVersion != null &&
-            VersionComparator.comp(minVersion, jVersion) > 0) {
+                VersionComparator.comp(minVersion, jVersion) > 0) {
             String foo = "Plugin " + appName + " requires Jetty version " + minVersion + " or higher";
             log.error(foo);
             disablePlugin(appName);
@@ -383,7 +389,7 @@ public class PluginStarter implements Runnable {
         String blacklistVersion = jetty9Blacklist.get(appName);
         String curVersion = stripHTML(props, "version");
         if (blacklistVersion != null &&
-            VersionComparator.comp(curVersion, blacklistVersion) <= 0) {
+                VersionComparator.comp(curVersion, blacklistVersion) <= 0) {
             String foo = "Plugin " + appName + " requires Jetty version 8.9999 or lower";
             log.error(foo);
             disablePlugin(appName);
@@ -394,7 +400,7 @@ public class PluginStarter implements Runnable {
         if (SystemVersion.isJava9()) {
             blacklistVersion = java9Blacklist.get(appName);
             if (blacklistVersion != null &&
-                VersionComparator.comp(curVersion, blacklistVersion) <= 0) {
+                    VersionComparator.comp(curVersion, blacklistVersion) <= 0) {
                 String foo = "Plugin " + appName + " requires Jetty version 8.9999 or lower";
                 log.error(foo);
                 disablePlugin(appName);
@@ -405,7 +411,7 @@ public class PluginStarter implements Runnable {
 
         String maxVersion = stripHTML(props, "max-jetty-version");
         if (maxVersion != null &&
-            VersionComparator.comp(maxVersion, jVersion) < 0) {
+                VersionComparator.comp(maxVersion, jVersion) < 0) {
             String foo = "Plugin " + appName + " requires Jetty version " + maxVersion + " or lower";
             log.error(foo);
             disablePlugin(appName);
@@ -432,7 +438,7 @@ public class PluginStarter implements Runnable {
 
         //handle console icons for plugins without web-resources through prop icon-code
         String fullprop = props.getProperty("icon-code");
-        if(fullprop != null && fullprop.length() > 1){
+        if(fullprop != null && fullprop.length() > 1) {
             byte[] decoded = Base64.decode(fullprop);
             if(decoded != null) {
                 NavHelper.getInstance(ctx).setBinary(appName, decoded);
@@ -528,8 +534,8 @@ public class PluginStarter implements Runnable {
                         added = true;
                     } catch (ClassCastException e) {
                         log.logAlways(Log.WARN, "Java version: " + System.getProperty("java.version") +
-                                                " does not support adding classpath element: " + f +
-                                                " for plugin " + appName);
+                                      " does not support adding classpath element: " + f +
+                                      " for plugin " + appName);
                     } catch (RuntimeException e) {
                         log.error("Plugin " + appName + " bad classpath element: " + f, e);
                     }
@@ -579,9 +585,9 @@ public class PluginStarter implements Runnable {
 
         ClientApp client = ctx.clientAppManager().getRegisteredApp(appName);
         if (client != null) {
-            try{
+            try {
                 client.shutdown(null);
-            }catch(Throwable t){
+            } catch(Throwable t) {
                 if (log.shouldLog(Log.ERROR))
                     log.error("Error stopping client app: " + appName, t);
             }
@@ -614,17 +620,17 @@ public class PluginStarter implements Runnable {
                 }
             }
         */
-            if (s != null) {
-                Collection<String> wars = pluginWars.get(appName);
-                if (wars != null) {
-                    for (String warName : wars) {
-                        if (log.shouldInfo())
-                            log.info("Stopping webapp " + warName + " in plugin " + appName);
-                        WebAppStarter.stopWebApp(ctx, s, warName);
-                    }
-                    wars.clear();
+        if (s != null) {
+            Collection<String> wars = pluginWars.get(appName);
+            if (wars != null) {
+                for (String warName : wars) {
+                    if (log.shouldInfo())
+                        log.info("Stopping webapp " + warName + " in plugin " + appName);
+                    WebAppStarter.stopWebApp(ctx, s, warName);
                 }
+                wars.clear();
             }
+        }
         //}
 
         // remove summary bar link
@@ -952,7 +958,7 @@ public class PluginStarter implements Runnable {
                 }
                 // wait before firing it up
                 SimpleTimer2.TimedEvent evt = new TrackedDelayedClient(pluginName, ctx.simpleTimer2(), ctx, app.className,
-                                                                       app.clientName, argVal, pluginThreadGroup, cl);
+                        app.clientName, argVal, pluginThreadGroup, cl);
                 evt.schedule(app.delay);
             }
         }
@@ -1035,10 +1041,10 @@ public class PluginStarter implements Runnable {
         boolean isClientThreadRunning = isClientThreadRunning(pluginName, ctx);
         if (log.shouldLog(Log.DEBUG))
             log.debug("plugin name = <" + pluginName +
-            ">; threads running? " + isClientThreadRunning +
-            "; webapp running? " + isWarRunning +
-            "; jobs running? " + isJobRunning +
-            "; process running? " + isProcessRunning);
+                      ">; threads running? " + isClientThreadRunning +
+                      "; webapp running? " + isWarRunning +
+                      "; jobs running? " + isJobRunning +
+                      "; process running? " + isProcessRunning);
         return isClientThreadRunning || isWarRunning || isJobRunning || isProcessRunning;
         //
         //if (log.shouldLog(Log.DEBUG))
@@ -1070,7 +1076,7 @@ public class PluginStarter implements Runnable {
                 if (activeThreads[i] != null) {
                     String name = activeThreads[i].getName();
                     if (!"org.eclipse.jetty.util.RolloverFileOutputStream".equals(name) &&
-                        !name.startsWith("HSQLDB Timer"))
+                            !name.startsWith("HSQLDB Timer"))
                         notRollover = true;
                     if (log.shouldLog(Log.DEBUG))
                         log.debug("Found " + activeThreads[i].getState() + " thread " + name + " for " + pluginName + ": " + name);
@@ -1087,26 +1093,26 @@ public class PluginStarter implements Runnable {
      *  but I don't see how to make it magically get used for everything.
      *  So add this to the whole JVM's classpath.
      */
-/******
-    private static void addToClasspath(String classpath, String clientName, Log log) {
-        StringTokenizer tok = new StringTokenizer(classpath, ",");
-        while (tok.hasMoreTokens()) {
-            String elem = tok.nextToken().trim();
-            File f = new File(elem);
-            if (!f.isAbsolute()) {
-                log.error("Plugin client " + clientName + " classpath element is not absolute: " + f);
-                continue;
-            }
-            try {
-                addPath(f.toURI().toURL());
-                if (log.shouldLog(Log.WARN))
-                    log.warn("INFO: Adding plugin to classpath: " + f);
-            } catch (Exception e) {
-                log.error("Plugin client " + clientName + " bad classpath element: " + f, e);
+    /******
+        private static void addToClasspath(String classpath, String clientName, Log log) {
+            StringTokenizer tok = new StringTokenizer(classpath, ",");
+            while (tok.hasMoreTokens()) {
+                String elem = tok.nextToken().trim();
+                File f = new File(elem);
+                if (!f.isAbsolute()) {
+                    log.error("Plugin client " + clientName + " classpath element is not absolute: " + f);
+                    continue;
+                }
+                try {
+                    addPath(f.toURI().toURL());
+                    if (log.shouldLog(Log.WARN))
+                        log.warn("INFO: Adding plugin to classpath: " + f);
+                } catch (Exception e) {
+                    log.error("Plugin client " + clientName + " bad classpath element: " + f, e);
+                }
             }
         }
-    }
-*****/
+    *****/
 
     /**
      *  @return null if no valid elements
@@ -1144,7 +1150,7 @@ public class PluginStarter implements Runnable {
         Class<URLClassLoader> urlClass = URLClassLoader.class;
         Method method = urlClass.getDeclaredMethod("addURL", URL.class);
         method.setAccessible(true);
-        method.invoke(urlClassLoader, new Object[]{u});
+        method.invoke(urlClassLoader, new Object[] {u});
     }
 
     /**

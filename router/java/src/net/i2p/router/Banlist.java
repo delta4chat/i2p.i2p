@@ -35,7 +35,7 @@ public class Banlist {
     private final Log _log;
     private final RouterContext _context;
     private final Map<Hash, Entry> _entries;
-    
+
     public static class Entry {
         /** when it should expire, per the i2p clock */
         public long expireOn;
@@ -46,7 +46,7 @@ public class Banlist {
         /** what transports they were banlisted for (String), or null for all transports */
         public Set<String> transports;
     }
-    
+
     /**
      *  Don't make this too long as the failure may be transient
      *  due to connection limits.
@@ -62,7 +62,7 @@ public class Banlist {
     public final static long BANLIST_DURATION_NO_NETWORK = 30*24*60*60*1000L;
     public final static long BANLIST_DURATION_LOCALHOST = 2*60*60*1000;
     private final static long BANLIST_CLEANER_START_DELAY = BANLIST_DURATION_PARTIAL;
-    
+
     public Banlist(RouterContext context) {
         _context = context;
         _log = context.logManager().getLog(Banlist.class);
@@ -71,7 +71,7 @@ public class Banlist {
         // i2pd bug?
         banlistRouterForever(Hash.FAKE_HASH, "Invalid Hash");
     }
-    
+
     private class Cleanup extends JobImpl {
         private List<Hash> _toUnbanlist;
         public Cleanup(RouterContext ctx) {
@@ -79,7 +79,9 @@ public class Banlist {
             _toUnbanlist = new ArrayList<Hash>(4);
             getTiming().setStartAfter(ctx.clock().now() + BANLIST_CLEANER_START_DELAY);
         }
-        public String getName() { return "Expire banned peers"; }
+        public String getName() {
+            return "Expire banned peers";
+        }
         public void runJob() {
             _toUnbanlist.clear();
             long now = getContext().clock().now();
@@ -100,15 +102,15 @@ public class Banlist {
                 if (_log.shouldLog(Log.INFO))
                     _log.info("Unbanlisting router (expired) " + peer.toBase64());
             }
-            
+
             requeue(30*1000);
         }
     }
-    
+
     public int getRouterCount() {
         return _entries.size();
     }
-    
+
     /**
      *  For BanlistRenderer in router console.
      *  Note - may contain expired entries.
@@ -116,7 +118,7 @@ public class Banlist {
     public Map<Hash, Entry> getEntries() {
         return Collections.unmodifiableMap(_entries);
     }
-    
+
     /**
      *  @return true if it WAS previously on the list
      */
@@ -127,7 +129,9 @@ public class Banlist {
     /**
      *  @return true if it WAS previously on the list
      */
-    public boolean banlistRouter(Hash peer, String reason) { return banlistRouter(peer, reason, null); }
+    public boolean banlistRouter(Hash peer, String reason) {
+        return banlistRouter(peer, reason, null);
+    }
 
     /**
      *  @return true if it WAS previously on the list
@@ -212,8 +216,8 @@ public class Banlist {
         boolean wasAlready = false;
         if (_log.shouldLog(Log.INFO))
             _log.info("Banlist " + peer.toBase64() +
-               ((transport != null) ? " on transport " + transport : ""), new Exception("Banlist cause: " + reason));
-        
+                      ((transport != null) ? " on transport " + transport : ""), new Exception("Banlist cause: " + reason));
+
         Entry e = new Entry();
         e.expireOn = expireOn;
         e.cause = reason;
@@ -223,28 +227,28 @@ public class Banlist {
             e.transports = new ConcurrentHashSet<String>(2);
             e.transports.add(transport);
         }
-        
-            Entry old = _entries.get(peer);
-            if (old != null) {
-                wasAlready = true;
-                // take the oldest expiration and cause, combine transports
-                if (old.expireOn > e.expireOn) {
-                    e.expireOn = old.expireOn;
-                    e.cause = old.cause;
-                    e.causeCode = old.causeCode;
-                }
-                if (e.transports != null) {
-                    if (old.transports != null)
-                        e.transports.addAll(old.transports);
-                    else {
-                        e.transports = null;
-                        e.cause = reason;
-                        e.causeCode = reasonCode;
-                    }
+
+        Entry old = _entries.get(peer);
+        if (old != null) {
+            wasAlready = true;
+            // take the oldest expiration and cause, combine transports
+            if (old.expireOn > e.expireOn) {
+                e.expireOn = old.expireOn;
+                e.cause = old.cause;
+                e.causeCode = old.causeCode;
+            }
+            if (e.transports != null) {
+                if (old.transports != null)
+                    e.transports.addAll(old.transports);
+                else {
+                    e.transports = null;
+                    e.cause = reason;
+                    e.causeCode = reasonCode;
                 }
             }
-            _entries.put(peer, e);
-        
+        }
+        _entries.put(peer, e);
+
         if (transport == null) {
             // we hate the peer on *any* transport
             _context.netDb().fail(peer);
@@ -256,20 +260,24 @@ public class Banlist {
             _context.messageHistory().banlist(peer, reason);
         return wasAlready;
     }
-    
+
     public void unbanlistRouter(Hash peer) {
         unbanlistRouter(peer, true);
     }
 
-    private void unbanlistRouter(Hash peer, boolean realUnbanlist) { unbanlistRouter(peer, realUnbanlist, null); }
+    private void unbanlistRouter(Hash peer, boolean realUnbanlist) {
+        unbanlistRouter(peer, realUnbanlist, null);
+    }
 
-    public void unbanlistRouter(Hash peer, String transport) { unbanlistRouter(peer, true, transport); }
+    public void unbanlistRouter(Hash peer, String transport) {
+        unbanlistRouter(peer, true, transport);
+    }
 
     private void unbanlistRouter(Hash peer, boolean realUnbanlist, String transport) {
         if (peer == null) return;
         if (_log.shouldLog(Log.DEBUG))
             _log.debug("unbanlist " + peer.toBase64()
-                      + (transport != null ? "/" + transport : ""));
+                       + (transport != null ? "/" + transport : ""));
         boolean fully = false;
 
         Entry e = _entries.remove(peer);
@@ -296,8 +304,10 @@ public class Banlist {
                           + (transport != null ? "/" + transport : ""));
         }
     }
-    
-    public boolean isBanlisted(Hash peer) { return isBanlisted(peer, null); }
+
+    public boolean isBanlisted(Hash peer) {
+        return isBanlisted(peer, null);
+    }
 
     public boolean isBanlisted(Hash peer, String transport) {
         boolean rv = false;
@@ -315,7 +325,7 @@ public class Banlist {
         } else {
             rv = entry.transports.contains(transport);
         }
-        
+
         if (unbanlist) {
             //PeerProfile prof = _context.profileOrganizer().getProfile(peer);
             //if (prof != null)
@@ -324,10 +334,10 @@ public class Banlist {
             if (_log.shouldLog(Log.INFO))
                 _log.info("Unbanlisting (expired) " + peer.toBase64());
         }
-        
+
         return rv;
     }
-    
+
     public boolean isBanlistedForever(Hash peer) {
         Entry entry = _entries.get(peer);
         return entry != null && entry.expireOn > _context.clock().now() + 2*24*60*60*1000L;

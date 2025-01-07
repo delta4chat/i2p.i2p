@@ -35,7 +35,7 @@ public abstract class DelegatingDnssecRR extends Data {
      * The cryptographic algorithm used to create the signature. If MiniDNS
      * isn't aware of the signature algorithm, then this field will be
      * <code>null</code>.
-     * 
+     *
      * @see #algorithmByte
      */
     public final SignatureAlgorithm algorithm;
@@ -49,7 +49,7 @@ public abstract class DelegatingDnssecRR extends Data {
      * The algorithm used to construct the digest. If MiniDNS
      * isn't aware of the digest algorithm, then this field will be
      * <code>null</code>.
-     * 
+     *
      * @see #digestTypeByte
      */
     public final DigestAlgorithm digestType;
@@ -125,10 +125,10 @@ public abstract class DelegatingDnssecRR extends Data {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder()
-                .append(keyTag).append(' ')
-                .append(algorithm).append(' ')
-                .append(digestType).append(' ')
-                .append(new BigInteger(1, digest).toString(16).toUpperCase());
+        .append(keyTag).append(' ')
+        .append(algorithm).append(' ')
+        .append(digestType).append(' ')
+        .append(new BigInteger(1, digest).toString(16).toUpperCase());
         return sb.toString();
     }
 

@@ -74,7 +74,7 @@ public class SimpleScheduler {
         // don't bother saving ref to remove hook if somebody else calls stop
         context.addShutdownTask(new Shutdown());
     }
-    
+
     /**
      * @since 0.8.8
      */
@@ -97,7 +97,7 @@ public class SimpleScheduler {
      * Queue up the given event to be fired no sooner than timeoutMs from now.
      *
      * @param event
-     * @param timeoutMs 
+     * @param timeoutMs
      */
     public void addEvent(SimpleTimer.TimedEvent event, long timeoutMs) {
         if (event == null)
@@ -105,7 +105,7 @@ public class SimpleScheduler {
         RunnableEvent re = new RunnableEvent(event, timeoutMs);
         re.schedule();
     }
-    
+
     /**
      * Queue up the given event to be fired after timeoutMs and every
      * timeoutMs thereafter. The TimedEvent must not do its own rescheduling.
@@ -116,7 +116,7 @@ public class SimpleScheduler {
     public void addPeriodicEvent(SimpleTimer.TimedEvent event, long timeoutMs) {
         addPeriodicEvent(event, timeoutMs, timeoutMs);
     }
-    
+
     /**
      * Queue up the given event to be fired after initialDelay and every
      * timeoutMs thereafter. The TimedEvent must not do its own rescheduling.
@@ -126,7 +126,7 @@ public class SimpleScheduler {
      *
      * @param event
      * @param initialDelay (ms)
-     * @param timeoutMs 
+     * @param timeoutMs
      */
     public void addPeriodicEvent(SimpleTimer.TimedEvent event, long initialDelay, long timeoutMs) {
         if (event == null)
@@ -134,7 +134,7 @@ public class SimpleScheduler {
         RunnableEvent re = new PeriodicRunnableEvent(event, initialDelay, timeoutMs);
         re.schedule();
     }
-    
+
     private class CustomThreadFactory implements ThreadFactory {
         public Thread newThread(Runnable r) {
             Thread rv = Executors.defaultThreadFactory().newThread(r);
@@ -182,11 +182,11 @@ public class SimpleScheduler {
             if (time > 1000 && _log.shouldLog(Log.WARN))
                 _log.warn(_name + " event execution took " + time + ": " + _timedEvent);
             if (_log.shouldLog(Log.INFO)) {
-                 // this call is slow - iterates through a HashMap -
-                 // would be better to have a local AtomicLong if we care
-                 long completed = _executor.getCompletedTaskCount();
-                 if (completed % 250 == 0)
-                     _log.info(debug());
+                // this call is slow - iterates through a HashMap -
+                // would be better to have a local AtomicLong if we care
+                long completed = _executor.getCompletedTaskCount();
+                if (completed % 250 == 0)
+                    _log.info(debug());
             }
         }
     }

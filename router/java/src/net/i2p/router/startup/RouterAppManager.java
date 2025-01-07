@@ -73,7 +73,7 @@ public class RouterAppManager extends ClientAppManagerImpl {
     public ClientApp getClientApp(String className, String[] args) {
         for (Map.Entry<ClientApp, String[]> e : _clients.entrySet()) {
             if (e.getKey().getClass().getName().equals(className) &&
-                Arrays.equals(e.getValue(), args))
+                    Arrays.equals(e.getValue(), args))
                 return e.getKey();
         }
         // workaround for Jetty stop and restart from i2ptunnel
@@ -113,21 +113,21 @@ public class RouterAppManager extends ClientAppManagerImpl {
     @Override
     public void notify(ClientApp app, ClientAppState state, String message, Exception e) {
         switch(state) {
-          case UNINITIALIZED:
-          case INITIALIZED:
+        case UNINITIALIZED:
+        case INITIALIZED:
             if (_log.shouldLog(Log.WARN))
                 _log.warn("Client " + app.getDisplayName() + " is now " + state);
             break;
 
-          case STARTING:
-          case RUNNING:
+        case STARTING:
+        case RUNNING:
             if (_log.shouldLog(Log.INFO))
                 _log.info("Client " + app.getDisplayName() + " is now " + state);
             break;
 
-          case FORKED:
-          case STOPPING:
-          case STOPPED:
+        case FORKED:
+        case STOPPING:
+        case STOPPED:
             _clients.remove(app);
             boolean removed = _registered.remove(app.getName(), app);
             if (removed && _log.shouldInfo()) {
@@ -140,8 +140,8 @@ public class RouterAppManager extends ClientAppManagerImpl {
                           ' ' + message, e);
             break;
 
-          case CRASHED:
-          case START_FAILED:
+        case CRASHED:
+        case START_FAILED:
             _clients.remove(app);
             boolean removed2 = _registered.remove(app.getName(), app);
             if (removed2 && _log.shouldInfo()) {
@@ -150,7 +150,7 @@ public class RouterAppManager extends ClientAppManagerImpl {
             if (message == null)
                 message = "";
             _log.log(Log.CRIT, "Client " + app.getDisplayName() + ' ' + state +
-                               ' ' + message, e);
+                     ' ' + message, e);
             break;
         }
     }
@@ -177,7 +177,7 @@ public class RouterAppManager extends ClientAppManagerImpl {
         // TODO if old app in there is not running and != this app, allow replacement
         return super.register(app);
     }
-    
+
     /**
      *  Unregister with the manager. Name must be the same as that from register().
      *  Only required for apps used by other apps.
@@ -205,8 +205,8 @@ public class RouterAppManager extends ClientAppManagerImpl {
             ClientAppState state = app.getState();
             if (state == RUNNING || state == STARTING) {
                 try {
-                   if (_log.shouldWarn())
-                       _log.warn("Shutting down client " + app.getDisplayName());
+                    if (_log.shouldWarn())
+                        _log.warn("Shutting down client " + app.getDisplayName());
                     app.shutdown(null);
                 } catch (Throwable t) {}
             }

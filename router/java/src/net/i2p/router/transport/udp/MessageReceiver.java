@@ -19,7 +19,7 @@ import net.i2p.util.SystemVersion;
 
 /**
  * Pull fully completed fragments off the {@link InboundMessageFragments} queue,
- * parse 'em into I2NPMessages, and stick them on the 
+ * parse 'em into I2NPMessages, and stick them on the
  * {@link net.i2p.router.InNetMessagePool} by way of the {@link UDPTransport}.
  */
 class MessageReceiver {
@@ -37,7 +37,7 @@ class MessageReceiver {
     private static final int MAX_QUEUE_SIZE = 128;
     private final int _threadCount;
     private static final long POISON_IMS = -99999999999l;
-    
+
     public MessageReceiver(RouterContext ctx, UDPTransport transport) {
         _context = ctx;
         _log = ctx.logManager().getLog(MessageReceiver.class);
@@ -65,10 +65,10 @@ class MessageReceiver {
         //_context.statManager().createRateStat("udp.inboundReadTime", "How long it takes to parse in the completed fragments into a message?", "udp", UDPTransport.RATES);
         //_context.statManager().createRateStat("udp.inboundReceiveProcessTime", "How long it takes to add the message to the transport?", "udp", UDPTransport.RATES);
         //_context.statManager().createRateStat("udp.inboundLag", "How long the oldest ready message has been sitting on the queue (period is the queue size)?", "udp", UDPTransport.RATES);
-        
+
         _alive = true;
     }
-    
+
     public synchronized void startup() {
         _alive = true;
         for (int i = 0; i < _threadCount; i++) {
@@ -76,13 +76,17 @@ class MessageReceiver {
             t.start();
         }
     }
-    
+
     private class Runner implements Runnable {
         private final I2NPMessageHandler _handler;
-        public Runner() { _handler = new I2NPMessageHandler(_context); }
-        public void run() { loop(_handler); }
+        public Runner() {
+            _handler = new I2NPMessageHandler(_context);
+        }
+        public void run() {
+            loop(_handler);
+        }
     }
-    
+
     public synchronized void shutdown() {
         _alive = false;
         _completeMessages.clear();
@@ -97,7 +101,7 @@ class MessageReceiver {
         }
         _completeMessages.clear();
     }
-    
+
     /**
      *  This queues the message for processing.
      *  Processing will call state.releaseResources(), do not access state after calling this.
@@ -121,7 +125,7 @@ class MessageReceiver {
         //if (lag > 1000)
         //    _context.statManager().addRateData("udp.inboundLag", lag, total);
     }
-    
+
     public void loop(I2NPMessageHandler handler) {
         InboundMessageState message = null;
         //ByteArray buf = _cache.acquire();
@@ -130,25 +134,25 @@ class MessageReceiver {
             int expired = 0;
             long expiredLifetime = 0;
             try {
-                    while (message == null) {
-                        message = _completeMessages.take();
-                        if ( (message != null) && (message.getMessageId() == POISON_IMS) ) {
-                            message = null;
-                            break;
-                        }
-                        if ( (message != null) && (message.isExpired()) ) {
-                            expiredLifetime += message.getLifetime();
-                            // message.releaseResources() ??
-                            message = null;
-                            expired++;
-                        }
-                        //remaining = _completeMessages.size();
+                while (message == null) {
+                    message = _completeMessages.take();
+                    if ( (message != null) && (message.getMessageId() == POISON_IMS) ) {
+                        message = null;
+                        break;
+                    }
+                    if ( (message != null) && (message.isExpired()) ) {
+                        expiredLifetime += message.getLifetime();
+                        // message.releaseResources() ??
+                        message = null;
+                        expired++;
+                    }
+                    //remaining = _completeMessages.size();
                 }
             } catch (InterruptedException ie) {}
-            
+
             if (expired > 0)
                 _context.statManager().addRateData("udp.inboundExpired", expired, expiredLifetime);
-            
+
             if (message != null) {
                 //long before = System.currentTimeMillis();
                 //if (remaining > 0)
@@ -174,11 +178,11 @@ class MessageReceiver {
                 //    _context.statManager().addRateData("udp.inboundReceiveProcessTime", after - afterRead, remaining);
             }
         }
-        
+
         // no need to zero it out, as these buffers are only used with an explicit getCompleteSize
-        //_cache.release(buf, false); 
+        //_cache.release(buf, false);
     }
-    
+
     /**
      *  Assemble all the fragments into an I2NP message.
      *  This calls state.releaseResources(), do not access state after calling this.

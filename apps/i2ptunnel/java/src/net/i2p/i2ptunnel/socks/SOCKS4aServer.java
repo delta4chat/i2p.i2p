@@ -61,7 +61,9 @@ class SOCKS4aServer extends SOCKSServer {
     }
 
     protected void setupServer() throws SOCKSException {
-        if (setupCompleted) { return; }
+        if (setupCompleted) {
+            return;
+        }
 
         DataInputStream in;
         DataOutputStream out;
@@ -234,18 +236,18 @@ class SOCKS4aServer extends SOCKSServer {
                     sendRequestReply(Reply.CONNECTION_REFUSED, InetAddress.getByName("127.0.0.1"), 0, out);
                 } catch (IOException ioe) {}
                 throw new SOCKSException(err);
-          /****
-            } else if (connPort == 80) {
-                // rewrite GET line to include hostname??? or add Host: line???
-                // or forward to local eepProxy (but that's a Socket not an I2PSocket)
-                // use eepProxy configured outproxies?
-                String err = "No handler for HTTP outproxy implemented - to: " + connHostName;
-                _log.error(err);
-                try {
-                    sendRequestReply(Reply.CONNECTION_REFUSED, InetAddress.getByName("127.0.0.1"), 0, out);
-                } catch (IOException ioe) {}
-                throw new SOCKSException(err);
-           ****/
+                /****
+                  } else if (connPort == 80) {
+                      // rewrite GET line to include hostname??? or add Host: line???
+                      // or forward to local eepProxy (but that's a Socket not an I2PSocket)
+                      // use eepProxy configured outproxies?
+                      String err = "No handler for HTTP outproxy implemented - to: " + connHostName;
+                      _log.error(err);
+                      try {
+                          sendRequestReply(Reply.CONNECTION_REFUSED, InetAddress.getByName("127.0.0.1"), 0, out);
+                      } catch (IOException ioe) {}
+                      throw new SOCKSException(err);
+                 ****/
             } else {
                 Outproxy outproxy = getOutproxyPlugin();
                 if (outproxy != null) {

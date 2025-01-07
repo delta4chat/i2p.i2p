@@ -82,7 +82,7 @@ public class Field implements Serializable {
         return qm5d8;
     }
 
-    public Encoding getEncoding(){
+    public Encoding getEncoding() {
         return enc;
     }
 

@@ -262,12 +262,12 @@ public class SSLEepGet extends EepGet {
         if (_sslContext == null)
             _log.error("Failed to initialize custom SSL context, using default context");
     }
-   
+
     /**
      * SSLEepGet https://foo/bar
      *   or to save cert chain:
      * SSLEepGet -s https://foo/bar
-     */ 
+     */
     public static void main(String args[]) {
         int saveCerts = 0;
         boolean noVerify = false;
@@ -280,7 +280,7 @@ public class SSLEepGet extends EepGet {
         try {
             int c;
             while ((c = g.getopt()) != -1) {
-              switch (c) {
+                switch (c) {
                 case 'p':
                     String s = g.getOptarg();
                     int colon = s.indexOf(':');
@@ -329,7 +329,7 @@ public class SSLEepGet extends EepGet {
                 default:
                     error = true;
                     break;
-              }  // switch
+                }  // switch
             } // while
         } catch (RuntimeException e) {
             e.printStackTrace();
@@ -370,7 +370,7 @@ public class SSLEepGet extends EepGet {
         if(!get.fetch(45*1000, -1, 60*1000))
             System.exit(1);
     }
-    
+
     private static void usage() {
         System.err.println("Usage: SSLEepGet [-dpsyz] https://url\n" +
                            "  -d use DNSOverHTTPS\n" +
@@ -433,52 +433,52 @@ public class SSLEepGet extends EepGet {
             X509TrustManager defaultTrustManager = (X509TrustManager)tmf.getTrustManagers()[0];
             _stm = new SavingTrustManager(defaultTrustManager);
             sslc.init(null, new TrustManager[] {_stm}, null);
-        /****
-            if (_log.shouldLog(Log.DEBUG)) {
-                SSLEngine eng = sslc.createSSLEngine();
-                SSLParameters params = sslc.getDefaultSSLParameters();
-                String[] s = eng.getSupportedProtocols();
-                Arrays.sort(s);
-                _log.debug("Supported protocols: " + s.length);
-                for (int i = 0; i < s.length; i++) {
-                     _log.debug(s[i]);
+            /****
+                if (_log.shouldLog(Log.DEBUG)) {
+                    SSLEngine eng = sslc.createSSLEngine();
+                    SSLParameters params = sslc.getDefaultSSLParameters();
+                    String[] s = eng.getSupportedProtocols();
+                    Arrays.sort(s);
+                    _log.debug("Supported protocols: " + s.length);
+                    for (int i = 0; i < s.length; i++) {
+                         _log.debug(s[i]);
+                    }
+                    s = eng.getEnabledProtocols();
+                    Arrays.sort(s);
+                    _log.debug("Enabled protocols: " + s.length);
+                    for (int i = 0; i < s.length; i++) {
+                         _log.debug(s[i]);
+                    }
+                    s = params.getProtocols();
+                    if (s == null)
+                        s = new String[0];
+                    _log.debug("Default protocols: " + s.length);
+                    Arrays.sort(s);
+                    for (int i = 0; i < s.length; i++) {
+                         _log.debug(s[i]);
+                    }
+                    s = eng.getSupportedCipherSuites();
+                    Arrays.sort(s);
+                    _log.debug("Supported ciphers: " + s.length);
+                    for (int i = 0; i < s.length; i++) {
+                         _log.debug(s[i]);
+                    }
+                    s = eng.getEnabledCipherSuites();
+                    Arrays.sort(s);
+                    _log.debug("Enabled ciphers: " + s.length);
+                    for (int i = 0; i < s.length; i++) {
+                         _log.debug(s[i]);
+                    }
+                    s = params.getCipherSuites();
+                    if (s == null)
+                        s = new String[0];
+                    _log.debug("Default ciphers: " + s.length);
+                    Arrays.sort(s);
+                    for (int i = 0; i < s.length; i++) {
+                         _log.debug(s[i]);
+                    }
                 }
-                s = eng.getEnabledProtocols();
-                Arrays.sort(s);
-                _log.debug("Enabled protocols: " + s.length);
-                for (int i = 0; i < s.length; i++) {
-                     _log.debug(s[i]);
-                }
-                s = params.getProtocols();
-                if (s == null)
-                    s = new String[0];
-                _log.debug("Default protocols: " + s.length);
-                Arrays.sort(s);
-                for (int i = 0; i < s.length; i++) {
-                     _log.debug(s[i]);
-                }
-                s = eng.getSupportedCipherSuites();
-                Arrays.sort(s);
-                _log.debug("Supported ciphers: " + s.length);
-                for (int i = 0; i < s.length; i++) {
-                     _log.debug(s[i]);
-                }
-                s = eng.getEnabledCipherSuites();
-                Arrays.sort(s);
-                _log.debug("Enabled ciphers: " + s.length);
-                for (int i = 0; i < s.length; i++) {
-                     _log.debug(s[i]);
-                }
-                s = params.getCipherSuites();
-                if (s == null)
-                    s = new String[0];
-                _log.debug("Default ciphers: " + s.length);
-                Arrays.sort(s);
-                for (int i = 0; i < s.length; i++) {
-                     _log.debug(s[i]);
-                }
-            }
-          ****/
+              ****/
             return sslc;
         } catch (GeneralSecurityException gse) {
             _log.error("Key Store update error", gse);
@@ -489,7 +489,7 @@ public class SSLEepGet extends EepGet {
         }
         return null;
     }
-    
+
     /**
      *  From http://blogs.sun.com/andreas/resource/InstallCert.java
      *  This just saves the certificate chain for later inspection.
@@ -508,12 +508,12 @@ public class SSLEepGet extends EepGet {
         }
 
         public void checkClientTrusted(X509Certificate[] chain, String authType)
-                throws CertificateException {
+        throws CertificateException {
             throw new CertificateException();
         }
 
         public void checkServerTrusted(X509Certificate[] chain, String authType)
-                throws CertificateException {
+        throws CertificateException {
             this.chain = chain;
             tm.checkServerTrusted(chain, authType);
         }
@@ -554,7 +554,7 @@ public class SSLEepGet extends EepGet {
         private final SSLContext context;
 
         private SSLState(SSLContext ctx) {
-             context = ctx;
+            context = ctx;
         }
     }
 
@@ -585,7 +585,7 @@ public class SSLEepGet extends EepGet {
         readHeaders();
         if (_aborted)
             throw new IOException("Timed out reading the HTTP headers");
-        
+
         // _proxy is the socket, even if not proxied.
         // We never use the timeout inactivity timer; only socket SoTimeout.
         if (timeout != null) {
@@ -596,7 +596,7 @@ public class SSLEepGet extends EepGet {
                 timeout.cancel();
                 timeout = null;
             }
-        }        
+        }
         if (_fetchInactivityTimeout > 0)
             _proxy.setSoTimeout(_fetchInactivityTimeout);
         else
@@ -625,10 +625,10 @@ public class SSLEepGet extends EepGet {
             doFetch(timeout);
             return;
         }
-        
+
         if (_log.shouldLog(Log.DEBUG))
             _log.debug("Headers read completely, reading " + _bytesRemaining);
-        
+
         boolean strictSize = (_bytesRemaining >= 0);
 
         Thread pusher = null;
@@ -681,24 +681,24 @@ public class SSLEepGet extends EepGet {
             if (_bytesRemaining >= read) // else chunked?
                 _bytesRemaining -= read;
             if (read > 0) {
-                for (int i = 0; i < _listeners.size(); i++) 
+                for (int i = 0; i < _listeners.size(); i++)
                     _listeners.get(i).bytesTransferred(
-                            _alreadyTransferred, 
-                            read, 
-                            _bytesTransferred, 
-                            _encodingChunked?-1:_bytesRemaining, 
-                            _url);
+                        _alreadyTransferred,
+                        read,
+                        _bytesTransferred,
+                        _encodingChunked?-1:_bytesRemaining,
+                        _url);
                 // This seems necessary to properly resume a partial download into a stream,
                 // as nothing else increments _alreadyTransferred, and there's no file length to check.
                 // Do this after calling the listeners to keep the total correct
                 _alreadyTransferred += read;
             }
         }
-            
+
         if (_out != null)
             _out.close();
         _out = null;
-        
+
         if (_isGzippedResponse) {
             try {
                 pusher.join();
@@ -713,23 +713,23 @@ public class SSLEepGet extends EepGet {
 
         if (_aborted)
             throw new IOException("Timed out reading the HTTP data");
-        
+
         if (timeout != null)
             timeout.cancel();
-        
+
         if (_transferFailed) {
             // 404, etc - transferFailed is called after all attempts fail, by fetch() above
-            for (int i = 0; i < _listeners.size(); i++) 
+            for (int i = 0; i < _listeners.size(); i++)
                 _listeners.get(i).attemptFailed(_url, _bytesTransferred, _bytesRemaining, _currentAttempt, _numRetries, new Exception("Attempt failed"));
         } else if ( (_bytesRemaining == -1) || (remaining == 0) ) {
-            for (int i = 0; i < _listeners.size(); i++) 
+            for (int i = 0; i < _listeners.size(); i++)
                 _listeners.get(i).transferComplete(
-                        _alreadyTransferred, 
-                        _bytesTransferred, 
-                        _encodingChunked?-1:_bytesRemaining, 
-                        _url, 
-                        _outputFile, 
-                        _notModified);
+                    _alreadyTransferred,
+                    _bytesTransferred,
+                    _encodingChunked?-1:_bytesRemaining,
+                    _url,
+                    _outputFile,
+                    _notModified);
         } else {
             throw new IOException("Disconnection on attempt " + _currentAttempt + " after " + _bytesTransferred);
         }
@@ -792,25 +792,25 @@ public class SSLEepGet extends EepGet {
                     if (_log.shouldLog(Log.DEBUG))
                         _log.debug("Connecting to " + _proxyType + " proxy");
                     switch (_proxyType) {
-                      case HTTP:
+                    case HTTP:
                         httpProxyConnect(host, port);
                         break;
 
-                      case INTERNAL:
+                    case INTERNAL:
                         internalHttpProxyConnect(host, port);
                         break;
 
-                      case SOCKS4:
+                    case SOCKS4:
                         socksProxyConnect(false, host, port);
                         break;
 
-                      case SOCKS5:
+                    case SOCKS5:
                         socksProxyConnect(true, host, port);
                         break;
 
-                      case HTTPS:
-                      case TRANSPARENT:
-                      default:
+                    case HTTPS:
+                    case TRANSPARENT:
+                    default:
                         throw new IOException("Unsupported proxy type " + _proxyType);
                     }
 
@@ -828,9 +828,9 @@ public class SSLEepGet extends EepGet {
                         _proxy = new Socket();
                         _proxy.setSoTimeout(_fetchHeaderTimeout);
                         _proxy.connect(new InetSocketAddress(ip, port), _fetchHeaderTimeout);
-                     } else {
+                    } else {
                         _proxy = new Socket(ip, port);
-                     }
+                    }
                     if (_sslContext != null)
                         _proxy = _sslContext.getSocketFactory().createSocket(_proxy, host, port, true);
                     else
@@ -878,7 +878,7 @@ public class SSLEepGet extends EepGet {
 
         _proxyIn = _proxy.getInputStream();
         _proxyOut = _proxy.getOutputStream();
-        
+
         // This is where the cert errors happen
         try {
             _proxyOut.write(DataHelper.getUTF8(req));
@@ -900,7 +900,7 @@ public class SSLEepGet extends EepGet {
         }
 
         _proxyIn = new BufferedInputStream(_proxyIn);
-        
+
         if (_log.shouldLog(Log.DEBUG))
             _log.debug("Request flushed");
     }
@@ -958,7 +958,7 @@ public class SSLEepGet extends EepGet {
         _proxyOut = _proxy.getOutputStream();
         StringBuilder buf = new StringBuilder(64);
         buf.append("CONNECT ").append(host).append(':').append(port).append(" HTTP/1.1\r\n" +
-                   "Host: ").append(host).append(':').append(port).append("\r\n");
+                "Host: ").append(host).append(':').append(port).append("\r\n");
         // TODO if we need extra headers to the proxy, add a new method and list.
         // Standard extra headers go the server, not the proxy
         //if (_extraPHeaders != null) {

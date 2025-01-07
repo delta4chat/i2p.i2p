@@ -31,14 +31,14 @@ public class PeerManagerFacadeImpl implements PeerManagerFacade {
     private final PeerTestJob _testJob;
 
     private static final boolean ENABLE_PEER_TEST = false;
-    
+
     public PeerManagerFacadeImpl(RouterContext ctx) {
         _context = ctx;
         _log = ctx.logManager().getLog(PeerManagerFacadeImpl.class);
         _persistenceHelper = new ProfilePersistenceHelper(ctx);
         _testJob = ENABLE_PEER_TEST ? new PeerTestJob(_context) : null;
     }
-    
+
     public synchronized void startup() {
         _log.info("Starting up the peer manager");
         _manager = new PeerManager(_context);
@@ -46,7 +46,7 @@ public class PeerManagerFacadeImpl implements PeerManagerFacade {
         if (_testJob != null)
             _testJob.startTesting(_manager);
     }
-    
+
     public synchronized void shutdown() {
         _log.info("Shutting down the peer manager");
         if (_testJob != null)
@@ -56,31 +56,31 @@ public class PeerManagerFacadeImpl implements PeerManagerFacade {
             _manager.clearProfiles();
         }
     }
-    
+
     public synchronized void restart() {
         _manager.storeProfiles();
         _persistenceHelper.setUs(_context.routerHash());
         _manager.loadProfiles();
     }
-    
+
     /**
      *  @param caps non-null
      */
-    public void setCapabilities(Hash peer, String caps) { 
+    public void setCapabilities(Hash peer, String caps) {
         if (_manager == null) return;
-        _manager.setCapabilities(peer, caps); 
+        _manager.setCapabilities(peer, caps);
     }
 
-    public void removeCapabilities(Hash peer) { 
+    public void removeCapabilities(Hash peer) {
         if (_manager == null) return;
-        _manager.removeCapabilities(peer); 
+        _manager.removeCapabilities(peer);
     }
 
     /** @deprecated unused */
     @Deprecated
-    public Hash selectRandomByCapability(char capability) { 
+    public Hash selectRandomByCapability(char capability) {
         //if (_manager == null) return null;
-        //return _manager.selectRandomByCapability(capability); 
+        //return _manager.selectRandomByCapability(capability);
         return null;
     }
 
@@ -88,9 +88,9 @@ public class PeerManagerFacadeImpl implements PeerManagerFacade {
      *  @param capability case-insensitive
      *  @return non-null unmodifiable set
      */
-    public Set<Hash> getPeersByCapability(char capability) { 
+    public Set<Hash> getPeersByCapability(char capability) {
         if (_manager == null) return Collections.emptySet();
-        return _manager.getPeersByCapability(capability); 
+        return _manager.getPeersByCapability(capability);
     }
 
     /**
@@ -98,14 +98,14 @@ public class PeerManagerFacadeImpl implements PeerManagerFacade {
      *  @return how many
      *  @since 0.9.45
      */
-    public int countPeersByCapability(char capability) { 
+    public int countPeersByCapability(char capability) {
         if (_manager == null) return 0;
-        return _manager.countPeersByCapability(capability); 
+        return _manager.countPeersByCapability(capability);
     }
 
     /** @deprecated moved to routerconsole */
     @Deprecated
-    public void renderStatusHTML(Writer out) throws IOException { 
+    public void renderStatusHTML(Writer out) throws IOException {
     }
-    
+
 }

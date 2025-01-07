@@ -12,7 +12,7 @@
 *		- first revision.
 *	02/28/05
 *		- Changed to use AllowedValue instead of String as the member.
-*	
+*
 ******************************************************************/
 
 package org.cybergarage.upnp;
@@ -22,44 +22,44 @@ import java.util.Vector;
 
 public class AllowedValueList extends Vector<AllowedValue>
 {
-	////////////////////////////////////////////////
-	//	Constants
-	////////////////////////////////////////////////
-	
-	public final static String ELEM_NAME = "allowedValueList";
+    ////////////////////////////////////////////////
+    //	Constants
+    ////////////////////////////////////////////////
+
+    public final static String ELEM_NAME = "allowedValueList";
 
 
-	////////////////////////////////////////////////
-	//	Constructor
-	////////////////////////////////////////////////
-	
-	public AllowedValueList() 
-	{
-	}
+    ////////////////////////////////////////////////
+    //	Constructor
+    ////////////////////////////////////////////////
 
-	public AllowedValueList(String[] values) {
-		for (int i = 0; i < values.length; i++) {
-			add(new AllowedValue(values[i]));
-		};
-		
-	}
+    public AllowedValueList()
+    {
+    }
 
-	
-	////////////////////////////////////////////////
-	//	Methods
-	////////////////////////////////////////////////
-	
-	public AllowedValue getAllowedValue(int n)
-	{
-		return get(n);
-	}
+    public AllowedValueList(String[] values) {
+        for (int i = 0; i < values.length; i++) {
+            add(new AllowedValue(values[i]));
+        };
 
-	public boolean isAllowed(String v){
-		for (Iterator<AllowedValue> i = this.iterator(); i.hasNext();) {
-			AllowedValue av = i.next();
-			if(av.getValue().equals(v))
-				return true;
-		}
-		return false;
-	}
+    }
+
+
+    ////////////////////////////////////////////////
+    //	Methods
+    ////////////////////////////////////////////////
+
+    public AllowedValue getAllowedValue(int n)
+    {
+        return get(n);
+    }
+
+    public boolean isAllowed(String v) {
+        for (Iterator<AllowedValue> i = this.iterator(); i.hasNext();) {
+            AllowedValue av = i.next();
+            if(av.getValue().equals(v))
+                return true;
+        }
+        return false;
+    }
 }

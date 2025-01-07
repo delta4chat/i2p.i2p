@@ -19,7 +19,7 @@ import net.i2p.util.Log;
  *  @since 0.9.21
  */
 public class AliasedTunnelPool extends TunnelPool {
-    
+
     private final TunnelPool _aliasOf;
 
     AliasedTunnelPool(RouterContext ctx, TunnelPoolManager mgr, TunnelPoolSettings settings, TunnelPool aliasOf) {
@@ -30,7 +30,7 @@ public class AliasedTunnelPool extends TunnelPool {
             throw new IllegalArgumentException();
         _aliasOf = aliasOf;
     }
-    
+
     @Override
     synchronized void startup() {
         if (_log.shouldLog(Log.INFO))
@@ -38,14 +38,14 @@ public class AliasedTunnelPool extends TunnelPool {
         _alive = true;
         super.refreshLeaseSet();
     }
-    
+
     @Override
     synchronized void shutdown() {
         if (_log.shouldLog(Log.WARN))
             _log.warn(toString() + ": Shutdown called");
         _alive = false;
     }
-    
+
     @Override
     TunnelInfo selectTunnel() {
         return _aliasOf.selectTunnel();
@@ -55,17 +55,17 @@ public class AliasedTunnelPool extends TunnelPool {
     TunnelInfo selectTunnel(Hash closestTo) {
         return _aliasOf.selectTunnel(closestTo);
     }
-    
+
     @Override
     public TunnelInfo getTunnel(TunnelId gatewayId) {
         return _aliasOf.getTunnel(gatewayId);
     }
-    
+
     @Override
     public List<TunnelInfo> listTunnels() {
         return _aliasOf.listTunnels();
     }
-    
+
     @Override
     boolean needFallback() {
         return false;
@@ -75,22 +75,22 @@ public class AliasedTunnelPool extends TunnelPool {
     public List<PooledTunnelCreatorConfig> listPending() {
         return _aliasOf.listPending();
     }
-    
+
     @Override
     public boolean isAlive() {
         return _alive && _aliasOf.isAlive();
     }
 
     @Override
-    public int size() { 
+    public int size() {
         return _aliasOf.size();
     }
-    
+
     @Override
     protected void addTunnel(TunnelInfo info) {
         _aliasOf.addTunnel(info);
     }
-    
+
     @Override
     void removeTunnel(TunnelInfo info) {
         _aliasOf.removeTunnel(info);
@@ -146,7 +146,7 @@ public class AliasedTunnelPool extends TunnelPool {
     int countHowManyToBuild() {
         return 0;
     }
-    
+
     @Override
     PooledTunnelCreatorConfig configureNewTunnel() {
         return null;
@@ -154,7 +154,7 @@ public class AliasedTunnelPool extends TunnelPool {
 
     @Override
     void buildComplete(PooledTunnelCreatorConfig cfg, BuildExecutor.Result result) {}
-    
+
     @Override
     public String toString() {
         return "Aliased " + super.toString();

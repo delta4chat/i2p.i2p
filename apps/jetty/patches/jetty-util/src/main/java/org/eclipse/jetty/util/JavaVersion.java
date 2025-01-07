@@ -52,11 +52,11 @@ public class JavaVersion
         }
 
         return new JavaVersion(
-            v,
-            (version[0] >= 9 || len == 1) ? version[0] : version[1],
-            version[0],
-            len > 1 ? version[1] : 0,
-            len > 2 ? version[2] : 0);
+                   v,
+                   (version[0] >= 9 || len == 1) ? version[0] : version[1],
+                   version[0],
+                   len > 1 ? version[1] : 0,
+                   len > 2 ? version[2] : 0);
     }
 
     private final String version;

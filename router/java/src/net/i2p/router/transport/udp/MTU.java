@@ -27,7 +27,7 @@ import net.i2p.util.SystemVersion;
 public class MTU {
 
     private static final boolean hasMTU = SystemVersion.isJava6();
-    
+
     private MTU() {};
 
     /**
@@ -92,23 +92,23 @@ public class MTU {
                             if (mtu < 0)
                                 mtu = isIPv6 ? PeerState.MIN_IPV6_MTU : 1500;
                             if (mtu > 0 &&
-                                ((isIPv6 && mtu < PeerState.MIN_IPV6_MTU) ||
-                                 (!isIPv6 && mtu < PeerState.MIN_MTU))) {
+                                    ((isIPv6 && mtu < PeerState.MIN_IPV6_MTU) ||
+                                     (!isIPv6 && mtu < PeerState.MIN_MTU))) {
                                 Log log = I2PAppContext.getGlobalContext().logManager().getLog(MTU.class);
                                 log.logAlways(Log.WARN, "Unusually low MTU " + mtu + " for interface " + ia +
-                                                        ", consider disabling");
+                                              ", consider disabling");
                             }
                             // fix for brokered tunnels with too big MTU
                             if (isIPv6 && mtu > 1420) {
                                 byte[] ip = addr.getAddress();
                                 // he.net
                                 if (mtu > 1472 &&
-                                    ip[0] == 0x20 && ip[1] == 0x01 &&
-                                    ip[2] == 0x04 && ip[3] == 0x70)
+                                        ip[0] == 0x20 && ip[1] == 0x01 &&
+                                        ip[2] == 0x04 && ip[3] == 0x70)
                                     return 1472;
                                 // route48.org, supports Wireguard
                                 if (ip[0] == 0x2a && ip[1] == 0x06 &&
-                                    ip[2] == (byte) 0xa0 && ip[3] == 0x04)
+                                        ip[2] == (byte) 0xa0 && ip[3] == 0x04)
                                     return 1420;
                             }
                             if (isSSU2)
@@ -141,9 +141,9 @@ public class MTU {
                     if (isIPv6 != (addr instanceof Inet6Address))
                         continue;
                     if (addr.isLinkLocalAddress() ||
-                        addr.isMulticastAddress() ||
-                        addr.isAnyLocalAddress() ||
-                        addr.isLoopbackAddress())
+                            addr.isMulticastAddress() ||
+                            addr.isAnyLocalAddress() ||
+                            addr.isLoopbackAddress())
                         continue;
                     if (isIPv6) {
                         // ygg
@@ -162,11 +162,11 @@ public class MTU {
                     if (isIPv6 && mtu > 1420) {
                         byte[] ip = addr.getAddress();
                         if (mtu > 1472 &&
-                            ip[0] == 0x20 && ip[1] == 0x01 &&
-                            ip[2] == 0x04 && ip[3] == 0x70)
+                                ip[0] == 0x20 && ip[1] == 0x01 &&
+                                ip[2] == 0x04 && ip[3] == 0x70)
                             mtu = 1472;
                         if (ip[0] == 0x2a && ip[1] == 0x06 &&
-                            ip[2] == (byte) 0xa0 && ip[3] == 0x04)
+                                ip[2] == (byte) 0xa0 && ip[3] == 0x04)
                             mtu = 1420;
                     }
                     if (mtu < rv)
@@ -247,19 +247,19 @@ public class MTU {
                     InetAddress addr = e.getKey();
                     Integer mtu = e.getValue();
                     System.out.println("MTU for " + addr.getHostAddress() + " is " + mtu +
-                                           "; I2P MTU is " + getMTU(addr, false) +
-                                           "; SSU2 MTU is " + getMTU(addr, true));
+                                       "; I2P MTU is " + getMTU(addr, false) +
+                                       "; SSU2 MTU is " + getMTU(addr, true));
                 }
             }
         } catch (SocketException se) {
-             System.out.println("no interfaces");
+            System.out.println("no interfaces");
         }
     }
 
     /** @since 0.9.57 */
     private static class IAComparator implements Comparator<InetAddress> {
         public int compare(InetAddress l, InetAddress r) {
-             return (l.getHostAddress()).compareTo((r.getHostAddress()));
+            return (l.getHostAddress()).compareTo((r.getHostAddress()));
         }
     }
 }

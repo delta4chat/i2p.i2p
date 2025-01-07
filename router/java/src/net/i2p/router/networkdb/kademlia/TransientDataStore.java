@@ -30,7 +30,7 @@ class TransientDataStore implements DataStore {
     protected final Log _log;
     private final ConcurrentHashMap<Hash, DatabaseEntry> _data;
     protected final RouterContext _context;
-    
+
     public TransientDataStore(RouterContext ctx) {
         _context = ctx;
         _log = ctx.logManager().getLog(getClass());
@@ -38,13 +38,15 @@ class TransientDataStore implements DataStore {
         if (_log.shouldLog(Log.INFO))
             _log.info("Data Store initialized");
     }
-    
-    public boolean isInitialized() { return true; }
+
+    public boolean isInitialized() {
+        return true;
+    }
 
     public void stop() {
         _data.clear();
     }
-    
+
     public void rescan() {}
 
     /**
@@ -61,7 +63,7 @@ class TransientDataStore implements DataStore {
     public Set<Hash> getKeys() {
         return Collections.unmodifiableSet(_data.keySet());
     }
-    
+
     /**
      *  @return Unmodifiable view, not a copy
      *  @since 0.8.3
@@ -88,7 +90,7 @@ class TransientDataStore implements DataStore {
     public DatabaseEntry get(Hash key) {
         return _data.get(key);
     }
-    
+
     public boolean isKnown(Hash key) {
         return _data.containsKey(key);
     }
@@ -101,7 +103,7 @@ class TransientDataStore implements DataStore {
         }
         return count;
     }
-    
+
     /** for PersistentDataStore only - don't use here
       * @throws UnsupportedOperationException always
       */
@@ -152,7 +154,7 @@ class TransientDataStore implements DataStore {
                 LeaseSet ols = (LeaseSet)old;
                 long oldDate, newDate;
                 if (type != DatabaseEntry.KEY_TYPE_LEASESET &&
-                    ols.getType() != DatabaseEntry.KEY_TYPE_LEASESET) {
+                        ols.getType() != DatabaseEntry.KEY_TYPE_LEASESET) {
                     LeaseSet2 ls2 = (LeaseSet2) ls;
                     LeaseSet2 ols2 = (LeaseSet2) ols;
                     oldDate = ols2.getPublished();
@@ -204,7 +206,7 @@ class TransientDataStore implements DataStore {
         _data.put(key, data);
         return true;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder buf = new StringBuilder();
@@ -217,7 +219,7 @@ class TransientDataStore implements DataStore {
         buf.append("\n");
         return buf.toString();
     }
-    
+
     /** for PersistentDataStore only - don't use here
       * @throws UnsupportedOperationException always
       */

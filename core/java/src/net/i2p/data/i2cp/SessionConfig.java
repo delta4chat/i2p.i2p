@@ -2,9 +2,9 @@ package net.i2p.data.i2cp;
 
 /*
  * free (adj.): unencumbered; not under the control of others
- * Written by jrandom in 2003 and released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
- * It probably won't make your computer catch on fire, or eat 
+ * Written by jrandom in 2003 and released into the public domain
+ * with no warranty of any kind, either expressed or implied.
+ * It probably won't make your computer catch on fire, or eat
  * your children, but it might.  Use at your own risk.
  *
  */
@@ -61,8 +61,8 @@ public class SessionConfig extends DataStructureImpl {
      */
     public static final String PROP_OFFLINE_SIGNATURE = "i2cp.leaseSetOfflineSignature";
 
-    /** 
-     * If the client authorized this session more than the specified period ago, 
+    /**
+     * If the client authorized this session more than the specified period ago,
      * refuse it, since it may be a replay attack.
      *
      * Really? See also ClientManager.REQUEST_LEASESET_TIMEOUT.
@@ -104,7 +104,7 @@ public class SessionConfig extends DataStructureImpl {
 
     /**
      * Retrieve any configuration options for the session
-     * 
+     *
      * @return Properties of this session
      */
     public Properties getOptions() {
@@ -221,7 +221,7 @@ public class SessionConfig extends DataStructureImpl {
     }
 
     /**
-     * Sign the structure using the supplied private key 
+     * Sign the structure using the supplied private key
      *
      * @param signingKey SigningPrivateKey to sign with.
      *                   If offline data is set, must be with the transient key.
@@ -370,7 +370,7 @@ public class SessionConfig extends DataStructureImpl {
                    && DataHelper.eq(getCreationDate(), cfg.getCreationDate())
                    && DataHelper.eq(getOptions(), cfg.getOptions());
         }
-         
+
         return false;
     }
 

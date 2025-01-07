@@ -33,10 +33,10 @@ public class InternalSocket extends Socket {
      *  @param port &gt; 0
      */
     public InternalSocket(int port) throws IOException {
-         if (port <= 0)
-             throw new IOException("bad port number");
-         _port = port;
-         InternalServerSocket.internalConnect(port, this);
+        if (port <= 0)
+            throw new IOException("bad port number");
+        _port = port;
+        InternalServerSocket.internalConnect(port, this);
     }
 
     /**
@@ -45,7 +45,7 @@ public class InternalSocket extends Socket {
      */
     public static Socket getSocket(String host, int port) throws IOException {
         if (I2PAppContext.getGlobalContext().isRouterContext() &&
-            (host.equals("127.0.0.1") || host.equals("localhost"))) {
+                (host.equals("127.0.0.1") || host.equals("localhost"))) {
             try {
                 return new InternalSocket(port);
             } catch (IOException ioe) {}

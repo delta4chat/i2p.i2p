@@ -15,7 +15,7 @@ import net.i2p.update.*;
 class DummyHandler implements Checker, Updater {
     private final RouterContext _context;
     private final ConsoleUpdateManager _mgr;
-    
+
     public DummyHandler(RouterContext ctx, ConsoleUpdateManager mgr) {
         _context = ctx;
         _mgr = mgr;
@@ -28,7 +28,7 @@ class DummyHandler implements Checker, Updater {
                             String id, String currentVersion, long maxTime) {
         if (type != UpdateType.TYPE_DUMMY)
             return null;
-         return new DummyRunner(_context, _mgr, maxTime);
+        return new DummyRunner(_context, _mgr, maxTime);
     }
 
     /**
@@ -38,7 +38,7 @@ class DummyHandler implements Checker, Updater {
                              String id, String newVersion, long maxTime) {
         if (type != UpdateType.TYPE_DUMMY)
             return null;
-         return new DummyRunner(_context, _mgr, maxTime);
+        return new DummyRunner(_context, _mgr, maxTime);
     }
 
     /**
@@ -53,7 +53,9 @@ class DummyHandler implements Checker, Updater {
         }
 
         @Override
-        public UpdateMethod getMethod() { return UpdateMethod.METHOD_DUMMY; }
+        public UpdateMethod getMethod() {
+            return UpdateMethod.METHOD_DUMMY;
+        }
 
         @Override
         protected void update() {

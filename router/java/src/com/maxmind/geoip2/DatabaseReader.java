@@ -68,7 +68,7 @@ public class DatabaseReader implements Closeable {
             // This should never happen. If it does, review the Builder class
             // constructors for errors.
             throw new IllegalArgumentException(
-                    "Unsupported Builder configuration: expected either File or URL");
+                "Unsupported Builder configuration: expected either File or URL");
         }
         this.locales = builder.locales;
     }
@@ -139,7 +139,7 @@ public class DatabaseReader implements Closeable {
         public Builder fileMode(FileMode val) {
             if (this.stream != null && FileMode.MEMORY != val) {
                 throw new IllegalArgumentException(
-                        "Only FileMode.MEMORY is supported when using an InputStream.");
+                    "Only FileMode.MEMORY is supported when using an InputStream.");
             }
             this.mode = val;
             return this;
@@ -180,15 +180,15 @@ public class DatabaseReader implements Closeable {
      * @throws IOException              if there is an error opening or reading from the file.
      */
     private Object get(InetAddress ipAddress,
-                      String type) throws IOException {
+                       String type) throws IOException {
 
         String databaseType = this.getMetadata().getDatabaseType();
         if (!databaseType.contains(type)) {
             String caller = Thread.currentThread().getStackTrace()[2]
-                    .getMethodName();
+                            .getMethodName();
             throw new UnsupportedOperationException(
-                    "Invalid attempt to open a " + databaseType
-                            + " database using the " + caller + " method");
+                "Invalid attempt to open a " + databaseType
+                + " database using the " + caller + " method");
         }
 
         return reader.get(ipAddress);

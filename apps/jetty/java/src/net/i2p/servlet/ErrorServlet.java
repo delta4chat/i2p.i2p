@@ -15,7 +15,7 @@ import net.i2p.I2PAppContext;
 import net.i2p.data.DataHelper;
 import net.i2p.util.NativeBigInteger;
 import net.i2p.util.Translate;
- 
+
 import org.eclipse.jetty.server.Server;
 
 /**
@@ -43,7 +43,7 @@ import org.eclipse.jetty.server.Server;
  * @since 0.9.34 adapted from routerconsole error.jsp, error500.jsp, and CSSHelper
  */
 public class ErrorServlet extends HttpServlet {
- 
+
     private static final long serialVersionUID = 99356750L;
     private final I2PAppContext _context;
     private static final String CONSOLE_BUNDLE_NAME = "net.i2p.router.web.messages";
@@ -81,7 +81,7 @@ public class ErrorServlet extends HttpServlet {
         _bundleName = getInitParameter("bundle");
         _defaultBundle = _bundleName != null ? _bundleName : CONSOLE_BUNDLE_NAME;
     }
-    
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setCharacterEncoding("UTF-8");
@@ -108,14 +108,14 @@ public class ErrorServlet extends HttpServlet {
         else
             ERROR_MESSAGE = DataHelper.escapeHTML(ERROR_MESSAGE);
         if (errorCode == 404 &&
-            (ERROR_URI.endsWith(".png") ||
-             ERROR_URI.endsWith(".jpg") ||
-             ERROR_URI.endsWith(".gif") ||
-             ERROR_URI.endsWith(".ico") ||
-             ERROR_URI.endsWith(".svg") ||
-             ERROR_URI.endsWith(".txt") ||
-             ERROR_URI.endsWith(".js") ||
-             ERROR_URI.endsWith(".css"))) {
+                (ERROR_URI.endsWith(".png") ||
+                 ERROR_URI.endsWith(".jpg") ||
+                 ERROR_URI.endsWith(".gif") ||
+                 ERROR_URI.endsWith(".ico") ||
+                 ERROR_URI.endsWith(".svg") ||
+                 ERROR_URI.endsWith(".txt") ||
+                 ERROR_URI.endsWith(".js") ||
+                 ERROR_URI.endsWith(".css"))) {
             // keep it simple
             resp.setContentType("text/plain");
             PrintWriter out = resp.getWriter();
@@ -150,7 +150,7 @@ public class ErrorServlet extends HttpServlet {
         out.println("</div></body></html>");
         out.close();
     }
-    
+
     /**
      *  Needed if the errored page was a POST
      *  @since 0.9.35

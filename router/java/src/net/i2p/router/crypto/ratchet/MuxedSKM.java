@@ -34,9 +34,13 @@ public class MuxedSKM extends SessionKeyManager {
         _ec = ec;
     }
 
-    public TransientSessionKeyManager getElgSKM() { return _elg; }
+    public TransientSessionKeyManager getElgSKM() {
+        return _elg;
+    }
 
-    public RatchetSKM getECSKM() { return _ec; }
+    public RatchetSKM getECSKM() {
+        return _ec;
+    }
 
     /**
      *  Should we try the Ratchet slow decrypt before ElG slow decrypt?
@@ -49,8 +53,8 @@ public class MuxedSKM extends SessionKeyManager {
         int ec = _ecCounter.get();
         int elg = _elgCounter.get();
         if (ec > RESTART_COUNTERS / 10 &&
-            elg > RESTART_COUNTERS / 10 &&
-            ec + elg > RESTART_COUNTERS) {
+                elg > RESTART_COUNTERS / 10 &&
+                ec + elg > RESTART_COUNTERS) {
             _ecCounter.set(0);
             _elgCounter.set(0);
             return true;
@@ -141,10 +145,14 @@ public class MuxedSKM extends SessionKeyManager {
     }
 
     @Override
-    public int getTagsToSend() { return 0; };
+    public int getTagsToSend() {
+        return 0;
+    };
 
     @Override
-    public int getLowThreshold() { return 0; };
+    public int getLowThreshold() {
+        return 0;
+    };
 
     /**
      *  ElG only
@@ -196,7 +204,7 @@ public class MuxedSKM extends SessionKeyManager {
         EncType type = target.getType();
         if (type == EncType.ELGAMAL_2048)
             return _elg.tagsDelivered(target, key, sessionTags);
-         return null;
+        return null;
     }
 
     /**

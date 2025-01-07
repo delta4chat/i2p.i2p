@@ -38,7 +38,7 @@ public final class UNKNOWN extends Data {
     }
 
     public static UNKNOWN parse(DataInputStream dis, int payloadLength, TYPE type)
-            throws IOException {
+    throws IOException {
         return new UNKNOWN(dis, payloadLength, type);
     }
 

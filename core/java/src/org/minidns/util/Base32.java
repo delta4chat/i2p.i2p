@@ -30,11 +30,11 @@ public final class Base32 {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < bytes.length; i += 5) {
             long j = ((long) (padded[i] & 0xff) << 32) + ((long) (padded[i + 1] & 0xff) << 24)
-                    + ((padded[i + 2] & 0xff) << 16) + ((padded[i + 3] & 0xff) << 8) + (padded[i + 4] & 0xff);
+                     + ((padded[i + 2] & 0xff) << 16) + ((padded[i + 3] & 0xff) << 8) + (padded[i + 4] & 0xff);
             sb.append(ALPHABET.charAt((int) ((j >> 35) & 0x1f))).append(ALPHABET.charAt((int) ((j >> 30) & 0x1f)))
-                    .append(ALPHABET.charAt((int) ((j >> 25) & 0x1f))).append(ALPHABET.charAt((int) ((j >> 20) & 0x1f)))
-                    .append(ALPHABET.charAt((int) ((j >> 15) & 0x1f))).append(ALPHABET.charAt((int) ((j >> 10) & 0x1f)))
-                    .append(ALPHABET.charAt((int) ((j >> 5) & 0x1f))).append(ALPHABET.charAt((int) (j & 0x1f)));
+            .append(ALPHABET.charAt((int) ((j >> 25) & 0x1f))).append(ALPHABET.charAt((int) ((j >> 20) & 0x1f)))
+            .append(ALPHABET.charAt((int) ((j >> 15) & 0x1f))).append(ALPHABET.charAt((int) ((j >> 10) & 0x1f)))
+            .append(ALPHABET.charAt((int) ((j >> 5) & 0x1f))).append(ALPHABET.charAt((int) (j & 0x1f)));
         }
         return sb.substring(0, sb.length() - paddingCount) + PADDING.substring(0, paddingCount);
     }

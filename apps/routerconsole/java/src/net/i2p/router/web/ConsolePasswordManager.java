@@ -31,7 +31,7 @@ public class ConsolePasswordManager extends RouterPasswordManager {
         super(ctx);
         migrateConsole();
     }
-    
+
     /**
      *  The username is the salt
      *
@@ -40,18 +40,18 @@ public class ConsolePasswordManager extends RouterPasswordManager {
      *  @param pw plain text, already trimmed
      *  @return if pw verified
      */
-/****
-    public boolean checkCrypt(String realm, String user, String pw) {
-        String pfx = realm;
-        if (user != null && user.length() > 0)
-            pfx += '.' + user;
-        String cr = _context.getProperty(pfx + PROP_CRYPT);
-        if (cr == null)
-            return false;
-        return cr.equals(UnixCrypt.crypt(pw, cr));
-    }
-****/
-    
+    /****
+        public boolean checkCrypt(String realm, String user, String pw) {
+            String pfx = realm;
+            if (user != null && user.length() > 0)
+                pfx += '.' + user;
+            String cr = _context.getProperty(pfx + PROP_CRYPT);
+            if (cr == null)
+                return false;
+            return cr.equals(UnixCrypt.crypt(pw, cr));
+        }
+    ****/
+
     /**
      *  Straight MD5. Compatible with Jetty.
      *
@@ -69,7 +69,7 @@ public class ConsolePasswordManager extends RouterPasswordManager {
             return false;
         return hex.equals(md5Hex(subrealm, user, pw));
     }
-    
+
     /**
      *  Get all MD5 usernames and passwords. Compatible with Jetty.
      *  Any "null" user is NOT included..
@@ -129,23 +129,23 @@ public class ConsolePasswordManager extends RouterPasswordManager {
      *  @param pw plain text, already trimmed
      *  @return success
      */
-/****
-    public boolean saveCrypt(String realm, String user, String pw) {
-        String pfx = realm;
-        if (user != null && user.length() > 0)
-            pfx += '.' + user;
-        String salt = user != null ? user : "";
-        String crypt = UnixCrypt.crypt(pw, salt);
-        Map<String, String> toAdd = Collections.singletonMap(pfx + PROP_CRYPT, crypt);
-        List<String> toDel = new ArrayList(4);
-        toDel.add(pfx + PROP_PW);
-        toDel.add(pfx + PROP_B64);
-        toDel.add(pfx + PROP_MD5);
-        toDel.add(pfx + PROP_SHASH);
-        return _context.router().saveConfig(toAdd, toDel);
-    }
-****/
-    
+    /****
+        public boolean saveCrypt(String realm, String user, String pw) {
+            String pfx = realm;
+            if (user != null && user.length() > 0)
+                pfx += '.' + user;
+            String salt = user != null ? user : "";
+            String crypt = UnixCrypt.crypt(pw, salt);
+            Map<String, String> toAdd = Collections.singletonMap(pfx + PROP_CRYPT, crypt);
+            List<String> toDel = new ArrayList(4);
+            toDel.add(pfx + PROP_PW);
+            toDel.add(pfx + PROP_B64);
+            toDel.add(pfx + PROP_MD5);
+            toDel.add(pfx + PROP_SHASH);
+            return _context.router().saveConfig(toAdd, toDel);
+        }
+    ****/
+
     /**
      *  Straight MD5, no salt
      *  Compatible with Jetty and RFC 2617.
@@ -171,45 +171,45 @@ public class ConsolePasswordManager extends RouterPasswordManager {
         toDel.add(pfx + PROP_SHASH);
         return _context.router().saveConfig(toAdd, toDel);
     }
-    
-/****
-    public static void main(String args[]) {
-        RouterContext ctx = (new Router()).getContext();
-        ConsolePasswordManager pm = new ConsolePasswordManager(ctx);
-        if (!pm.migrate())
-            System.out.println("Fail 1");
-        if (!pm.migrateConsole())
-            System.out.println("Fail 1a");
 
-        System.out.println("Test plain");
-        if (!pm.savePlain("type1", "user1", "pw1"))
-            System.out.println("Fail 2");
-        if (!pm.checkPlain("type1", "user1", "pw1"))
-            System.out.println("Fail 3");
+    /****
+        public static void main(String args[]) {
+            RouterContext ctx = (new Router()).getContext();
+            ConsolePasswordManager pm = new ConsolePasswordManager(ctx);
+            if (!pm.migrate())
+                System.out.println("Fail 1");
+            if (!pm.migrateConsole())
+                System.out.println("Fail 1a");
 
-        System.out.println("Test B64");
-        if (!pm.saveB64("type2", "user2", "pw2"))
-            System.out.println("Fail 4");
-        if (!pm.checkB64("type2", "user2", "pw2"))
-            System.out.println("Fail 5");
+            System.out.println("Test plain");
+            if (!pm.savePlain("type1", "user1", "pw1"))
+                System.out.println("Fail 2");
+            if (!pm.checkPlain("type1", "user1", "pw1"))
+                System.out.println("Fail 3");
 
-        System.out.println("Test MD5");
-        if (!pm.saveMD5("type3", "realm", "user3", "pw3"))
-            System.out.println("Fail 6");
-        if (!pm.checkMD5("type3", "realm", "user3", "pw3"))
-            System.out.println("Fail 7");
+            System.out.println("Test B64");
+            if (!pm.saveB64("type2", "user2", "pw2"))
+                System.out.println("Fail 4");
+            if (!pm.checkB64("type2", "user2", "pw2"))
+                System.out.println("Fail 5");
 
-        //System.out.println("Test crypt");
-        //if (!pm.saveCrypt("type4", "user4", "pw4"))
-        //    System.out.println("Fail 8");
-        //if (!pm.checkCrypt("type4", "user4", "pw4"))
-        //    System.out.println("Fail 9");
+            System.out.println("Test MD5");
+            if (!pm.saveMD5("type3", "realm", "user3", "pw3"))
+                System.out.println("Fail 6");
+            if (!pm.checkMD5("type3", "realm", "user3", "pw3"))
+                System.out.println("Fail 7");
 
-        System.out.println("Test hash");
-        if (!pm.saveHash("type5", "user5", "pw5"))
-            System.out.println("Fail 10");
-        if (!pm.checkHash("type5", "user5", "pw5"))
-            System.out.println("Fail 11");
-    }
-****/
+            //System.out.println("Test crypt");
+            //if (!pm.saveCrypt("type4", "user4", "pw4"))
+            //    System.out.println("Fail 8");
+            //if (!pm.checkCrypt("type4", "user4", "pw4"))
+            //    System.out.println("Fail 9");
+
+            System.out.println("Test hash");
+            if (!pm.saveHash("type5", "user5", "pw5"))
+                System.out.println("Fail 10");
+            if (!pm.checkHash("type5", "user5", "pw5"))
+                System.out.println("Fail 11");
+        }
+    ****/
 }

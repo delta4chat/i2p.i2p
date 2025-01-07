@@ -10,12 +10,12 @@
 *
 *	12/13/02
 *		- first revision.
-*	
+*
 ******************************************************************/
 
 package org.cybergarage.http;
 
 public interface HTTPRequestListener
 {
-	public void httpRequestRecieved(HTTPRequest httpReq);
+    public void httpRequestRecieved(HTTPRequest httpReq);
 }

@@ -9,24 +9,24 @@ import net.i2p.util.Log;
  *
  */
 class SchedulerReceived extends SchedulerImpl {
-    
+
     public SchedulerReceived(I2PAppContext ctx) {
         super(ctx);
     }
-    
+
     public boolean accept(Connection con) {
-        return (con != null) && 
+        return (con != null) &&
                (con.getLastSendId() < 0) &&
                (con.getSendStreamId() > 0);
     }
-    
+
     public void eventOccurred(Connection con) {
         if (con.getUnackedPacketsReceived() <= 0) {
             if (_log.shouldLog(Log.WARN))
                 _log.warn("hmm, state is received, but no unacked packets received?");
             return;
         }
-        
+
         long timeTillSend = con.getNextSendTime() - _context.clock().now();
         if (timeTillSend <= 0) {
             if (con.getNextSendTime() > 0) {

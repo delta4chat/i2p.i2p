@@ -243,7 +243,7 @@ public class Archive {
             }
 
             long now = (lastUpdate - lastUpdate % (pdpCount * pdpStep))
-                    + (timer * pdpCount * pdpStep);
+                       + (timer * pdpCount * pdpStep);
 
             timer++;
 
@@ -342,19 +342,19 @@ public class Archive {
         StringBuilder sb = new StringBuilder("[Archive: OFFSET=0x");
 
         sb.append(Long.toHexString(headerOffset))
-          .append(", SIZE=0x")
-          .append(Long.toHexString(headerSize))
-          .append(", type=")
-          .append(type)
-          .append(", rowCount=")
-          .append(rowCount)
-          .append(", pdpCount=")
-          .append(pdpCount)
-          .append(", xff=")
-          .append(xff)
-          .append(", currentRow=")
-          .append(currentRow)
-          .append("]");
+        .append(", SIZE=0x")
+        .append(Long.toHexString(headerSize))
+        .append(", type=")
+        .append(type)
+        .append(", rowCount=")
+        .append(rowCount)
+        .append(", pdpCount=")
+        .append(pdpCount)
+        .append(", xff=")
+        .append(xff)
+        .append(", currentRow=")
+        .append(currentRow)
+        .append("]");
 
         for(CDPStatusBlock cdp: cdpStatusBlocks) {
             sb.append("\n\t\t");

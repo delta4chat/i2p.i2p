@@ -82,10 +82,10 @@ class LookupThrottler {
             return this.h.equals(((ReplyTunnel)obj).h) &&
                    this.id.equals(((ReplyTunnel)obj).id);
         }
-    
+
         @Override
         public int hashCode() {
-            return this.h.hashCode() ^ this.id.hashCode(); 
+            return this.h.hashCode() ^ this.id.hashCode();
         }
     }
 }

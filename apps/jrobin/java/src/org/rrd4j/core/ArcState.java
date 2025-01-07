@@ -24,7 +24,7 @@ public class ArcState implements RrdUpdater<ArcState> {
             long lastUpdateTime = header.getLastUpdateTime();
             long arcStep = parentArc.getArcStep();
             long initNanSteps = (Util.normalize(lastUpdateTime, step) -
-                    Util.normalize(lastUpdateTime, arcStep)) / step;
+                                 Util.normalize(lastUpdateTime, arcStep)) / step;
             accumValue.set(Double.NaN);
             nanSteps.set(initNanSteps);
         }

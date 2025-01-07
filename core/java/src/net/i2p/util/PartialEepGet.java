@@ -45,11 +45,11 @@ public class PartialEepGet extends EepGet {
               size, size, null, outputStream, url, true, null, null);
         _fetchSize = size;
     }
-   
+
     /**
      * PartialEepGet [-p 127.0.0.1:4444] [-l #bytes] url
      *
-     */ 
+     */
     public static void main(String args[]) {
         String proxyHost = "127.0.0.1";
         int proxyPort = 4444;
@@ -63,7 +63,7 @@ public class PartialEepGet extends EepGet {
         try {
             int c;
             while ((c = g.getopt()) != -1) {
-              switch (c) {
+                switch (c) {
                 case 'p':
                     String s = g.getOptarg();
                     int colon = s.indexOf(':');
@@ -105,7 +105,7 @@ public class PartialEepGet extends EepGet {
                 default:
                     error = true;
                     break;
-              }  // switch
+                }  // switch
             } // while
         } catch (RuntimeException e) {
             e.printStackTrace();
@@ -157,14 +157,14 @@ public class PartialEepGet extends EepGet {
             System.exit(1);
         }
     }
-    
+
     private static void usage() {
         System.err.println("PartialEepGet [-p 127.0.0.1[:4444]] [-c] [-o outputFile]\n" +
                            "              [-l #bytes] (default 56)\n" +
                            "              [-u username] [-x password] url\n" +
                            "              (use -c or -p :0 for no proxy)");
     }
-    
+
     @Override
     protected String getRequest() throws IOException {
         StringBuilder buf = new StringBuilder(2048);
@@ -189,7 +189,7 @@ public class PartialEepGet extends EepGet {
         if (_shouldProxy) {
             urlToSend = _actualURL;
             if ((path == null || path.length()<= 0) &&
-                (query == null || query.length()<= 0))
+                    (query == null || query.length()<= 0))
                 urlToSend += "/";
         } else {
             urlToSend = path;

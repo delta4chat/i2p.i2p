@@ -1,9 +1,9 @@
 package net.i2p.sam;
 /*
  * free (adj.): unencumbered; not under the control of others
- * Written by human in 2004 and released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
- * It probably won't  make your computer catch on fire, or eat 
+ * Written by human in 2004 and released into the public domain
+ * with no warranty of any kind, either expressed or implied.
+ * It probably won't  make your computer catch on fire, or eat
  * your children, but it might.  Use at your own risk.
  *
  */
@@ -84,18 +84,18 @@ class SAMUtils {
      *
      * @return True if the destination is valid, false otherwise
      */
-/****
-    public static boolean checkDestination(String dest) {
-        try {
-            Destination d = new Destination();
-            d.fromBase64(dest);
+    /****
+        public static boolean checkDestination(String dest) {
+            try {
+                Destination d = new Destination();
+                d.fromBase64(dest);
 
-            return true;
-        } catch (DataFormatException e) {
-            return false;
+                return true;
+            } catch (DataFormatException e) {
+                return false;
+            }
         }
-    }
-****/
+    ****/
 
     /**
      * Check whether a base64-encoded {dest,privkey,signingprivkey[,offlinesig]} is valid
@@ -110,8 +110,8 @@ class SAMUtils {
         byte[] b = Base64.decode(dest);
         if (b == null || b.length < 663)
             return false;
-    	ByteArrayInputStream destKeyStream = new ByteArrayInputStream(b);
-    	try {
+        ByteArrayInputStream destKeyStream = new ByteArrayInputStream(b);
+        try {
             Destination d = Destination.create(destKeyStream);
             new PrivateKey().readBytes(destKeyStream);
             SigType dtype = d.getSigningPublicKey().getType();
@@ -133,9 +133,9 @@ class SAMUtils {
                 spk.readBytes(destKeyStream);
             }
         } catch (DataFormatException e) {
-                return false;
+            return false;
         } catch (IOException e) {
-                return false;
+            return false;
         }
         return destKeyStream.available() == 0;
     }
@@ -152,7 +152,7 @@ class SAMUtils {
         Destination dest = ns.lookup(name);
         return dest;
     }
-    
+
     /**
      * Resolve the destination from a key or a hostname
      *
@@ -166,7 +166,7 @@ class SAMUtils {
         // NamingService caches b64 so just use it for everything
         // TODO: Add a static local cache here so SAM doesn't flush the
         // NamingService cache
-    	Destination d = lookupHost(s);
+        Destination d = lookupHost(s);
         if (d == null) {
             String msg;
             if (s.length() >= 516)
@@ -177,7 +177,7 @@ class SAMUtils {
                 msg = "Host name not found: ";
             throw new DataFormatException(msg + s);
         }
-    	return d;
+        return d;
     }
 
     public static final String COMMAND = "\"\"COMMAND\"\"";
@@ -229,85 +229,85 @@ class SAMUtils {
         for (int i = 0; i <= length; i++) {
             char c = (i < length) ? args.charAt(i) : ' ';
             switch (c) {
-                case '"':
-                    if (isQuoted) {
-                        // keys never quoted
-                        if (key != null) {
-                            if (rv.setProperty(key, buf.length() > 0 ? buf.toString() : "true") != null)
-                                throw new SAMException("Duplicate parameter " + key);
-                            key = null;
-                        }
-                        buf.setLength(0);
+            case '"':
+                if (isQuoted) {
+                    // keys never quoted
+                    if (key != null) {
+                        if (rv.setProperty(key, buf.length() > 0 ? buf.toString() : "true") != null)
+                            throw new SAMException("Duplicate parameter " + key);
+                        key = null;
                     }
-                    isQuoted = !isQuoted;
-                    break;
+                    buf.setLength(0);
+                }
+                isQuoted = !isQuoted;
+                break;
 
-                case '\r':
-                case '\n':
-                    break;
+            case '\r':
+            case '\n':
+                break;
 
-                case ' ':
-                case '\b':
-                case '\f':
-                case '\t':
-                    // whitespace - if we're in a quoted section, keep this as part of the quote,
-                    // otherwise use it as a delim
-                    if (isQuoted) {
-                        buf.append(c);
-                    } else {
-                        if (key != null) {
-                            if (rv.setProperty(key, buf.length() > 0 ? buf.toString() : "true") != null)
-                                throw new SAMException("Duplicate parameter " + key);
-                            key = null;
-                        } else if (buf.length() > 0) {
-                            // key without value
-                            String k = buf.toString();
-                            if (rv.isEmpty()) {
-                                k =  k.toUpperCase(Locale.US);
-                                rv.setProperty(COMMAND, k);
-                                if (k.equals("PING") || k.equals("PONG")) {
-                                    // eat the rest of the line
-                                    if (i + 1 < args.length()) {
-                                        String pingData = args.substring(i + 1);
-                                        rv.setProperty(OPCODE, pingData);
-                                    }
-                                    // this will force an end of the loop
-                                    i = length + 1;
-                                }
-                            } else if (rv.size() == 1) {
-                                rv.setProperty(OPCODE, k.toUpperCase(Locale.US));
-                            } else {
-                                if (rv.setProperty(k, "true") != null)
-                                    throw new SAMException("Duplicate parameter " + k);
-                            }
-                        }
-                        buf.setLength(0);
-                    }
-                    break;
-
-                case '=':
-                    if (isQuoted) {
-                        buf.append(c);
-                    } else if (key != null) {
-                        // '=' in a value
-                        buf.append(c);
-                    } else {
-                        if (buf.length() == 0)
-                            throw new SAMException("Empty parameter name");
-                        key = buf.toString();
-                        buf.setLength(0);
-                    }
-                    break;
-
-                case '\\':
-                    if (++i >= length)
-                        throw new SAMException("Unterminated escape");
-                    c = args.charAt(i);
-                    // fall through...
-
-                default:
+            case ' ':
+            case '\b':
+            case '\f':
+            case '\t':
+                // whitespace - if we're in a quoted section, keep this as part of the quote,
+                // otherwise use it as a delim
+                if (isQuoted) {
                     buf.append(c);
-                    break;
+                } else {
+                    if (key != null) {
+                        if (rv.setProperty(key, buf.length() > 0 ? buf.toString() : "true") != null)
+                            throw new SAMException("Duplicate parameter " + key);
+                        key = null;
+                    } else if (buf.length() > 0) {
+                        // key without value
+                        String k = buf.toString();
+                        if (rv.isEmpty()) {
+                            k =  k.toUpperCase(Locale.US);
+                            rv.setProperty(COMMAND, k);
+                            if (k.equals("PING") || k.equals("PONG")) {
+                                // eat the rest of the line
+                                if (i + 1 < args.length()) {
+                                    String pingData = args.substring(i + 1);
+                                    rv.setProperty(OPCODE, pingData);
+                                }
+                                // this will force an end of the loop
+                                i = length + 1;
+                            }
+                        } else if (rv.size() == 1) {
+                            rv.setProperty(OPCODE, k.toUpperCase(Locale.US));
+                        } else {
+                            if (rv.setProperty(k, "true") != null)
+                                throw new SAMException("Duplicate parameter " + k);
+                        }
+                    }
+                    buf.setLength(0);
+                }
+                break;
+
+            case '=':
+                if (isQuoted) {
+                    buf.append(c);
+                } else if (key != null) {
+                    // '=' in a value
+                    buf.append(c);
+                } else {
+                    if (buf.length() == 0)
+                        throw new SAMException("Empty parameter name");
+                    key = buf.toString();
+                    buf.setLength(0);
+                }
+                break;
+
+            case '\\':
+                if (++i >= length)
+                    throw new SAMException("Unterminated escape");
+                c = args.charAt(i);
+            // fall through...
+
+            default:
+                buf.append(c);
+                break;
             }
         }
         // nothing needed here, as we forced a trailing space in the loop
@@ -317,49 +317,49 @@ class SAMUtils {
         return rv;
     }
 
-/****
-    public static void main(String args[]) {
-        try {
-            test("a=b c=d e=\"f g h\"");
-            test("a=\"b c d\" e=\"f g h\" i=\"j\"");
-            test("a=\"b c d\" e=f i=\"j\"");
-            if (args.length == 0) {
-                System.out.println("Usage: CommandParser file || CommandParser text to parse");
-                return;
-            }
-            if (args.length > 1 || !(new java.io.File(args[0])).exists()) {
-                StringBuilder buf = new StringBuilder(128);
-                for (int i = 0; i < args.length; i++) {
-                    if (i != 0)
-                        buf.append(' ');
-                    buf.append(args[i]);
+    /****
+        public static void main(String args[]) {
+            try {
+                test("a=b c=d e=\"f g h\"");
+                test("a=\"b c d\" e=\"f g h\" i=\"j\"");
+                test("a=\"b c d\" e=f i=\"j\"");
+                if (args.length == 0) {
+                    System.out.println("Usage: CommandParser file || CommandParser text to parse");
+                    return;
                 }
-                test(buf.toString());
-            } else {
-                java.io.InputStream in = new java.io.FileInputStream(args[0]);
-                String line;
-                while ((line = net.i2p.data.DataHelper.readLine(in)) != null) {
-                    try {
-                        test(line);
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                if (args.length > 1 || !(new java.io.File(args[0])).exists()) {
+                    StringBuilder buf = new StringBuilder(128);
+                    for (int i = 0; i < args.length; i++) {
+                        if (i != 0)
+                            buf.append(' ');
+                        buf.append(args[i]);
+                    }
+                    test(buf.toString());
+                } else {
+                    java.io.InputStream in = new java.io.FileInputStream(args[0]);
+                    String line;
+                    while ((line = net.i2p.data.DataHelper.readLine(in)) != null) {
+                        try {
+                            test(line);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
-    }
 
-    private static void test(String props) throws Exception {
-        System.out.println("Testing: " + props);
-        Properties m = parseParams(props);
-        System.out.println("Found " + m.size() + " keys");
-        for (Map.Entry e : m.entrySet()) {
-            System.out.println(e.getKey() + "=[" + e.getValue() + ']');
+        private static void test(String props) throws Exception {
+            System.out.println("Testing: " + props);
+            Properties m = parseParams(props);
+            System.out.println("Found " + m.size() + " keys");
+            for (Map.Entry e : m.entrySet()) {
+                System.out.println(e.getKey() + "=[" + e.getValue() + ']');
+            }
+            System.out.println("-------------");
         }
-        System.out.println("-------------");
-    }
-****/
+    ****/
 }
 

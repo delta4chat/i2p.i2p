@@ -2,9 +2,9 @@ package net.i2p.data.i2cp;
 
 /*
  * free (adj.): unencumbered; not under the control of others
- * Written by jrandom in 2003 and released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
- * It probably won't make your computer catch on fire, or eat 
+ * Written by jrandom in 2003 and released into the public domain
+ * with no warranty of any kind, either expressed or implied.
+ * It probably won't make your computer catch on fire, or eat
  * your children, but it might.  Use at your own risk.
  *
  */
@@ -334,10 +334,10 @@ public class MessageStatusMessage extends I2CPMessageImpl {
         }
     }
 
-    
-    /** 
+
+    /**
      * Override to reduce mem churn
-     * @throws IOException 
+     * @throws IOException
      */
     @Override
     public void writeMessage(OutputStream out) throws I2CPMessageException, IOException {
@@ -346,7 +346,7 @@ public class MessageStatusMessage extends I2CPMessageImpl {
                   1 + // status
                   4 + // size
                   4; // nonce
-        
+
         try {
             DataHelper.writeLong(out, 4, len);
             out.write((byte) MESSAGE_TYPE);
@@ -359,7 +359,7 @@ public class MessageStatusMessage extends I2CPMessageImpl {
             throw new I2CPMessageException("Unable to write the message length or type", dfe);
         }
     }
-    
+
     @Override
     protected byte[] doWriteMessage() throws I2CPMessageException, IOException {
         throw new UnsupportedOperationException("This shouldn't be called... use writeMessage(out)");

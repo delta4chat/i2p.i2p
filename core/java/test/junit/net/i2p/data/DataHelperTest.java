@@ -23,7 +23,7 @@ public class DataHelperTest {
      * well as some 8 byte values.
      */
     @Test
-    public void testLong() throws Exception{
+    public void testLong() throws Exception {
         for (int i = 0; i <= 0xFF; i+=4)
             checkLong(1, i);
         for (long i = 0; i <= 0xFFFF; i+=16)
@@ -59,7 +59,7 @@ public class DataHelperTest {
     }
 
     @Test
-    public void testDate() throws Exception{
+    public void testDate() throws Exception {
         TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
         cal.set(Calendar.YEAR, 1970);
@@ -102,16 +102,16 @@ public class DataHelperTest {
         cal.set(Calendar.MINUTE, 59);
         cal.set(Calendar.SECOND, 59);
         boolean error = false;
-        try{
+        try {
             checkDate(cal.getTime());
-        }catch(Exception e){
+        } catch(Exception e) {
             error = true;
         }
         assertTrue(error);
     }
 
     @SuppressWarnings("deprecation")
-    private void checkDate(Date when) throws Exception{
+    private void checkDate(Date when) throws Exception {
         byte buf[] = new byte[DataHelper.DATE_LENGTH];
         DataHelper.toDate(buf, 0, when.getTime());
         byte tbuf[] = DataHelper.toDate(when);
@@ -121,10 +121,10 @@ public class DataHelperTest {
     }
 
     @Test
-    public void testCompress() throws Exception{
+    public void testCompress() throws Exception {
         Random r = new Random();
-        for (int size = 0; size < 32*1024; size+=32){   // Original had size++, changed value because
-                                                        // speed was a problem. -Comwiz
+        for (int size = 0; size < 32*1024; size+=32) {  // Original had size++, changed value because
+            // speed was a problem. -Comwiz
             byte data[] = new byte[size];
             r.nextBytes(data);
             byte compressed[] = DataHelper.compress(data);

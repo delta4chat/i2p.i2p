@@ -81,22 +81,22 @@ public class DNSOverHTTPS implements EepGet.StatusListener {
     // https://ithi.research.icann.org/graph-m3.html#M332
     // https://tools.ietf.org/html/draft-ietf-dnsop-private-use-tld-00
     private static final List<String> locals = Arrays.asList(new String[] {
-        "localhost",
-        "in-addr.arpa", "ip6.arpa", "home.arpa",
-        "i2p", "onion",
-        "i2p.arpa", "onion.arpa",
-        "corp", "home", "internal", "intranet", "lan", "local", "private",
-        "dhcp", "localdomain", "bbrouter", "dlink", "ctc", "intra", "loc", "modem", "ip",
-        "test", "example", "invalid",
-        "alt",
-        "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
-        "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
-        "aa",
-        "qm", "qn", "qo", "qp", "qq", "qr", "qs", "qt", "qu", "qv", "qw", "qx", "qy", "qz",
-        "xa", "xb", "xc", "xd", "xe", "xf", "xg", "xh", "xi", "xj", "xk", "xl", "xm",
-        "xn", "xo", "xp", "xq", "xr", "xs", "xt", "xu", "xv", "xw", "xx", "xy", "xz",
-        "zz"
-    } );
+                "localhost",
+                "in-addr.arpa", "ip6.arpa", "home.arpa",
+                "i2p", "onion",
+                "i2p.arpa", "onion.arpa",
+                "corp", "home", "internal", "intranet", "lan", "local", "private",
+                "dhcp", "localdomain", "bbrouter", "dlink", "ctc", "intra", "loc", "modem", "ip",
+                "test", "example", "invalid",
+                "alt",
+                "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
+                "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
+                "aa",
+                "qm", "qn", "qo", "qp", "qq", "qr", "qs", "qt", "qu", "qv", "qw", "qx", "qy", "qz",
+                "xa", "xb", "xc", "xd", "xe", "xf", "xg", "xh", "xi", "xj", "xk", "xl", "xm",
+                "xn", "xo", "xp", "xq", "xr", "xs", "xt", "xu", "xv", "xw", "xx", "xy", "xz",
+                "zz"
+            } );
 
     static {
         // Public lists:
@@ -158,7 +158,8 @@ public class DNSOverHTTPS implements EepGet.StatusListener {
         public final String ip;
         public final long expires;
         public Result(String i, long e) {
-            ip = i; expires = e;
+            ip = i;
+            expires = e;
         }
     }
 
@@ -196,7 +197,7 @@ public class DNSOverHTTPS implements EepGet.StatusListener {
             return null;
         for (String local : locals) {
             if (host.equals(local) ||
-                (host.endsWith(local) && host.charAt(host.length() - local.length() - 1) == '.')) {
+                    (host.endsWith(local) && host.charAt(host.length() - local.length() - 1) == '.')) {
                 return null;
             }
         }
@@ -291,12 +292,12 @@ public class DNSOverHTTPS implements EepGet.StatusListener {
     private String query(String host, boolean isv6, List<String> toQuery, long timeout) {
         Question q = new Question(host, isv6 ? TYPE.AAAA : TYPE.A);
         DnsMessage msg = DnsMessage.builder()
-                                   .setId(0)
-                                   .setOpcode(DnsMessage.OPCODE.QUERY)
-                                   .setQrFlag(false)
-                                   .setRecursionDesired(true)
-                                   .setQuestion(q)
-                                   .build();
+                         .setId(0)
+                         .setOpcode(DnsMessage.OPCODE.QUERY)
+                         .setQrFlag(false)
+                         .setRecursionDesired(true)
+                         .setQuestion(q)
+                         .build();
         byte[] msgb = msg.toArray();
         String msgb64 = Base64.encode(msgb, true);
         // google (and only google) returns 400 for trailing unescaped '='
@@ -349,7 +350,7 @@ public class DNSOverHTTPS implements EepGet.StatusListener {
      */
     private String fetch(SSLEepGet eepget, String host, boolean isv6, Question q) {
         if (eepget.fetch(TIMEOUT, TIMEOUT, TIMEOUT) &&
-            eepget.getStatusCode() == 200 && baos.size() > 0) {
+                eepget.getStatusCode() == 200 && baos.size() > 0) {
             long end = System.currentTimeMillis();
             log("Got response in " + (end - fetchStart) + "ms");
             byte[] b = baos.toByteArray();
@@ -528,7 +529,10 @@ public class DNSOverHTTPS implements EepGet.StatusListener {
         } catch (Exception e) {
             if (DEBUG) e.printStackTrace();
         } finally {
-            if (in != null) try { in.close(); } catch (IOException ioe) {}
+            if (in != null) try {
+                    in.close();
+                }
+                catch (IOException ioe) {}
         }
     }
 
@@ -543,7 +547,7 @@ public class DNSOverHTTPS implements EepGet.StatusListener {
         try {
             int c;
             while ((c = g.getopt()) != -1) {
-              switch (c) {
+                switch (c) {
                 case '4':
                     type = Type.V4_ONLY;
                     break;
@@ -593,7 +597,7 @@ public class DNSOverHTTPS implements EepGet.StatusListener {
                 default:
                     error = true;
                     break;
-              }  // switch
+                }  // switch
             } // while
         } catch (RuntimeException e) {
             e.printStackTrace();
@@ -646,7 +650,7 @@ public class DNSOverHTTPS implements EepGet.StatusListener {
                 System.err.println(type + " lookup failed for " + hostname);
         }
     }
-    
+
     private static void usage() {
         System.err.println("DNSOverHTTPS [-fstu46] hostname\n" +
                            "             [-f] (IPv4 preferred)\n" +
@@ -771,7 +775,10 @@ public class DNSOverHTTPS implements EepGet.StatusListener {
                 decodeStamp(line, true);
             }
         } finally {
-            if (in != null) try { in.close(); } catch (IOException ioe) {}
+            if (in != null) try {
+                    in.close();
+                }
+                catch (IOException ioe) {}
         }
     }
 }

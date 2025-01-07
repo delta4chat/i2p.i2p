@@ -21,7 +21,9 @@ class IterativeFollowupJob extends SingleSearchJob {
     }
 
     @Override
-    public String getName() { return "Iterative search key from DSRM"; }
+    public String getName() {
+        return "Iterative search key from DSRM";
+    }
 
     @Override
     void success() {

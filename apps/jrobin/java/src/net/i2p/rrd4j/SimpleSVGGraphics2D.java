@@ -132,19 +132,27 @@ public class SimpleSVGGraphics2D extends Graphics2D {
         }
     }
 
-    public void dispose() { buf.setLength(0); }
+    public void dispose() {
+        buf.setLength(0);
+    }
 
     //// API bypass ////
 
     /**
      * Graphics2D API bypass, advanced use only
      */
-    public SimpleSVGMaker getMaker() { start(); return svg; }
+    public SimpleSVGMaker getMaker() {
+        start();
+        return svg;
+    }
 
     /**
      * Graphics2D API bypass, advanced use only
      */
-    public void append(String s) { start(); buf.append(s).append('\n'); }
+    public void append(String s) {
+        start();
+        buf.append(s).append('\n');
+    }
 
     //// draws/fills used by rrd4j ////
 
@@ -184,9 +192,13 @@ public class SimpleSVGGraphics2D extends Graphics2D {
         svg.drawText(str, x, y, (Color) paint, font, clipID, hints);
     }
 
-    public void drawString(String str, float x, float y) { drawString(str, (int) x, (int) y); }
+    public void drawString(String str, float x, float y) {
+        drawString(str, (int) x, (int) y);
+    }
 
-    public FontRenderContext getFontRenderContext() { return frctx; }
+    public FontRenderContext getFontRenderContext() {
+        return frctx;
+    }
 
     //// supported things not used by rrd4j ////
 
@@ -249,25 +261,25 @@ public class SimpleSVGGraphics2D extends Graphics2D {
         for (PathIterator it = s.getPathIterator(frctx.getTransform()); !it.isDone(); it.next()) {
             int type = it.currentSegment(coords);
             switch(type) {
-                case SEG_MOVETO:
-                case SEG_LINETO:
-                    if (i >= x.length) {
-                        x = Arrays.copyOf(x, x.length * 2);
-                        y = Arrays.copyOf(y, y.length * 2);
-                    }
-                    x[i] = (int) coords[0];
-                    y[i++] = (int) coords[1];
-                    break;
+            case SEG_MOVETO:
+            case SEG_LINETO:
+                if (i >= x.length) {
+                    x = Arrays.copyOf(x, x.length * 2);
+                    y = Arrays.copyOf(y, y.length * 2);
+                }
+                x[i] = (int) coords[0];
+                y[i++] = (int) coords[1];
+                break;
 
-                case SEG_CLOSE:
-                    break;
+            case SEG_CLOSE:
+                break;
 
-                case SEG_CUBICTO:
-                case SEG_QUADTO:
-                    throw new UnsupportedOperationException("Unsupported curved shape");
+            case SEG_CUBICTO:
+            case SEG_QUADTO:
+                throw new UnsupportedOperationException("Unsupported curved shape");
 
-                default:
-                    throw new UnsupportedOperationException("Unsupported type " + type);
+            default:
+                throw new UnsupportedOperationException("Unsupported type " + type);
             }
         }
         if (draw)
@@ -304,36 +316,38 @@ public class SimpleSVGGraphics2D extends Graphics2D {
 
     //// transforms ////
 
-    public void translate(int x, int y) { translate((double) x, (double) y); }
+    public void translate(int x, int y) {
+        translate((double) x, (double) y);
+    }
 
     public void translate(double tx, double ty) {
-         AffineTransform ntx = (AffineTransform) transform.clone();
-         ntx.translate(tx, ty);
-         setTransform(ntx);
+        AffineTransform ntx = (AffineTransform) transform.clone();
+        ntx.translate(tx, ty);
+        setTransform(ntx);
     }
 
     public void rotate(double theta) {
-         AffineTransform ntx = (AffineTransform) transform.clone();
-         ntx.rotate(theta);
-         setTransform(ntx);
+        AffineTransform ntx = (AffineTransform) transform.clone();
+        ntx.rotate(theta);
+        setTransform(ntx);
     }
 
     public void rotate(double theta, double x, double y) {
-         AffineTransform ntx = (AffineTransform) transform.clone();
-         ntx.rotate(theta, x, y);
-         setTransform(ntx);
+        AffineTransform ntx = (AffineTransform) transform.clone();
+        ntx.rotate(theta, x, y);
+        setTransform(ntx);
     }
 
     public void scale(double sx, double sy) {
-         AffineTransform ntx = (AffineTransform) transform.clone();
-         ntx.scale(sx, sy);
-         setTransform(ntx);
+        AffineTransform ntx = (AffineTransform) transform.clone();
+        ntx.scale(sx, sy);
+        setTransform(ntx);
     }
 
     public void shear(double shx, double shy) {
-         AffineTransform ntx = (AffineTransform) transform.clone();
-         ntx.shear(shx, shy);
-         setTransform(ntx);
+        AffineTransform ntx = (AffineTransform) transform.clone();
+        ntx.shear(shx, shy);
+        setTransform(ntx);
     }
 
     public void setTransform(AffineTransform tx) {
@@ -354,25 +368,51 @@ public class SimpleSVGGraphics2D extends Graphics2D {
         transform = tx;
     }
 
-    public AffineTransform getTransform() { return transform; }
+    public AffineTransform getTransform() {
+        return transform;
+    }
 
     //// setters ////
 
-    public void setFont(Font font) { this.font = font; }
-    public void setPaint(Paint paint) { this.paint = paint; }
-    public void setStroke(Stroke stroke) { this.stroke = stroke; }
+    public void setFont(Font font) {
+        this.font = font;
+    }
+    public void setPaint(Paint paint) {
+        this.paint = paint;
+    }
+    public void setStroke(Stroke stroke) {
+        this.stroke = stroke;
+    }
 
     //// we support these but unused by rrd4j ////
 
-    public void setBackground(Color color) { bgcolor = color; }
-    public Color getBackground() { return bgcolor; }
-    public Shape getClip() { return clip; }
-    public Rectangle getClipBounds() { return clip; }
-    public void setColor(Color color) { paint = color; }
-    public Color getColor() { return (Color) paint; }
-    public Font getFont() { return font; }
-    public Paint getPaint() { return paint; }
-    public Stroke getStroke() { return stroke; }
+    public void setBackground(Color color) {
+        bgcolor = color;
+    }
+    public Color getBackground() {
+        return bgcolor;
+    }
+    public Shape getClip() {
+        return clip;
+    }
+    public Rectangle getClipBounds() {
+        return clip;
+    }
+    public void setColor(Color color) {
+        paint = color;
+    }
+    public Color getColor() {
+        return (Color) paint;
+    }
+    public Font getFont() {
+        return font;
+    }
+    public Paint getPaint() {
+        return paint;
+    }
+    public Stroke getStroke() {
+        return stroke;
+    }
 
     //// Hints ////
 
@@ -388,44 +428,113 @@ public class SimpleSVGGraphics2D extends Graphics2D {
         }
     }
 
-    public void addRenderingHints(Map<?,?> hints) { this.hints.putAll(hints); }
-    public Object getRenderingHint(RenderingHints.Key hintKey) { return hints.get(hintKey); }
-    public void setRenderingHint(RenderingHints.Key hintKey, Object hintValue) { hints.put(hintKey, hintValue); }
-    public void setRenderingHints(Map<?,?> hints) { this.hints.clear(); addRenderingHints(hints); }
+    public void addRenderingHints(Map<?,?> hints) {
+        this.hints.putAll(hints);
+    }
+    public Object getRenderingHint(RenderingHints.Key hintKey) {
+        return hints.get(hintKey);
+    }
+    public void setRenderingHint(RenderingHints.Key hintKey, Object hintValue) {
+        hints.put(hintKey, hintValue);
+    }
+    public void setRenderingHints(Map<?,?> hints) {
+        this.hints.clear();
+        addRenderingHints(hints);
+    }
 
     //// unsupported things ////
     //// all do nothing or throw ////
 
-    public void clipRect(int x, int y, int width, int height) { throw new UnsupportedOperationException(); }
-    public void clip(Shape s) { throw new UnsupportedOperationException(); }
-    public void copyArea(int x, int y, int width, int height, int dx, int dy) { throw new UnsupportedOperationException(); }
-    public Graphics create() { throw new UnsupportedOperationException(); }
-    public void drawGlyphVector(GlyphVector g, float x, float y) { throw new UnsupportedOperationException(); }
-    public void drawImage(BufferedImage img, BufferedImageOp op, int x, int y) { throw new UnsupportedOperationException(); }
-    public boolean drawImage(Image img, AffineTransform xform, ImageObserver obs) { throw new UnsupportedOperationException(); }
-    public boolean drawImage(Image img, int x, int y, ImageObserver obs) { throw new UnsupportedOperationException(); }
-    public boolean drawImage(Image img, int x, int y, Color bgcolor, ImageObserver obs) { throw new UnsupportedOperationException(); }
-    public boolean drawImage(Image img, int x, int y, int width, int height, ImageObserver obs) { throw new UnsupportedOperationException(); }
-    public boolean drawImage(Image img, int x, int y, int width, int height, Color bgcolor, ImageObserver obs) { throw new UnsupportedOperationException(); }
-    public boolean drawImage(Image img, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2, ImageObserver obs) { throw new UnsupportedOperationException(); }
-    public boolean drawImage(Image img, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2, Color bgcolor, ImageObserver obs) { throw new UnsupportedOperationException(); }
-    public void drawOval(int x, int y, int width, int height) { throw new UnsupportedOperationException(); }
-    public void drawPolygon(int[] xPoints, int[] yPoints, int nPoints) { throw new UnsupportedOperationException(); }
-    public void drawRenderableImage(RenderableImage img, AffineTransform xform) { throw new UnsupportedOperationException(); }
-    public void drawRenderedImage(RenderedImage img, AffineTransform xform) { throw new UnsupportedOperationException(); }
-    public void drawRoundRect(int x, int y, int width, int height, int arcWidth, int arcHeight) { throw new UnsupportedOperationException(); }
-    public void drawString(AttributedCharacterIterator iterator, float x, float y) { throw new UnsupportedOperationException(); }
-    public void drawString(AttributedCharacterIterator iterator, int x, int y) { throw new UnsupportedOperationException(); }
-    public void fillOval(int x, int y, int width, int height) { throw new UnsupportedOperationException(); }
-    public void fillPolyline(int[] xPoints, int[] yPoints, int nPoints) { throw new UnsupportedOperationException(); }
-    public void fillRoundRect(int x, int y, int width, int height, int arcWidth, int arcHeight) { throw new UnsupportedOperationException(); }
-    public Composite getComposite() { return null; }
-    public GraphicsConfiguration getDeviceConfiguration() { return null; }
-    public FontMetrics getFontMetrics(Font f) { return null; }
-    public RenderingHints getRenderingHints() { return null; }
-    public boolean hit(Rectangle rect, Shape s, boolean onStroke) { return false; }
-    public void setComposite(Composite comp) { throw new UnsupportedOperationException(); }
+    public void clipRect(int x, int y, int width, int height) {
+        throw new UnsupportedOperationException();
+    }
+    public void clip(Shape s) {
+        throw new UnsupportedOperationException();
+    }
+    public void copyArea(int x, int y, int width, int height, int dx, int dy) {
+        throw new UnsupportedOperationException();
+    }
+    public Graphics create() {
+        throw new UnsupportedOperationException();
+    }
+    public void drawGlyphVector(GlyphVector g, float x, float y) {
+        throw new UnsupportedOperationException();
+    }
+    public void drawImage(BufferedImage img, BufferedImageOp op, int x, int y) {
+        throw new UnsupportedOperationException();
+    }
+    public boolean drawImage(Image img, AffineTransform xform, ImageObserver obs) {
+        throw new UnsupportedOperationException();
+    }
+    public boolean drawImage(Image img, int x, int y, ImageObserver obs) {
+        throw new UnsupportedOperationException();
+    }
+    public boolean drawImage(Image img, int x, int y, Color bgcolor, ImageObserver obs) {
+        throw new UnsupportedOperationException();
+    }
+    public boolean drawImage(Image img, int x, int y, int width, int height, ImageObserver obs) {
+        throw new UnsupportedOperationException();
+    }
+    public boolean drawImage(Image img, int x, int y, int width, int height, Color bgcolor, ImageObserver obs) {
+        throw new UnsupportedOperationException();
+    }
+    public boolean drawImage(Image img, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2, ImageObserver obs) {
+        throw new UnsupportedOperationException();
+    }
+    public boolean drawImage(Image img, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2, Color bgcolor, ImageObserver obs) {
+        throw new UnsupportedOperationException();
+    }
+    public void drawOval(int x, int y, int width, int height) {
+        throw new UnsupportedOperationException();
+    }
+    public void drawPolygon(int[] xPoints, int[] yPoints, int nPoints) {
+        throw new UnsupportedOperationException();
+    }
+    public void drawRenderableImage(RenderableImage img, AffineTransform xform) {
+        throw new UnsupportedOperationException();
+    }
+    public void drawRenderedImage(RenderedImage img, AffineTransform xform) {
+        throw new UnsupportedOperationException();
+    }
+    public void drawRoundRect(int x, int y, int width, int height, int arcWidth, int arcHeight) {
+        throw new UnsupportedOperationException();
+    }
+    public void drawString(AttributedCharacterIterator iterator, float x, float y) {
+        throw new UnsupportedOperationException();
+    }
+    public void drawString(AttributedCharacterIterator iterator, int x, int y) {
+        throw new UnsupportedOperationException();
+    }
+    public void fillOval(int x, int y, int width, int height) {
+        throw new UnsupportedOperationException();
+    }
+    public void fillPolyline(int[] xPoints, int[] yPoints, int nPoints) {
+        throw new UnsupportedOperationException();
+    }
+    public void fillRoundRect(int x, int y, int width, int height, int arcWidth, int arcHeight) {
+        throw new UnsupportedOperationException();
+    }
+    public Composite getComposite() {
+        return null;
+    }
+    public GraphicsConfiguration getDeviceConfiguration() {
+        return null;
+    }
+    public FontMetrics getFontMetrics(Font f) {
+        return null;
+    }
+    public RenderingHints getRenderingHints() {
+        return null;
+    }
+    public boolean hit(Rectangle rect, Shape s, boolean onStroke) {
+        return false;
+    }
+    public void setComposite(Composite comp) {
+        throw new UnsupportedOperationException();
+    }
     public void setPaintMode() {}
-    public void setXORMode(Color color) { throw new UnsupportedOperationException(); }
+    public void setXORMode(Color color) {
+        throw new UnsupportedOperationException();
+    }
     public void transform(AffineTransform tx) {}
 }

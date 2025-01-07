@@ -31,9 +31,9 @@ public final class Metadata {
     @SuppressWarnings("unchecked")
     Metadata(Map metadata) {
         this.binaryFormatMajorVersion = getInt(metadata,
-                "binary_format_major_version");
+                                               "binary_format_major_version");
         this.binaryFormatMinorVersion = getInt(metadata,
-                "binary_format_minor_version");
+                                               "binary_format_minor_version");
         this.buildEpoch = getLong(metadata, "build_epoch");
         this.databaseType = getString(metadata, "database_type");
         this.languages = (List<String>) metadata.get("languages");
@@ -155,11 +155,11 @@ public final class Metadata {
     @Override
     public String toString() {
         return "Metadata [binaryFormatMajorVersion="
-                + this.binaryFormatMajorVersion + ", binaryFormatMinorVersion="
-                + this.binaryFormatMinorVersion + ", buildEpoch="
-                + this.buildEpoch + ", databaseType=" + this.databaseType
-                + ", description=" + this.description + ", ipVersion="
-                + this.ipVersion + ", nodeCount=" + this.nodeCount
-                + ", recordSize=" + this.recordSize + "]";
+               + this.binaryFormatMajorVersion + ", binaryFormatMinorVersion="
+               + this.binaryFormatMinorVersion + ", buildEpoch="
+               + this.buildEpoch + ", databaseType=" + this.databaseType
+               + ", description=" + this.description + ", ipVersion="
+               + this.ipVersion + ", nodeCount=" + this.nodeCount
+               + ", recordSize=" + this.recordSize + "]";
     }
 }

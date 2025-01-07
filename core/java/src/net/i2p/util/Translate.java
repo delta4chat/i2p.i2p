@@ -136,8 +136,8 @@ public abstract class Translate {
             return fmt.format(oArray, new StringBuffer(), null).toString();
         } catch (IllegalArgumentException iae) {
             System.err.println("Bad format: sing: \"" + s +
-                           "\" plural: \"" + p +
-                           "\" lang: " + lang);
+                               "\" plural: \"" + p +
+                               "\" lang: " + lang);
             return "FIXME: " + s + ' ' + p + ',' + n;
         }
     }

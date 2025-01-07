@@ -109,7 +109,7 @@ class SimpleBandwidthEstimator implements BandwidthEstimator {
      * Here we insert virtual null samples if necessary as in Westwood,
      * And use a very simple EWMA (exponential weighted moving average)
      * time-varying filter, as in kernel tcp_westwood.c
-     * 
+     *
      * @param time the time of the measurement
      * @param packets number of packets acked
      */
@@ -152,9 +152,9 @@ class SimpleBandwidthEstimator implements BandwidthEstimator {
     @Override
     public synchronized String toString() {
         return "SBE[" +
-                " _bKFiltered " + _bKFiltered +
-                " _tAck " + _tAck + "; " +
-                DataHelper.formatSize2Decimal((long) (_bKFiltered * 1000 * _opts.getMaxMessageSize()), false) +
-                "Bps]";
+               " _bKFiltered " + _bKFiltered +
+               " _tAck " + _tAck + "; " +
+               DataHelper.formatSize2Decimal((long) (_bKFiltered * 1000 * _opts.getMaxMessageSize()), false) +
+               "Bps]";
     }
 }

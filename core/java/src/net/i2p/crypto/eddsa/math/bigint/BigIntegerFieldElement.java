@@ -96,11 +96,11 @@ public class BigIntegerFieldElement extends FieldElement implements Serializable
         return new BigIntegerFieldElement(f, bi.modPow(((BigIntegerFieldElement)e).bi, ((BigIntegerFieldElement)m).bi));
     }
 
-    public FieldElement pow(FieldElement e){
+    public FieldElement pow(FieldElement e) {
         return modPow(e, f.getQ());
     }
 
-    public FieldElement pow22523(){
+    public FieldElement pow22523() {
         return pow(f.getQm5d8());
     }
 

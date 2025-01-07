@@ -67,7 +67,7 @@ public class ConfigUpdateHandler extends FormHandler {
     public static final String PROP_UPDATE_DISABLED = "router.updateDisabled";
     /** no default */
     public static final String PROP_ZIP_URL = "router.updateUnsignedURL";
-    
+
     public static final String PROP_UPDATE_URL = "router.updateURL";
 
     /**
@@ -89,20 +89,20 @@ public class ConfigUpdateHandler extends FormHandler {
      *  These versions have not been released since 0.9.22, 2015.
      */
     private static final String PACK200_URLS =
-    "http://echelon.i2p/i2p/i2pupdate.su2\r\n" +
-    //"http://inr.i2p/i2p/i2pupdate.su2\r\n" +
-    //"http://meeh.i2p/i2pupdate/i2pupdate.su2\r\n" +
-    "http://stats.i2p/i2p/i2pupdate.su2";
+        "http://echelon.i2p/i2p/i2pupdate.su2\r\n" +
+        //"http://inr.i2p/i2p/i2pupdate.su2\r\n" +
+        //"http://meeh.i2p/i2pupdate/i2pupdate.su2\r\n" +
+        "http://stats.i2p/i2p/i2pupdate.su2";
     // "http://www.i2p2.i2p/_static/i2pupdate.su2\r\n" +
     //"http://update.dg.i2p/files/i2pupdate.su2";
     //"http://update.killyourtv.i2p/i2pupdate.su2\r\n" ;
     // "http://update.postman.i2p/i2pupdate.su2" ;
 
     private static final String NO_PACK200_URLS =
-    "http://echelon.i2p/i2p/i2pupdate.sud\r\n" +
-    //"http://inr.i2p/i2p/i2pupdate.sud\r\n" +
-    //"http://meeh.i2p/i2pupdate/i2pupdate.sud\r\n" +
-    "http://stats.i2p/i2p/i2pupdate.sud";
+        "http://echelon.i2p/i2p/i2pupdate.sud\r\n" +
+        //"http://inr.i2p/i2p/i2pupdate.sud\r\n" +
+        //"http://meeh.i2p/i2pupdate/i2pupdate.sud\r\n" +
+        "http://stats.i2p/i2p/i2pupdate.sud";
     // "http://www.i2p2.i2p/_static/i2pupdate.sud\r\n" +
     //"http://update.dg.i2p/files/i2pupdate.sud";
     //"http://update.killyourtv.i2p/i2pupdate.sud\r\n" ;
@@ -133,7 +133,7 @@ public class ConfigUpdateHandler extends FormHandler {
     }
 
     public static final String PROP_TRUSTED_KEYS = "router.trustedUpdateKeys";
-    
+
     /**
      *  Convenience method for updaters
      *  @return the configured value, else the registered HTTP proxy, else the default
@@ -161,8 +161,8 @@ public class ConfigUpdateHandler extends FormHandler {
             String proxyHost = _context.getProperty(PROP_PROXY_HOST, DEFAULT_PROXY_HOST);
             int proxyPort = proxyPort(_context);
             if (shouldProxy && proxyPort == ConfigUpdateHandler.DEFAULT_PROXY_PORT_INT &&
-                proxyHost.equals(ConfigUpdateHandler.DEFAULT_PROXY_HOST) &&
-                !_context.portMapper().isRegistered(PortMapper.SVC_HTTP_PROXY)) {
+                    proxyHost.equals(ConfigUpdateHandler.DEFAULT_PROXY_HOST) &&
+                    !_context.portMapper().isRegistered(PortMapper.SVC_HTTP_PROXY)) {
                 addFormError(_t("HTTP client proxy tunnel must be running"));
                 return;
             }
@@ -208,7 +208,7 @@ public class ConfigUpdateHandler extends FormHandler {
                 }
             }
         }
-        
+
         if (_proxyHost != null && _proxyHost.length() > 0 && !_proxyHost.equals(_t("internal"))) {
             String oldHost = _context.router().getConfigSetting(PROP_PROXY_HOST);
             if ( (oldHost == null) || (!_proxyHost.equals(oldHost)) ) {
@@ -216,7 +216,7 @@ public class ConfigUpdateHandler extends FormHandler {
                 addFormNotice(_t("Updating proxy host to {0}", _proxyHost));
             }
         }
-        
+
         if (_proxyPort != null && _proxyPort.length() > 0 && !_proxyPort.equals(_t("internal"))) {
             String oldPort = _context.router().getConfigSetting(PROP_PROXY_PORT);
             if ( (oldPort == null) || (!_proxyPort.equals(oldPort)) ) {
@@ -224,7 +224,7 @@ public class ConfigUpdateHandler extends FormHandler {
                 addFormNotice(_t("Updating proxy port to {0}", _proxyPort));
             }
         }
-        
+
         if (isAdvanced()) {
             changes.put(PROP_SHOULD_PROXY_NEWS, Boolean.toString(_newsThroughProxy));
             if (!_context.getBooleanProperty(PROP_UPDATE_DISABLED)) {
@@ -233,14 +233,17 @@ public class ConfigUpdateHandler extends FormHandler {
                 changes.put(PROP_UPDATE_DEV_SU3, Boolean.toString(_updateDevSU3));
             }
         }
-        
+
         String oldFreqStr = _context.getProperty(PROP_REFRESH_FREQUENCY, DEFAULT_REFRESH_FREQUENCY);
         long oldFreq = DEFAULT_REFRESH_FREQ;
-        try { oldFreq = Long.parseLong(oldFreqStr); } catch (NumberFormatException nfe) {}
+        try {
+            oldFreq = Long.parseLong(oldFreqStr);
+        }
+        catch (NumberFormatException nfe) {}
         if (_refreshFrequency != oldFreq) {
             changes.put(PROP_REFRESH_FREQUENCY, Long.toString(_refreshFrequency));
             addFormNoticeNoEscape(_t("Updating refresh frequency to {0}",
-                            _refreshFrequency <= 0 ? _t("Never") : DataHelper.formatDuration2(_refreshFrequency)));
+                                     _refreshFrequency <= 0 ? _t("Never") : DataHelper.formatDuration2(_refreshFrequency)));
         }
 
         if ( (_updatePolicy != null) && (_updatePolicy.length() > 0) ) {
@@ -274,7 +277,7 @@ public class ConfigUpdateHandler extends FormHandler {
                 }
             }
         }
-        
+
         if ( (_zipURL != null) && (_zipURL.length() > 0) ) {
             String oldURL = _context.router().getConfigSetting(PROP_ZIP_URL);
             if ( (oldURL == null) || (!_zipURL.equals(oldURL)) ) {
@@ -286,7 +289,7 @@ public class ConfigUpdateHandler extends FormHandler {
                 }
             }
         }
-        
+
         if ( (_devSU3URL != null) && (_devSU3URL.length() > 0) ) {
             String oldURL = _context.router().getConfigSetting(PROP_DEV_SU3_URL);
             if ( (oldURL == null) || (!_devSU3URL.equals(oldURL)) ) {
@@ -298,26 +301,53 @@ public class ConfigUpdateHandler extends FormHandler {
                 }
             }
         }
-        
+
         _context.router().saveConfig(changes, null);
     }
-    
-    public void setNewsURL(String url) { _newsURL = url; }
-    public void setRefreshFrequency(String freq) {
-        try { _refreshFrequency = Long.parseLong(freq); } catch (NumberFormatException nfe) {}
+
+    public void setNewsURL(String url) {
+        _newsURL = url;
     }
-    public void setUpdateURL(String url) { _updateURL = url; }
-    public void setUpdatePolicy(String policy) { _updatePolicy = policy; }
-    public void setTrustedKeys(String keys) { _trustedKeys = keys; }
-    public void setUpdateThroughProxy(String foo) { _updateThroughProxy = true; }
-    public void setProxyHost(String host) { _proxyHost = host; }
-    public void setProxyPort(String port) { _proxyPort = port; }
-    public void setUpdateUnsigned(String foo) { _updateUnsigned = true; }
-    public void setZipURL(String url) { _zipURL = url; }
-     /** @since 0.9.9 */
-    public void setNewsThroughProxy(String foo) { _newsThroughProxy = true; }
+    public void setRefreshFrequency(String freq) {
+        try {
+            _refreshFrequency = Long.parseLong(freq);
+        }
+        catch (NumberFormatException nfe) {}
+    }
+    public void setUpdateURL(String url) {
+        _updateURL = url;
+    }
+    public void setUpdatePolicy(String policy) {
+        _updatePolicy = policy;
+    }
+    public void setTrustedKeys(String keys) {
+        _trustedKeys = keys;
+    }
+    public void setUpdateThroughProxy(String foo) {
+        _updateThroughProxy = true;
+    }
+    public void setProxyHost(String host) {
+        _proxyHost = host;
+    }
+    public void setProxyPort(String port) {
+        _proxyPort = port;
+    }
+    public void setUpdateUnsigned(String foo) {
+        _updateUnsigned = true;
+    }
+    public void setZipURL(String url) {
+        _zipURL = url;
+    }
+    /** @since 0.9.9 */
+    public void setNewsThroughProxy(String foo) {
+        _newsThroughProxy = true;
+    }
     /** @since 0.9.20 */
-    public void setUpdateDevSU3(String foo) { _updateDevSU3  = true; }
+    public void setUpdateDevSU3(String foo) {
+        _updateDevSU3  = true;
+    }
     /** @since 0.9.20 */
-    public void setDevSU3URL(String url) { _devSU3URL = url; }
+    public void setDevSU3URL(String url) {
+        _devSU3URL = url;
+    }
 }

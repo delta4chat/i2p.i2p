@@ -22,7 +22,7 @@ public class EchoLargeIT extends StreamingITBase {
     private Log _log;
     private I2PSession _client;
     private I2PSession _server;
-    
+
     @Test
     public void test() throws Exception {
         I2PAppContext context = I2PAppContext.getGlobalContext();
@@ -37,9 +37,9 @@ public class EchoLargeIT extends StreamingITBase {
         Thread client = runClient(context, _client);
         client.join();
     }
-    
-    
-    
+
+
+
     @Override
     protected Properties getProperties() {
         return new Properties();
@@ -61,7 +61,7 @@ public class EchoLargeIT extends StreamingITBase {
         public ServerRunner(I2PAppContext ctx, I2PSession session) {
             super(ctx,session);
         }
-        
+
         public void run() {
             try {
                 Properties opts = new Properties();
@@ -101,14 +101,14 @@ public class EchoLargeIT extends StreamingITBase {
                 _log.error("error running", e);
             }
         }
-        
+
     }
-    
+
     private class ClientRunner extends RunnerBase {
         public ClientRunner(I2PAppContext ctx, I2PSession session) {
             super(ctx,session);
         }
-        
+
         public void run() {
             try {
                 Properties opts = new Properties();
@@ -128,14 +128,14 @@ public class EchoLargeIT extends StreamingITBase {
                     _log.debug("client wrote a buffer");
                     out.flush();
                     _log.debug("client flushed");
-                    
+
                     byte rbuf[] = new byte[buf.length];
                     for (int j = 0; j < buf.length; j++) {
                         int c = in.read();
                         if (c == -1) {
                             buf = null;
                             break;
-                        } else {                
+                        } else {
                             //_log.debug("client read: " + ((char)c));
                             if (c < 0) c += 256;
                             rbuf[j] = (byte)(c & 0xFF);
@@ -157,12 +157,12 @@ public class EchoLargeIT extends StreamingITBase {
                     _log.debug("Closing the client socket");
                 socket.close();
                 _log.debug("socket closed");
-                
+
                 Thread.sleep(5*1000);
             } catch (Exception e) {
                 _log.error("error running", e);
             }
         }
-        
+
     }
 }

@@ -203,9 +203,9 @@ class UDPTrackerClient implements I2PSessionMuxedListener {
      *  @return null on failure or if toWait <= 0
      */
     private ReplyWaiter sendAnnounce(Tracker tr, long connID,
-                                 byte[] ih, byte[] id,
-                                 long downloaded, long left, long uploaded,
-                                 int event, int numWant, long toWait) {
+                                     byte[] ih, byte[] id,
+                                     long downloaded, long left, long uploaded,
+                                     int event, int numWant, long toWait) {
         int tid = _context.random().nextInt();
         byte[] payload = sendAnnounce(tr, tid, connID, ih, id, downloaded, left, uploaded, event, numWant);
         if (payload != null) {
@@ -227,9 +227,9 @@ class UDPTrackerClient implements I2PSessionMuxedListener {
      *  @return the payload or null on failure
      */
     private byte[] sendAnnounce(Tracker tr, int tid, long connID,
-                                 byte[] ih, byte[] id,
-                                 long downloaded, long left, long uploaded,
-                                 int event, int numWant) {
+                                byte[] ih, byte[] id,
+                                long downloaded, long left, long uploaded,
+                                int event, int numWant) {
         byte[] payload = new byte[98];
         DataHelper.toLong8(payload, 0, connID);
         DataHelper.toLong(payload, 8, 4, ACTION_ANNOUNCE);
@@ -261,25 +261,25 @@ class UDPTrackerClient implements I2PSessionMuxedListener {
                     return false;
                 }
                 switch (w.getState()) {
-                    case INIT:
-                        continue;
+                case INIT:
+                    continue;
 
-                    case SUCCESS:
-                        return true;
+                case SUCCESS:
+                    return true;
 
-                    case FAIL:
+                case FAIL:
+                    return false;
+
+                case TIMEOUT:
+                    if (_log.shouldInfo())
+                        _log.info("Timeout: " + w);
+                    long toWait = untilTime - _context.clock().now();
+                    if (toWait <= 1000)
                         return false;
-
-                    case TIMEOUT:
-                        if (_log.shouldInfo())
-                            _log.info("Timeout: " + w);
-                        long toWait = untilTime - _context.clock().now();
-                        if (toWait <= 1000)
-                            return false;
-                        boolean ok = resend(w, Math.min(toWait, w.getSentTo().getTimeout()));
-                        if (!ok)
-                            return false;
-                        continue;
+                    boolean ok = resend(w, Math.min(toWait, w.getSentTo().getTimeout()));
+                    if (!ok)
+                        return false;
+                    continue;
                 }
             }
         }
@@ -395,7 +395,7 @@ class UDPTrackerClient implements I2PSessionMuxedListener {
         Tracker tr = waiter.getSentTo();
         if (payload.length >= 22) {
             int interval = Math.min(MAX_INTERVAL, Math.max(MIN_INTERVAL,
-                                                           (int) DataHelper.fromLong(payload, 8, 4)));
+                                    (int) DataHelper.fromLong(payload, 8, 4)));
             int leeches = (int) DataHelper.fromLong(payload, 12, 4);
             int seeds = (int) DataHelper.fromLong(payload, 16, 4);
             int peers = (int) DataHelper.fromLong(payload, 20, 2);
@@ -739,7 +739,7 @@ class UDPTrackerClient implements I2PSessionMuxedListener {
             //if (action == ACTION_CONNECT)
             //    sentTo.connFailed();
             //else
-                sentTo.replyTimeout();
+            sentTo.replyTimeout();
             setState(WaitState.TIMEOUT);
             if (_log.shouldWarn())
                 _log.warn("timeout waiting for reply from " + sentTo);

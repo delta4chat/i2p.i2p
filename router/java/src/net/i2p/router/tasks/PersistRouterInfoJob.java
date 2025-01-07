@@ -1,9 +1,9 @@
 package net.i2p.router.tasks;
 /*
  * free (adj.): unencumbered; not under the control of others
- * Written by jrandom in 2003 and released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
- * It probably won't make your computer catch on fire, or eat 
+ * Written by jrandom in 2003 and released into the public domain
+ * with no warranty of any kind, either expressed or implied.
+ * It probably won't make your computer catch on fire, or eat
  * your children, but it might.  Use at your own risk.
  *
  */
@@ -26,11 +26,13 @@ import net.i2p.util.SecureFileOutputStream;
  *  @since 0.8.12 moved from Router.java
  */
 public class PersistRouterInfoJob extends JobImpl {
-    public PersistRouterInfoJob(RouterContext ctx) { 
-        super(ctx); 
+    public PersistRouterInfoJob(RouterContext ctx) {
+        super(ctx);
     }
 
-    public String getName() { return "Persist Updated Router Information"; }
+    public String getName() {
+        return "Persist Updated Router Information";
+    }
 
     public void runJob() {
         Log _log = getContext().logManager().getLog(PersistRouterInfoJob.class);
@@ -51,7 +53,10 @@ public class PersistRouterInfoJob extends JobImpl {
             } catch (IOException ioe) {
                 _log.error("Error writing out the rebuilt router information", ioe);
             } finally {
-                if (fos != null) try { fos.close(); } catch (IOException ioe) {}
+                if (fos != null) try {
+                        fos.close();
+                    }
+                    catch (IOException ioe) {}
             }
         }
     }

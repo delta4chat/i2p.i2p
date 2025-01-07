@@ -54,7 +54,7 @@ class UpdateRunner extends I2PAppThread implements UpdateTask, EepGet.StatusList
     /**
      *  Uses router version for partial checks
      */
-    public UpdateRunner(RouterContext ctx, ConsoleUpdateManager mgr, UpdateType type, List<URI> uris) { 
+    public UpdateRunner(RouterContext ctx, ConsoleUpdateManager mgr, UpdateType type, List<URI> uris) {
         this(ctx, mgr, type, uris, RouterVersion.VERSION);
     }
 
@@ -72,7 +72,7 @@ class UpdateRunner extends I2PAppThread implements UpdateTask, EepGet.StatusList
      *  @since 0.9.7
      */
     public UpdateRunner(RouterContext ctx, ConsoleUpdateManager mgr, UpdateType type,
-                        List<URI> uris, String currentVersion) { 
+                        List<URI> uris, String currentVersion) {
         this(ctx, mgr, type, HTTP, uris, currentVersion);
     }
 
@@ -82,7 +82,7 @@ class UpdateRunner extends I2PAppThread implements UpdateTask, EepGet.StatusList
      *  @since 0.9.9
      */
     public UpdateRunner(RouterContext ctx, ConsoleUpdateManager mgr, UpdateType type,
-                        UpdateMethod method, List<URI> uris, String currentVersion) { 
+                        UpdateMethod method, List<URI> uris, String currentVersion) {
         super("Update Runner");
         setDaemon(true);
         _context = ctx;
@@ -98,20 +98,30 @@ class UpdateRunner extends I2PAppThread implements UpdateTask, EepGet.StatusList
 
     //////// begin UpdateTask methods
 
-    public boolean isRunning() { return _isRunning; }
+    public boolean isRunning() {
+        return _isRunning;
+    }
 
     public void shutdown() {
         _isRunning = false;
         interrupt();
     }
 
-    public UpdateType getType() { return _type; }
+    public UpdateType getType() {
+        return _type;
+    }
 
-    public UpdateMethod getMethod() { return _method; }
+    public UpdateMethod getMethod() {
+        return _method;
+    }
 
-    public URI getURI() { return _currentURI; }
+    public URI getURI() {
+        return _currentURI;
+    }
 
-    public String getID() { return ""; }
+    public String getID() {
+        return "";
+    }
 
     //////// end UpdateTask methods
 
@@ -150,8 +160,8 @@ class UpdateRunner extends I2PAppThread implements UpdateTask, EepGet.StatusList
                 proxyHost = _context.getProperty(ConfigUpdateHandler.PROP_PROXY_HOST, ConfigUpdateHandler.DEFAULT_PROXY_HOST);
                 proxyPort = ConfigUpdateHandler.proxyPort(_context);
                 if (proxyPort == ConfigUpdateHandler.DEFAULT_PROXY_PORT_INT &&
-                    proxyHost.equals(ConfigUpdateHandler.DEFAULT_PROXY_HOST) &&
-                    _context.portMapper().getPort(PortMapper.SVC_HTTP_PROXY) < 0) {
+                        proxyHost.equals(ConfigUpdateHandler.DEFAULT_PROXY_HOST) &&
+                        _context.portMapper().getPort(PortMapper.SVC_HTTP_PROXY) < 0) {
                     String msg = _t("HTTP client proxy tunnel must be running");
                     if (_log.shouldWarn())
                         _log.warn(msg);
@@ -190,10 +200,10 @@ class UpdateRunner extends I2PAppThread implements UpdateTask, EepGet.StatusList
             _currentURI = uri;
             String updateURL = uri.toString();
             if ((_method == HTTP && !"http".equals(uri.getScheme())) ||
-                (_method == HTTP_CLEARNET && !"http".equals(uri.getScheme())) ||
-                (_method == HTTPS_CLEARNET && !"https".equals(uri.getScheme())) ||
-                uri.getHost() == null ||
-                (_method != HTTP && uri.getHost().toLowerCase(Locale.US).endsWith(".i2p"))) {
+                    (_method == HTTP_CLEARNET && !"http".equals(uri.getScheme())) ||
+                    (_method == HTTPS_CLEARNET && !"https".equals(uri.getScheme())) ||
+                    uri.getHost() == null ||
+                    (_method != HTTP && uri.getHost().toLowerCase(Locale.US).endsWith(".i2p"))) {
                 if (_log.shouldLog(Log.WARN))
                     _log.warn("Bad update URI " + uri + " for method " + _method);
                 continue;
@@ -242,7 +252,7 @@ class UpdateRunner extends I2PAppThread implements UpdateTask, EepGet.StatusList
         if (!this.done)
             _mgr.notifyTaskFailed(this, "", null);
     }
-    
+
     // EepGet Listeners below.
     // We use the same for both the partial and the full EepGet,
     // with a couple of adjustments depending on which mode.
@@ -294,7 +304,7 @@ class UpdateRunner extends I2PAppThread implements UpdateTask, EepGet.StatusList
         // don't display bytesTransferred as it is meaningless
         if (_log.shouldLog(Log.WARN))
             _log.warn("Update from " + url + " did not download completely (" +
-                           bytesRemaining + " remaining after " + currentAttempt + " tries)");
+                      bytesRemaining + " remaining after " + currentAttempt + " tries)");
         updateStatus("<b>" + _t("Transfer failed from {0}", linkify(url)) + "</b>");
         _mgr.notifyAttemptFailed(this, url, null);
         // update() will call notifyTaskFailed() after last URL

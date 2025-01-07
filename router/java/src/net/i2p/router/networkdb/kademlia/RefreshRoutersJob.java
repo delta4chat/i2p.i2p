@@ -36,7 +36,7 @@ class RefreshRoutersJob extends JobImpl {
     private final FloodfillNetworkDatabaseFacade _facade;
     private List<Hash> _routers;
     private boolean _wasRun;
-    
+
     /** rerun fairly often. 1000 routers in 50 minutes
      *  Don't go faster as this overloads the expl. OBEP / IBGW
      */
@@ -44,14 +44,16 @@ class RefreshRoutersJob extends JobImpl {
     private final static long EXPIRE = 2*60*60*1000;
     private final static long NEW_LOOP_DELAY = 37*60*1000;
     private static final int ENOUGH_FFS = 3 * StartExplorersJob.LOW_FFS;
-    
+
     public RefreshRoutersJob(RouterContext ctx, FloodfillNetworkDatabaseFacade facade) {
         super(ctx);
         _log = ctx.logManager().getLog(RefreshRoutersJob.class);
         _facade = facade;
     }
-    
-    public String getName() { return "Refresh Routers Job"; }
+
+    public String getName() {
+        return "Refresh Routers Job";
+    }
 
     public void runJob() {
         if (_facade.isInitialized()) {

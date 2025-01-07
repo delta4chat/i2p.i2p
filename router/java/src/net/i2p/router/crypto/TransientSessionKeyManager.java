@@ -2,9 +2,9 @@ package net.i2p.router.crypto;
 
 /*
  * free (adj.): unencumbered; not under the control of others
- * Written by jrandom in 2003 and released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
- * It probably won't  make your computer catch on fire, or eat 
+ * Written by jrandom in 2003 and released into the public domain
+ * with no warranty of any kind, either expressed or implied.
+ * It probably won't  make your computer catch on fire, or eat
  * your children, but it might.  Use at your own risk.
  *
  */
@@ -36,7 +36,7 @@ import net.i2p.util.Log;
 import net.i2p.util.SimpleTimer;
 
 /**
- * Implement the session key management, but keep everything in memory (don't write 
+ * Implement the session key management, but keep everything in memory (don't write
  * to disk).  However, this being java, we cannot guarantee that the keys aren't swapped
  * out to disk so this should not be considered secure in that sense.
  *
@@ -98,7 +98,7 @@ public class TransientSessionKeyManager extends SessionKeyManager {
 
     /**
      * Keep unused inbound session tags around for this long (a few minutes longer than
-     * session tags are used on the outbound side so that no reasonable network lag 
+     * session tags are used on the outbound side so that no reasonable network lag
      * can cause failed decrypts)
      *
      * This is also the max idle time for an outbound session.
@@ -158,8 +158,8 @@ public class TransientSessionKeyManager extends SessionKeyManager {
     private static final boolean USE_UNACKED_TAGS = false;
 
     /**
-     * The session key manager should only be constructed and accessed through the 
-     * application context.  This constructor should only be used by the 
+     * The session key manager should only be constructed and accessed through the
+     * application context.  This constructor should only be used by the
      * appropriate application context itself.
      *
      */
@@ -184,13 +184,13 @@ public class TransientSessionKeyManager extends SessionKeyManager {
         _inboundTagSets = new HashMap<SessionTag, TagSet>(128);
         context.statManager().createRateStat("crypto.sessionTagsExpired", "How many tags/sessions are expired?", "Encryption", new long[] { 10*60*1000, 60*60*1000, 3*60*60*1000 });
         context.statManager().createRateStat("crypto.sessionTagsRemaining", "How many tags/sessions are remaining after a cleanup?", "Encryption", new long[] { 10*60*1000, 60*60*1000, 3*60*60*1000 });
-         _alive = true;
+        _alive = true;
         _context.simpleTimer2().addEvent(new CleanupEvent(), 60*1000);
     }
 
     @Override
     public void shutdown() {
-         _alive = false;
+        _alive = false;
         synchronized (_inboundTagSets) {
             _inboundTagSets.clear();
         }
@@ -229,34 +229,34 @@ public class TransientSessionKeyManager extends SessionKeyManager {
         }
     }
 
-/****** leftover from when we had the persistent SKM
-    protected void setData(Set<TagSet> inboundTagSets, Set<OutboundSession> outboundSessions) {
-        if (_log.shouldLog(Log.INFO))
-            _log.info("Loading " + inboundTagSets.size() + " inbound tag sets, and " 
-                      + outboundSessions.size() + " outbound sessions");
-        Map<SessionTag, TagSet> tagSets = new HashMap(inboundTagSets.size());
-        for (Iterator<TagSet> iter = inboundTagSets.iterator(); iter.hasNext();) {
-            TagSet ts = iter.next();
-            for (Iterator<SessionTag> tsIter = ts.getTags().iterator(); tsIter.hasNext();) {
-                SessionTag tag = tsIter.next();
-                tagSets.put(tag, ts);
+    /****** leftover from when we had the persistent SKM
+        protected void setData(Set<TagSet> inboundTagSets, Set<OutboundSession> outboundSessions) {
+            if (_log.shouldLog(Log.INFO))
+                _log.info("Loading " + inboundTagSets.size() + " inbound tag sets, and "
+                          + outboundSessions.size() + " outbound sessions");
+            Map<SessionTag, TagSet> tagSets = new HashMap(inboundTagSets.size());
+            for (Iterator<TagSet> iter = inboundTagSets.iterator(); iter.hasNext();) {
+                TagSet ts = iter.next();
+                for (Iterator<SessionTag> tsIter = ts.getTags().iterator(); tsIter.hasNext();) {
+                    SessionTag tag = tsIter.next();
+                    tagSets.put(tag, ts);
+                }
+            }
+            synchronized (_inboundTagSets) {
+                _inboundTagSets.clear();
+                _inboundTagSets.putAll(tagSets);
+            }
+            Map<PublicKey, OutboundSession> sessions = new HashMap(outboundSessions.size());
+            for (Iterator<OutboundSession> iter = outboundSessions.iterator(); iter.hasNext();) {
+                OutboundSession sess = iter.next();
+                sessions.put(sess.getTarget(), sess);
+            }
+            synchronized (_outboundSessions) {
+                _outboundSessions.clear();
+                _outboundSessions.putAll(sessions);
             }
         }
-        synchronized (_inboundTagSets) {
-            _inboundTagSets.clear();
-            _inboundTagSets.putAll(tagSets);
-        }
-        Map<PublicKey, OutboundSession> sessions = new HashMap(outboundSessions.size());
-        for (Iterator<OutboundSession> iter = outboundSessions.iterator(); iter.hasNext();) {
-            OutboundSession sess = iter.next();
-            sessions.put(sess.getTarget(), sess);
-        }
-        synchronized (_outboundSessions) {
-            _outboundSessions.clear();
-            _outboundSessions.putAll(sessions);
-        }
-    }
-******/
+    ******/
 
     /**
      * Retrieve the session key currently associated with encryption to the target,
@@ -271,7 +271,7 @@ public class TransientSessionKeyManager extends SessionKeyManager {
         long now = _context.clock().now();
         if (sess.getLastUsedDate() < now - SESSION_LIFETIME_MAX_MS) {
             if (_log.shouldLog(Log.INFO))
-                _log.info("Expiring old session key established on " 
+                _log.info("Expiring old session key established on "
                           + new Date(sess.getEstablishedDate())
                           + " but not used for "
                           + (now-sess.getLastUsedDate())
@@ -372,14 +372,18 @@ public class TransientSessionKeyManager extends SessionKeyManager {
      *  @since 0.9.2
      */
     @Override
-    public int getTagsToSend() { return _tagsToSend; };
+    public int getTagsToSend() {
+        return _tagsToSend;
+    };
 
     /**
      *  @return the configured value
      *  @since 0.9.2
      */
     @Override
-    public int getLowThreshold() { return _lowThreshold; };
+    public int getLowThreshold() {
+        return _lowThreshold;
+    };
 
     /**
      *  @return true if we have less than the threshold or what we have is about to expire
@@ -399,7 +403,9 @@ public class TransientSessionKeyManager extends SessionKeyManager {
     @Override
     public int getAvailableTags(PublicKey target, SessionKey key) {
         OutboundSession sess = getSession(target);
-        if (sess == null) { return 0; }
+        if (sess == null) {
+            return 0;
+        }
         if (sess.getCurrentKey().equals(key)) {
             return sess.availableTags();
         }
@@ -407,16 +413,18 @@ public class TransientSessionKeyManager extends SessionKeyManager {
     }
 
     /**
-     * Determine how long the available tags will be available for before expiring, in 
+     * Determine how long the available tags will be available for before expiring, in
      * milliseconds
      */
     @Override
     public long getAvailableTimeLeft(PublicKey target, SessionKey key) {
         OutboundSession sess = getSession(target);
-        if (sess == null) { return 0; }
+        if (sess == null) {
+            return 0;
+        }
         if (sess.getCurrentKey().equals(key)) {
             long end = sess.getLastExpirationDate();
-            if (end <= 0) 
+            if (end <= 0)
                 return 0;
             else
                 return end - _context.clock().now();
@@ -621,12 +629,12 @@ public class TransientSessionKeyManager extends SessionKeyManager {
             }
         }
         _log.logAlways(Log.WARN, "TOO MANY SESSION TAGS!  removed " + removed.size()
-                     + " tag sets arbitrarily, with " + tags + " tags,"
-                     + "where there are " + old + " long lasting sessions, "
-                     + recent + " ones created in the last few minutes, and "
-                     + large + " sessions with more than 100 tags (and "
-                     + absurd + " with more than 1000!), leaving a total of "
-                     + _inboundTagSets.size() + " tags behind");
+                       + " tag sets arbitrarily, with " + tags + " tags,"
+                       + "where there are " + old + " long lasting sessions, "
+                       + recent + " ones created in the last few minutes, and "
+                       + large + " sessions with more than 100 tags (and "
+                       + absurd + " with more than 1000!), leaving a total of "
+                       + _inboundTagSets.size() + " tags behind");
     }
 
     /**
@@ -675,8 +683,8 @@ public class TransientSessionKeyManager extends SessionKeyManager {
         }
         if ( (session != null) && (_log.shouldLog(Log.WARN)) )
             _log.warn("Removing session tags with " + session.availableTags() + " available for "
-                       + (session.getLastExpirationDate()-_context.clock().now())
-                       + "ms more", new Exception("Removed by"));
+                      + (session.getLastExpirationDate()-_context.clock().now())
+                      + "ms more", new Exception("Removed by"));
     }
 
     /**
@@ -711,7 +719,7 @@ public class TransientSessionKeyManager extends SessionKeyManager {
                         if (_log.shouldInfo())
                             _log.info("Session key " + skey.toBase64() + " has " + count + " tag sets");
                         // for any session key with at least 10 tagsets,
-                       // remove all tagsets larger than 8 tags that haven't been used and
+                        // remove all tagsets larger than 8 tags that haven't been used and
                         // are old. The more the tagsets, the more aggressively we expire.
                         // From 9 minutes at 10 down to one minute at 50
                         long age = Math.min(5*60*1000, Math.max(60*1000, 9*60*1000 - ((count - 10) * 8*60*1000/40)));
@@ -721,7 +729,7 @@ public class TransientSessionKeyManager extends SessionKeyManager {
                             int origSize = ts.getOriginalSize();
                             long expires = ts.getDate();
                             if (curSize == origSize && curSize > 8 &&
-                                expires < now + SESSION_LIFETIME_MAX_MS - age) {
+                                    expires < now + SESSION_LIFETIME_MAX_MS - age) {
                                 if (_log.shouldInfo())
                                     _log.info("Removed unused tag set " + ts);
                                 for (SessionTag tag : tags) {
@@ -746,7 +754,7 @@ public class TransientSessionKeyManager extends SessionKeyManager {
                 oremoved += sess.expireTags();
                 // don't kill a new session or one that's temporarily out of tags
                 if (sess.getLastUsedDate() < now - (SESSION_LIFETIME_MAX_MS / 2) &&
-                    sess.availableTags() <= 0) {
+                        sess.availableTags() <= 0) {
                     iter.remove();
                     oremoved++;   // just to have a non-zero return value?
                 }
@@ -793,8 +801,8 @@ public class TransientSessionKeyManager extends SessionKeyManager {
             sets.addAll(e.getValue());
             totalSets += sets.size();
             buf.append("<tr><td><b>Session key:</b> ").append(skey.toBase64()).append("</td>" +
-                       "<td><b>Sets:</b> ").append(sets.size()).append("</td></tr>" +
-                       "<tr class=\"expiry\"><td colspan=\"2\"><ul>");
+                    "<td><b>Sets:</b> ").append(sets.size()).append("</td></tr>" +
+                            "<tr class=\"expiry\"><td colspan=\"2\"><ul>");
             for (TagSet ts : sets) {
                 int size = ts.getTags().size();
                 total += size;
@@ -811,12 +819,12 @@ public class TransientSessionKeyManager extends SessionKeyManager {
             buf.setLength(0);
         }
         buf.append("<tr><th colspan=\"2\">Total inbound tags: ").append(total).append(" (")
-           .append(DataHelper.formatSize2(32*total)).append("B); sets: ").append(totalSets)
-           .append("; sessions: ").append(inboundSets.size())
-           .append("</th></tr>\n" +
-                   "</table>" +
-                   "<h3 class=\"debug_outboundsessions\">ElGamal Outbound Sessions</h3>" +
-                   "<table>");
+        .append(DataHelper.formatSize2(32*total)).append("B); sets: ").append(totalSets)
+        .append("; sessions: ").append(inboundSets.size())
+        .append("</th></tr>\n" +
+                "</table>" +
+                "<h3 class=\"debug_outboundsessions\">ElGamal Outbound Sessions</h3>" +
+                "<table>");
         total = 0;
         totalSets = 0;
         Set<OutboundSession> outbound = getOutboundSessions();
@@ -826,18 +834,18 @@ public class TransientSessionKeyManager extends SessionKeyManager {
             sets.addAll(sess.getTagSets());
             totalSets += sets.size();
             buf.append("<tr class=\"debug_outboundtarget\"><td><div class=\"debug_targetinfo\"><b>Target public key:</b> ").append(toString(sess.getTarget())).append("<br>" +
-                       "<b>Established:</b> ").append(DataHelper.formatDuration2(now - sess.getEstablishedDate())).append(" ago<br>" +
-                       "<b>Ack Received?</b> ").append(sess.getAckReceived()).append("<br>" +
-                       "<b>Last Used:</b> ").append(DataHelper.formatDuration2(now - sess.getLastUsedDate())).append(" ago<br>" +
-                       "<b>Session key:</b> ").append(sess.getCurrentKey().toBase64()).append("</div></td>" +
-                       "<td><b># Sets:</b> ").append(sess.getTagSets().size()).append("</td></tr>" +
-                       "<tr><td colspan=\"2\"><ul>");
+                    "<b>Established:</b> ").append(DataHelper.formatDuration2(now - sess.getEstablishedDate())).append(" ago<br>" +
+                            "<b>Ack Received?</b> ").append(sess.getAckReceived()).append("<br>" +
+                                    "<b>Last Used:</b> ").append(DataHelper.formatDuration2(now - sess.getLastUsedDate())).append(" ago<br>" +
+                                            "<b>Session key:</b> ").append(sess.getCurrentKey().toBase64()).append("</div></td>" +
+                                                    "<td><b># Sets:</b> ").append(sess.getTagSets().size()).append("</td></tr>" +
+                                                            "<tr><td colspan=\"2\"><ul>");
             for (Iterator<TagSet> siter = sets.iterator(); siter.hasNext();) {
                 TagSet ts = siter.next();
                 int size = ts.getTags().size();
                 total += size;
                 buf.append("<li><b>ID: ").append(ts.getID())
-                   .append(" Sent:</b> ").append(DataHelper.formatDuration2(now - ts.getDate())).append(" ago with ");
+                .append(" Sent:</b> ").append(DataHelper.formatDuration2(now - ts.getDate())).append(" ago with ");
                 buf.append(size).append('/').append(ts.getOriginalSize()).append(" tags remaining; acked? ").append(ts.getAcked()).append("</li>");
             }
             buf.append("</ul></td></tr>\n");
@@ -845,9 +853,9 @@ public class TransientSessionKeyManager extends SessionKeyManager {
             buf.setLength(0);
         }
         buf.append("<tr><th colspan=\"2\">Total outbound tags: ").append(total).append(" (")
-           .append(DataHelper.formatSize2(32*total)).append("B); sets: ").append(totalSets)
-           .append("; sessions: ").append(outbound.size())
-           .append("</th></tr>\n</table>");
+        .append(DataHelper.formatSize2(32*total)).append("B); sets: ").append(totalSets)
+        .append("; sessions: ").append(outbound.size())
+        .append("</th></tr>\n</table>");
 
         out.write(buf.toString());
     }
@@ -867,11 +875,11 @@ public class TransientSessionKeyManager extends SessionKeyManager {
      *  Earliest first
      */
     private static class TagSetComparator implements Comparator<TagSet>, Serializable {
-         public int compare(TagSet l, TagSet r) {
-             int rv = (int) (l.getDate() - r.getDate());
-             if (rv != 0)
-                 return rv;
-             return l.hashCode() - r.hashCode();
+        public int compare(TagSet l, TagSet r) {
+            int rv = (int) (l.getDate() - r.getDate());
+            if (rv != 0)
+                return rv;
+            return l.hashCode() - r.hashCode();
         }
     }
 
@@ -1014,7 +1022,7 @@ public class TransientSessionKeyManager extends SessionKeyManager {
                             for (TagSet set : _tagSets) {
                                 dropped += set.getTags().size();
                             }
-                            _log.warn("Rekeyed from " + _currentKey + " to " + key 
+                            _log.warn("Rekeyed from " + _currentKey + " to " + key
                                       + ": dropping " + dropped + " session tags", new Exception());
                         }
                         _acked = false;
@@ -1109,7 +1117,7 @@ public class TransientSessionKeyManager extends SessionKeyManager {
         }
 
         /**
-         * Get the furthest away tag set expiration date - after which all of the  
+         * Get the furthest away tag set expiration date - after which all of the
          * tags will have expired
          *
          */
@@ -1117,7 +1125,7 @@ public class TransientSessionKeyManager extends SessionKeyManager {
             long last = 0;
             synchronized (_tagSets) {
                 for (TagSet set : _tagSets) {
-                    if ( (set.getDate() > last) && (!set.getTags().isEmpty()) ) 
+                    if ( (set.getDate() > last) && (!set.getTags().isEmpty()) )
                         last = set.getDate();
                 }
             }
@@ -1170,8 +1178,8 @@ public class TransientSessionKeyManager extends SessionKeyManager {
             _origSize = tags.size();
             //if (true) {
             //    long now = I2PAppContext.getGlobalContext().clock().now();
-            //    _createdBy = new Exception("Created by: key=" + _key.toBase64() + " on " 
-            //                               + new Date(now) + "/" + now 
+            //    _createdBy = new Exception("Created by: key=" + _key.toBase64() + " on "
+            //                               + new Date(now) + "/" + now
             //                               + " via " + Thread.currentThread().getName());
             //}
         }
@@ -1227,32 +1235,36 @@ public class TransientSessionKeyManager extends SessionKeyManager {
         /**
          *  For outbound only.
          */
-        public void setAcked() { _acked = true; }
+        public void setAcked() {
+            _acked = true;
+        }
 
         /**
          *  For outbound only.
          */
-        public boolean getAcked() { return _acked; }
-
-/******    this will return a dup if two in the same ms, so just use java
-        @Override
-        public int hashCode() {
-            long rv = 0;
-            if (_key != null) rv = _key.hashCode();
-            rv = rv * 7 + _date;
-            // no need to hashCode the tags, key + date should be enough
-            return (int) rv;
+        public boolean getAcked() {
+            return _acked;
         }
 
-        @Override
-        public boolean equals(Object o) {
-            if ((o == null) || !(o instanceof TagSet)) return false;
-            TagSet ts = (TagSet) o;
-            return DataHelper.eq(ts.getAssociatedKey(), _key)
-                   //&& DataHelper.eq(ts.getTags(), getTags())
-                   && ts.getDate() == _date;
-        }
-******/
+        /******    this will return a dup if two in the same ms, so just use java
+                @Override
+                public int hashCode() {
+                    long rv = 0;
+                    if (_key != null) rv = _key.hashCode();
+                    rv = rv * 7 + _date;
+                    // no need to hashCode the tags, key + date should be enough
+                    return (int) rv;
+                }
+
+                @Override
+                public boolean equals(Object o) {
+                    if ((o == null) || !(o instanceof TagSet)) return false;
+                    TagSet ts = (TagSet) o;
+                    return DataHelper.eq(ts.getAssociatedKey(), _key)
+                           //&& DataHelper.eq(ts.getTags(), getTags())
+                           && ts.getDate() == _date;
+                }
+        ******/
 
         /** @since 0.9 for debugging */
         public int getID() {

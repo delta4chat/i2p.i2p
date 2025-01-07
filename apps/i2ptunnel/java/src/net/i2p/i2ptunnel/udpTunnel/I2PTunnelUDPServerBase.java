@@ -21,28 +21,28 @@ import net.i2p.i2ptunnel.udp.*;
 import net.i2p.util.EventDispatcher;
 import net.i2p.util.Log;
 
-    /**
-     * Base client class that sets up an I2P Datagram server destination.
-     * The UDP side is not implemented here, as there are at least
-     * two possibilities:
-     *
-     * 1) UDP side is a "client"
-     *    Example: Streamr Producer
-     *    - configure an inbound port
-     *    - External application receives no data
-     *    - Extending class must have a constructor with a port argument
-     *
-     * 2) UDP side is a client/server
-     *    Example: DNS
-     *    - configure an inbound port and a destination host and port
-     *    - External application sends and receives data
-     *    - Extending class must have a constructor with host and 2 port arguments
-     *
-     * So the implementing class must create a UDPSource and/or UDPSink,
-     * and must call setSink().
-     *
-     * @author zzz with portions from welterde's streamr
-     */
+/**
+ * Base client class that sets up an I2P Datagram server destination.
+ * The UDP side is not implemented here, as there are at least
+ * two possibilities:
+ *
+ * 1) UDP side is a "client"
+ *    Example: Streamr Producer
+ *    - configure an inbound port
+ *    - External application receives no data
+ *    - Extending class must have a constructor with a port argument
+ *
+ * 2) UDP side is a client/server
+ *    Example: DNS
+ *    - configure an inbound port and a destination host and port
+ *    - External application sends and receives data
+ *    - Extending class must have a constructor with host and 2 port arguments
+ *
+ * So the implementing class must create a UDPSource and/or UDPSink,
+ * and must call setSink().
+ *
+ * @author zzz with portions from welterde's streamr
+ */
 
 public class I2PTunnelUDPServerBase extends I2PTunnelTask implements Source, Sink {
 
@@ -68,7 +68,7 @@ public class I2PTunnelUDPServerBase extends I2PTunnelTask implements Source, Sin
      *
      */
     public I2PTunnelUDPServerBase(File privkey, String privkeyname, Logging l,
-                           EventDispatcher notifyThis, I2PTunnel tunnel) {
+                                  EventDispatcher notifyThis, I2PTunnel tunnel) {
         super("UDPServer <- " + privkeyname, notifyThis, tunnel);
         _log = tunnel.getContext().logManager().getLog(I2PTunnelUDPServerBase.class);
         FileInputStream fis = null;
@@ -80,7 +80,10 @@ public class I2PTunnelUDPServerBase extends I2PTunnelTask implements Source, Sin
             notifyEvent("openServerResult", "error");
         } finally {
             if (fis != null)
-                try { fis.close(); } catch (IOException ioe) {}
+                try {
+                    fis.close();
+                }
+                catch (IOException ioe) {}
         }
     }
 
@@ -104,7 +107,7 @@ public class I2PTunnelUDPServerBase extends I2PTunnelTask implements Source, Sin
         // Setup the sink. Always send raw datagrams.
         _i2pSink = new I2PSinkAnywhere(_session, true);
     }
-    
+
     /**
      * Classes should override to start UDP side as well.
      *
@@ -114,12 +117,12 @@ public class I2PTunnelUDPServerBase extends I2PTunnelTask implements Source, Sin
      */
     public void startRunning() {
         //synchronized (startLock) {
-            try {
-                _session.connect();
-            } catch(I2PSessionException exc) {
-                throw new RuntimeException("failed to connect session", exc);
-            }
-            start();
+        try {
+            _session.connect();
+        } catch(I2PSessionException exc) {
+            throw new RuntimeException("failed to connect session", exc);
+        }
+        start();
         //}
 
         notifyEvent("openServerResult", "ok");
@@ -134,7 +137,7 @@ public class I2PTunnelUDPServerBase extends I2PTunnelTask implements Source, Sin
     public void setReadTimeout(long ms) {
         readTimeout = ms;
     }
-    
+
     /**
      * Get the read idle timeout for newly-created connections (in
      * milliseconds).

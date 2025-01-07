@@ -48,24 +48,27 @@ public class TranslationStatus {
     private final ObjectCounterUnsafe<Locale> bundles;
 
     private static final String[] JARS =  { "desktopgui.jar", "i2p.jar",
-                                            "i2psnark.war", "i2ptunnel.jar", "i2ptunnel.war", 
+                                            "i2psnark.war", "i2ptunnel.jar", "i2ptunnel.war",
                                             "mstreaming.jar", "router.jar", "routerconsole.jar",
-                                            "susidns.war", "susimail.war" };
+                                            "susidns.war", "susimail.war"
+                                          };
 
     // Java lang codes, see notes below
     private static final String[] LANGS = { "ar", "az", "bg", "ca", "cs", "da", "de", "el", "es", "es_AR",
                                             "et", "fa", "fi", "fr", "gan", "gl", "hi", "hr", "hu", "in", "it", "iw",
                                             "ja", "ko", "ku", "mg", "nb", "nl", "nn", "pl", "pt", "pt_BR",
                                             "ro", "ru", "sk", "sl", "sq", "sr", "sv", "tk", "tr", "uk", "vi",
-                                            "zh", "zh_TW" };
+                                            "zh", "zh_TW"
+                                          };
 
     private static final String[] FILES = {
-                                            "core/java/src/gnu/getopt/MessagesBundle.properties",
-                                            "apps/routerconsole/resources/docs/readme.html",        // no country variants supported
-                                            "installer/resources/eepsite/docroot/help/index.html",
-                                            "installer/resources/locale-man/man.po",                // non-Java
-                                            "installer/resources/locale/po/messages.po",            // non-Java
-                                            "debian/po/.po" };                                      // non-Java
+        "core/java/src/gnu/getopt/MessagesBundle.properties",
+        "apps/routerconsole/resources/docs/readme.html",        // no country variants supported
+        "installer/resources/eepsite/docroot/help/index.html",
+        "installer/resources/locale-man/man.po",                // non-Java
+        "installer/resources/locale/po/messages.po",            // non-Java
+        "debian/po/.po"
+    };                                      // non-Java
 
     public TranslationStatus(I2PAppContext ctx, boolean html) {
         _context = ctx;
@@ -78,21 +81,21 @@ public class TranslationStatus {
         foundLangs = new HashSet<Locale>(64);
     }
 
-/*
-   only useful if we bundle this at runtime
+    /*
+       only useful if we bundle this at runtime
 
-    public String getStatus() throws IOException {
-        File base = _context.getBaseDir();
-        File jars = new File(base, "lib");
-        File wars = new File(base, "webapps");
-        File[] files = new File[JARS.length];
-        for (int i = 0; i < JARS.length; i++) {
-            String f = JARS[i];
-            files[i] = new File(f.endsWith(".jar") ? jars : wars, f);
+        public String getStatus() throws IOException {
+            File base = _context.getBaseDir();
+            File jars = new File(base, "lib");
+            File wars = new File(base, "webapps");
+            File[] files = new File[JARS.length];
+            for (int i = 0; i < JARS.length; i++) {
+                String f = JARS[i];
+                files[i] = new File(f.endsWith(".jar") ? jars : wars, f);
+            }
+            return getStatus(files);
         }
-        return getStatus(files);
-    }
-*/
+    */
 
     public String getStatus(File[] files) throws IOException {
         buf.setLength(0);
@@ -122,7 +125,10 @@ public class TranslationStatus {
                 ioe.printStackTrace();
                 continue;
             } finally {
-                if (zip != null) try { zip.close(); } catch (IOException e) {}
+                if (zip != null) try {
+                        zip.close();
+                    }
+                    catch (IOException e) {}
             }
 
             if (classes.isEmpty()) {
@@ -140,7 +146,9 @@ public class TranslationStatus {
             } else if (files[i].getName().endsWith(".war")) {
                 try {
                     url = (new URI("jar:file:" + files[i] + "!/WEB-INF/classes/")).toURL();
-                } catch (URISyntaxException use) { continue; }
+                } catch (URISyntaxException use) {
+                    continue;
+                }
             } else {
                 System.err.println("Not a jar/war file: " + files[i]);
                 continue;
@@ -282,21 +290,21 @@ public class TranslationStatus {
             //int tx = 0;
             Set<String> keys = bun.keySet();
             int tot = Math.max(0, keys.size() - 1);  // exclude header
-         /*
-            for (String k : keys) {
-                try {
-                    String v = bun.getString(k);
-                    if (v.length() == 0)
-                        not++;
-                    else if (v.equals(k))
-                        same++;
-                    else
-                        tx++;
-                } catch (MissingResourceException e) {
-                    not++;
-                }
-            }
-         */
+            /*
+               for (String k : keys) {
+                   try {
+                       String v = bun.getString(k);
+                       if (v.length() == 0)
+                           not++;
+                       else if (v.equals(k))
+                           same++;
+                       else
+                           tx++;
+                   } catch (MissingResourceException e) {
+                       not++;
+                   }
+               }
+            */
             Locale loc = bun.getLocale();
             String lang = loc.getLanguage();
             String country = loc.getCountry();

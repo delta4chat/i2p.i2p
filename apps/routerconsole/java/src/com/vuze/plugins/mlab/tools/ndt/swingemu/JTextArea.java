@@ -1,7 +1,7 @@
 /*
  * Created on May 20, 2010
  * Created by Paul Gardner
- * 
+ *
  * Copyright 2010 Vuze, Inc.  All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,39 +28,39 @@ import edu.internet2.ndt.Tcpbw100;
 import net.i2p.I2PAppContext;
 import net.i2p.util.Log;
 
-public class 
-JTextArea 
-	extends Component
+public class
+    JTextArea
+    extends Component
 {
-	private final Log _log = I2PAppContext.getGlobalContext().logManager().getLog(Tcpbw100.class);
-	private final StringBuilder text = new StringBuilder();
-	
-	public 
-	JTextArea(
-		String		str,
-		int			a,
-		int			b )
-	{
-		text.append(str);
-	}
-	
-	public void
-	append(
-		String		str )
-	{
-		if (_log.shouldWarn())
-			_log.warn(str.trim());
-		text.append(str);
-	}
-	
-	public String
-	getText()
-	{
-		return text.toString();
-	}
-	
-	public void
-	selectAll()
-	{
-	}
+    private final Log _log = I2PAppContext.getGlobalContext().logManager().getLog(Tcpbw100.class);
+    private final StringBuilder text = new StringBuilder();
+
+    public
+    JTextArea(
+        String		str,
+        int			a,
+        int			b )
+    {
+        text.append(str);
+    }
+
+    public void
+    append(
+        String		str )
+    {
+        if (_log.shouldWarn())
+            _log.warn(str.trim());
+        text.append(str);
+    }
+
+    public String
+    getText()
+    {
+        return text.toString();
+    }
+
+    public void
+    selectAll()
+    {
+    }
 }

@@ -126,14 +126,14 @@ class PartialPiece implements Comparable<PartialPiece> {
 
     /** piece number */
     public int getPiece() {
-         return this.piece.getId();
+        return this.piece.getId();
     }
 
     /**
      *  @since 0.9.1
      */
     public int getLength() {
-         return this.pclen;
+        return this.pclen;
     }
 
     /**
@@ -216,7 +216,7 @@ class PartialPiece implements Comparable<PartialPiece> {
         }
         return sha1.digest();
     }
-    
+
     /**
      *  Blocking.
      *  If offset matches the previous downloaded amount
@@ -364,7 +364,7 @@ class PartialPiece implements Comparable<PartialPiece> {
                 _cache.release(ba, false);
         }
     }
-    
+
     /**
      *  Release all resources.
      *
@@ -382,7 +382,7 @@ class PartialPiece implements Comparable<PartialPiece> {
             //    I2PAppContext.getGlobalContext().logManager().getLog(PartialPiece.class).warn("Released " + tempfile);
         }
     }
-    
+
     /**
      *  Caller must synchronize
      *
@@ -407,7 +407,7 @@ class PartialPiece implements Comparable<PartialPiece> {
             return d;
         return opp.getDownloaded() - getDownloaded();  // reverse
     }
-    
+
     @Override
     public int hashCode() {
         return piece.getId() * 7777;

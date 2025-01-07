@@ -10,7 +10,7 @@
 *
 *	01/30/03
 *		- first revision.
-*	
+*
 ******************************************************************/
 
 package org.cybergarage.upnp.control;
@@ -22,76 +22,76 @@ import org.cybergarage.xml.*;
 
 public class QueryResponse extends ControlResponse
 {
-	////////////////////////////////////////////////
-	//	Constructor
-	////////////////////////////////////////////////
-	
-	public QueryResponse()
-	{
-	}
+    ////////////////////////////////////////////////
+    //	Constructor
+    ////////////////////////////////////////////////
 
-	public QueryResponse(SOAPResponse soapRes)
-	{
-		super(soapRes);
-	}
+    public QueryResponse()
+    {
+    }
 
-	////////////////////////////////////////////////
-	//	Qyery
-	////////////////////////////////////////////////
+    public QueryResponse(SOAPResponse soapRes)
+    {
+        super(soapRes);
+    }
 
-	private Node getReturnNode()
-	{
-		Node bodyNode = getBodyNode();
-		if (bodyNode == null)
-			return null;
-		if (bodyNode.hasNodes() == false)
-			return null;
-		Node queryResNode = bodyNode.getNode(0);
-		if (queryResNode == null)
-			return null;
-		if (queryResNode.hasNodes() == false)
-			return null;
-		return queryResNode.getNode(0);
-	}
-	
-	public String getReturnValue()
-	{
-		Node node = getReturnNode();
-		if (node == null)
-			return "";
-		return node.getValue();
-	}
+    ////////////////////////////////////////////////
+    //	Qyery
+    ////////////////////////////////////////////////
 
-	////////////////////////////////////////////////
-	//	Response
-	////////////////////////////////////////////////
+    private Node getReturnNode()
+    {
+        Node bodyNode = getBodyNode();
+        if (bodyNode == null)
+            return null;
+        if (bodyNode.hasNodes() == false)
+            return null;
+        Node queryResNode = bodyNode.getNode(0);
+        if (queryResNode == null)
+            return null;
+        if (queryResNode.hasNodes() == false)
+            return null;
+        return queryResNode.getNode(0);
+    }
 
-	public void setResponse(StateVariable stateVar)
-	{
-		String var = stateVar.getValue();
+    public String getReturnValue()
+    {
+        Node node = getReturnNode();
+        if (node == null)
+            return "";
+        return node.getValue();
+    }
 
-		setStatusCode(HTTPStatus.OK);
-		
-		Node bodyNode = getBodyNode();
-		Node resNode = createResponseNode(var);
-		bodyNode.addNode(resNode);
-		
-		Node envNodee = getEnvelopeNode();
-		setContent(envNodee);
+    ////////////////////////////////////////////////
+    //	Response
+    ////////////////////////////////////////////////
 
-	}
+    public void setResponse(StateVariable stateVar)
+    {
+        String var = stateVar.getValue();
 
-	private Node createResponseNode(String var)
-	{
-		Node queryResNode = new Node();
-		queryResNode.setName(Control.NS, Control.QUERY_STATE_VARIABLE_RESPONSE);
-		queryResNode.setNameSpace(Control.NS, Control.XMLNS);
-		
-		Node returnNode = new Node();
-		returnNode.setName(Control.RETURN);
-		returnNode.setValue(var);
-		queryResNode.addNode(returnNode);
-		
-		return queryResNode;
-	}
+        setStatusCode(HTTPStatus.OK);
+
+        Node bodyNode = getBodyNode();
+        Node resNode = createResponseNode(var);
+        bodyNode.addNode(resNode);
+
+        Node envNodee = getEnvelopeNode();
+        setContent(envNodee);
+
+    }
+
+    private Node createResponseNode(String var)
+    {
+        Node queryResNode = new Node();
+        queryResNode.setName(Control.NS, Control.QUERY_STATE_VARIABLE_RESPONSE);
+        queryResNode.setNameSpace(Control.NS, Control.XMLNS);
+
+        Node returnNode = new Node();
+        returnNode.setName(Control.RETURN);
+        returnNode.setValue(var);
+        queryResNode.addNode(returnNode);
+
+        return queryResNode;
+    }
 }

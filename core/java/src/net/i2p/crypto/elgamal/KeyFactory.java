@@ -31,7 +31,7 @@ public final class KeyFactory extends KeyFactorySpi {
      *  Supports PKCS8EncodedKeySpec
      */
     protected PrivateKey engineGeneratePrivate(KeySpec keySpec)
-            throws InvalidKeySpecException {
+    throws InvalidKeySpecException {
         if (keySpec instanceof ElGamalPrivateKeySpec) {
             return new ElGamalPrivateKeyImpl((ElGamalPrivateKeySpec) keySpec);
         }
@@ -45,7 +45,7 @@ public final class KeyFactory extends KeyFactorySpi {
      *  Supports X509EncodedKeySpec
      */
     protected PublicKey engineGeneratePublic(KeySpec keySpec)
-            throws InvalidKeySpecException {
+    throws InvalidKeySpecException {
         if (keySpec instanceof ElGamalPublicKeySpec) {
             return new ElGamalPublicKeyImpl((ElGamalPublicKeySpec) keySpec);
         }
@@ -57,7 +57,7 @@ public final class KeyFactory extends KeyFactorySpi {
 
     @SuppressWarnings("unchecked")
     protected <T extends KeySpec> T engineGetKeySpec(Key key, Class<T> keySpec)
-            throws InvalidKeySpecException {
+    throws InvalidKeySpecException {
         if (keySpec.isAssignableFrom(ElGamalPublicKeySpec.class) && key instanceof ElGamalPublicKey) {
             ElGamalPublicKey k = (ElGamalPublicKey) key;
             ElGamalParameterSpec egp = k.getParameters();

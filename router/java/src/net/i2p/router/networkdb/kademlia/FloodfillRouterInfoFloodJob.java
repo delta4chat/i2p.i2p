@@ -26,25 +26,27 @@ import net.i2p.util.Log;
 class FloodfillRouterInfoFloodJob extends JobImpl {
     private final Log _log;
     private final FloodfillNetworkDatabaseFacade _facade;
-    
+
     private static final int FLOOD_PEERS = 2 * FloodfillNetworkDatabaseFacade.MAX_TO_FLOOD;
-    
+
     public FloodfillRouterInfoFloodJob(RouterContext context, FloodfillNetworkDatabaseFacade facade) {
         super(context);
         _facade = facade;
         _log = context.logManager().getLog(FloodfillRouterInfoFloodJob.class);
     }
-    
-    public String getName() { return "Flood our RouterInfo to nearby floodfills"; }
+
+    public String getName() {
+        return "Flood our RouterInfo to nearby floodfills";
+    }
 
     public void runJob() {
         FloodfillPeerSelector sel = (FloodfillPeerSelector)_facade.getPeerSelector();
         DatabaseStoreMessage dsm;
         OutNetMessage outMsg;
         RouterInfo nextPeerInfo;
-        
+
         List<Hash> peers = sel.selectFloodfillParticipants(getContext().routerHash(), FLOOD_PEERS, null);
-        
+
         for(Hash ri: peers) {
             // Iterate through list of nearby (ff) peers
             dsm          = new DatabaseStoreMessage(getContext());

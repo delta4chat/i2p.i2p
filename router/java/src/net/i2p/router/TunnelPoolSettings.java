@@ -37,7 +37,7 @@ public class TunnelPoolSettings {
     private int _priority;
     private final Set<Hash> _aliases;
     private Hash _aliasOf;
-    
+
     /** prefix used to override the router's defaults for clients */
     // unimplemented
     //public static final String  PREFIX_DEFAULT = "router.defaultPool.";
@@ -46,7 +46,7 @@ public class TunnelPoolSettings {
     public static final String  PREFIX_INBOUND_EXPLORATORY = "router.inboundPool.";
     /** prefix used to configure the outbound exploratory pool */
     public static final String  PREFIX_OUTBOUND_EXPLORATORY = "router.outboundPool.";
-    
+
     public static final String  PROP_NICKNAME = "nickname";
     public static final String  PROP_QUANTITY = "quantity";
     public static final String  PROP_BACKUP_QUANTITY = "backupQuantity";
@@ -60,7 +60,7 @@ public class TunnelPoolSettings {
     public static final String  PROP_PRIORITY = "priority";
     /** @since 0.9.17 */
     public static final String  PROP_RANDOM_KEY = "randomKey";
-    
+
     public static final int     DEFAULT_QUANTITY = 2;
     public static final int     DEFAULT_BACKUP_QUANTITY = 0;
     // public static final int     DEFAULT_REBUILD_PERIOD = 60*1000;
@@ -128,15 +128,23 @@ public class TunnelPoolSettings {
         else
             _aliases = null;
     }
-    
+
     /** how many tunnels should be available at all times */
-    public int getQuantity() { return _quantity; }
-    public void setQuantity(int quantity) { _quantity = quantity; }
+    public int getQuantity() {
+        return _quantity;
+    }
+    public void setQuantity(int quantity) {
+        _quantity = quantity;
+    }
 
     /** how many backup tunnels should be kept waiting in the wings */
-    public int getBackupQuantity() { return _backupQuantity; }
-    public void setBackupQuantity(int quantity) { _backupQuantity = quantity; }
-    
+    public int getBackupQuantity() {
+        return _backupQuantity;
+    }
+    public void setBackupQuantity(int quantity) {
+        _backupQuantity = quantity;
+    }
+
     /**
      *  Convenience
      *  @return getQuantity() + getBackupQuantity()
@@ -149,19 +157,23 @@ public class TunnelPoolSettings {
     /** how long before tunnel expiration should new tunnels be built */
     // public int getRebuildPeriod() { return _rebuildPeriod; }
     // public void setRebuildPeriod(int periodMs) { _rebuildPeriod = periodMs; }
-    
+
     /**
      *  How many remote hops should be in the tunnel NOT including us
      *  @return 0 to 7
      */
-    public int getLength() { return _length; }
+    public int getLength() {
+        return _length;
+    }
 
     /**
      *  How many remote hops should be in the tunnel NOT including us
      *  @param length 0 to 7 (not enforced here)
      */
-    public void setLength(int length) { _length = length; }
-    
+    public void setLength(int length) {
+        _length = length;
+    }
+
     /**
      * If there are no tunnels to build with, will this pool allow 0 hop tunnels?
      *
@@ -191,43 +203,57 @@ public class TunnelPoolSettings {
         if (!_isExploratory)
             _allowZeroHop = ok;
     }
-    
-    /** 
+
+    /**
      * how should the length be varied.  if negative, this randomly skews from
      * (length - variance) to (length + variance), or if positive, from length
      * to (length + variance), inclusive.
      *
      */
-    public int getLengthVariance() { return _lengthVariance; }
-    public void setLengthVariance(int variance) { _lengthVariance = variance; }
+    public int getLengthVariance() {
+        return _lengthVariance;
+    }
+    public void setLengthVariance(int variance) {
+        _lengthVariance = variance;
+    }
 
-    /** 
+    /**
      * A temporary length to be used due to network conditions.
      * If less than zero, the standard length should be used.
      * Unused until 0.8.11
      */
-    public int getLengthOverride() { return _lengthOverride; }
+    public int getLengthOverride() {
+        return _lengthOverride;
+    }
 
-    /** 
+    /**
      * A temporary length to be used due to network conditions.
      * If less than zero, the standard length will be used.
      * Unused until 0.8.11
      */
-    public void setLengthOverride(int length) { _lengthOverride = length; }
+    public void setLengthOverride(int length) {
+        _lengthOverride = length;
+    }
 
     /** is this an inbound tunnel? */
-    public boolean isInbound() { return _isInbound; }
-    
+    public boolean isInbound() {
+        return _isInbound;
+    }
+
     /** is this an exploratory tunnel (or a client tunnel) */
-    public boolean isExploratory() { return _isExploratory; }
-    
+    public boolean isExploratory() {
+        return _isExploratory;
+    }
+
     // Duration is hardcoded
     //public int getDuration() { return _duration; }
     //public void setDuration(int ms) { _duration = ms; }
-    
+
     /** what destination is this a client tunnel for (or null if exploratory) */
-    public Hash getDestination() { return _destination; }
-    
+    public Hash getDestination() {
+        return _destination;
+    }
+
     /**
      *  Other destinations that use the same tunnel (or null if exploratory)
      *  Modifiable, concurrent, not a copy
@@ -261,12 +287,18 @@ public class TunnelPoolSettings {
      *
      *  @return non-null
      */
-    public SessionKey getRandomKey() { return _randomKey; }
+    public SessionKey getRandomKey() {
+        return _randomKey;
+    }
 
     /** what user supplied name was given to the client connected (can be null) */
-    public String getDestinationNickname() { return _destinationNickname; }
-    public void setDestinationNickname(String name) { _destinationNickname = name; }
-    
+    public String getDestinationNickname() {
+        return _destinationNickname;
+    }
+    public void setDestinationNickname(String name) {
+        _destinationNickname = name;
+    }
+
     /**
      *  How many bytes to match to determine if a router's IP is too close to another's
      *  to be in the same tunnel
@@ -277,21 +309,29 @@ public class TunnelPoolSettings {
      *  @return 0-4 Number of bytes to match to determine if peers in the same IP range should
      *          not be in the same tunnel. 0 = disable check; 1 = /8; 2 = /16; 3 = /24; 4 = exact IP match
      */
-    public int getIPRestriction() { return _IPRestriction; }
-    
+    public int getIPRestriction() {
+        return _IPRestriction;
+    }
+
     /**
      *  Outbound message priority - for outbound tunnels only
      *  @return -25 to +30, default 30 for outbound exploratory and 0 for others
      *  @since 0.9.4
      */
-    public int getPriority() { return _priority; }
+    public int getPriority() {
+        return _priority;
+    }
 
     /**
      *  @return non-null
      */
-    public Properties getUnknownOptions() { return _unknownOptions; }
+    public Properties getUnknownOptions() {
+        return _unknownOptions;
+    }
 
-    public long getMsgIdBloomXor() { return _msgIDBloomXor; }
+    public long getMsgIdBloomXor() {
+        return _msgIDBloomXor;
+    }
 
     /**
      *  Defaults in props are NOT honored.
@@ -313,14 +353,14 @@ public class TunnelPoolSettings {
                 //    _duration = getInt(value, DEFAULT_DURATION);
                 else if (name.equalsIgnoreCase(prefix + PROP_LENGTH))
                     _length = getInt(value, _isInbound ?
-                                            (_isExploratory ? DEFAULT_IB_EXPL_LENGTH : DEFAULT_IB_LENGTH) :
-                                            (_isExploratory ? DEFAULT_OB_EXPL_LENGTH : DEFAULT_OB_LENGTH));
+                                     (_isExploratory ? DEFAULT_IB_EXPL_LENGTH : DEFAULT_IB_LENGTH) :
+                                     (_isExploratory ? DEFAULT_OB_EXPL_LENGTH : DEFAULT_OB_LENGTH));
                 else if (name.equalsIgnoreCase(prefix + PROP_LENGTH_VARIANCE))
                     _lengthVariance = getInt(value, _isExploratory ?
-                                                        (_isInbound ?
-                                                             DEFAULT_IB_EXPL_LENGTH_VARIANCE :
-                                                             DEFAULT_OB_EXPL_LENGTH_VARIANCE) :
-                                                        DEFAULT_LENGTH_VARIANCE);
+                                             (_isInbound ?
+                                              DEFAULT_IB_EXPL_LENGTH_VARIANCE :
+                                              DEFAULT_OB_EXPL_LENGTH_VARIANCE) :
+                                             DEFAULT_LENGTH_VARIANCE);
                 else if (name.equalsIgnoreCase(prefix + PROP_QUANTITY))
                     _quantity = getInt(value, DEFAULT_QUANTITY);
                 // else if (name.equalsIgnoreCase(prefix + PROP_REBUILD_PERIOD))
@@ -335,8 +375,8 @@ public class TunnelPoolSettings {
                         r = 0;
                     _IPRestriction = r;
                 } else if ((!_isInbound) && name.equalsIgnoreCase(prefix + PROP_PRIORITY)) {
-                     int def = _isExploratory ? EXPLORATORY_PRIORITY : 0;
-                     int max = _isExploratory ? EXPLORATORY_PRIORITY : MAX_PRIORITY;
+                    int def = _isExploratory ? EXPLORATORY_PRIORITY : 0;
+                    int max = _isExploratory ? EXPLORATORY_PRIORITY : MAX_PRIORITY;
                     _priority = Math.min(max, Math.max(MIN_PRIORITY, getInt(value, def)));
                 } else if (name.equalsIgnoreCase(prefix + PROP_RANDOM_KEY)) {
                     byte[] rk = Base64.decode(value);
@@ -347,7 +387,7 @@ public class TunnelPoolSettings {
             }
         }
     }
-    
+
     /**
      *  @param prefix non-null
      */
@@ -389,22 +429,24 @@ public class TunnelPoolSettings {
         buf.append("====================================\n");
         return buf.toString();
     }
-    
+
     // used for strict peer ordering
     private static SessionKey generateRandomKey() {
         byte data[] = new byte[SessionKey.KEYSIZE_BYTES];
         RandomSource.getInstance().nextBytes(data);
         return new SessionKey(data);
     }
-    
-    private static final boolean getBoolean(String str, boolean defaultValue) { 
+
+    private static final boolean getBoolean(String str, boolean defaultValue) {
         if (str == null) return defaultValue;
         boolean v = Boolean.parseBoolean(str) ||
                     "YES".equals(str.toUpperCase(Locale.US));
         return v;
     }
 
-    private static final int getInt(String str, int defaultValue) { return (int)getLong(str, defaultValue); }
+    private static final int getInt(String str, int defaultValue) {
+        return (int)getLong(str, defaultValue);
+    }
 
     private static final long getLong(String str, long defaultValue) {
         if (str == null) return defaultValue;

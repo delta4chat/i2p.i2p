@@ -141,8 +141,8 @@ class ClientPeerSelector extends TunnelPeerSelector {
                         TunnelPoolSettings tps = tp.getSettings();
                         int len = tps.getLength();
                         if (len <= 0 ||
-                            tps.getLengthOverride() == 0 ||
-                            len + tps.getLengthVariance() <= 0) {
+                                tps.getLengthOverride() == 0 ||
+                                len + tps.getLengthVariance() <= 0) {
                             // leave it true
                         } else {
                             List<TunnelInfo> tunnels = tp.listTunnels();
@@ -160,8 +160,8 @@ class ClientPeerSelector extends TunnelPeerSelector {
                                 tps = tp.getSettings();
                                 len = tps.getLength();
                                 if (len <= 0 ||
-                                    tps.getLengthOverride() == 0 ||
-                                    len + tps.getLengthVariance() <= 0) {
+                                        tps.getLengthOverride() == 0 ||
+                                        len + tps.getLengthVariance() <= 0) {
                                     // leave it true
                                 } else {
                                     tunnels = tp.listTunnels();

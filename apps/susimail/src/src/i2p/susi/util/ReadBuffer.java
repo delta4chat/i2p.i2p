@@ -1,8 +1,8 @@
 /*
  * Created on Nov 15, 2004
- * 
+ *
  *  This file is part of susimail project, see http://susi.i2p/
- *  
+ *
  *  Copyright (C) 2004-2005  <susi23@mail.i2p>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -18,7 +18,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *  
+ *
  * $Revision: 1.2 $
  */
 package i2p.susi.util;
@@ -37,60 +37,60 @@ import net.i2p.data.DataHelper;
  */
 public class ReadBuffer implements Buffer {
 
-	public final byte content[];
-	public final int length, offset;
-	
-	public ReadBuffer(byte[] content, int offset, int length) {
-		this.content = content;
-		this.offset = offset;
-		this.length = length;
-	}
+    public final byte content[];
+    public final int length, offset;
 
-	/**
-	 * @return new ByteArrayInputStream over the content
-	 * @since 0.9.34
-	 */
-	public InputStream getInputStream() {
-		return new ByteArrayInputStream(content, offset, length);
-	}
+    public ReadBuffer(byte[] content, int offset, int length) {
+        this.content = content;
+        this.offset = offset;
+        this.length = length;
+    }
 
-	/**
-	 * @throws IllegalStateException always
-	 * @since 0.9.34
-	 */
-	public OutputStream getOutputStream() {
-		throw new IllegalStateException();
-	}
+    /**
+     * @return new ByteArrayInputStream over the content
+     * @since 0.9.34
+     */
+    public InputStream getInputStream() {
+        return new ByteArrayInputStream(content, offset, length);
+    }
 
-	/**
-	 * Does nothing
-	 * @since 0.9.34
-	 */
-	public void readComplete(boolean success) {}
+    /**
+     * @throws IllegalStateException always
+     * @since 0.9.34
+     */
+    public OutputStream getOutputStream() {
+        throw new IllegalStateException();
+    }
 
-	/**
-	 * Does nothing
-	 * @since 0.9.34
-	 */
-	public void writeComplete(boolean success) {}
+    /**
+     * Does nothing
+     * @since 0.9.34
+     */
+    public void readComplete(boolean success) {}
 
-	/**
-	 * Always valid
-	 */
-	public int getLength() {
-		return length;
-	}
+    /**
+     * Does nothing
+     * @since 0.9.34
+     */
+    public void writeComplete(boolean success) {}
 
-	/**
-	 * Always valid
-	 */
-	public int getOffset() {
-		return offset;
-	}
+    /**
+     * Always valid
+     */
+    public int getLength() {
+        return length;
+    }
 
-	@Override
-	public String toString()
-	{
-		return content != null ? DataHelper.getUTF8(content, offset, length) : "";
-	}
+    /**
+     * Always valid
+     */
+    public int getOffset() {
+        return offset;
+    }
+
+    @Override
+    public String toString()
+    {
+        return content != null ? DataHelper.getUTF8(content, offset, length) : "";
+    }
 }

@@ -70,7 +70,7 @@ public class FIFOBandwidthLimiter {
 
     private final FIFOBandwidthRefiller _refiller;
     private final Thread _refillerThread;
-    
+
     private long _lastTotalSent;
     private long _lastTotalReceived;
     private long _lastStatsUpdated;
@@ -78,12 +78,12 @@ public class FIFOBandwidthLimiter {
     private float _recvBps;
     private float _sendBps15s;
     private float _recvBps15s;
-    
+
     public /* static */ long now() {
         // dont use the clock().now(), since that may jump
-        return System.currentTimeMillis(); 
+        return System.currentTimeMillis();
     }
-    
+
     public FIFOBandwidthLimiter(RouterContext context) {
         _context = context;
         _log = context.logManager().getLog(FIFOBandwidthLimiter.class);
@@ -104,8 +104,12 @@ public class FIFOBandwidthLimiter {
 
     //public long getAvailableInboundBytes() { return _availableInboundBytes; }
     //public long getAvailableOutboundBytes() { return _availableOutboundBytes; }
-    public long getTotalAllocatedInboundBytes() { return _totalAllocatedInboundBytes.get(); }
-    public long getTotalAllocatedOutboundBytes() { return _totalAllocatedOutboundBytes.get(); }
+    public long getTotalAllocatedInboundBytes() {
+        return _totalAllocatedInboundBytes.get();
+    }
+    public long getTotalAllocatedOutboundBytes() {
+        return _totalAllocatedOutboundBytes.get();
+    }
     //public long getTotalWastedInboundBytes() { return _totalWastedInboundBytes.get(); }
     //public long getTotalWastedOutboundBytes() { return _totalWastedOutboundBytes.get(); }
     //public long getMaxInboundBytes() { return _maxInboundBytes; }
@@ -115,48 +119,68 @@ public class FIFOBandwidthLimiter {
 
     /** @deprecated unused for now, we are always limited */
     @Deprecated
-    void setInboundUnlimited(boolean isUnlimited) { _inboundUnlimited = isUnlimited; }
+    void setInboundUnlimited(boolean isUnlimited) {
+        _inboundUnlimited = isUnlimited;
+    }
 
     /** @deprecated unused for now, we are always limited */
     @Deprecated
-    void setOutboundUnlimited(boolean isUnlimited) { _outboundUnlimited = isUnlimited; }
+    void setOutboundUnlimited(boolean isUnlimited) {
+        _outboundUnlimited = isUnlimited;
+    }
 
     /** @return smoothed one second rate */
-    public float getSendBps() { return _sendBps; }
+    public float getSendBps() {
+        return _sendBps;
+    }
 
     /** @return smoothed one second rate */
-    public float getReceiveBps() { return _recvBps; }
+    public float getReceiveBps() {
+        return _recvBps;
+    }
 
     /** @return smoothed 15 second rate */
-    public float getSendBps15s() { return _sendBps15s; }
+    public float getSendBps15s() {
+        return _sendBps15s;
+    }
 
     /** @return smoothed 15 second rate */
-    public float getReceiveBps15s() { return _recvBps15s; }
-    
+    public float getReceiveBps15s() {
+        return _recvBps15s;
+    }
+
     /**
      *  The configured maximum, not the current rate.
      *  In binary K, i.e. rate / 1024.
      */
-    public int getOutboundKBytesPerSecond() { return _refiller.getOutboundKBytesPerSecond(); } 
-    
+    public int getOutboundKBytesPerSecond() {
+        return _refiller.getOutboundKBytesPerSecond();
+    }
+
     /**
      *  The configured maximum, not the current rate.
      *  In binary K, i.e. rate / 1024.
      */
-    public int getInboundKBytesPerSecond() { return _refiller.getInboundKBytesPerSecond(); } 
-    
+    public int getInboundKBytesPerSecond() {
+        return _refiller.getInboundKBytesPerSecond();
+    }
+
     /**
      *  The configured maximum, not the current rate.
      *  In binary K, i.e. rate / 1024.
      */
-    public int getOutboundBurstKBytesPerSecond() { return _refiller.getOutboundBurstKBytesPerSecond(); } 
-    
+    public int getOutboundBurstKBytesPerSecond() {
+        return _refiller.getOutboundBurstKBytesPerSecond();
+    }
+
     /**
      *  The configured maximum, not the current rate.
      *  In binary K, i.e. rate / 1024.
      */
-    public int getInboundBurstKBytesPerSecond() { return _refiller.getInboundBurstKBytesPerSecond(); } 
-    
+    public int getInboundBurstKBytesPerSecond() {
+        return _refiller.getInboundBurstKBytesPerSecond();
+    }
+
     public synchronized void reinitialize() {
         clear();
         _refiller.reinitialize();
@@ -185,7 +209,7 @@ public class FIFOBandwidthLimiter {
         //_inboundUnlimited = false;
         //_outboundUnlimited = false;
     }
-    
+
     /**
      *  We intend to send traffic for a participating tunnel
      *  with the given size and adjustment factor.
@@ -267,18 +291,26 @@ public class FIFOBandwidthLimiter {
         if (pending > 0)
             _context.statManager().addRateData("bwLimiter.pendingOutboundRequests", pending);
     }
-    
+
     void setInboundBurstKBps(int kbytesPerSecond) {
         _maxInbound = kbytesPerSecond * 1024;
     }
     void setOutboundBurstKBps(int kbytesPerSecond) {
         _maxOutbound = kbytesPerSecond * 1024;
     }
-    public int getInboundBurstBytes() { return _maxInboundBurst; }
-    public int getOutboundBurstBytes() { return _maxOutboundBurst; }
-    void setInboundBurstBytes(int bytes) { _maxInboundBurst = bytes; }
-    void setOutboundBurstBytes(int bytes) { _maxOutboundBurst = bytes; }
-    
+    public int getInboundBurstBytes() {
+        return _maxInboundBurst;
+    }
+    public int getOutboundBurstBytes() {
+        return _maxOutboundBurst;
+    }
+    void setInboundBurstBytes(int bytes) {
+        _maxInboundBurst = bytes;
+    }
+    void setOutboundBurstBytes(int bytes) {
+        _maxOutboundBurst = bytes;
+    }
+
     StringBuilder getStatus() {
         StringBuilder rv = new StringBuilder(128);
         rv.append("Available: ").append(_availableInbound).append('/').append(_availableOutbound);
@@ -287,7 +319,7 @@ public class FIFOBandwidthLimiter {
         rv.append(" Burst max: ").append(_maxInboundBurst).append('/').append(_maxOutboundBurst);
         return rv;
     }
-    
+
     /**
      *  @since 0.9.53
      */
@@ -299,7 +331,7 @@ public class FIFOBandwidthLimiter {
         rv.append(" Burst max: ").append(_maxInboundBurst);
         return rv;
     }
-    
+
     /**
      *  @since 0.9.53
      */
@@ -311,7 +343,7 @@ public class FIFOBandwidthLimiter {
         rv.append(" Burst max: ").append(_maxOutboundBurst);
         return rv;
     }
-    
+
     /**
      * More bytes are available - add them to the queue and satisfy any requests
      * we can
@@ -347,7 +379,7 @@ public class FIFOBandwidthLimiter {
                 want = _maxInbound - avi;
             //if (_log.shouldLog(Log.DEBUG))
             //    _log.debug("want to pull " + want + " from the inbound burst (" + _unavailableInboundBurst + ") to supplement " + avi + " (max: " + _maxInbound + ")");
-            
+
             if (want > 0) {
                 int uib = _unavailableInboundBurst.get();
                 if (want <= uib) {
@@ -359,7 +391,7 @@ public class FIFOBandwidthLimiter {
                 }
             }
         }
-        
+
         int avo = _availableOutbound.addAndGet((int) bytesOutbound);
         if (avo > _maxOutbound) {
             //if (_log.shouldLog(Log.DEBUG))
@@ -378,7 +410,7 @@ public class FIFOBandwidthLimiter {
                 want = _maxOutbound - avo;
             //if (_log.shouldLog(Log.DEBUG))
             //    _log.debug("want to pull " + want + " from the outbound burst (" + _unavailableOutboundBurst + ") to supplement " + avo + " (max: " + _maxOutbound + ")");
-            
+
             if (want > 0) {
                 int uob = _unavailableOutboundBurst.get();
                 if (want <= uob) {
@@ -390,11 +422,11 @@ public class FIFOBandwidthLimiter {
                 }
             }
         }
-        
+
         satisfyRequests(buf);
         updateStats();
     }
-    
+
     private void updateStats() {
         long now = now();
         long time = now - _lastStatsUpdated;
@@ -419,8 +451,8 @@ public class FIFOBandwidthLimiter {
 
             // warning, getStatLog() can be null
             //if (_log.shouldLog(Log.WARN)) {
-                //if (_log.shouldLog(Log.INFO))
-                //    _log.info("BW: time = " + time + " sent: " + _sendBps + " recv: " + _recvBps);
+            //if (_log.shouldLog(Log.INFO))
+            //    _log.info("BW: time = " + time + " sent: " + _sendBps + " recv: " + _recvBps);
             //    _context.statManager().getStatLog().addData("bw", "bw.sendBps1s", (long)_sendBps, sent);
             //    _context.statManager().getStatLog().addData("bw", "bw.recvBps1s", (long)_recvBps, recv);
             //}
@@ -431,12 +463,12 @@ public class FIFOBandwidthLimiter {
             //if (_sendBps15s <= 0)
             //    _sendBps15s = (0.045f)*((float)sent*15*1000f)/(float)time;
             //else
-                _sendBps15s = (0.955f)*_sendBps15s + (0.045f)*(sent*1000f)/time;
+            _sendBps15s = (0.955f)*_sendBps15s + (0.045f)*(sent*1000f)/time;
 
             //if (_recvBps15s <= 0)
             //    _recvBps15s = (0.045f)*((float)recv*15*1000f)/(float)time;
             //else
-                _recvBps15s = (0.955f)*_recvBps15s + (0.045f)*((float)recv*1000)/time;
+            _recvBps15s = (0.955f)*_recvBps15s + (0.045f)*((float)recv*1000)/time;
 
             // warning, getStatLog() can be null
             //if (_log.shouldLog(Log.WARN)) {
@@ -447,10 +479,10 @@ public class FIFOBandwidthLimiter {
             //}
         }
     }
-    
+
     /**
      * Go through the queue, satisfying as many requests as possible (notifying
-     * each one satisfied that the request has been granted).  
+     * each one satisfied that the request has been granted).
      *
      * @param buffer Out parameter, returned with the satisfied outbound requests only
      */
@@ -460,7 +492,7 @@ public class FIFOBandwidthLimiter {
         buffer.clear();
         satisfyOutboundRequests(buffer);
     }
-    
+
     /**
      * @param satisfied Out parameter, returned with the satisfied requests added
      */
@@ -474,13 +506,13 @@ public class FIFOBandwidthLimiter {
                 } else {
                     // no bandwidth available
                     if (_log.shouldLog(Log.DEBUG))
-                        _log.debug("Denying " + _pendingInboundRequests.size() 
-                                  + " pending inbound requests (status: " + getInboundStatus()
-                                  + ", longest waited " + locked_getLongestInboundWait() + ')');
+                        _log.debug("Denying " + _pendingInboundRequests.size()
+                                   + " pending inbound requests (status: " + getInboundStatus()
+                                   + ", longest waited " + locked_getLongestInboundWait() + ')');
                 }
             }
         }
-        
+
         if (satisfied != null) {
             for (int i = 0; i < satisfied.size(); i++) {
                 SimpleRequest creq = (SimpleRequest)satisfied.get(i);
@@ -488,7 +520,7 @@ public class FIFOBandwidthLimiter {
             }
         }
     }
-    
+
     /** called from debug logging only */
     private long locked_getLongestInboundWait() {
         long start = -1;
@@ -497,7 +529,7 @@ public class FIFOBandwidthLimiter {
             if ( (start < 0) || (start > req.getRequestTime()) )
                 start = req.getRequestTime();
         }
-        if (start == -1) 
+        if (start == -1)
             return 0;
         else
             return now() - start;
@@ -517,7 +549,7 @@ public class FIFOBandwidthLimiter {
         else
             return now() - start;
     }
-    
+
     /**
      * There are no limits, so just give every inbound request whatever they want
      *
@@ -532,19 +564,19 @@ public class FIFOBandwidthLimiter {
             satisfied.add(req);
             long waited = now() - req.getRequestTime();
             if (_log.shouldLog(Log.DEBUG))
-                 _log.debug("Granting inbound request " + req + " fully (waited " 
-                            + waited
-                            + "ms) pending " + _pendingInboundRequests.size());
+                _log.debug("Granting inbound request " + req + " fully (waited "
+                           + waited
+                           + "ms) pending " + _pendingInboundRequests.size());
             if (waited > 10)
                 _context.statManager().addRateData("bwLimiter.inboundDelayedTime", waited);
         }
     }
-    
+
     /**
      * ok, we have limits, so lets iterate through the requests, allocating as much
      * bandwidth as we can to those who have used what we have given them and are waiting
      * for more (giving priority to the first ones who requested it)
-     * 
+     *
      * @param satisfied out param, list of requests that were completely satisfied
      */
     private final void locked_satisfyInboundAvailable(List<Request> satisfied) {
@@ -554,11 +586,11 @@ public class FIFOBandwidthLimiter {
             if (req.getAborted()) {
                 // connection decided they dont want the data anymore
                 if (_log.shouldLog(Log.DEBUG))
-                     _log.debug("Aborting inbound request to " 
-                                + req
-                                + " waited " 
-                                + waited
-                                + "ms) pending " + _pendingInboundRequests.size());
+                    _log.debug("Aborting inbound request to "
+                               + req
+                               + " waited "
+                               + waited
+                               + "ms) pending " + _pendingInboundRequests.size());
                 _pendingInboundRequests.remove(i);
                 i--;
                 continue;
@@ -570,17 +602,17 @@ public class FIFOBandwidthLimiter {
             // This never affected NTCP (which also requires a full allocation)
             // since it registers a CompleteListener, so getAllocationsSinceWait() was always zero.
             //if (req.getAllocationsSinceWait() > 0) {
-                // we have already allocated some values to this request, but
-                // they haven't taken advantage of it yet (most likely they're
-                // IO bound)
-                // (also, the complete listener is only set for situations where 
-                // waitForNextAllocation() is never called)
+            // we have already allocated some values to this request, but
+            // they haven't taken advantage of it yet (most likely they're
+            // IO bound)
+            // (also, the complete listener is only set for situations where
+            // waitForNextAllocation() is never called)
             //    continue;
             //}
             // ok, they are really waiting for us to give them stuff
             int requested = req.getPendingRequested();
             int allocated;
-            if (avi >= requested) 
+            if (avi >= requested)
                 allocated = requested;
             else
                 allocated = avi;
@@ -590,20 +622,20 @@ public class FIFOBandwidthLimiter {
             satisfied.add(req);
             if (req.getPendingRequested() > 0) {
                 if (_log.shouldLog(Log.DEBUG))
-                     _log.debug("Allocating " + allocated + " bytes inbound as a partial grant to " 
-                                + req
-                                + " waited " 
-                                + waited
-                                + "ms) pending " + _pendingInboundRequests.size()
-                                + ", longest waited " + locked_getLongestInboundWait() + " in");
+                    _log.debug("Allocating " + allocated + " bytes inbound as a partial grant to "
+                               + req
+                               + " waited "
+                               + waited
+                               + "ms) pending " + _pendingInboundRequests.size()
+                               + ", longest waited " + locked_getLongestInboundWait() + " in");
             } else {
                 if (_log.shouldLog(Log.DEBUG))
-                     _log.debug("Allocating " + allocated + " bytes inbound to finish the partial grant to " 
-                                + req
-                                + " waited " 
-                                + waited
-                                + "ms) pending " + _pendingInboundRequests.size()
-                                + ", longest waited " + locked_getLongestInboundWait() + " out");
+                    _log.debug("Allocating " + allocated + " bytes inbound to finish the partial grant to "
+                               + req
+                               + " waited "
+                               + waited
+                               + "ms) pending " + _pendingInboundRequests.size()
+                               + ", longest waited " + locked_getLongestInboundWait() + " out");
                 _pendingInboundRequests.remove(i);
                 i--;
                 if (waited > 10)
@@ -611,7 +643,7 @@ public class FIFOBandwidthLimiter {
             }
         }
     }
-    
+
     /**
      * @param satisfied Out parameter, returned with the satisfied requests added
      */
@@ -625,13 +657,13 @@ public class FIFOBandwidthLimiter {
                 } else {
                     // no bandwidth available
                     if (_log.shouldLog(Log.INFO))
-                        _log.info("Denying " + _pendingOutboundRequests.size() 
+                        _log.info("Denying " + _pendingOutboundRequests.size()
                                   + " pending outbound requests (status: " + getOutboundStatus()
                                   + ", longest waited " + locked_getLongestOutboundWait() + ')');
                 }
             }
         }
-        
+
         if (satisfied != null) {
             for (int i = 0; i < satisfied.size(); i++) {
                 SimpleRequest creq = (SimpleRequest)satisfied.get(i);
@@ -639,7 +671,7 @@ public class FIFOBandwidthLimiter {
             }
         }
     }
-    
+
     /**
      * There are no limits, so just give every outbound request whatever they want
      *
@@ -654,20 +686,20 @@ public class FIFOBandwidthLimiter {
             satisfied.add(req);
             long waited = now() - req.getRequestTime();
             if (_log.shouldLog(Log.DEBUG))
-                 _log.debug("Granting outbound request " + req + " fully (waited " 
-                            + waited
-                            + "ms) pending " + _pendingOutboundRequests.size()
-                            + ", longest waited " + locked_getLongestOutboundWait() + " out");
+                _log.debug("Granting outbound request " + req + " fully (waited "
+                           + waited
+                           + "ms) pending " + _pendingOutboundRequests.size()
+                           + ", longest waited " + locked_getLongestOutboundWait() + " out");
             if (waited > 10)
                 _context.statManager().addRateData("bwLimiter.outboundDelayedTime", waited);
         }
     }
-    
+
     /**
      * ok, we have limits, so lets iterate through the requests, allocating as much
      * bandwidth as we can to those who have used what we have given them and are waiting
      * for more (giving priority to the first ones who requested it)
-     * 
+     *
      * @param satisfied out param, list of requests that were completely satisfied
      */
     private final void locked_satisfyOutboundAvailable(List<Request> satisfied) {
@@ -677,11 +709,11 @@ public class FIFOBandwidthLimiter {
             if (req.getAborted()) {
                 // connection decided they dont want the data anymore
                 if (_log.shouldLog(Log.DEBUG))
-                     _log.debug("Aborting outbound request to " 
-                                + req
-                                + " waited " 
-                                + waited
-                                + "ms) pending " + _pendingOutboundRequests.size());
+                    _log.debug("Aborting outbound request to "
+                               + req
+                               + " waited "
+                               + waited
+                               + "ms) pending " + _pendingOutboundRequests.size());
                 _pendingOutboundRequests.remove(i);
                 i--;
                 continue;
@@ -693,9 +725,9 @@ public class FIFOBandwidthLimiter {
             // This never affected NTCP (which also requires a full allocation)
             // since it registers a CompleteListener, so getAllocationsSinceWait() was always zero.
             //if (req.getAllocationsSinceWait() > 0) {
-                // we have already allocated some values to this request, but
-                // they haven't taken advantage of it yet (most likely they're
-                // IO bound)
+            // we have already allocated some values to this request, but
+            // they haven't taken advantage of it yet (most likely they're
+            // IO bound)
             //    if (_log.shouldLog(Log.WARN))
             //        _log.warn("multiple allocations since wait... ntcp shouldn't do this: " + req);
             //    continue;
@@ -703,7 +735,7 @@ public class FIFOBandwidthLimiter {
             // ok, they are really waiting for us to give them stuff
             int requested = req.getPendingRequested();
             int allocated;
-            if (avo >= requested) 
+            if (avo >= requested)
                 allocated = requested;
             else
                 allocated = avo;
@@ -713,20 +745,20 @@ public class FIFOBandwidthLimiter {
             satisfied.add(req);
             if (req.getPendingRequested() > 0) {
                 if (_log.shouldLog(Log.DEBUG))
-                     _log.debug("Allocating " + allocated + " bytes outbound as a partial grant to " 
-                                + req
-                                + " waited " 
-                                + waited
-                                + "ms) pending " + _pendingOutboundRequests.size()
-                                + ", longest waited " + locked_getLongestOutboundWait() + " out");
+                    _log.debug("Allocating " + allocated + " bytes outbound as a partial grant to "
+                               + req
+                               + " waited "
+                               + waited
+                               + "ms) pending " + _pendingOutboundRequests.size()
+                               + ", longest waited " + locked_getLongestOutboundWait() + " out");
             } else {
                 if (_log.shouldLog(Log.DEBUG))
-                     _log.debug("Allocating " + allocated + " bytes outbound to finish the partial grant to " 
-                                + req
-                                + " waited " 
-                                + waited
-                                + "ms) pending " + _pendingOutboundRequests.size()
-                                + ", longest waited " + locked_getLongestOutboundWait() + " out)");
+                    _log.debug("Allocating " + allocated + " bytes outbound to finish the partial grant to "
+                               + req
+                               + " waited "
+                               + waited
+                               + "ms) pending " + _pendingOutboundRequests.size()
+                               + ", longest waited " + locked_getLongestOutboundWait() + " out)");
                 _pendingOutboundRequests.remove(i);
                 i--;
                 if (waited > 10)
@@ -734,7 +766,7 @@ public class FIFOBandwidthLimiter {
             }
         }
     }
-    
+
     /**
      *  Lockless total satisfaction,
      *  at some minor risk of exceeding the limits
@@ -756,7 +788,7 @@ public class FIFOBandwidthLimiter {
         //    _log.info("IB shortcut for " + requested + "B? " + rv);
         return rv;
     }
-    
+
     /**
      *  Lockless total satisfaction,
      *  at some minor risk of exceeding the limits
@@ -782,39 +814,39 @@ public class FIFOBandwidthLimiter {
     /** @deprecated not worth translating */
     @Deprecated
     public void renderStatusHTML(Writer out) throws IOException {
-/*******
-        long now = now();
-        StringBuilder buf = new StringBuilder(4096);
-        buf.append("<h3><b id=\"bwlim\">Limiter Status:</b></h3>").append(getStatus().toString()).append("\n");
-        buf.append("<h3>Pending bandwidth requests:</h3><ul>");
-        buf.append("<li>Inbound requests: <ol>");
-        synchronized (_pendingInboundRequests) {
-            for (int i = 0; i < _pendingInboundRequests.size(); i++) {
-                Request req = (Request)_pendingInboundRequests.get(i);
-                buf.append("<li>").append(req.getRequestName()).append(" for ");
-                buf.append(req.getTotalInboundRequested()).append(" bytes ");
-                buf.append("requested (").append(req.getPendingInboundRequested()).append(" pending) as of ");
-                buf.append(now-req.getRequestTime());
-                buf.append("ms ago</li>\n");
-            }
-        }
-        buf.append("</ol></li><li>Outbound requests: <ol>\n");
-        synchronized (_pendingOutboundRequests) {
-            for (int i = 0; i < _pendingOutboundRequests.size(); i++) {
-                Request req = (Request)_pendingOutboundRequests.get(i);
-                buf.append("<li>").append(req.getRequestName()).append(" for ");
-                buf.append(req.getTotalOutboundRequested()).append(" bytes ");
-                buf.append("requested (").append(req.getPendingOutboundRequested()).append(" pending) as of ");
-                buf.append(now-req.getRequestTime());
-                buf.append("ms ago</li>\n");
-            }
-        }
-        buf.append("</ol></li></ul><hr>\n");
-        out.write(buf.toString());
-        out.flush();
-******/
+        /*******
+                long now = now();
+                StringBuilder buf = new StringBuilder(4096);
+                buf.append("<h3><b id=\"bwlim\">Limiter Status:</b></h3>").append(getStatus().toString()).append("\n");
+                buf.append("<h3>Pending bandwidth requests:</h3><ul>");
+                buf.append("<li>Inbound requests: <ol>");
+                synchronized (_pendingInboundRequests) {
+                    for (int i = 0; i < _pendingInboundRequests.size(); i++) {
+                        Request req = (Request)_pendingInboundRequests.get(i);
+                        buf.append("<li>").append(req.getRequestName()).append(" for ");
+                        buf.append(req.getTotalInboundRequested()).append(" bytes ");
+                        buf.append("requested (").append(req.getPendingInboundRequested()).append(" pending) as of ");
+                        buf.append(now-req.getRequestTime());
+                        buf.append("ms ago</li>\n");
+                    }
+                }
+                buf.append("</ol></li><li>Outbound requests: <ol>\n");
+                synchronized (_pendingOutboundRequests) {
+                    for (int i = 0; i < _pendingOutboundRequests.size(); i++) {
+                        Request req = (Request)_pendingOutboundRequests.get(i);
+                        buf.append("<li>").append(req.getRequestName()).append(" for ");
+                        buf.append(req.getTotalOutboundRequested()).append(" bytes ");
+                        buf.append("requested (").append(req.getPendingOutboundRequested()).append(" pending) as of ");
+                        buf.append(now-req.getRequestTime());
+                        buf.append("ms ago</li>\n");
+                    }
+                }
+                buf.append("</ol></li></ul><hr>\n");
+                out.write(buf.toString());
+                out.flush();
+        ******/
     }
-    
+
     private static class SimpleRequest implements Request {
         private int _allocated;
         private final int _total;
@@ -827,7 +859,7 @@ public class FIFOBandwidthLimiter {
         private CompleteListener _lsnr;
         private Object _attachment;
         private final int _priority;
-        
+
         /**
          *  @param priority 0 for now
          */
@@ -841,17 +873,27 @@ public class FIFOBandwidthLimiter {
         }
 
         /** uses System clock, not context clock */
-        public long getRequestTime() { return _requestTime; }
-        public int getTotalRequested() { return _total; }
-        public synchronized int getPendingRequested() { return _total - _allocated; }
-        public boolean getAborted() { return _aborted; }
+        public long getRequestTime() {
+            return _requestTime;
+        }
+        public int getTotalRequested() {
+            return _total;
+        }
+        public synchronized int getPendingRequested() {
+            return _total - _allocated;
+        }
+        public boolean getAborted() {
+            return _aborted;
+        }
         public synchronized void abort() {
             _aborted = true;
             // so isComplete() will return true
             _allocated = _total;
             notifyAllocation();
         }
-        public CompleteListener getCompleteListener() { return _lsnr; }
+        public CompleteListener getCompleteListener() {
+            return _lsnr;
+        }
 
         /**
          *  Only used by NTCP.
@@ -870,9 +912,11 @@ public class FIFOBandwidthLimiter {
                 lsnr.complete(this);
             }
         }
-        
-        private synchronized boolean isComplete() { return _allocated >= _total; }
-        
+
+        private synchronized boolean isComplete() {
+            return _allocated >= _total;
+        }
+
         /**
          *  Only used by SSU.
          *  May return without allocating.
@@ -899,7 +943,9 @@ public class FIFOBandwidthLimiter {
          *  has been called (i.e. SSU)
          *  Now unused.
          */
-        synchronized int getAllocationsSinceWait() { return _waited ? _allocationsSinceWait : 0; }
+        synchronized int getAllocationsSinceWait() {
+            return _waited ? _allocationsSinceWait : 0;
+        }
 
         /**
          *  Increments allocationsSinceWait only if there is a listener.
@@ -926,14 +972,22 @@ public class FIFOBandwidthLimiter {
             }
         }
 
-        public void attach(Object obj) { _attachment = obj; }
-        public Object attachment() { return _attachment; }
+        public void attach(Object obj) {
+            _attachment = obj;
+        }
+        public Object attachment() {
+            return _attachment;
+        }
 
         // PQEntry methods
-        public int getPriority() { return _priority; };
+        public int getPriority() {
+            return _priority;
+        };
         // uncomment for switch to PBQ
         public void setSeqNum(long num) { /** _requestId = num; */ };
-        public long getSeqNum() { return _requestId; };
+        public long getSeqNum() {
+            return _requestId;
+        };
 
         @Override
         public String toString() {
@@ -968,7 +1022,7 @@ public class FIFOBandwidthLimiter {
         public Object attachment();
         public CompleteListener getCompleteListener();
     }
-    
+
     public interface CompleteListener {
         public void complete(Request req);
     }
@@ -977,24 +1031,42 @@ public class FIFOBandwidthLimiter {
 
     private static class NoopRequest implements Request {
         public void abort() {}
-        public boolean getAborted() { return false; }
-        public int getPendingRequested() { return 0; }
+        public boolean getAborted() {
+            return false;
+        }
+        public int getPendingRequested() {
+            return 0;
+        }
         @Override
-        public String toString() { return "noop"; }
-        public long getRequestTime() { return 0; }
-        public int getTotalRequested() { return 0; }
+        public String toString() {
+            return "noop";
+        }
+        public long getRequestTime() {
+            return 0;
+        }
+        public int getTotalRequested() {
+            return 0;
+        }
         public void waitForNextAllocation() {}
-        public CompleteListener getCompleteListener() { return null; }
+        public CompleteListener getCompleteListener() {
+            return null;
+        }
         public void setCompleteListener(CompleteListener lsnr) {
             lsnr.complete(NoopRequest.this);
         }
         public void attach(Object obj) {
             throw new UnsupportedOperationException("Don't attach to a satisfied request");
         }
-        public Object attachment() { return null; }
+        public Object attachment() {
+            return null;
+        }
         // PQEntry methods
-        public int getPriority() { return 0; };
+        public int getPriority() {
+            return 0;
+        };
         public void setSeqNum(long num) {};
-        public long getSeqNum() { return 0; };
+        public long getSeqNum() {
+            return 0;
+        };
     }
 }

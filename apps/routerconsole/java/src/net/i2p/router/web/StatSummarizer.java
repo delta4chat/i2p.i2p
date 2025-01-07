@@ -50,7 +50,7 @@ public class StatSummarizer implements Runnable, ClientApp {
     private volatile boolean _isRunning;
     private volatile Thread _thread;
     private static final String NAME = "StatSummarizer";
-    
+
     public StatSummarizer(RouterContext ctx) {
         _context = ctx;
         _log = _context.logManager().getLog(getClass());
@@ -58,7 +58,7 @@ public class StatSummarizer implements Runnable, ClientApp {
         _sem = new Semaphore(MAX_CONCURRENT_PNG, true);
         _context.addShutdownTask(new Shutdown());
     }
-    
+
     /**
      * @return null if disabled
      */
@@ -74,16 +74,16 @@ public class StatSummarizer implements Runnable, ClientApp {
         ClientApp app = ctx.clientAppManager().getRegisteredApp(NAME);
         return (app != null) ? (StatSummarizer) app : null;
     }
-    
+
     public void run() {
         // JRobin 1.5.9 crashes these JVMs
         if (SystemVersion.isApache() ||            // Harmony
-            SystemVersion.isGNU()) {               // JamVM or gij
+                SystemVersion.isGNU()) {               // JamVM or gij
             _log.logAlways(Log.WARN, "Graphing not supported with this JVM: " +
-                                     System.getProperty("java.vendor") + ' ' +
-                                     System.getProperty("java.version") + " (" +
-                                     System.getProperty("java.runtime.name") + ' ' +
-                                     System.getProperty("java.runtime.version") + ')');
+                           System.getProperty("java.vendor") + ' ' +
+                           System.getProperty("java.version") + " (" +
+                           System.getProperty("java.runtime.name") + ' ' +
+                           System.getProperty("java.runtime.version") + ')');
             return;
         }
         _isRunning = true;
@@ -133,12 +133,12 @@ public class StatSummarizer implements Runnable, ClientApp {
             _context.clientAppManager().unregister(this);
         }
     }
-    
+
     /** @since 0.9.38 */
     public static boolean isDisabled(I2PAppContext ctx) {
         return ctx.clientAppManager().getRegisteredApp(NAME) == null;
     }
-    
+
     /**
      * Disable graph generation until restart
      * See SummaryRenderer.render()
@@ -199,19 +199,21 @@ public class StatSummarizer implements Runnable, ClientApp {
      *  List of SummaryListener instances
      *  @since public since 0.9.33, was package private
      */
-    public List<SummaryListener> getListeners() { return _listeners; }
-    
+    public List<SummaryListener> getListeners() {
+        return _listeners;
+    }
+
     /**  @since public since 0.9.33, was package private */
     public static final String DEFAULT_DATABASES = "bw.sendRate.60000" +
-                                                    ",bw.recvRate.60000" +
+            ",bw.recvRate.60000" +
 //                                                  ",tunnel.testSuccessTime.60000" +
 //                                                  ",udp.outboundActiveCount.60000" +
 //                                                  ",udp.receivePacketSize.60000" +
 //                                                  ",udp.receivePacketSkew.60000" +
 //                                                  ",udp.sendConfirmTime.60000" +
 //                                                  ",udp.sendPacketSize.60000" +
-                                                    ",router.memoryUsed.60000" +
-                                                    ",router.activePeers.60000";
+            ",router.memoryUsed.60000" +
+            ",router.activePeers.60000";
 //                                                  ",router.activeSendPeers.60000" +
 //                                                  ",tunnel.acceptLoad.60000" +
 //                                                  ",tunnel.dropLoadProactive.60000" +
@@ -226,16 +228,16 @@ public class StatSummarizer implements Runnable, ClientApp {
 //                                                  ",ntcp.receiveTime.60000" +
 //                                                  ",transport.sendMessageFailureLifetime.60000" +
 //                                                  ",transport.sendProcessingTime.60000";
-    
+
     private String adjustDatabases(String oldSpecs) {
         String spec = _context.getProperty("stat.summaries", DEFAULT_DATABASES);
         if ( ( (spec == null) && (oldSpecs == null) ) ||
-             ( (spec != null) && (oldSpecs != null) && (oldSpecs.equals(spec))) )
+                ( (spec != null) && (oldSpecs != null) && (oldSpecs.equals(spec))) )
             return oldSpecs;
-        
+
         Set<Rate> old = parseSpecs(oldSpecs);
         Set<Rate> newSpecs = parseSpecs(spec);
-        
+
         // remove old ones
         for (Rate r : old) {
             if (!newSpecs.contains(r))
@@ -255,7 +257,7 @@ public class StatSummarizer implements Runnable, ClientApp {
         }
         return buf.toString();
     }
-    
+
     private void removeDb(Rate r) {
         for (SummaryListener lsnr : _listeners) {
             if (lsnr.getRate().equals(r)) {
@@ -276,9 +278,9 @@ public class StatSummarizer implements Runnable, ClientApp {
         //System.out.println("Start listening for " + r.getRateStat().getName() + ": " + r.getPeriod());
     }
 
-    public boolean renderPng(Rate rate, OutputStream out) throws IOException { 
+    public boolean renderPng(Rate rate, OutputStream out) throws IOException {
         return renderPng(rate, out, DEFAULT_X, DEFAULT_Y,
-                         false, false, false, false, -1, 0, true); 
+                         false, false, false, false, -1, 0, true);
     }
 
     /**
@@ -290,15 +292,15 @@ public class StatSummarizer implements Runnable, ClientApp {
      *  @return success
      */
     public boolean renderPng(Rate rate, OutputStream out, int width, int height, boolean hideLegend,
-                                          boolean hideGrid, boolean hideTitle, boolean showEvents, int periodCount,
-                                          int end, boolean showCredit) throws IOException {
+                             boolean hideGrid, boolean hideTitle, boolean showEvents, int periodCount,
+                             int end, boolean showCredit) throws IOException {
         try {
             try {
                 _sem.acquire();
             } catch (InterruptedException ie) {}
             try {
                 return locked_renderPng(rate, out, width, height, hideLegend, hideGrid, hideTitle, showEvents,
-                                    periodCount, end, showCredit);
+                                        periodCount, end, showCredit);
             } catch (NoClassDefFoundError ncdfe) {
                 //  java.lang.NoClassDefFoundError: Could not initialize class sun.awt.X11FontManager
                 //  at java.lang.Class.forName0(Native Method)
@@ -320,8 +322,8 @@ public class StatSummarizer implements Runnable, ClientApp {
      *  @param end number of periods before now
      */
     private boolean locked_renderPng(Rate rate, OutputStream out, int width, int height, boolean hideLegend,
-                                          boolean hideGrid, boolean hideTitle, boolean showEvents, int periodCount,
-                                          int end, boolean showCredit) throws IOException {
+                                     boolean hideGrid, boolean hideTitle, boolean showEvents, int periodCount,
+                                     int end, boolean showCredit) throws IOException {
         if (width > MAX_X)
             width = MAX_X;
         else if (width <= 0)
@@ -370,7 +372,7 @@ public class StatSummarizer implements Runnable, ClientApp {
         }
         return false;
     }
-    
+
     /**
      *  This does the two-data bandwidth graph only.
      *  For all other graphs see renderPng() above.
@@ -380,15 +382,15 @@ public class StatSummarizer implements Runnable, ClientApp {
      *  @return success
      */
     public boolean renderRatePng(OutputStream out, int width, int height, boolean hideLegend,
-                                              boolean hideGrid, boolean hideTitle, boolean showEvents,
-                                              int periodCount, int end, boolean showCredit) throws IOException {
+                                 boolean hideGrid, boolean hideTitle, boolean showEvents,
+                                 int periodCount, int end, boolean showCredit) throws IOException {
         try {
             try {
                 _sem.acquire();
             } catch (InterruptedException ie) {}
             try {
                 return locked_renderRatePng(out, width, height, hideLegend, hideGrid, hideTitle, showEvents,
-                                        periodCount, end, showCredit);
+                                            periodCount, end, showCredit);
             } catch (NoClassDefFoundError ncdfe) {
                 //  java.lang.NoClassDefFoundError: Could not initialize class sun.awt.X11FontManager
                 //  at java.lang.Class.forName0(Native Method)
@@ -407,8 +409,8 @@ public class StatSummarizer implements Runnable, ClientApp {
     }
 
     private boolean locked_renderRatePng(OutputStream out, int width, int height, boolean hideLegend,
-                                              boolean hideGrid, boolean hideTitle, boolean showEvents,
-                                              int periodCount, int end, boolean showCredit) throws IOException {
+                                         boolean hideGrid, boolean hideTitle, boolean showEvents,
+                                         int periodCount, int end, boolean showCredit) throws IOException {
 
         // go to some trouble to see if we have the data for the combined bw graph
         SummaryListener txLsnr = null;
@@ -435,7 +437,7 @@ public class StatSummarizer implements Runnable, ClientApp {
                          end, showCredit, rxLsnr, _t("Bandwidth usage"));
         return true;
     }
-    
+
     /**
      * @param specs statName.period,statName.period,statName.period
      * @return list of Rate objects
@@ -454,8 +456,8 @@ public class StatSummarizer implements Runnable, ClientApp {
             String name = spec.substring(0, split);
             String per = spec.substring(split+1);
             long period = -1;
-            try { 
-                period = Long.parseLong(per); 
+            try {
+                period = Long.parseLong(per);
                 RateStat rs = _context.statManager().getRate(name);
                 if (rs != null) {
                     Rate r = rs.getRate(period);

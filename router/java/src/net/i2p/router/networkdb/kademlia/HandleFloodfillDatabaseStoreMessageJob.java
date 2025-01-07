@@ -1,9 +1,9 @@
 package net.i2p.router.networkdb.kademlia;
 /*
  * free (adj.): unencumbered; not under the control of others
- * Written by jrandom in 2003 and released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
- * It probably won't make your computer catch on fire, or eat 
+ * Written by jrandom in 2003 and released into the public domain
+ * with no warranty of any kind, either expressed or implied.
+ * It probably won't make your computer catch on fire, or eat
  * your children, but it might.  Use at your own risk.
  *
  */
@@ -57,8 +57,8 @@ class HandleFloodfillDatabaseStoreMessageJob extends JobImpl {
      * @param receivedMessage must never have reply token set if it came down a tunnel
      */
     public HandleFloodfillDatabaseStoreMessageJob(RouterContext ctx, DatabaseStoreMessage receivedMessage,
-                                                  RouterIdentity from, Hash fromHash,
-                                                  FloodfillNetworkDatabaseFacade facade, long msgIDBloomXor) {
+            RouterIdentity from, Hash fromHash,
+            FloodfillNetworkDatabaseFacade facade, long msgIDBloomXor) {
         super(ctx);
         _log = ctx.logManager().getLog(getClass());
         _message = receivedMessage;
@@ -67,10 +67,10 @@ class HandleFloodfillDatabaseStoreMessageJob extends JobImpl {
         _facade = facade;
         _msgIDBloomXor = msgIDBloomXor;
     }
-    
+
     public void runJob() {
         long recvBegin = System.currentTimeMillis();
-        
+
         String invalidMessage = null;
         // set if invalid store but not his fault
         boolean dontBlamePeer = false;
@@ -118,8 +118,8 @@ class HandleFloodfillDatabaseStoreMessageJob extends JobImpl {
                 // FloodOnlyLookupMatchJob called setReceivedAsReply(),
                 // and we are seeing this only as a duplicate,
                 // so we don't set the receivedAsPublished() flag.
-                // Otherwise, mark it as something we received unsolicited, so we'll answer queries 
-                // for it.  This flag must NOT get set on entries that we 
+                // Otherwise, mark it as something we received unsolicited, so we'll answer queries
+                // for it.  This flag must NOT get set on entries that we
                 // receive in response to our own lookups.
                 // See ../HDLMJ for more info
                 if (!_facade.isClientDb()) {
@@ -134,8 +134,8 @@ class HandleFloodfillDatabaseStoreMessageJob extends JobImpl {
                         getContext().statManager().addRateData("netDb.storeLocalLeaseSetToLocalClient", 1, 0);
                         dontBlamePeer = true;
                         throw new IllegalArgumentException("(dbid: " + _facade
-                            + ") Peer attempted to store local leaseSet: "
-                            + key.toBase32() + " to client subDB " + _facade + "which is it's own publisher");
+                                                           + ") Peer attempted to store local leaseSet: "
+                                                           + key.toBase32() + " to client subDB " + _facade + "which is it's own publisher");
                     }
                 }
                 //boolean oldrar = ls.getReceivedAsReply();
@@ -166,8 +166,8 @@ class HandleFloodfillDatabaseStoreMessageJob extends JobImpl {
                     //    match.setReceivedAsPublished(true);
                 }
             } catch (UnsupportedCryptoException uce) {
-               if (_log.shouldError())
-                   _log.error("UCE: ", uce);
+                if (_log.shouldError())
+                    _log.error("UCE: ", uce);
                 invalidMessage = uce.getMessage();
                 dontBlamePeer = true;
             } catch (IllegalArgumentException iae) {
@@ -232,7 +232,7 @@ class HandleFloodfillDatabaseStoreMessageJob extends JobImpl {
                 // Never store our RouterInfo received from somebody else.
                 // This generally happens from a FloodfillVerifyStoreJob.
                 // If it is valid, it shouldn't be newer than what we have - unless
-                // somebody has our keys... 
+                // somebody has our keys...
                 if (isUs) {
                     //getContext().statManager().addRateData("netDb.storeLocalRouterInfoAttempt", 1, 0);
                     // This is initiated by PeerTestJob from another peer
@@ -244,7 +244,7 @@ class HandleFloodfillDatabaseStoreMessageJob extends JobImpl {
                 // This is probably impossible but log it if we ever see it so it can be investigated.
                 if (_facade.isClientDb() && _log.shouldWarn())
                     _log.warn("[dbid: " + _facade
-                        + "]:  Handling RI dbStore in client netDb context of router " + key.toBase64());
+                              + "]:  Handling RI dbStore in client netDb context of router " + key.toBase64());
                 boolean shouldStore = true;
                 if (ri.getReceivedAsPublished()) {
                     // these are often just dup stores from concurrent lookups
@@ -265,7 +265,7 @@ class HandleFloodfillDatabaseStoreMessageJob extends JobImpl {
                                 byte[] rkey = gen.getRoutingKey(key).getData();
                                 byte[] ourRKey = getContext().routerHash().getData();
                                 int distance = (((rkey[0] ^ ourRKey[0]) & 0xff) << 8) |
-                                                ((rkey[1] ^ ourRKey[1]) & 0xff);
+                                               ((rkey[1] ^ ourRKey[1]) & 0xff);
                                 // they have to be within 1/256 of the keyspace
                                 if (distance >= 256) {
                                     long until = gen.getTimeTillMidnight();
@@ -294,7 +294,7 @@ class HandleFloodfillDatabaseStoreMessageJob extends JobImpl {
                                         rkey = gen.getNextRoutingKey(key).getData();
                                         ourRKey = gen.getNextRoutingKey(getContext().routerHash()).getData();
                                         distance = (((rkey[0] ^ ourRKey[0]) & 0xff) << 8) |
-                                                    ((rkey[1] ^ ourRKey[1]) & 0xff);
+                                                   ((rkey[1] ^ ourRKey[1]) & 0xff);
                                         if (distance >= 256) {
                                             int pdrop = Math.min(110, (128 * count / LIMIT_ROUTERS) - 128);
                                             if (isU)
@@ -343,7 +343,7 @@ class HandleFloodfillDatabaseStoreMessageJob extends JobImpl {
                         }
                         if (shouldStore && _log.shouldDebug())
                             _log.debug("(dbid: " + _facade
-                                      + ") Handling new unsolicited dbStore of router " + key.toBase64());
+                                       + ") Handling new unsolicited dbStore of router " + key.toBase64());
                     } else if (prevNetDb.getPublished() >= ri.getPublished()) {
                         shouldStore = false;
                     } else {
@@ -394,17 +394,17 @@ class HandleFloodfillDatabaseStoreMessageJob extends JobImpl {
                     }
                     if (prevNetDb == null) {
                         if (!forever &&
-                            getContext().blocklist().isBlocklisted(ri)) {
-                            if (_log.shouldWarn())
-                                _log.warn("(dbid: " + _facade + ") Blocklisting new peer " + key + ' ' + ri);
-                            wasNew = false; // don't flood
-                            shouldStore = false; // don't call heardAbout()
-                        }
+                                    getContext().blocklist().isBlocklisted(ri)) {
+                                if (_log.shouldWarn())
+                                    _log.warn("(dbid: " + _facade + ") Blocklisting new peer " + key + ' ' + ri);
+                                wasNew = false; // don't flood
+                                shouldStore = false; // don't call heardAbout()
+                            }
                     } else if (!forever) {
                         Collection<RouterAddress> oldAddr = prevNetDb.getAddresses();
                         Collection<RouterAddress> newAddr = ri.getAddresses();
                         if ((!newAddr.equals(oldAddr)) &&
-                            getContext().blocklist().isBlocklisted(ri)) {
+                                getContext().blocklist().isBlocklisted(ri)) {
                             if (_log.shouldWarn())
                                 _log.warn("(dbid: " + _facade + ") New address received, Blocklisting old peer " + key + ' ' + ri);
                             wasNew = false; // don't flood
@@ -428,17 +428,17 @@ class HandleFloodfillDatabaseStoreMessageJob extends JobImpl {
             // don't ack or flood
             return;
         }
-        
+
         long recvEnd = System.currentTimeMillis();
         getContext().statManager().addRateData("netDb.storeRecvTime", recvEnd-recvBegin);
-        
+
         // ack even if invalid
         // in particular, ack our own RI (from PeerTestJob)
         // TODO any cases where we shouldn't?
         if (_message.getReplyToken() > 0)
             sendAck(key);
         long ackEnd = System.currentTimeMillis();
-        
+
         if (_from != null)
             _fromHash = _from.getHash();
         if (_fromHash != null) {
@@ -458,8 +458,8 @@ class HandleFloodfillDatabaseStoreMessageJob extends JobImpl {
 
         // flood it
         if (invalidMessage == null &&
-            _facade.floodfillEnabled() &&
-            _message.getReplyToken() > 0) {
+                _facade.floodfillEnabled() &&
+                _message.getReplyToken() > 0) {
             if (wasNew) {
                 // DOS prevention
                 // Note this does not throttle the ack above
@@ -481,7 +481,7 @@ class HandleFloodfillDatabaseStoreMessageJob extends JobImpl {
             }
         }
     }
-    
+
     private void sendAck(Hash storedKey) {
         DeliveryStatusMessage msg = new DeliveryStatusMessage(getContext());
         msg.setMessageId(_message.getReplyToken());
@@ -494,7 +494,7 @@ class HandleFloodfillDatabaseStoreMessageJob extends JobImpl {
         // A store of our own RI, only if we are not FF
         DatabaseStoreMessage msg2;
         if (_facade.floodfillEnabled() ||
-            storedKey.equals(getContext().routerHash())) {
+                storedKey.equals(getContext().routerHash())) {
             // don't send our RI if the store was our RI (from PeerTestJob)
             msg2 = null;
         } else {
@@ -546,60 +546,60 @@ class HandleFloodfillDatabaseStoreMessageJob extends JobImpl {
         // only send direct for RI replies or non-tunnel
         boolean isEstab = (type == DatabaseEntry.KEY_TYPE_ROUTERINFO || replyTunnel == null) &&
                           getContext().commSystem().isEstablished(toPeer);
-/*
-        if (!isEstab && replyTunnel != null) {
-            DatabaseEntry entry = _message.getEntry();
-            int type = entry.getType();
-            if (type == DatabaseEntry.KEY_TYPE_LEASESET || type == DatabaseEntry.KEY_TYPE_LS2) {
-                // As of 0.9.42,
-                // if reply GW and tunnel are in the LS, we can pick a different one from the LS,
-                // so look for one that's connected to reduce connections
-                LeaseSet ls = (LeaseSet) entry;
-                int count = ls.getLeaseCount();
-                if (count > 1) {
-                    boolean found = false;
-                    for (int i = 0; i < count; i++) {
-                        Lease lease = ls.getLease(i);
-                        if (lease.getGateway().equals(toPeer) && lease.getTunnelId().equals(replyTunnel)) {
-                            found = true;
-                            break;
-                        }
-                    }
-                    if (found) {
-                        //_log.warn("Looking for alternate to " + toPeer + " reply gw in LS with " + count + " leases");
-                        for (int i = 0; i < count; i++) {
-                            Lease lease = ls.getLease(i);
-                            Hash gw = lease.getGateway();
-                            if (gw.equals(toPeer))
-                                continue;
-                            if (lease.isExpired())
-                                continue;
-                            if (getContext().commSystem().isEstablished(gw)) {
-                                // switch to use this lease instead
-                                toPeer = gw;
-                                replyTunnel = lease.getTunnelId();
-                                isEstab = true;
-                                break;
+        /*
+                if (!isEstab && replyTunnel != null) {
+                    DatabaseEntry entry = _message.getEntry();
+                    int type = entry.getType();
+                    if (type == DatabaseEntry.KEY_TYPE_LEASESET || type == DatabaseEntry.KEY_TYPE_LS2) {
+                        // As of 0.9.42,
+                        // if reply GW and tunnel are in the LS, we can pick a different one from the LS,
+                        // so look for one that's connected to reduce connections
+                        LeaseSet ls = (LeaseSet) entry;
+                        int count = ls.getLeaseCount();
+                        if (count > 1) {
+                            boolean found = false;
+                            for (int i = 0; i < count; i++) {
+                                Lease lease = ls.getLease(i);
+                                if (lease.getGateway().equals(toPeer) && lease.getTunnelId().equals(replyTunnel)) {
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            if (found) {
+                                //_log.warn("Looking for alternate to " + toPeer + " reply gw in LS with " + count + " leases");
+                                for (int i = 0; i < count; i++) {
+                                    Lease lease = ls.getLease(i);
+                                    Hash gw = lease.getGateway();
+                                    if (gw.equals(toPeer))
+                                        continue;
+                                    if (lease.isExpired())
+                                        continue;
+                                    if (getContext().commSystem().isEstablished(gw)) {
+                                        // switch to use this lease instead
+                                        toPeer = gw;
+                                        replyTunnel = lease.getTunnelId();
+                                        isEstab = true;
+                                        break;
+                                    }
+                                }
+                                if (_log.shouldWarn()) {
+                                    if (isEstab)
+                                        _log.warn("(dbid: " + _facade
+                                                  + ") Switched to alt connected peer " + toPeer
+                                                  + " in LS with " + count + " leases");
+                                    else
+                                        _log.warn("(dbid: " + _facade + ") Alt connected peer not found in LS with " + count + " leases");
+                                }
+                            } else {
+                                if (_log.shouldWarn())
+                                    _log.warn("(dbid: " + _facade
+                                              + ") Reply gw " + toPeer + ' ' + replyTunnel
+                                              + " not found in LS with " + count + " leases: " + ls);
                             }
                         }
-                        if (_log.shouldWarn()) {
-                            if (isEstab)
-                                _log.warn("(dbid: " + _facade
-                                          + ") Switched to alt connected peer " + toPeer
-                                          + " in LS with " + count + " leases");
-                            else
-                                _log.warn("(dbid: " + _facade + ") Alt connected peer not found in LS with " + count + " leases");
-                        }
-                    } else {
-                        if (_log.shouldWarn())
-                            _log.warn("(dbid: " + _facade
-                                      + ") Reply gw " + toPeer + ' ' + replyTunnel
-                                      + " not found in LS with " + count + " leases: " + ls);
                     }
                 }
-            }
-        }
-*/
+        */
         if (isEstab && !_facade.isClientDb()) {
             I2NPMessage out1 = msg;
             I2NPMessage out2 = msg2;
@@ -627,22 +627,24 @@ class HandleFloodfillDatabaseStoreMessageJob extends JobImpl {
             return;
         }
 
-            // pick tunnel with endpoint closest to toPeer
-            TunnelInfo outTunnel = getContext().tunnelManager().selectOutboundExploratoryTunnel(toPeer);
-            if (outTunnel == null) {
-                if (_log.shouldLog(Log.WARN))
-                    _log.warn("(dbid: " + _facade + ") No outbound tunnel could be found");
-                return;
-            }
-            getContext().tunnelDispatcher().dispatchOutbound(msg, outTunnel.getSendTunnelId(0),
-                                                             replyTunnel, toPeer);
-            if (msg2 != null)
-                getContext().tunnelDispatcher().dispatchOutbound(msg2, outTunnel.getSendTunnelId(0),
-                                                                 replyTunnel, toPeer);
+        // pick tunnel with endpoint closest to toPeer
+        TunnelInfo outTunnel = getContext().tunnelManager().selectOutboundExploratoryTunnel(toPeer);
+        if (outTunnel == null) {
+            if (_log.shouldLog(Log.WARN))
+                _log.warn("(dbid: " + _facade + ") No outbound tunnel could be found");
+            return;
+        }
+        getContext().tunnelDispatcher().dispatchOutbound(msg, outTunnel.getSendTunnelId(0),
+                replyTunnel, toPeer);
+        if (msg2 != null)
+            getContext().tunnelDispatcher().dispatchOutbound(msg2, outTunnel.getSendTunnelId(0),
+                    replyTunnel, toPeer);
     }
- 
-    public String getName() { return "Handle Database Store Message"; }
-    
+
+    public String getName() {
+        return "Handle Database Store Message";
+    }
+
     @Override
     public void dropped() {
         getContext().messageHistory().messageProcessingError(_message.getUniqueId(), _message.getClass().getName(), "Dropped due to overload");

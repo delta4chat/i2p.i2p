@@ -337,7 +337,7 @@ public class DataProcessor implements DataHolder {
 
     /**
      * Extract the variable value from an already define Variable datasource (a VDEF)
-     * 
+     *
      * @param sourceName Datasource name
      * @return A combined time and value extracted calculated from the datasource
      */
@@ -353,7 +353,7 @@ public class DataProcessor implements DataHolder {
 
     /**
      * Returns single aggregated value for a single datasource.
-     * 
+     *
      * @param sourceName Datasource name
      * @param var variable that will generate value
      * @return A combined time and value extracted calculated from the datasource
@@ -679,7 +679,7 @@ public class DataProcessor implements DataHolder {
      */
     @Override
     public void datasource(String name, URI rrdUri, String dsName,
-            ConsolFun consolFunc) {
+                           ConsolFun consolFunc) {
         Def def = new Def(name, rrdUri, dsName, consolFunc, RrdBackendFactory.findFactory(rrdUri));
         sources.put(name, def);
     }
@@ -980,7 +980,7 @@ public class DataProcessor implements DataHolder {
         Map<URI, RrdDb> openRrd = new HashMap<>(defSources.length);
         Set<RrdDb> newDb = new HashSet<>(defSources.length);
         try {
-            // Storing of the RrdDb in a array to batch open/close, useful if a pool 
+            // Storing of the RrdDb in a array to batch open/close, useful if a pool
             // is used.
             int d = 0;
             for (Def def: defSources) {
@@ -1017,11 +1017,11 @@ public class DataProcessor implements DataHolder {
                     }
                     // now we have everything
                     lastRrdArchiveUpdateTime = Math.max(
-                            lastRrdArchiveUpdateTime,
-                            batchRrd[i].getLastArchiveUpdateTime());
+                                                   lastRrdArchiveUpdateTime,
+                                                   batchRrd[i].getLastArchiveUpdateTime());
                     FetchRequest req = batchRrd[i].createFetchRequest(
-                            defSources[i].getConsolFun(), tStart, tEndFixed,
-                            fetchRequestResolution);
+                                           defSources[i].getConsolFun(), tStart, tEndFixed,
+                                           fetchRequestResolution);
                     req.setFilter(dsNames);
                     FetchData data = req.fetchData();
                     assert data != null;
@@ -1033,7 +1033,7 @@ public class DataProcessor implements DataHolder {
                     }
                 }
             }
-        } catch (UncheckedIOException ex){
+        } catch (UncheckedIOException ex) {
             throw ex.getCause();
         } finally {
             newDb.forEach(t -> {

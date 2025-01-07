@@ -26,7 +26,7 @@ public class RatchetSessionTag {
             throw new IllegalArgumentException();
         _data = DataHelper.fromLong8(val, 0);
     }
-    
+
     /**
      *  @return data as a byte array
      */
@@ -35,7 +35,7 @@ public class RatchetSessionTag {
         DataHelper.toLong8(rv, 0, _data);
         return rv;
     }
-    
+
     /**
      *  @return data as a long value
      *  @since 0.9.46
@@ -43,7 +43,7 @@ public class RatchetSessionTag {
     public long getLong() {
         return _data;
     }
-    
+
     public int length() {
         return LENGTH;
     }
@@ -85,13 +85,13 @@ public class RatchetSessionTag {
         return buf.toString();
     }
 
-/****
-    public static void main(String[] args) {
-        // test toBase64()
-        long l = net.i2p.util.RandomSource.getInstance().nextLong();
-        RatchetSessionTag tag = new RatchetSessionTag(l);
-        System.out.println(tag.toBase64());
-        System.out.println(Base64.encode(tag.getData()));
-    }
-****/
+    /****
+        public static void main(String[] args) {
+            // test toBase64()
+            long l = net.i2p.util.RandomSource.getInstance().nextLong();
+            RatchetSessionTag tag = new RatchetSessionTag(l);
+            System.out.println(tag.toBase64());
+            System.out.println(Base64.encode(tag.getData()));
+        }
+    ****/
 }

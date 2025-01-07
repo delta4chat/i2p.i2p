@@ -91,11 +91,11 @@ public class RRSIG extends Data {
         byte[] signature = new byte[sigSize];
         if (dis.read(signature) != signature.length) throw new IOException();
         return new RRSIG(typeCovered, null, algorithm, labels, originalTtl, signatureExpiration, signatureInception, keyTag, signerName,
-                signature);
+                         signature);
     }
 
-    private  RRSIG(TYPE typeCovered, SignatureAlgorithm algorithm, byte algorithmByte, byte labels, long originalTtl, Date signatureExpiration, 
-            Date signatureInception, int keyTag, DnsName signerName, byte[] signature) {
+    private  RRSIG(TYPE typeCovered, SignatureAlgorithm algorithm, byte algorithmByte, byte labels, long originalTtl, Date signatureExpiration,
+                   Date signatureInception, int keyTag, DnsName signerName, byte[] signature) {
         this.typeCovered = typeCovered;
 
         assert algorithmByte == (algorithm != null ? algorithm.number : algorithmByte);
@@ -111,28 +111,28 @@ public class RRSIG extends Data {
         this.signature = signature;
     }
 
-    public RRSIG(TYPE typeCovered, int algorithm, byte labels, long originalTtl, Date signatureExpiration, 
-            Date signatureInception, int keyTag, DnsName signerName, byte[] signature) {
-            this(typeCovered, null, (byte) algorithm, labels, originalTtl, signatureExpiration, signatureInception, keyTag, signerName, signature);
+    public RRSIG(TYPE typeCovered, int algorithm, byte labels, long originalTtl, Date signatureExpiration,
+                 Date signatureInception, int keyTag, DnsName signerName, byte[] signature) {
+        this(typeCovered, null, (byte) algorithm, labels, originalTtl, signatureExpiration, signatureInception, keyTag, signerName, signature);
     }
 
-    public RRSIG(TYPE typeCovered, int algorithm, byte labels, long originalTtl, Date signatureExpiration, 
-            Date signatureInception, int keyTag, String signerName, byte[] signature) {
-            this(typeCovered, null, (byte) algorithm, labels, originalTtl, signatureExpiration, signatureInception, keyTag, DnsName.from(signerName), signature);
-    }
-
-    public RRSIG(TYPE typeCovered, SignatureAlgorithm algorithm, byte labels,
-            long originalTtl, Date signatureExpiration, Date signatureInception,
-            int keyTag, DnsName signerName, byte[] signature) {
-        this(typeCovered, algorithm.number, labels, originalTtl, signatureExpiration, signatureInception,
-                keyTag, signerName, signature);
+    public RRSIG(TYPE typeCovered, int algorithm, byte labels, long originalTtl, Date signatureExpiration,
+                 Date signatureInception, int keyTag, String signerName, byte[] signature) {
+        this(typeCovered, null, (byte) algorithm, labels, originalTtl, signatureExpiration, signatureInception, keyTag, DnsName.from(signerName), signature);
     }
 
     public RRSIG(TYPE typeCovered, SignatureAlgorithm algorithm, byte labels,
-            long originalTtl, Date signatureExpiration, Date signatureInception,
-            int keyTag, String signerName, byte[] signature) {
+                 long originalTtl, Date signatureExpiration, Date signatureInception,
+                 int keyTag, DnsName signerName, byte[] signature) {
         this(typeCovered, algorithm.number, labels, originalTtl, signatureExpiration, signatureInception,
-                keyTag, DnsName.from(signerName), signature);
+             keyTag, signerName, signature);
+    }
+
+    public RRSIG(TYPE typeCovered, SignatureAlgorithm algorithm, byte labels,
+                 long originalTtl, Date signatureExpiration, Date signatureInception,
+                 int keyTag, String signerName, byte[] signature) {
+        this(typeCovered, algorithm.number, labels, originalTtl, signatureExpiration, signatureInception,
+             keyTag, DnsName.from(signerName), signature);
     }
 
     public byte[] getSignature() {
@@ -183,15 +183,15 @@ public class RRSIG extends Data {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
         dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
         StringBuilder sb = new StringBuilder()
-                .append(typeCovered).append(' ')
-                .append(algorithm).append(' ')
-                .append(labels).append(' ')
-                .append(originalTtl).append(' ')
-                .append(dateFormat.format(signatureExpiration)).append(' ')
-                .append(dateFormat.format(signatureInception)).append(' ')
-                .append(keyTag).append(' ')
-                .append(signerName).append(". ")
-                .append(getSignatureBase64());
+        .append(typeCovered).append(' ')
+        .append(algorithm).append(' ')
+        .append(labels).append(' ')
+        .append(originalTtl).append(' ')
+        .append(dateFormat.format(signatureExpiration)).append(' ')
+        .append(dateFormat.format(signatureInception)).append(' ')
+        .append(keyTag).append(' ')
+        .append(signerName).append(". ")
+        .append(getSignatureBase64());
         return sb.toString();
     }
 }

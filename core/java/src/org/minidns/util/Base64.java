@@ -31,7 +31,7 @@ public final class Base64 {
         for (int i = 0; i < bytes.length; i += 3) {
             int j = ((padded[i] & 0xff) << 16) + ((padded[i + 1] & 0xff) << 8) + (padded[i + 2] & 0xff);
             sb.append(ALPHABET.charAt((j >> 18) & 0x3f)).append(ALPHABET.charAt((j >> 12) & 0x3f))
-                    .append(ALPHABET.charAt((j >> 6) & 0x3f)).append(ALPHABET.charAt(j & 0x3f));
+            .append(ALPHABET.charAt((j >> 6) & 0x3f)).append(ALPHABET.charAt(j & 0x3f));
         }
         return sb.substring(0, sb.length() - paddingCount) + PADDING.substring(0, paddingCount);
     }

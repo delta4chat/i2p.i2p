@@ -24,7 +24,7 @@ class PacketHandler {
     private final ByteCache _cache = ByteCache.getInstance(32, 4*1024);
     //private int _lastDelay;
     //private int _dropped;
-    
+
     public PacketHandler(I2PAppContext ctx, ConnectionManager mgr) {
         _manager = mgr;
         _context = ctx;
@@ -32,77 +32,77 @@ class PacketHandler {
         _log = ctx.logManager().getLog(PacketHandler.class);
         //_lastDelay = _context.random().nextInt(30*1000);
     }
-    
-/** what is the point of this ? */
-/*****
-    private boolean choke(Packet packet) { 
-        if (true) return true;
-        //if ( (_dropped == 0) && true ) { //&& (_manager.getSent() <= 0) ) {
-        //    _dropped++;
-        //    return false;
-        //}
-        if (true) {
-            // artificial choke: 2% random drop and a 0-5s
-            // random tiered delay from 0-30s
-            if (_context.random().nextInt(100) >= 98) {
-                displayPacket(packet, "DROP", null);
-                return false;
-            } else {
-                // if (true) return true; // no lag, just drop
-                // int delay = _context.random().nextInt(5*1000);
-                int delay = _context.random().nextInt(1*1000);
-                int delayFactor = _context.random().nextInt(100);
-                if (delayFactor > 80) {
-                    if (delayFactor > 98)
-                        delay *= 5;
-                    else if (delayFactor > 95)
-                        delay *= 4;
-                    else if (delayFactor > 90)
-                        delay *= 3;
-                    else
-                        delay *= 2;
+
+    /** what is the point of this ? */
+    /*****
+        private boolean choke(Packet packet) {
+            if (true) return true;
+            //if ( (_dropped == 0) && true ) { //&& (_manager.getSent() <= 0) ) {
+            //    _dropped++;
+            //    return false;
+            //}
+            if (true) {
+                // artificial choke: 2% random drop and a 0-5s
+                // random tiered delay from 0-30s
+                if (_context.random().nextInt(100) >= 98) {
+                    displayPacket(packet, "DROP", null);
+                    return false;
+                } else {
+                    // if (true) return true; // no lag, just drop
+                    // int delay = _context.random().nextInt(5*1000);
+                    int delay = _context.random().nextInt(1*1000);
+                    int delayFactor = _context.random().nextInt(100);
+                    if (delayFactor > 80) {
+                        if (delayFactor > 98)
+                            delay *= 5;
+                        else if (delayFactor > 95)
+                            delay *= 4;
+                        else if (delayFactor > 90)
+                            delay *= 3;
+                        else
+                            delay *= 2;
+                    }
+
+                    if (_context.random().nextInt(100) >= 20)
+                        delay = _lastDelay;
+
+                    _lastDelay = delay;
+                    SimpleTimer.getInstance().addEvent(new Reinject(packet, delay), delay);
+                    return false;
                 }
-                 
-                if (_context.random().nextInt(100) >= 20)
-                    delay = _lastDelay;
-                
-                _lastDelay = delay;
-                SimpleTimer.getInstance().addEvent(new Reinject(packet, delay), delay);
-                return false;
+            } else {
+                return true;
             }
-        } else {
-            return true;
         }
-    }
-    
-    private class Reinject implements SimpleTimer.TimedEvent {
-        private Packet _packet;
-        private int _delay;
-        public Reinject(Packet packet, int delay) {
-            _packet = packet;
-            _delay = delay;
+
+        private class Reinject implements SimpleTimer.TimedEvent {
+            private Packet _packet;
+            private int _delay;
+            public Reinject(Packet packet, int delay) {
+                _packet = packet;
+                _delay = delay;
+            }
+            public void timeReached() {
+                _log.debug("Reinjecting after " + _delay + ": " + _packet);
+                receivePacketDirect(_packet);
+            }
         }
-        public void timeReached() {
-            _log.debug("Reinjecting after " + _delay + ": " + _packet);
-            receivePacketDirect(_packet);
-        }
-    }
-*****/
-    
+    *****/
+
     /** */
     void receivePacket(Packet packet) {
         //boolean ok = choke(packet);
         //if (ok)
-            receivePacketDirect(packet, true);
+        receivePacketDirect(packet, true);
     }
-    
+
     void receivePacketDirect(Packet packet, boolean queueIfNoConn) {
         //if (_log.shouldLog(Log.DEBUG))
         //    _log.debug("packet received: " + packet);
-        
+
         long sendId = packet.getSendStreamId();
-        
-        Connection con = (sendId > 0 ? _manager.getConnectionByInboundId(sendId) : null); 
+
+        Connection con = (sendId > 0 ? _manager.getConnectionByInboundId(sendId) : null);
         if (con != null) {
             if (_log.shouldDebug())
                 displayPacket(packet, "RECV", "wsize " + con.getOptions().getWindowSize() + " rto " + con.getOptions().getRTO());
@@ -115,7 +115,7 @@ class PacketHandler {
         // Don't log here, wait until we have the conn to make the dumps easier to follow
         //((PacketLocal)packet).logTCPDump(true);
     }
-    
+
     private static final SimpleDateFormat _fmt = new SimpleDateFormat("HH:mm:ss.SSS");
 
     /** logs to router log at debug level */
@@ -132,11 +132,11 @@ class PacketHandler {
         //System.out.println(str);
         _log.debug(str);
     }
-    
+
     private void receiveKnownCon(Connection con, Packet packet) {
         // is this ok here or does it need to be below each packetHandler().receivePacket() ?
         if (I2PSocketManagerFull.pcapWriter != null &&
-            _context.getBooleanProperty(I2PSocketManagerFull.PROP_PCAP))
+                _context.getBooleanProperty(I2PSocketManagerFull.PROP_PCAP))
             packet.logTCPDump(con);
         if (packet.isFlagSet(Packet.FLAG_ECHO)) {
             if (packet.getSendStreamId() > 0) {
@@ -152,8 +152,8 @@ class PacketHandler {
             }
             packet.releasePayload();
             return;
-        } 
-        
+        }
+
         // the packet is pointed at a stream ID we're receiving on
         if (isValidMatch(con.getSendStreamId(), packet.getReceiveStreamId())) {
             // the packet's receive stream ID also matches what we expect
@@ -177,9 +177,9 @@ class PacketHandler {
                         _log.warn("Received forged reset for " + con, ie);
                 }
             } else {
-                if ( (con.getSendStreamId() <= 0) || 
-                     (con.getSendStreamId() == packet.getReceiveStreamId()) ||
-                     (packet.getSequenceNum() <= ConnectionOptions.MIN_WINDOW_SIZE) ) { // its in flight from the first batch
+                if ( (con.getSendStreamId() <= 0) ||
+                        (con.getSendStreamId() == packet.getReceiveStreamId()) ||
+                        (packet.getSequenceNum() <= ConnectionOptions.MIN_WINDOW_SIZE) ) { // its in flight from the first batch
                     long oldId = con.getSendStreamId();
                     if (packet.isFlagSet(Packet.FLAG_SYNCHRONIZE)) {
                         if (oldId <= 0) {
@@ -199,7 +199,7 @@ class PacketHandler {
                             return;
                         }
                     }
-                    
+
                     try {
                         con.getPacketHandler().receivePacket(packet, con);
                     } catch (I2PException ie) {
@@ -220,7 +220,7 @@ class PacketHandler {
                     packet.releasePayload();
                 } else {
                     if (!con.getResetSent()) {
-                        // someone is sending us a packet on the wrong stream 
+                        // someone is sending us a packet on the wrong stream
                         // It isn't a SYN so it isn't likely to have a FROM to send a reset back to
                         if (_log.shouldLog(Log.WARN)) {
                             StringBuilder buf = new StringBuilder(512);
@@ -240,7 +240,7 @@ class PacketHandler {
             }
         }
     }
-    
+
     /**
      *  This sends a reset back to the place this packet came from.
      *  If the packet has no 'optional from' or valid signature, this does nothing.
@@ -262,7 +262,7 @@ class PacketHandler {
         }
         sendResetUnverified(packet);
     }
-    
+
     /**
      *  This sends a reset back to the place this packet came from.
      *  Packet MUST have a FROM option.
@@ -285,7 +285,7 @@ class PacketHandler {
         // this just sends the packet - no retries or whatnot
         _manager.getPacketQueue().enqueue(reply);
     }
-    
+
     private void receiveUnknownCon(Packet packet, long sendId, boolean queueIfNoConn) {
         if (packet.isFlagSet(Packet.FLAG_ECHO)) {
             if (packet.getSendStreamId() > 0) {
@@ -330,7 +330,7 @@ class PacketHandler {
                 packet.releasePayload();
                 return;
             }
-            
+
             if (packet.isFlagSet(Packet.FLAG_SYNCHRONIZE)) {
                 // logTCPDump() will be called in ConnectionManager.receiveConnection(),
                 // which is called by ConnectionHandler.receiveNewSyn(),
@@ -356,7 +356,7 @@ class PacketHandler {
                     for (Connection con : _manager.listConnections()) {
                         buf.append(con.toString()).append(" ");
                     }
-                    _log.debug("connections: " + buf.toString() + " sendId: " 
+                    _log.debug("connections: " + buf.toString() + " sendId: "
                                + (sendId > 0 ? Packet.toId(sendId) : " unknown"));
                 }
                 //packet.releasePayload();
@@ -364,7 +364,7 @@ class PacketHandler {
             } else {
                 // log it here, just before we kill it - dest will be unknown
                 if (I2PSocketManagerFull.pcapWriter != null &&
-                    _context.getBooleanProperty(I2PSocketManagerFull.PROP_PCAP))
+                        _context.getBooleanProperty(I2PSocketManagerFull.PROP_PCAP))
                     packet.logTCPDump(null);
                 // don't queue again (infinite loop!)
                 sendReset(packet);
@@ -372,7 +372,7 @@ class PacketHandler {
             }
         }
     }
-    
+
     /**
      *  @param con null if unknown
      */
@@ -388,11 +388,11 @@ class PacketHandler {
             _manager.receivePing(con, packet);
         }
     }
-    
+
     private void receivePong(Packet packet) {
         _manager.receivePong(packet.getReceiveStreamId(), packet.getPayload());
     }
-    
+
     private static final boolean isValidMatch(long conStreamId, long packetStreamId) {
         return ( (conStreamId == packetStreamId) && (conStreamId != 0) );
     }

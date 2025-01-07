@@ -83,7 +83,7 @@ public class LogsHelper extends HelperBase {
         return "<p>" + _t("File location") + ": <a href=\"/router.log\" target=\"_blank\">" +
                DataHelper.escapeHTML(_context.logManager().currentFile()) + "</a></p>" + str;
     }
-    
+
     /**
      *
      */
@@ -157,8 +157,14 @@ public class LogsHelper extends HelperBase {
             String[] vals = DataHelper.split(prop, ",", 3);
             if (vals.length == 3) {
                 if (vals[2].equals(f.getName())) {
-                    try { lastMod = Long.parseLong(vals[0]); } catch (NumberFormatException nfe) {}
-                    try { toSkip = Long.parseLong(vals[1]); } catch (NumberFormatException nfe) {}
+                    try {
+                        lastMod = Long.parseLong(vals[0]);
+                    }
+                    catch (NumberFormatException nfe) {}
+                    try {
+                        toSkip = Long.parseLong(vals[1]);
+                    }
+                    catch (NumberFormatException nfe) {}
                 } else {
                     // file rotated
                     lastMod = 0;
@@ -195,7 +201,7 @@ public class LogsHelper extends HelperBase {
             toSkip = -1;
         } else {
             obuf.append("<p>").append(_t("File location")).append(": <a href=\"/wrapper.log\" target=\"_blank\">")
-                .append(loc).append("</a></p></td></tr>\n<tr><td>");
+            .append(loc).append("</a></p></td></tr>\n<tr><td>");
             if (str.length() > 0) {
                 str = str.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
                 obuf.append("<pre id=\"servicelogs\">").append(str).append("</pre>");
@@ -256,13 +262,13 @@ public class LogsHelper extends HelperBase {
         if (msgs.isEmpty())
             return "</td></tr><tr><td><p><i>" + _t("No log messages") + "</i></p>";
         boolean colorize = _context.getBooleanPropertyDefaultTrue("routerconsole.logs.color");
-        StringBuilder buf = new StringBuilder(16*1024); 
+        StringBuilder buf = new StringBuilder(16*1024);
         buf.append("</td></tr><tr><td><ul>");
         // newest first
-        // for (int i = msgs.size() - 1; i >= 0; i--) { 
+        // for (int i = msgs.size() - 1; i >= 0; i--) {
         // oldest first
         boolean displayed = false;
-        for (int i = 0; i < msgs.size(); i++) { 
+        for (int i = 0; i < msgs.size(); i++) {
             String msg = msgs.get(i);
             // don't display the dup message if it is last
             //if (i == 0 && msg.contains("&darr;"))
@@ -291,7 +297,7 @@ public class LogsHelper extends HelperBase {
                 else if (msg.contains(_c("ERROR")))
                     color = "#ff3300";
                 else if (msg.contains(_c("WARN")))
-                   // color = "#ff00cc"; poor legibility on light backgrounds
+                    // color = "#ff00cc"; poor legibility on light backgrounds
                     color = "#bf00df";
                 else if (msg.contains(_c("INFO")))
                     color = "#333399";
@@ -306,13 +312,13 @@ public class LogsHelper extends HelperBase {
             buf.append("</li>\n");
         }
         buf.append("</ul>\n");
-        
+
         return buf.toString();
     }
 
     /**
      * Read in the last few lines of a (newline delimited) textfile, or null if
-     * the file doesn't exist.  
+     * the file doesn't exist.
      *
      * Same as FileUtil.readTextFile but uses platform encoding,
      * not UTF-8, since the wrapper log cannot be configured:
@@ -366,7 +372,10 @@ public class LogsHelper extends HelperBase {
         } catch (IOException ioe) {
             return -1;
         } finally {
-            if (in != null) try { in.close(); } catch (IOException ioe) {}
+            if (in != null) try {
+                    in.close();
+                }
+                catch (IOException ioe) {}
         }
     }
 

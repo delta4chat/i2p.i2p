@@ -1,9 +1,9 @@
 package net.i2p.data;
 /*
  * free (adj.): unencumbered; not under the control of others
- * Written by jrandom in 2003 and released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
- * It probably won't make your computer catch on fire, or eat 
+ * Written by jrandom in 2003 and released into the public domain
+ * with no warranty of any kind, either expressed or implied.
+ * It probably won't make your computer catch on fire, or eat
  * your children, but it might.  Use at your own risk.
  *
  */
@@ -23,7 +23,7 @@ import org.junit.Test;
  */
 public class MappingTest {
     @Test
-    public void testProperties() throws Exception{
+    public void testProperties() throws Exception {
         byte[] temp = null;
 
         Properties orig = new Properties();

@@ -19,13 +19,13 @@ import net.i2p.util.Log;
 public class ConnectIT extends StreamingITBase {
     private Log _log;
     private I2PSession _server;
-    
+
     @Before
     public void setUp() throws Exception {
 //        System.setProperty(I2PClient.PROP_TCP_HOST, "localhost");
-//        System.setProperty(I2PClient.PROP_TCP_PORT, "11001");  
+//        System.setProperty(I2PClient.PROP_TCP_PORT, "11001");
     }
-    
+
     @Test
     public void test() throws Exception {
         I2PAppContext context = I2PAppContext.getGlobalContext();
@@ -42,9 +42,9 @@ public class ConnectIT extends StreamingITBase {
         for (Thread c : clients)
             c.join();
     }
-    
-    
-    
+
+
+
     @Override
     protected Runnable getClient(I2PAppContext ctx, I2PSession session) {
         return new ClientRunner(ctx,session);
@@ -61,7 +61,7 @@ public class ConnectIT extends StreamingITBase {
         public ServerRunner(I2PAppContext ctx, I2PSession session) {
             super(ctx,session);
         }
-        
+
         public void run() {
             try {
                 Properties opts = new Properties();
@@ -73,21 +73,21 @@ public class ConnectIT extends StreamingITBase {
                 while (true) {
                     I2PSocket socket = ssocket.accept();
                     _log.debug("socket accepted: " + socket);
-                    Thread.sleep(5*1000); 
+                    Thread.sleep(5*1000);
                     socket.close();
                 }
             } catch (Exception e) {
                 _log.error("error running", e);
             }
         }
-        
+
     }
-    
+
     private class ClientRunner extends RunnerBase {
         public ClientRunner(I2PAppContext ctx, I2PSession session) {
             super(ctx,session);
         }
-        
+
         public void run() {
             try {
                 Properties opts = new Properties();
@@ -96,7 +96,7 @@ public class ConnectIT extends StreamingITBase {
                 _log.debug("manager created");
                 I2PSocket socket = mgr.connect(_server.getMyDestination());
                 _log.debug("socket created");
-                Thread.sleep(5*1000); 
+                Thread.sleep(5*1000);
                 socket.close();
                 _log.debug("socket closed");
                 mgr.destroySocketManager();
@@ -106,9 +106,9 @@ public class ConnectIT extends StreamingITBase {
                 _log.error("error running", e);
             }
         }
-        
+
     }
-    
+
     @Override
     protected Properties getProperties() {
         return System.getProperties();

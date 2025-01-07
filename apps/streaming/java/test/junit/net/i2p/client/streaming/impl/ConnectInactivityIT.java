@@ -18,15 +18,15 @@ import net.i2p.util.Log;
  */
 public class ConnectInactivityIT extends StreamingITBase {
     private static final long LONG_TIME = 60 * 1000;
-    
+
     private static void sleep() throws Exception {
         Thread.sleep(LONG_TIME);
     }
-    
+
     private Log _log;
     private I2PSession _client;
     private I2PSession _server;
-    
+
     @Test
     public void test() throws Exception {
         I2PAppContext context = I2PAppContext.getGlobalContext();
@@ -37,27 +37,27 @@ public class ConnectInactivityIT extends StreamingITBase {
         runServer(context, _server);
         _log.debug("creating client session");
         _client = createSession();
-        
+
         _log.debug("running client");
         Thread client = runClient(context, _client);
         client.join(LONG_TIME + 1000);
     }
-    
+
     @Override
     protected Runnable getClient(I2PAppContext ctx, I2PSession session) {
         return new ClientRunner(ctx,session);
     }
-    
+
     @Override
     protected Runnable getServer(I2PAppContext ctx, I2PSession session) {
         return new ServerRunner(ctx,session);
     }
-    
+
     private class ServerRunner extends RunnerBase {
         public ServerRunner(I2PAppContext ctx, I2PSession session) {
             super(ctx,session);
         }
-        
+
         public void run() {
             try {
                 Properties opts = new Properties();
@@ -77,14 +77,14 @@ public class ConnectInactivityIT extends StreamingITBase {
                 _log.error("error running", e);
             }
         }
-        
+
     }
-    
+
     private class ClientRunner extends RunnerBase {
         public ClientRunner(I2PAppContext ctx, I2PSession session) {
             super(ctx,session);
         }
-        
+
         public void run() {
             try {
                 Properties opts = new Properties();
@@ -102,9 +102,9 @@ public class ConnectInactivityIT extends StreamingITBase {
                 _log.error("error running", e);
             }
         }
-        
+
     }
-    
+
     @Override
     protected Properties getProperties() {
         Properties p = new Properties();

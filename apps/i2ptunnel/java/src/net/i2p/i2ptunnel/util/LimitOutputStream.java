@@ -15,8 +15,10 @@ public abstract class LimitOutputStream extends FilterOutputStream {
     protected final DoneCallback _callback;
     protected boolean _isDone;
 
-    public interface DoneCallback { public void streamDone(); }
-    
+    public interface DoneCallback {
+        public void streamDone();
+    }
+
     /**
      *  @param done non-null
      */
@@ -41,9 +43,11 @@ public abstract class LimitOutputStream extends FilterOutputStream {
     public void write(byte buf[], int off, int len) throws IOException {
         out.write(buf, off, len);
     }
-    
 
-    protected boolean isDone() { return _isDone; }
+
+    protected boolean isDone() {
+        return _isDone;
+    }
 
     /**
      *  flush(), call the callback, and set _isDone

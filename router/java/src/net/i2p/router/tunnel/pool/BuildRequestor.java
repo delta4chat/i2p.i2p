@@ -74,7 +74,7 @@ abstract class BuildRequestor {
 
     /** make this shorter than REQUEST_TIMEOUT */
     private static final int FIRST_HOP_TIMEOUT = 10*1000;
-    
+
     /** some randomization is added on to this */
     private static final int BUILD_MSG_TIMEOUT = 60*1000;
 
@@ -92,7 +92,7 @@ abstract class BuildRequestor {
         return true;
         //return ctx.getBooleanPropertyDefaultTrue("router.usePairedTunnels");
     }
-    
+
     /** new style requests need to fill in the tunnel IDs before hand */
     private static void prepare(RouterContext ctx, PooledTunnelCreatorConfig cfg) {
         int len = cfg.getLength();
@@ -115,7 +115,7 @@ abstract class BuildRequestor {
                     id = new TunnelId(1 + ctx.random().nextLong(TunnelId.MAX_ID_VALUE));
                 hop.setReceiveTunnelId(id);
             }
-            
+
             if (i > 0)
                 cfg.getConfig(i-1).setSendTunnelId(hop.getReceiveTunnelId());
             // AES reply keys now set in createTunnelBuildMessage(),
@@ -136,16 +136,16 @@ abstract class BuildRequestor {
                                   PooledTunnelCreatorConfig cfg, BuildExecutor exec) {
         // new style crypto fills in all the blanks, while the old style waits for replies to fill in the next hop, etc
         prepare(ctx, cfg);
-        
+
         if (cfg.getLength() <= 1) {
             buildZeroHop(ctx, cfg, exec);
             return true;
         }
-        
+
         Log log = ctx.logManager().getLog(BuildRequestor.class);
         final TunnelPool pool = cfg.getTunnelPool();
         final TunnelPoolSettings settings = pool.getSettings();
-        
+
         TunnelInfo pairedTunnel = null;
         Hash farEnd = cfg.getFarEnd();
         TunnelManagerFacade mgr = ctx.tunnelManager();
@@ -185,15 +185,15 @@ abstract class BuildRequestor {
                 if (log.shouldWarn())
                     log.warn(fails + " consecutive build timeouts for " + cfg + ", using exploratory tunnel");
             }
-            if (pairedTunnel == null) {   
+            if (pairedTunnel == null) {
                 if (isInbound) {
                     // random more reliable than closest ??
                     //pairedTunnel = mgr.selectOutboundExploratoryTunnel(farEnd);
                     pairedTunnel = mgr.selectOutboundTunnel();
                     if (pairedTunnel != null &&
-                        pairedTunnel.getLength() <= 1 &&
-                        mgr.getOutboundSettings().getLength() > 0 &&
-                        mgr.getOutboundSettings().getLength() + mgr.getOutboundSettings().getLengthVariance() > 0) {
+                            pairedTunnel.getLength() <= 1 &&
+                            mgr.getOutboundSettings().getLength() > 0 &&
+                            mgr.getOutboundSettings().getLength() + mgr.getOutboundSettings().getLengthVariance() > 0) {
                         // don't build using a zero-hop expl.,
                         // as it is both very bad for anonomyity,
                         // and it takes a build slot away from exploratory
@@ -204,9 +204,9 @@ abstract class BuildRequestor {
                     //pairedTunnel = mgr.selectInboundExploratoryTunnel(farEnd);
                     pairedTunnel = mgr.selectInboundTunnel();
                     if (pairedTunnel != null &&
-                        pairedTunnel.getLength() <= 1 &&
-                        mgr.getInboundSettings().getLength() > 0 &&
-                        mgr.getInboundSettings().getLength() + mgr.getInboundSettings().getLengthVariance() > 0) {
+                            pairedTunnel.getLength() <= 1 &&
+                            mgr.getInboundSettings().getLength() > 0 &&
+                            mgr.getInboundSettings().getLength() + mgr.getInboundSettings().getLengthVariance() > 0) {
                         // ditto
                         pairedTunnel = null;
                     }
@@ -227,10 +227,13 @@ abstract class BuildRequestor {
             // But don't let a client tunnel waiting for exploratories slow things down too much,
             // as there may be other tunnel pools who can build
             int ms = settings.isExploratory() ? 250 : 25;
-            try { Thread.sleep(ms); } catch (InterruptedException ie) {}
+            try {
+                Thread.sleep(ms);
+            }
+            catch (InterruptedException ie) {}
             return false;
         }
-        
+
         //long beforeCreate = System.currentTimeMillis();
         I2NPMessage msg = createTunnelBuildMessage(ctx, pool, cfg, pairedTunnel, exec);
         //long createTime = System.currentTimeMillis()-beforeCreate;
@@ -240,7 +243,7 @@ abstract class BuildRequestor {
             exec.buildComplete(cfg, OTHER_FAILURE);
             return false;
         }
-        
+
         // store the ID of the paired GW so we can credit/blame the paired tunnel,
         // see TunnelPool.updatePairedProfile()
         if (pairedTunnel.getLength() > 1) {
@@ -249,13 +252,13 @@ abstract class BuildRequestor {
                           pairedTunnel.getSendTunnelId(0);
             cfg.setPairedGW(gw);
         }
-        
+
         //long beforeDispatch = System.currentTimeMillis();
         if (cfg.isInbound()) {
             Hash ibgw = cfg.getPeer(0);
             // don't wrap if IBGW == OBEP
             if (msg.getType() == ShortTunnelBuildMessage.MESSAGE_TYPE &&
-                !ibgw.equals(pairedTunnel.getEndpoint())) {
+                    !ibgw.equals(pairedTunnel.getEndpoint())) {
                 // STBM is garlic encrypted to the IBGW, to hide it from the OBEP
                 RouterInfo peer = ctx.netDb().lookupRouterInfoLocally(ibgw);
                 if (peer != null) {
@@ -274,9 +277,9 @@ abstract class BuildRequestor {
             }
 
             if (log.shouldLog(Log.INFO))
-                log.info("Sending the tunnel build request " + msg.getUniqueId() + " out the tunnel " + pairedTunnel + " to " 
-                          + ibgw + " for " + cfg + " waiting for the reply of "
-                          + cfg.getReplyMessageId());
+                log.info("Sending the tunnel build request " + msg.getUniqueId() + " out the tunnel " + pairedTunnel + " to "
+                         + ibgw + " for " + cfg + " waiting for the reply of "
+                         + cfg.getReplyMessageId());
             // send it out a tunnel targetting the first hop
             // TODO - would be nice to have a TunnelBuildFirstHopFailJob queued if the
             // pairedTunnel is zero-hop, but no way to do that?
@@ -284,9 +287,9 @@ abstract class BuildRequestor {
         } else {
             if (log.shouldLog(Log.INFO))
                 log.info("Sending the tunnel build request directly to " + cfg.getPeer(1)
-                          + " for " + cfg + " waiting for the reply of " + cfg.getReplyMessageId() 
-                          + " via IB tunnel " + pairedTunnel
-                          + " with msgId=" + msg.getUniqueId());
+                         + " for " + cfg + " waiting for the reply of " + cfg.getReplyMessageId()
+                         + " via IB tunnel " + pairedTunnel
+                         + " with msgId=" + msg.getUniqueId());
             // send it directly to the first hop
             // Add some fuzz to the TBM expiration to make it harder to guess how many hops
             // or placement in the tunnel
@@ -350,8 +353,8 @@ abstract class BuildRequestor {
      *  @return null on error
      */
     private static TunnelBuildMessage createTunnelBuildMessage(RouterContext ctx, TunnelPool pool,
-                                                               PooledTunnelCreatorConfig cfg,
-                                                               TunnelInfo pairedTunnel, BuildExecutor exec) {
+            PooledTunnelCreatorConfig cfg,
+            TunnelInfo pairedTunnel, BuildExecutor exec) {
         Log log = ctx.logManager().getLog(BuildRequestor.class);
         long replyTunnel = 0;
         Hash replyRouter;
@@ -368,29 +371,29 @@ abstract class BuildRequestor {
             }
         }
 
-/*
-        // Testing, send to explicitPeers only
-        List<Hash> explicitPeers = null;
-        if (useShortTBM) {
-            String peers = ctx.getProperty("explicitPeers");
-            if (peers != null && !peers.isEmpty()) {
-                explicitPeers = new ArrayList<Hash>(4);
-                StringTokenizer tok = new StringTokenizer(peers, ",");
-                while (tok.hasMoreTokens()) {
-                    String peerStr = tok.nextToken();
-                    Hash peer = new Hash();
-                    try {
-                        peer.fromBase64(peerStr);
-                        explicitPeers.add(peer);
-                    } catch (DataFormatException dfe) {}
+        /*
+                // Testing, send to explicitPeers only
+                List<Hash> explicitPeers = null;
+                if (useShortTBM) {
+                    String peers = ctx.getProperty("explicitPeers");
+                    if (peers != null && !peers.isEmpty()) {
+                        explicitPeers = new ArrayList<Hash>(4);
+                        StringTokenizer tok = new StringTokenizer(peers, ",");
+                        while (tok.hasMoreTokens()) {
+                            String peerStr = tok.nextToken();
+                            Hash peer = new Hash();
+                            try {
+                                peer.fromBase64(peerStr);
+                                explicitPeers.add(peer);
+                            } catch (DataFormatException dfe) {}
+                        }
+                        if (explicitPeers.isEmpty())
+                            useShortTBM = false;
+                    } else {
+                        useShortTBM = false;
+                    }
                 }
-                if (explicitPeers.isEmpty())
-                    useShortTBM = false;
-            } else {
-                useShortTBM = false;
-            }
-        }
-*/
+        */
 
         if (cfg.isInbound()) {
             //replyTunnel = 0; // as above
@@ -466,17 +469,17 @@ abstract class BuildRequestor {
         // This is in BuildExecutor.buildTunnel() now
         //long replyMessageId = ctx.random().nextLong(I2NPMessage.MAX_ID_VALUE);
         //cfg.setReplyMessageId(replyMessageId);
-        
+
         Collections.shuffle(order, ctx.random()); // randomized placement within the message
         cfg.setReplyOrder(order);
-        
+
         if (log.shouldLog(Log.DEBUG))
             log.debug("Build order: " + order + " for " + cfg);
-        
+
         for (int i = 0; i < msg.getRecordCount(); i++) {
             int hop = order.get(i).intValue();
             PublicKey key = null;
-    
+
             if (BuildMessageGenerator.isBlank(cfg, hop)) {
                 // erm, blank
             } else {
@@ -484,8 +487,8 @@ abstract class BuildRequestor {
                 RouterInfo peerInfo = ctx.netDb().lookupRouterInfoLocally(peer);
                 if (peerInfo == null) {
                     if (log.shouldLog(Log.WARN))
-                        log.warn("Peer selected for hop " + i + "/" + hop + " was not found locally: " 
-                                  + peer + " for " + cfg);
+                        log.warn("Peer selected for hop " + i + "/" + hop + " was not found locally: "
+                                 + peer + " for " + cfg);
                     return null;
                 } else {
                     key = peerInfo.getIdentity().getPublicKey();
@@ -502,14 +505,14 @@ abstract class BuildRequestor {
         BuildMessageGenerator.layeredEncrypt(ctx, msg, cfg, order);
         //if (useShortTBM && log.shouldWarn())
         //    log.warn("Sending STBM: " + cfg.toStringFull());
-        
+
         return msg;
     }
-    
+
     private static void buildZeroHop(RouterContext ctx, PooledTunnelCreatorConfig cfg, BuildExecutor exec) {
         Log log = ctx.logManager().getLog(BuildRequestor.class);
         if (log.shouldLog(Log.DEBUG))
-            log.debug("Build zero hop tunnel " + cfg);            
+            log.debug("Build zero hop tunnel " + cfg);
 
         boolean ok;
         if (cfg.isInbound())
@@ -537,7 +540,9 @@ abstract class BuildRequestor {
             _cfg = cfg;
             _exec = exec;
         }
-        public String getName() { return "Timeout contacting first peer for OB tunnel"; }
+        public String getName() {
+            return "Timeout contacting first peer for OB tunnel";
+        }
         public void runJob() {
             _exec.buildComplete(_cfg, OTHER_FAILURE);
             getContext().profileManager().tunnelTimedOut(_cfg.getPeer(1));

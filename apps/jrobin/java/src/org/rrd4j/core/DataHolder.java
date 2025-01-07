@@ -13,11 +13,11 @@ import org.rrd4j.data.Variable;
  */
 public interface DataHolder {
 
-   /**
-    * Constant that defines the default {@link RrdDbPool} usage policy. Defaults to <code>false</code>
-    * (i.e. the pool will not be used to fetch data from RRD files)
-    */
-   boolean DEFAULT_POOL_USAGE_POLICY = false;
+    /**
+     * Constant that defines the default {@link RrdDbPool} usage policy. Defaults to <code>false</code>
+     * (i.e. the pool will not be used to fetch data from RRD files)
+     */
+    boolean DEFAULT_POOL_USAGE_POLICY = false;
 
     /**
      * Returns boolean value representing {@link org.rrd4j.core.RrdDbPool RrdDbPool} usage policy.
@@ -81,13 +81,13 @@ public interface DataHolder {
      */
     long getStartTime();
 
-   /**
-     * Sets starting and ending time for the for the graph. Timestamps in seconds since epoch are
-     * required. Negative numbers are relative to the current time.
-     *
-     * @param startTime Starting time in seconds since epoch
-     * @param endTime   Ending time in seconds since epoch
-     */
+    /**
+      * Sets starting and ending time for the for the graph. Timestamps in seconds since epoch are
+      * required. Negative numbers are relative to the current time.
+      *
+      * @param startTime Starting time in seconds since epoch
+      * @param endTime   Ending time in seconds since epoch
+      */
     void setTimeSpan(long startTime, long endTime);
 
     /**
@@ -112,7 +112,7 @@ public interface DataHolder {
      * @param consolFun Consolidation function (AVERAGE, MIN, MAX, LAST)
      */
     void datasource(String name, String rrdPath, String dsName,
-            ConsolFun consolFun);
+                    ConsolFun consolFun);
 
     /**
      * Defines virtual datasource. This datasource can then be used
@@ -124,7 +124,7 @@ public interface DataHolder {
      * @param consolFun Consolidation function (AVERAGE, MIN, MAX, LAST)
      */
     void datasource(String name, URI rrdUri, String dsName,
-            ConsolFun consolFun);
+                    ConsolFun consolFun);
 
     /**
      * Defines virtual datasource. This datasource can then be used
@@ -137,7 +137,7 @@ public interface DataHolder {
      * @param backend   Backend to be used while fetching data from a RRD file.
      */
     void datasource(String name, String rrdPath, String dsName,
-            ConsolFun consolFun, RrdBackendFactory backend);
+                    ConsolFun consolFun, RrdBackendFactory backend);
 
     /**
      * Defines virtual datasource. This datasource can then be used
@@ -150,7 +150,7 @@ public interface DataHolder {
      * @param backend   Backend to be used while fetching data from a RRD file.
      */
     void datasource(String name, URI rrdUri, String dsName,
-            ConsolFun consolFun, RrdBackendFactory backend);
+                    ConsolFun consolFun, RrdBackendFactory backend);
 
     /**
      * Create a new virtual datasource by evaluating a mathematical
@@ -195,7 +195,7 @@ public interface DataHolder {
 
     /**
      * Creates a new 'fetched' datasource. Datasource values are obtained from the
-     * given {@link org.rrd4j.core.FetchData} object. 
+     * given {@link org.rrd4j.core.FetchData} object.
      * Values will be extracted from the datasource dsName in the fetchData
      *
      * @param name      Source name.

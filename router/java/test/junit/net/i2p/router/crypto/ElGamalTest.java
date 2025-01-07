@@ -1,13 +1,13 @@
 package net.i2p.router.crypto;
 /*
  * free (adj.): unencumbered; not under the control of others
- * Written by jrandom in 2003 and released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
- * It probably won't make your computer catch on fire, or eat 
+ * Written by jrandom in 2003 and released into the public domain
+ * with no warranty of any kind, either expressed or implied.
+ * It probably won't make your computer catch on fire, or eat
  * your children, but it might.  Use at your own risk.
  *
  */
- 
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -29,13 +29,13 @@ import net.i2p.data.SessionTag;
 import net.i2p.router.crypto.ElGamalAESEngine;
 import net.i2p.util.RandomSource;
 
-public class ElGamalTest extends TestCase{
+public class ElGamalTest extends TestCase {
     private I2PAppContext _context;
-    
+
     // Following 4 String arrays for use with the testVerify* methods
-    
-    private static final String UNENCRYPTED[] = new String[] { 
-        "", 
+
+    private static final String UNENCRYPTED[] = new String[] {
+        "",
         "hello world",
         "1234567890123456789012345678901234567890123456789012345678901234567890" +
         "1234567890123456789012345678901234567890123456789012345678901234567890" +
@@ -51,14 +51,14 @@ public class ElGamalTest extends TestCase{
         "KOjGlyMLgd1nxl5R5wIYL4uHKZNaYuArsRYmtV~MgMQPGvDtIbdGTV6aL6UbOYryzQSUMY" +
         "OuO3S~YoBjA6Nmi0SeJM3tyTxlI6U1EYjR6oQcI4SOFUW4L~8pfYWijcncCODAqpXVN6ZI" +
         "AJ3a6vjxGu56IDp4xCcKlOEHgdXvqmEC67dR5qf2btH6dtWoB3-Z6QPsS6tPTQ=="
-        );
+    );
     private static final String PRIVATE_KEY = new String(
         "gMlIhURVXU8uPube20Xr8E1K11g-3qZxOj1riThHqt-rBx72MPq5ivT1rr28cE9mzOmsXi" +
         "bbsuBuQKYDvF7hGICRB3ROSPePYhcupV3j7XiXUIYjWNw9hvylHXK~nTT7jkpIBazBJZfr" +
         "LJPcDZTDB0YnCOHOL-KFn4N1R5B22g0iYRABN~O10AUjQmf1epklAXPqYlzmOYeJSfTPBI" +
         "E44nEccWJp0M0KynhKVbDI0v9VYm6sPFK7WrzRyWwHL~r735wiRkwywuMmKJtA7-PuJjcW" +
         "NLkJwx6WScH2msMzhzYPi8JSZJBl~PosX934l-L0T-KNV4jg1Ih6yoCnm1748A=="
-        );
+    );
     private static final String ENCRYPTED[] = new String[] {
         "AMfISa8KvTpaC7KXZzSvC2axyiSk0xPexBAf29yU~IKq21DzaU19wQcGJg-ktpG4hjGSg7" +
         "u-mJ07b61yo-EGmVGZsv3nYuQYW-GjvsZQa9nm98VljlMtWrxu7TsRXw~SQlWQxMvthqJB" +
@@ -80,7 +80,7 @@ public class ElGamalTest extends TestCase{
         "ArP8dtvN0JY3LSnbcsm-pT9ttFHCPGomLfaAuP7ohknBoXK0j9e6~splg5sUA9TfLeBfqc" +
         "Lr0Sf8b3l~PvmrVkbVcaE8yUqSS6JFdt3pavjyyAQSmSlb2jVNKGPlrov5QLzlbH7G~AUv" +
         "IehsbGQX5ptRROtSojN~iYx3WQTOa-JLEC-AL7RbRu6B62p9I0pD0JgbUfCc4C4l9E9W~s" +
-        "MuaJLAXxh0b2miF7C5bzZHxbt~MtZ7Ho5qpZMitXyoE3icb43B6Y1sbA==", 
+        "MuaJLAXxh0b2miF7C5bzZHxbt~MtZ7Ho5qpZMitXyoE3icb43B6Y1sbA==",
 
         "ACjb0FkTIQbnEzCZlYXGxekznfJad5uW~F5Mbu~0wtsI1O2veqdr7Mb0N754xdIz7929Ti" +
         "1Kz-CxVEAkb3RBbVNcYHLfjy23oQ4BCioDKQaJcdkJqXa~Orm7Ta2tbkhM1Mx05MDrQaVF" +
@@ -91,7 +91,7 @@ public class ElGamalTest extends TestCase{
         "UV~0OuBXkMZEyJT-uIVfbE~xrwPE0zPYE~parSVQgi~yNQBxukUM1smAM5xXVvJu8GjmE-" +
         "kJZw1cxaYLGsJjDHDk4HfEsyQVVPZ0V3bQvhB1tg5cCsTH~VNjts4taDTPWfDZmjtVaxxr" +
         "PRII4NEDKqEzg3JBevM~yft-RDfMc8RVlm-gCGANrRQORFii7uD3o9~y~4P2tLnO7Fy3m5" +
-        "rdjRsOsWnCQZzw37mcBoT9rEZPrVpD8pjebJ1~HNc764xIpXDWVt8CbA==", 
+        "rdjRsOsWnCQZzw37mcBoT9rEZPrVpD8pjebJ1~HNc764xIpXDWVt8CbA==",
 
         "AHDZBKiWeaIYQS9R1l70IlRnoplwKTkLP2dLlXmVh1gB33kx65uX8OMb3hdZEO0Bbzxkkx" +
         "quqlNn5w166nJO4nPbpEzVfgtY4ClUuv~W4H4CXBr0FcZM1COAkd6rtp6~lUp7cZ8FAkpH" +
@@ -102,7 +102,7 @@ public class ElGamalTest extends TestCase{
         "u2YV2n4wMq9laBx0shuKOJqO3rjRnszzCbqMuFAXfc3KgGDEaCpI7049s3i2yIcv4vT9uU" +
         "AlrM-dsrdw0JgJiFYl0JXh~TO0IyrcVcLpgZYgRhEvTAdkDNwTs-2GK4tzdPEd34os4a2c" +
         "DPL8joh3jhp~eGoRzrpcdRekxENdzheL4w3wD1fJ9W2-leil1FH6EPc3FSL6e~nqbw69gN" +
-        "bsuXAMQ6CobukJdJEy37uKmEw4v6WPyfYMUUacchv1JoNfkHLpnAWifQ==", 
+        "bsuXAMQ6CobukJdJEy37uKmEw4v6WPyfYMUUacchv1JoNfkHLpnAWifQ==",
 
         "AGwvKAMJcPAliP-n7F0Rrj0JMRaFGjww~zvBjyzc~SPJrBF831cMqZFRmMHotgA7S5BrH2" +
         "6CL8okI2N-7as0F2l7OPx50dFEwSVSjqBjVV6SGRFC8oS-ii1FURMz2SCHSaj6kazAYq4s" +
@@ -113,7 +113,7 @@ public class ElGamalTest extends TestCase{
         "kBMIFOOJ9MhpEN533OBQDwUKcoxMjl0zOMNCLx8IdCE6cLtUDKJXLB0atnDpLkBer6FwXP" +
         "81EvKDYhtp1GsbiKvZDt8LSPJQnm2EdA3Pr9fpAisJ5Ocaxlfa6~uQCuqGA9nJ9n6w03u-" +
         "ZpSMhSh4zm2s1MqijmaJRc-QNKmN~u1hh3R2hwWNi7FoStMA87sutEBXMdFI8un7StHNSE" +
-        "iCYwmmW2Nu3djkM-X8gGjSsdrphTU7uOXbwazmguobFGxI0JujYruM5Q==", 
+        "iCYwmmW2Nu3djkM-X8gGjSsdrphTU7uOXbwazmguobFGxI0JujYruM5Q==",
 
         "ALFYtPSwEEW3eTO4hLw6PZNlBKoSIseQNBi034gq6FwYEZsJOAo-1VXcvMviKw2MCP9ZkH" +
         "lTNBfzc79ms2TU8kXxc7zwUc-l2HJLWh6dj2tIQLR8bbWM7U0iUx4XB1B-FEvdhbjz7dsu" +
@@ -126,46 +126,46 @@ public class ElGamalTest extends TestCase{
         "x9TJA8K8T44v7vE6--Nw4Z4zjepwkIOht9iQsA6D6wRUQpeYX8bjIyYDPC7GUHq0WhXR6E" +
         "6Ojc9k8V5uh0SZ-rCQX6sccdk3JbyRhjGP4rSKr6MmvxVVsqBjcbpxsg=="
     };
-    
+
     protected void setUp() {
         _context = I2PAppContext.getGlobalContext();
         //Object o = YKGenerator.class;
     }
-    
-    public void testBasicAES(){
+
+    public void testBasicAES() {
         SessionKey sessionKey = KeyGenerator.getInstance().generateSessionKey();
         Hash h = SHA256Generator.getInstance().calculateHash(sessionKey.getData());
         byte iv[] = new byte[16];
         System.arraycopy(h.getData(), 0, iv, 0, 16);
-        
+
         String msg = "Hello world01234012345678901234501234567890123450123456789012345";
         h = SHA256Generator.getInstance().calculateHash(DataHelper.getASCII(msg));
-        
+
         byte aesEncr[] = new byte[DataHelper.getASCII(msg).length];
         byte aesDecr[] = new byte[aesEncr.length];
         _context.aes().encrypt(DataHelper.getASCII(msg), 0, aesEncr, 0, sessionKey, iv, aesEncr.length);
         _context.aes().decrypt(aesEncr, 0, aesDecr, 0, sessionKey, iv, aesEncr.length);
         h = SHA256Generator.getInstance().calculateHash(aesDecr);
-        
+
         assertEquals(msg, new String(aesDecr));
     }
-    
-    public void testAES(){
+
+    public void testAES() {
         SessionKey sessionKey = KeyGenerator.getInstance().generateSessionKey();
         Hash h = SHA256Generator.getInstance().calculateHash(sessionKey.getData());
         byte iv[] = new byte[16];
         System.arraycopy(h.getData(), 0, iv, 0, 16);
-        
+
         String msg = "Hello world";
-        
+
         ElGamalAESEngine e = new ElGamalAESEngine(_context);
         byte encrypted[] = e.encryptAESBlock(DataHelper.getASCII(msg), sessionKey, iv, null, null, 64);
         Set<SessionTag> foundTags = new HashSet<SessionTag>();
         SessionKey foundKey = new SessionKey();
         byte decrypted[] = null;
-        try{
+        try {
             decrypted = e.decryptAESBlock(encrypted, 0, encrypted.length, sessionKey, iv, null, foundTags, foundKey);
-        }catch(DataFormatException dfe){
+        } catch(DataFormatException dfe) {
             dfe.printStackTrace();
             fail();
         }
@@ -173,12 +173,12 @@ public class ElGamalTest extends TestCase{
         String read = new String(decrypted);
         assertEquals(msg, read);
     }
-    
-    public void testRoundTrip(){
+
+    public void testRoundTrip() {
         Object keys[] = KeyGenerator.getInstance().generatePKIKeypair();
         PublicKey pubKey = (PublicKey)keys[0];
         PrivateKey privKey = (PrivateKey)keys[1];
-        
+
         String msg = "Hello world";
         Set toBeDelivered = new HashSet();
         SessionKey key = _context.sessionKeyManager().getCurrentKey(pubKey);
@@ -187,9 +187,9 @@ public class ElGamalTest extends TestCase{
         ElGamalAESEngine e = new ElGamalAESEngine(_context);
         byte[] encrypted = e.encrypt(DataHelper.getASCII(msg), pubKey, key, null, null, 64);
         byte[] decrypted = null;
-        try{
+        try {
             decrypted = e.decrypt(encrypted, privKey, _context.sessionKeyManager());
-        }catch(DataFormatException dfe){
+        } catch(DataFormatException dfe) {
             dfe.printStackTrace();
             fail();
         }
@@ -197,101 +197,101 @@ public class ElGamalTest extends TestCase{
         String read = new String(decrypted);
         assertEquals(msg, read);
     }
-    
-    public void testElGamal(){
+
+    public void testElGamal() {
         for (int i = 0; i < 2; i++) {
             Object keys[] = KeyGenerator.getInstance().generatePKIKeypair();
             PublicKey pubKey = (PublicKey)keys[0];
             PrivateKey privKey = (PrivateKey)keys[1];
             SessionKey key = KeyGenerator.getInstance().generateSessionKey();
-            
+
             ByteArrayOutputStream elgSrc = new ByteArrayOutputStream(256);
-            try{
+            try {
                 key.writeBytes(elgSrc);
-            }catch(DataFormatException dfe){
+            } catch(DataFormatException dfe) {
                 dfe.printStackTrace();
                 fail();
-            }catch(IOException ioe){
+            } catch(IOException ioe) {
                 ioe.printStackTrace();
                 fail();
             }
-            
+
             byte preIV[] = new byte[32];
             RandomSource.getInstance().nextBytes(preIV);
-            try{
+            try {
                 elgSrc.write(preIV);
                 elgSrc.flush();
-            }catch(IOException ioe){
+            } catch(IOException ioe) {
                 ioe.printStackTrace();
                 fail();
             }
-            
-            
+
+
             byte elgEncr[] = _context.elGamalEngine().encrypt(elgSrc.toByteArray(), pubKey);
             byte elgDecr[] = _context.elGamalEngine().decrypt(elgEncr, privKey);
-            
+
             ByteArrayInputStream bais = new ByteArrayInputStream(elgDecr);
             SessionKey nk = new SessionKey();
-            
-            try{
+
+            try {
                 nk.readBytes(bais);
-            }catch(DataFormatException dfe){
+            } catch(DataFormatException dfe) {
                 dfe.printStackTrace();
                 fail();
-            }catch(IOException ioe){
+            } catch(IOException ioe) {
                 ioe.printStackTrace();
                 fail();
             }
             byte postpreIV[] = new byte[32];
-            
+
             int read = 0;
-            try{
+            try {
                 read = bais.read(postpreIV);
-            }catch(IOException ioe){
+            } catch(IOException ioe) {
                 ioe.printStackTrace();
                 fail();
             }
-            
+
             assertEquals(read, postpreIV.length);
-            
-            
+
+
             assertTrue(DataHelper.eq(preIV, postpreIV));
             assertEquals(key, nk);
         }
     }
-    
-    public void testLoop(){
+
+    public void testLoop() {
         ElGamalAESEngine e = new ElGamalAESEngine(_context);
-        for(int i = 0; i < 5; i++){
+        for(int i = 0; i < 5; i++) {
             Object keys[] = KeyGenerator.getInstance().generatePKIKeypair();
             PublicKey pubKey = (PublicKey)keys[0];
             PrivateKey privKey = (PrivateKey)keys[1];
-            
+
             byte[] msg = new byte[400];
             RandomSource.getInstance().nextBytes(msg);
             SessionKey key = _context.sessionKeyManager().getCurrentKey(pubKey);
             if (key == null)
                 key = _context.sessionKeyManager().createSession(pubKey);
-            
+
             byte[] encrypted = e.encrypt(msg, pubKey, key, null, null, 1024);
             byte[] decrypted = null;
-            try{
+            try {
                 decrypted = e.decrypt(encrypted, privKey, _context.sessionKeyManager());
-            }catch(DataFormatException dfe){
+            } catch(DataFormatException dfe) {
                 dfe.printStackTrace();
                 fail();
             }
-            
+
             assertTrue(DataHelper.eq(msg, decrypted));
         }
     }
-    
-    public void testVerifySelf(){
+
+    public void testVerifySelf() {
         Object keypair[] = _context.keyGenerator().generatePKIKeypair();
         PublicKey pub = (PublicKey)keypair[0];
         PrivateKey priv = (PrivateKey)keypair[1];
 
-        for (int i = 0; i < UNENCRYPTED.length; i++) { 
+        for (int i = 0; i < UNENCRYPTED.length; i++) {
             byte orig[] = DataHelper.getASCII(UNENCRYPTED[i]);
 
             byte encrypted[] = _context.elGamalEngine().encrypt(orig, pub);
@@ -300,14 +300,14 @@ public class ElGamalTest extends TestCase{
             assertTrue(DataHelper.eq(decrypted, orig));
         }
     }
-    
-    public void testVerifyCompatability(){
+
+    public void testVerifyCompatability() {
         PublicKey pub = new PublicKey();
         PrivateKey priv = new PrivateKey();
-        try{
+        try {
             pub.fromBase64(PUBLIC_KEY);
             priv.fromBase64(PRIVATE_KEY);
-        }catch(DataFormatException dfe){
+        } catch(DataFormatException dfe) {
             dfe.printStackTrace();
             fail();
         }
@@ -319,8 +319,8 @@ public class ElGamalTest extends TestCase{
             assertTrue(DataHelper.eq(decrypted, DataHelper.getASCII(UNENCRYPTED[i])));
         }
     }
-    
-    public void testMultiple(){
+
+    public void testMultiple() {
         Object[] keys = KeyGenerator.getInstance().generatePKIKeypair();
         byte[] message = new byte[222];
         for (int x = 0; x < 25; x++) {
@@ -328,15 +328,15 @@ public class ElGamalTest extends TestCase{
             keys = KeyGenerator.getInstance().generatePKIKeypair();
             PublicKey pubkey = (PublicKey)keys[0];
             PrivateKey privkey = (PrivateKey)keys[1];
-            
+
             byte[] e = _context.elGamalEngine().encrypt(message, pubkey);
             byte[] d = _context.elGamalEngine().decrypt(e, privkey);
-            
+
             assertTrue(DataHelper.eq(d, message));
         }
     }
-    
-    public void testElGamalAESEngine() throws Exception{
+
+    public void testElGamalAESEngine() throws Exception {
         I2PAppContext ctx = I2PAppContext.getGlobalContext();
         ElGamalAESEngine e = new ElGamalAESEngine(ctx);
         Object kp[] = ctx.keyGenerator().generatePKIKeypair();
@@ -352,12 +352,12 @@ public class ElGamalTest extends TestCase{
             byte encrypted[] = e.encrypt(DataHelper.getASCII("blah"), pubKey, sessionKey, tags, null, 1024);
             byte decrypted[] = e.decrypt(encrypted, privKey, _context.sessionKeyManager());
             assertEquals("blah", new String(decrypted));
-                
+
             ctx.sessionKeyManager().tagsDelivered(pubKey, sessionKey, tags);
         }
     }
-    
-    public void testElGamalEngine(){
+
+    public void testElGamalEngine() {
         int numRuns = 10;
         RandomSource.getInstance().nextBoolean();
         I2PAppContext context = I2PAppContext.getGlobalContext();
@@ -375,16 +375,16 @@ public class ElGamalTest extends TestCase{
             assertTrue(DataHelper.eq(decr, buf));
         }
     }
-    
-/****
-Package private, move back to net.i2p.crypto if we want to test it
-    public void testYKGen(){
-        RandomSource.getInstance().nextBoolean();
-        I2PAppContext context = I2PAppContext.getGlobalContext();
-        YKGenerator ykgen = new YKGenerator(context);
-        for (int i = 0; i < 5; i++) {
-            ykgen.getNextYK();
+
+    /****
+    Package private, move back to net.i2p.crypto if we want to test it
+        public void testYKGen(){
+            RandomSource.getInstance().nextBoolean();
+            I2PAppContext context = I2PAppContext.getGlobalContext();
+            YKGenerator ykgen = new YKGenerator(context);
+            for (int i = 0; i < 5; i++) {
+                ykgen.getNextYK();
+            }
         }
-    }
-****/
+    ****/
 }

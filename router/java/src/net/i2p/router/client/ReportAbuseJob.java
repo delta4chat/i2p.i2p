@@ -38,8 +38,10 @@ class ReportAbuseJob extends JobImpl {
         _reason = reason;
         _severity = severity;
     }
-    
-    public String getName() { return "Report Abuse"; }
+
+    public String getName() {
+        return "Report Abuse";
+    }
 
     public void runJob() {
         if (_runner.isDead()) return;

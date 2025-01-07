@@ -54,7 +54,7 @@ class UDPReceiver {
         _context.statManager().createRateStat("udp.ignorePacketFromDroplist", "Packet lifetime for those dropped on the drop list", "udp", UDPTransport.RATES);
         _context.statManager().createRateStat("udp.receiveFailsafe", "limiter stuck?", "udp", new long[] { 24*60*60*1000L });
     }
-    
+
     /**
      *  Cannot be restarted (socket is final)
      */
@@ -64,75 +64,75 @@ class UDPReceiver {
         I2PThread t = new I2PThread(_runner, _name, true);
         t.start();
     }
-    
+
     public synchronized void shutdown() {
         _keepRunning = false;
     }
-    
-/*********
-    private void adjustDropProbability() {
-        String p = _context.getProperty("i2np.udp.dropProbability");
-        if (p != null) {
-            try { 
-                ARTIFICIAL_DROP_PROBABILITY = Integer.parseInt(p);
-            } catch (NumberFormatException nfe) {}
-            if (ARTIFICIAL_DROP_PROBABILITY < 0) ARTIFICIAL_DROP_PROBABILITY = 0;
-        } else {
-            //ARTIFICIAL_DROP_PROBABILITY = 0;
+
+    /*********
+        private void adjustDropProbability() {
+            String p = _context.getProperty("i2np.udp.dropProbability");
+            if (p != null) {
+                try {
+                    ARTIFICIAL_DROP_PROBABILITY = Integer.parseInt(p);
+                } catch (NumberFormatException nfe) {}
+                if (ARTIFICIAL_DROP_PROBABILITY < 0) ARTIFICIAL_DROP_PROBABILITY = 0;
+            } else {
+                //ARTIFICIAL_DROP_PROBABILITY = 0;
+            }
         }
-    }
-**********/
-    
+    **********/
+
     /**
-     * Replace the old listen port with the new one, returning the old. 
+     * Replace the old listen port with the new one, returning the old.
      * NOTE: this closes the old socket so that blocking calls unblock!
      *
      */
-/*********
-    public DatagramSocket updateListeningPort(DatagramSocket socket, int newPort) {
-        return _runner.updateListeningPort(socket, newPort);
-    }
-**********/
+    /*********
+        public DatagramSocket updateListeningPort(DatagramSocket socket, int newPort) {
+            return _runner.updateListeningPort(socket, newPort);
+        }
+    **********/
 
     /** if a packet been sitting in the queue for a full second (meaning the handlers are overwhelmed), drop subsequent packets */
     private static final long MAX_QUEUE_PERIOD = 2*1000;
-    
-/*********
-    private static int ARTIFICIAL_DROP_PROBABILITY = 0; // 4
-    
-    private static final int ARTIFICIAL_DELAY = 0; // 200;
-    private static final int ARTIFICIAL_DELAY_BASE = 0; //600;
-**********/
-    
+
+    /*********
+        private static int ARTIFICIAL_DROP_PROBABILITY = 0; // 4
+
+        private static final int ARTIFICIAL_DELAY = 0; // 200;
+        private static final int ARTIFICIAL_DELAY_BASE = 0; //600;
+    **********/
+
     /** @return zero (was queue size) */
     private int receive(UDPPacket packet) {
-/*********
-        //adjustDropProbability();
-        
-        if (ARTIFICIAL_DROP_PROBABILITY > 0) { 
-            // the first check is to let the compiler optimize away this 
-            // random block on the live system when the probability is == 0
-            // (not if it isn't final jr)
-            int v = _context.random().nextInt(100);
-            if (v <= ARTIFICIAL_DROP_PROBABILITY) {
-                if (_log.shouldLog(Log.ERROR))
-                    _log.error("Drop with v=" + v + " p=" + ARTIFICIAL_DROP_PROBABILITY + " packet size: " + packet.getPacket().getLength() + ": " + packet);
-                _context.statManager().addRateData("udp.droppedInboundProbabalistically", 1, 0);
-                return -1;
-            } else {
-                _context.statManager().addRateData("udp.acceptedInboundProbabalistically", 1, 0);
-            }
-        }
-        
-        if ( (ARTIFICIAL_DELAY > 0) || (ARTIFICIAL_DELAY_BASE > 0) ) {
-            long delay = ARTIFICIAL_DELAY_BASE + _context.random().nextInt(ARTIFICIAL_DELAY);
-            if (_log.shouldLog(Log.INFO))
-                _log.info("Delay packet " + packet + " for " + delay);
-            SimpleTimer2.getInstance().addEvent(new ArtificiallyDelayedReceive(packet), delay);
-            return -1;
-        }
-**********/
-        
+        /*********
+                //adjustDropProbability();
+
+                if (ARTIFICIAL_DROP_PROBABILITY > 0) {
+                    // the first check is to let the compiler optimize away this
+                    // random block on the live system when the probability is == 0
+                    // (not if it isn't final jr)
+                    int v = _context.random().nextInt(100);
+                    if (v <= ARTIFICIAL_DROP_PROBABILITY) {
+                        if (_log.shouldLog(Log.ERROR))
+                            _log.error("Drop with v=" + v + " p=" + ARTIFICIAL_DROP_PROBABILITY + " packet size: " + packet.getPacket().getLength() + ": " + packet);
+                        _context.statManager().addRateData("udp.droppedInboundProbabalistically", 1, 0);
+                        return -1;
+                    } else {
+                        _context.statManager().addRateData("udp.acceptedInboundProbabalistically", 1, 0);
+                    }
+                }
+
+                if ( (ARTIFICIAL_DELAY > 0) || (ARTIFICIAL_DELAY_BASE > 0) ) {
+                    long delay = ARTIFICIAL_DELAY_BASE + _context.random().nextInt(ARTIFICIAL_DELAY);
+                    if (_log.shouldLog(Log.INFO))
+                        _log.info("Delay packet " + packet + " for " + delay);
+                    SimpleTimer2.getInstance().addEvent(new ArtificiallyDelayedReceive(packet), delay);
+                    return -1;
+                }
+        **********/
+
         return doReceive(packet);
     }
 
@@ -147,7 +147,7 @@ class UDPReceiver {
 
         if (_log.shouldLog(Log.INFO))
             _log.info("Received: " + packet);
-        
+
         RemoteHostId from = packet.getRemoteHost();
         if (_transport.isInDropList(from)) {
             if (_log.shouldLog(Log.INFO))
@@ -165,58 +165,58 @@ class UDPReceiver {
             return 0;
         }
 
-/****
-        packet.enqueue();
-        boolean rejected = false;
-        int queueSize = 0;
-        long headPeriod = 0;
+        /****
+                packet.enqueue();
+                boolean rejected = false;
+                int queueSize = 0;
+                long headPeriod = 0;
 
-            UDPPacket head = _inboundQueue.peek();
-            if (head != null) {
-                headPeriod = head.getLifetime();
-                if (headPeriod > MAX_QUEUE_PERIOD) {
-                    rejected = true;
-                }
-            }
-            if (!rejected) {
-****/
-                try {
-                    _handler.queueReceived(packet);
-                } catch (InterruptedException ie) {
-                    packet.release();
-                    _keepRunning = false;
-                }
-                //return queueSize + 1;
-                return 0;
-/****
-            }
-        
-        // rejected
-        packet.release();
-        _context.statManager().addRateData("udp.droppedInbound", queueSize, headPeriod);
-        if (_log.shouldLog(Log.WARN)) {
-            queueSize = _inboundQueue.size();
-            StringBuilder msg = new StringBuilder();
-            msg.append("Dropping inbound packet with ");
-            msg.append(queueSize);
-            msg.append(" queued for ");
-            msg.append(headPeriod);
-            msg.append(" packet handlers: ").append(_transport.getPacketHandlerStatus());
-            _log.warn(msg.toString());
+                    UDPPacket head = _inboundQueue.peek();
+                    if (head != null) {
+                        headPeriod = head.getLifetime();
+                        if (headPeriod > MAX_QUEUE_PERIOD) {
+                            rejected = true;
+                        }
+                    }
+                    if (!rejected) {
+        ****/
+        try {
+            _handler.queueReceived(packet);
+        } catch (InterruptedException ie) {
+            packet.release();
+            _keepRunning = false;
         }
-        return queueSize;
-****/
+        //return queueSize + 1;
+        return 0;
+        /****
+                    }
+
+                // rejected
+                packet.release();
+                _context.statManager().addRateData("udp.droppedInbound", queueSize, headPeriod);
+                if (_log.shouldLog(Log.WARN)) {
+                    queueSize = _inboundQueue.size();
+                    StringBuilder msg = new StringBuilder();
+                    msg.append("Dropping inbound packet with ");
+                    msg.append(queueSize);
+                    msg.append(" queued for ");
+                    msg.append(headPeriod);
+                    msg.append(" packet handlers: ").append(_transport.getPacketHandlerStatus());
+                    _log.warn(msg.toString());
+                }
+                return queueSize;
+        ****/
     }
-    
-  /****
-    private class ArtificiallyDelayedReceive implements SimpleTimer.TimedEvent {
-        private UDPPacket _packet;
-        public ArtificiallyDelayedReceive(UDPPacket packet) { _packet = packet; }
-        public void timeReached() { doReceive(_packet); }
-    }
-  ****/
-    
-    
+
+    /****
+      private class ArtificiallyDelayedReceive implements SimpleTimer.TimedEvent {
+          private UDPPacket _packet;
+          public ArtificiallyDelayedReceive(UDPPacket packet) { _packet = packet; }
+          public void timeReached() { doReceive(_packet); }
+      }
+    ****/
+
+
     private class Runner implements Runnable {
         //private volatile boolean _socketChanged;
 
@@ -234,24 +234,27 @@ class UDPReceiver {
                 // http://code.google.com/p/android/issues/detail?id=24748
                 if (_isAndroid)
                     dpacket.setLength(UDPPacket.MAX_PACKET_SIZE);
-                
+
                 // block before we read...
                 //if (_log.shouldLog(Log.DEBUG))
                 //    _log.debug("Before throttling receive");
                 while (!_context.throttle().acceptNetworkMessage())
-                    try { Thread.sleep(10); } catch (InterruptedException ie) {}
-                
+                    try {
+                        Thread.sleep(10);
+                    }
+                    catch (InterruptedException ie) {}
+
                 try {
                     //if (_log.shouldLog(Log.INFO))
                     //    _log.info("Before blocking socket.receive on " + System.identityHashCode(packet));
                     //synchronized (Runner.this) {
-                        _socket.receive(dpacket);
+                    _socket.receive(dpacket);
                     //}
                     int size = dpacket.getLength();
                     //if (_log.shouldDebug())
                     //    _log.debug("After blocking socket.receive: packet is " + size + " bytes on " + System.identityHashCode(packet));
                     packet.resetBegin();
-            
+
                     // and block after we know how much we read but before
                     // we release the packet to the inbound queue
                     if (size >= UDPPacket.MAX_PACKET_SIZE) {
@@ -265,7 +268,7 @@ class UDPReceiver {
                         //FIFOBandwidthLimiter.Request req = _context.bandwidthLimiter().requestInbound(size, "UDP receiver");
                         //_context.bandwidthLimiter().requestInbound(req, size, "UDP receiver");
                         FIFOBandwidthLimiter.Request req =
-                              _context.bandwidthLimiter().requestInbound(size, "UDP receiver");
+                            _context.bandwidthLimiter().requestInbound(size, "UDP receiver");
                         // failsafe, don't wait forever
                         int waitCount = 0;
                         while (req.getPendingRequested() > 0 && waitCount++ < 5) {
@@ -276,7 +279,7 @@ class UDPReceiver {
                             req.abort();
                             _context.statManager().addRateData("udp.receiveFailsafe", 1);
                         }
-                        
+
                         receive(packet);
                         //_context.statManager().addRateData("udp.receivePacketSize", size);
                     } else {
@@ -290,8 +293,8 @@ class UDPReceiver {
                     //    if (_log.shouldLog(Log.INFO))
                     //        _log.info("Changing ports...");
                     //} else {
-                        if (_log.shouldLog(Log.WARN))
-                            _log.warn("Error receiving", ioe);
+                    if (_log.shouldLog(Log.WARN))
+                        _log.warn("Error receiving", ioe);
                     //}
                     packet.release();
                     if (_socket.isClosed()) {
@@ -301,27 +304,30 @@ class UDPReceiver {
                         }
                     } else if (_keepRunning) {
                         // TODO count consecutive errors, give up after too many?
-                        try { Thread.sleep(100); } catch (InterruptedException ie) {}
+                        try {
+                            Thread.sleep(100);
+                        }
+                        catch (InterruptedException ie) {}
                     }
                 }
             }
             if (_log.shouldLog(Log.WARN))
                 _log.warn("Stop receiving on " + _endpoint);
         }
-        
-     /******
-        public DatagramSocket updateListeningPort(DatagramSocket socket, int newPort) {
-            _name = "UDPReceive on " + newPort;
-            DatagramSocket old = null;
-            synchronized (Runner.this) {
-                old = _socket;
-                _socket = socket;
-            }
-            _socketChanged = true;
-            // ok, its switched, now lets break any blocking calls
-            old.close();
-            return old;
-        }
-      *****/
+
+        /******
+           public DatagramSocket updateListeningPort(DatagramSocket socket, int newPort) {
+               _name = "UDPReceive on " + newPort;
+               DatagramSocket old = null;
+               synchronized (Runner.this) {
+                   old = _socket;
+                   _socket = socket;
+               }
+               _socketChanged = true;
+               // ok, its switched, now lets break any blocking calls
+               old.close();
+               return old;
+           }
+         *****/
     }
 }

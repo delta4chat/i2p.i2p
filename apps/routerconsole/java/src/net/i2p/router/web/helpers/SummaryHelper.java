@@ -98,7 +98,7 @@ public class SummaryHelper extends HelperBase {
         "Destinations" + S +
         "";
 
-     /** @since 0.9.32 */
+    /** @since 0.9.32 */
     static final String DEFAULT_MINIMAL_ADVANCED =
         "AdvancedRouterInfo" + S +
         "MemoryBar" + S +
@@ -116,7 +116,7 @@ public class SummaryHelper extends HelperBase {
      * the current JVM at the given context.
      *
      */
-    public String getIdent() { 
+    public String getIdent() {
         if (_context == null) return "[no router]";
 
         if (_context.routerHash() != null)
@@ -128,47 +128,49 @@ public class SummaryHelper extends HelperBase {
      * Retrieve the version number of the router.
      *
      */
-    public String getVersion() { 
+    public String getVersion() {
         return RouterVersion.FULL_VERSION;
     }
     /**
      * Retrieve a pretty printed uptime count (ala 4d or 7h or 39m)
      *
      */
-    public String getUptime() { 
+    public String getUptime() {
         if (_context == null) return "[no router]";
 
         Router router = _context.router();
-        if (router == null) 
+        if (router == null)
             return "[not up]";
         else
             return DataHelper.formatDuration2(router.getUptime());
     }
 
-/**
-    this displayed offset, not skew - now handled in reachability()
+    /**
+        this displayed offset, not skew - now handled in reachability()
 
-    private String timeSkew() {
-        if (_context == null) return "";
-        //if (!_context.clock().getUpdatedSuccessfully())
-        //    return " (Unknown skew)";
-        long ms = _context.clock().getOffset();
-        long diff = Math.abs(ms);
-        if (diff < 3000)
-            return "";
-        return " (" + DataHelper.formatDuration2(diff) + " " + _t("skew") + ")";
-    }
-**/
+        private String timeSkew() {
+            if (_context == null) return "";
+            //if (!_context.clock().getUpdatedSuccessfully())
+            //    return " (Unknown skew)";
+            long ms = _context.clock().getOffset();
+            long diff = Math.abs(ms);
+            if (diff < 3000)
+                return "";
+            return " (" + DataHelper.formatDuration2(diff) + " " + _t("skew") + ")";
+        }
+    **/
 
     /** allowReseed */
     public boolean allowReseed() {
         return _context.netDb().isInitialized() &&
                (_context.netDb().getKnownRouters() < ReseedChecker.MINIMUM) ||
-                _context.getBooleanProperty("i2p.alwaysAllowReseed");
+               _context.getBooleanProperty("i2p.alwaysAllowReseed");
     }
 
     /** subtract one for ourselves, so if we know no other peers it displays zero */
-    public int getAllPeers() { return Math.max(_context.netDb().getKnownRouters() - 1, 0); }
+    public int getAllPeers() {
+        return Math.max(_context.netDb().getKnownRouters() - 1, 0);
+    }
 
     public enum NetworkState {
         HIDDEN,
@@ -224,13 +226,13 @@ public class SummaryHelper extends HelperBase {
     private NetworkStateMessage reachability() {
         if (_context.commSystem().isDummy())
             return new NetworkStateMessage(NetworkState.VMCOMM, "VM Comm System");
-/*
-        if (_context.router().getUptime() > 60*1000 &&
-            !_context.clientManager().isAlive() &&
-            !_context.router().gracefulShutdownInProgress() &&
-            !_context.router().isRestarting())
-            return new NetworkStateMessage(NetworkState.ERROR, _t("ERR-Client Manager I2CP Error - check logs"));  // not a router problem but the user should know
-*/
+        /*
+                if (_context.router().getUptime() > 60*1000 &&
+                    !_context.clientManager().isAlive() &&
+                    !_context.router().gracefulShutdownInProgress() &&
+                    !_context.router().isRestarting())
+                    return new NetworkStateMessage(NetworkState.ERROR, _t("ERR-Client Manager I2CP Error - check logs"));  // not a router problem but the user should know
+        */
         // Warn based on actual skew from peers, not update status, so if we successfully offset
         // the clock, we don't complain.
         //if (!_context.clock().getUpdatedSuccessfully())
@@ -248,72 +250,72 @@ public class SummaryHelper extends HelperBase {
         String txstatus = _context.commSystem().getLocalizedStatusString();
         NetworkState state = NetworkState.RUNNING;
         switch (status) {
-            case OK:
-            case IPV4_OK_IPV6_UNKNOWN:
-            case IPV4_OK_IPV6_FIREWALLED:
-            case IPV4_UNKNOWN_IPV6_OK:
-            case IPV4_DISABLED_IPV6_OK:
-            case IPV4_SNAT_IPV6_OK:
-                List<RouterAddress> ras = routerInfo.getTargetAddresses("NTCP", "NTCP2");
-                if (ras.isEmpty())
-                    return new NetworkStateMessage(NetworkState.RUNNING, txstatus);
-                byte[] ip = null;
-                for (RouterAddress ra : ras) {
-                    ip = ra.getIP();
-                    if (ip != null)
-                        break;
-                }
-                if (ip == null) {
-                    // Usually a transient issue during state transitions, possibly with hidden mod, don't show this
-                    // NTCP2 addresses may not have an IP
-                    //return new NetworkStateMessage(NetworkState.ERROR, _t("ERR-Unresolved TCP Address"));
-                    return new NetworkStateMessage(NetworkState.RUNNING, txstatus);
-                }
-                // TODO set IPv6 arg based on configuration?
-                if (TransportUtil.isPubliclyRoutable(ip, true))
-                    return new NetworkStateMessage(NetworkState.RUNNING, txstatus);
-                return new NetworkStateMessage(NetworkState.ERROR, fixup(_t("ERR-Private TCP Address")));
+        case OK:
+        case IPV4_OK_IPV6_UNKNOWN:
+        case IPV4_OK_IPV6_FIREWALLED:
+        case IPV4_UNKNOWN_IPV6_OK:
+        case IPV4_DISABLED_IPV6_OK:
+        case IPV4_SNAT_IPV6_OK:
+            List<RouterAddress> ras = routerInfo.getTargetAddresses("NTCP", "NTCP2");
+            if (ras.isEmpty())
+                return new NetworkStateMessage(NetworkState.RUNNING, txstatus);
+            byte[] ip = null;
+            for (RouterAddress ra : ras) {
+                ip = ra.getIP();
+                if (ip != null)
+                    break;
+            }
+            if (ip == null) {
+                // Usually a transient issue during state transitions, possibly with hidden mod, don't show this
+                // NTCP2 addresses may not have an IP
+                //return new NetworkStateMessage(NetworkState.ERROR, _t("ERR-Unresolved TCP Address"));
+                return new NetworkStateMessage(NetworkState.RUNNING, txstatus);
+            }
+            // TODO set IPv6 arg based on configuration?
+            if (TransportUtil.isPubliclyRoutable(ip, true))
+                return new NetworkStateMessage(NetworkState.RUNNING, txstatus);
+            return new NetworkStateMessage(NetworkState.ERROR, fixup(_t("ERR-Private TCP Address")));
 
-            case IPV4_SNAT_IPV6_UNKNOWN:
-            case DIFFERENT:
-                return new NetworkStateMessage(NetworkState.ERROR, fixup(_t("ERR-SymmetricNAT")));
+        case IPV4_SNAT_IPV6_UNKNOWN:
+        case DIFFERENT:
+            return new NetworkStateMessage(NetworkState.ERROR, fixup(_t("ERR-SymmetricNAT")));
 
-            case REJECT_UNSOLICITED:
-                state = NetworkState.FIREWALLED;
-            case IPV4_DISABLED_IPV6_FIREWALLED:
-                if (routerInfo.getTargetAddress("NTCP") != null)
-                    return new NetworkStateMessage(NetworkState.WARN, fixup(_t("WARN-Firewalled with Inbound TCP Enabled")));
-                // fall through...
-            case IPV4_FIREWALLED_IPV6_OK:
-            case IPV4_FIREWALLED_IPV6_UNKNOWN:
-                if ((_context.netDb()).floodfillEnabled())
-                    return new NetworkStateMessage(NetworkState.WARN, fixup(_t("WARN-Firewalled and Floodfill")));
-                //if (_context.router().getRouterInfo().getCapabilities().indexOf('O') >= 0)
-                //    return new NetworkStateMessage(NetworkState.WARN, _t("WARN-Firewalled and Fast"));
-                return new NetworkStateMessage(state, txstatus);
+        case REJECT_UNSOLICITED:
+            state = NetworkState.FIREWALLED;
+        case IPV4_DISABLED_IPV6_FIREWALLED:
+            if (routerInfo.getTargetAddress("NTCP") != null)
+                return new NetworkStateMessage(NetworkState.WARN, fixup(_t("WARN-Firewalled with Inbound TCP Enabled")));
+        // fall through...
+        case IPV4_FIREWALLED_IPV6_OK:
+        case IPV4_FIREWALLED_IPV6_UNKNOWN:
+            if ((_context.netDb()).floodfillEnabled())
+                return new NetworkStateMessage(NetworkState.WARN, fixup(_t("WARN-Firewalled and Floodfill")));
+            //if (_context.router().getRouterInfo().getCapabilities().indexOf('O') >= 0)
+            //    return new NetworkStateMessage(NetworkState.WARN, _t("WARN-Firewalled and Fast"));
+            return new NetworkStateMessage(state, txstatus);
 
-            case DISCONNECTED:
-                return new NetworkStateMessage(NetworkState.TESTING, _t("Disconnected - check network connection"));
+        case DISCONNECTED:
+            return new NetworkStateMessage(NetworkState.TESTING, _t("Disconnected - check network connection"));
 
-            case HOSED:
-                return new NetworkStateMessage(NetworkState.ERROR, fixup(_t("ERR-UDP Port In Use - Set i2np.udp.internalPort=xxxx in advanced config and restart")));
+        case HOSED:
+            return new NetworkStateMessage(NetworkState.ERROR, fixup(_t("ERR-UDP Port In Use - Set i2np.udp.internalPort=xxxx in advanced config and restart")));
 
-            case UNKNOWN:
-                state = NetworkState.TESTING;
-            case IPV4_UNKNOWN_IPV6_FIREWALLED:
-            case IPV4_DISABLED_IPV6_UNKNOWN:
-            default:
-                List<RouterAddress> ra = routerInfo.getTargetAddresses("SSU", "SSU2");
-                if (ra.isEmpty() && _context.router().getUptime() > 5*60*1000) {
-                    if (getActivePeers() <= 0)
-                        return new NetworkStateMessage(NetworkState.ERROR, fixup(_t("ERR-No Active Peers, Check Network Connection and Firewall")));
-                    else if (_context.getProperty(ConfigNetHelper.PROP_I2NP_NTCP_HOSTNAME) == null ||
-                        _context.getProperty(ConfigNetHelper.PROP_I2NP_NTCP_PORT) == null)
-                        return new NetworkStateMessage(NetworkState.ERROR, fixup(_t("ERR-UDP Disabled and Inbound TCP host/port not set")));
-                    else
-                        return new NetworkStateMessage(NetworkState.WARN, fixup(_t("WARN-Firewalled with UDP Disabled")));
-                }
-                return new NetworkStateMessage(state, txstatus);
+        case UNKNOWN:
+            state = NetworkState.TESTING;
+        case IPV4_UNKNOWN_IPV6_FIREWALLED:
+        case IPV4_DISABLED_IPV6_UNKNOWN:
+        default:
+            List<RouterAddress> ra = routerInfo.getTargetAddresses("SSU", "SSU2");
+            if (ra.isEmpty() && _context.router().getUptime() > 5*60*1000) {
+                if (getActivePeers() <= 0)
+                    return new NetworkStateMessage(NetworkState.ERROR, fixup(_t("ERR-No Active Peers, Check Network Connection and Firewall")));
+                else if (_context.getProperty(ConfigNetHelper.PROP_I2NP_NTCP_HOSTNAME) == null ||
+                         _context.getProperty(ConfigNetHelper.PROP_I2NP_NTCP_PORT) == null)
+                    return new NetworkStateMessage(NetworkState.ERROR, fixup(_t("ERR-UDP Disabled and Inbound TCP host/port not set")));
+                else
+                    return new NetworkStateMessage(NetworkState.WARN, fixup(_t("WARN-Firewalled with UDP Disabled")));
+            }
+            return new NetworkStateMessage(state, txstatus);
         }
     }
 
@@ -603,12 +605,12 @@ public class SummaryHelper extends HelperBase {
         buf.append("<h3>");
         if (link) {
             buf.append("<a href=\"/i2ptunnelmgr\" target=\"_top\" title=\"")
-           .append(_t("Add/remove/edit &amp; control your client and server tunnels"))
-           .append("\">");
+            .append(_t("Add/remove/edit &amp; control your client and server tunnels"))
+            .append("\">");
         }
         buf.append(_t("Local Tunnels"));
         if (link) {
-           buf.append("</a>");
+            buf.append("</a>");
         }
         buf.append("</h3><hr class=\"b\">");
         if (!clients.isEmpty()) {
@@ -745,7 +747,7 @@ public class SummaryHelper extends HelperBase {
         else
             return _context.tunnelManager().getParticipatingCount();
     }
- 
+
     /** @since 0.7.10 */
     public String getShareRatio() {
         if (_context == null)
@@ -770,9 +772,9 @@ public class SummaryHelper extends HelperBase {
         Rate lagRate = rs.getRate(60*1000);
         return DataHelper.formatDuration2((long)lagRate.getAverageValue());
     }
- 
+
     /**
-     * How long it takes us to pump out a message, averaged over the last minute 
+     * How long it takes us to pump out a message, averaged over the last minute
      * (pretty printed with the units attached)
      *
      */
@@ -855,8 +857,8 @@ public class SummaryHelper extends HelperBase {
                 dver = NewsHelper.unsignedVersionDownloaded();
         }
         if (dver != null &&
-            !NewsHelper.isUpdateInProgress() &&
-            !_context.router().gracefulShutdownInProgress()) {
+                !NewsHelper.isUpdateInProgress() &&
+                !_context.router().gracefulShutdownInProgress()) {
             if (needSpace)
                 buf.append("<hr>");
             else
@@ -876,8 +878,8 @@ public class SummaryHelper extends HelperBase {
         String unsignedConstraint = unsignedAvail ? NewsHelper.unsignedUpdateConstraint() : null;
         String devSU3Constraint = devSU3Avail ? NewsHelper.devSU3UpdateConstraint() : null;
         if (avail && constraint != null &&
-            !NewsHelper.isUpdateInProgress() &&
-            !_context.router().gracefulShutdownInProgress()) {
+                !NewsHelper.isUpdateInProgress() &&
+                !_context.router().gracefulShutdownInProgress()) {
             if (needSpace)
                 buf.append("<hr>");
             else
@@ -888,8 +890,8 @@ public class SummaryHelper extends HelperBase {
             avail = false;
         }
         if (unsignedAvail && unsignedConstraint != null &&
-            !NewsHelper.isUpdateInProgress() &&
-            !_context.router().gracefulShutdownInProgress()) {
+                !NewsHelper.isUpdateInProgress() &&
+                !_context.router().gracefulShutdownInProgress()) {
             if (needSpace)
                 buf.append("<hr>");
             else
@@ -900,8 +902,8 @@ public class SummaryHelper extends HelperBase {
             unsignedAvail = false;
         }
         if (devSU3Avail && devSU3Constraint != null &&
-            !NewsHelper.isUpdateInProgress() &&
-            !_context.router().gracefulShutdownInProgress()) {
+                !NewsHelper.isUpdateInProgress() &&
+                !_context.router().gracefulShutdownInProgress()) {
             if (needSpace)
                 buf.append("<hr>");
             else
@@ -912,45 +914,45 @@ public class SummaryHelper extends HelperBase {
             devSU3Avail = false;
         }
         if ((avail || unsignedAvail || devSU3Avail) &&
-            !_context.commSystem().isDummy() &&
-            !NewsHelper.isUpdateInProgress() &&
-            !_context.router().gracefulShutdownInProgress() &&
-            _context.portMapper().isRegistered(PortMapper.SVC_HTTP_PROXY) &&  // assume using proxy for now
-            getAction() == null &&
-            getUpdateNonce() == null) {
-                if (needSpace)
-                    buf.append("<hr>");
-                long nonce = _context.random().nextLong();
-                String prev = System.getProperty("net.i2p.router.web.UpdateHandler.nonce");
-                if (prev != null)
-                    System.setProperty("net.i2p.router.web.UpdateHandler.noncePrev", prev);
-                System.setProperty("net.i2p.router.web.UpdateHandler.nonce", nonce+"");
-                String uri = getRequestURI();
-                buf.append("<form action=\"").append(uri).append("\" method=\"POST\">\n");
-                buf.append("<input type=\"hidden\" name=\"updateNonce\" value=\"").append(nonce).append("\" >\n");
-                if (avail) {
-                    buf.append("<button type=\"submit\" class=\"download\" name=\"updateAction\" value=\"signed\" >")
-                       // Note to translators: parameter is a version, e.g. "0.8.4"
-                       .append(_t("Download {0} Update", getUpdateVersion()))
-                       .append("</button><br>\n");
-                }
-                if (devSU3Avail) {
-                    buf.append("<button type=\"submit\" class=\"download\" name=\"updateAction\" value=\"DevSU3\" >")
-                       // Note to translators: parameter is a router version, e.g. "0.9.19-16"
-                       // <br> is optional, to help the browser make the lines even in the button
-                       // If the translation is shorter than the English, you should probably not include <br>
-                       .append(_t("Download Signed<br>Development Update<br>{0}", getDevSU3UpdateVersion()))
-                       .append("</button><br>\n");
-                }
-                if (unsignedAvail) {
-                    buf.append("<button type=\"submit\" class=\"download\" name=\"updateAction\" value=\"Unsigned\" >")
-                       // Note to translators: parameter is a date and time, e.g. "02-Mar 20:34 UTC"
-                       // <br> is optional, to help the browser make the lines even in the button
-                       // If the translation is shorter than the English, you should probably not include <br>
-                       .append(_t("Download Unsigned<br>Update {0}", getUnsignedUpdateVersion()))
-                       .append("</button><br>\n");
-                }
-                buf.append("</form>\n");
+                !_context.commSystem().isDummy() &&
+                !NewsHelper.isUpdateInProgress() &&
+                !_context.router().gracefulShutdownInProgress() &&
+                _context.portMapper().isRegistered(PortMapper.SVC_HTTP_PROXY) &&  // assume using proxy for now
+                getAction() == null &&
+                getUpdateNonce() == null) {
+            if (needSpace)
+                buf.append("<hr>");
+            long nonce = _context.random().nextLong();
+            String prev = System.getProperty("net.i2p.router.web.UpdateHandler.nonce");
+            if (prev != null)
+                System.setProperty("net.i2p.router.web.UpdateHandler.noncePrev", prev);
+            System.setProperty("net.i2p.router.web.UpdateHandler.nonce", nonce+"");
+            String uri = getRequestURI();
+            buf.append("<form action=\"").append(uri).append("\" method=\"POST\">\n");
+            buf.append("<input type=\"hidden\" name=\"updateNonce\" value=\"").append(nonce).append("\" >\n");
+            if (avail) {
+                buf.append("<button type=\"submit\" class=\"download\" name=\"updateAction\" value=\"signed\" >")
+                // Note to translators: parameter is a version, e.g. "0.8.4"
+                .append(_t("Download {0} Update", getUpdateVersion()))
+                .append("</button><br>\n");
+            }
+            if (devSU3Avail) {
+                buf.append("<button type=\"submit\" class=\"download\" name=\"updateAction\" value=\"DevSU3\" >")
+                // Note to translators: parameter is a router version, e.g. "0.9.19-16"
+                // <br> is optional, to help the browser make the lines even in the button
+                // If the translation is shorter than the English, you should probably not include <br>
+                .append(_t("Download Signed<br>Development Update<br>{0}", getDevSU3UpdateVersion()))
+                .append("</button><br>\n");
+            }
+            if (unsignedAvail) {
+                buf.append("<button type=\"submit\" class=\"download\" name=\"updateAction\" value=\"Unsigned\" >")
+                // Note to translators: parameter is a date and time, e.g. "02-Mar 20:34 UTC"
+                // <br> is optional, to help the browser make the lines even in the button
+                // If the translation is shorter than the English, you should probably not include <br>
+                .append(_t("Download Unsigned<br>Update {0}", getUnsignedUpdateVersion()))
+                .append("</button><br>\n");
+            }
+            buf.append("</form>\n");
         }
         return buf.toString();
     }
@@ -971,19 +973,19 @@ public class SummaryHelper extends HelperBase {
         StringBuilder buf = new StringBuilder(256);
         if (showFirewallWarning()) {
             buf.append("<h4 id=\"sb_warning\"><a href=\"/help#configurationhelp\" target=\"_top\" title=\"")
-               .append(_t("Help with firewall configuration"))
-               .append("\">")
-               .append(_t("Check network connection and NAT/firewall"))
-               .append("</a></h4>");
+            .append(_t("Help with firewall configuration"))
+            .append("\">")
+            .append(_t("Check network connection and NAT/firewall"))
+            .append("</a></h4>");
         }
 
         if (DeadlockDetector.isDeadlocked()) {
             buf.append("<div class=\"sb_notice\"><b>")
-               .append(_t("Deadlock detected"))
-               .append(" - <a href=\"/logs\">")
-               .append(_t("Please report"))
-               .append("</a> - ").append(_t("After reporting, please restart your router"))
-               .append("</b></div>");
+            .append(_t("Deadlock detected"))
+            .append(" - <a href=\"/logs\">")
+            .append(_t("Please report"))
+            .append("</a> - ").append(_t("After reporting, please restart your router"))
+            .append("</b></div>");
         }
 
         // checker will be null for DummyNetworkDatabaseFacade
@@ -1019,8 +1021,12 @@ public class SummaryHelper extends HelperBase {
     }
 
     private NewsHelper _newshelper;
-    public void storeNewsHelper(NewsHelper n) { _newshelper = n; }
-    public NewsHelper getNewsHelper() { return _newshelper; }
+    public void storeNewsHelper(NewsHelper n) {
+        _newshelper = n;
+    }
+    public NewsHelper getNewsHelper() {
+        return _newshelper;
+    }
 
     private static final String SS = Character.toString(S);
 
@@ -1054,19 +1060,33 @@ public class SummaryHelper extends HelperBase {
     /* below here is stuff we need to get from summarynoframe.jsp to SummaryBarRenderer */
 
     private String _action;
-    public void setAction(String s) { _action = s == null ? null : DataHelper.stripHTML(s); }
-    public String getAction() { return _action; }
+    public void setAction(String s) {
+        _action = s == null ? null : DataHelper.stripHTML(s);
+    }
+    public String getAction() {
+        return _action;
+    }
 
     private String _consoleNonce;
-    public void setConsoleNonce(String s) { _consoleNonce = s == null ? null : DataHelper.stripHTML(s); }
-    public String getConsoleNonce() { return _consoleNonce; }
+    public void setConsoleNonce(String s) {
+        _consoleNonce = s == null ? null : DataHelper.stripHTML(s);
+    }
+    public String getConsoleNonce() {
+        return _consoleNonce;
+    }
 
     private String _updateNonce;
-    public void setUpdateNonce(String s) { _updateNonce = s == null ? null : DataHelper.stripHTML(s); }
-    public String getUpdateNonce() { return _updateNonce; }
+    public void setUpdateNonce(String s) {
+        _updateNonce = s == null ? null : DataHelper.stripHTML(s);
+    }
+    public String getUpdateNonce() {
+        return _updateNonce;
+    }
 
     private String _requestURI;
-    public void setRequestURI(String s) { _requestURI = s == null ? null : DataHelper.stripHTML(s); }
+    public void setRequestURI(String s) {
+        _requestURI = s == null ? null : DataHelper.stripHTML(s);
+    }
 
     /**
      * @return non-null; "/home" if (strangely) not set by jsp
@@ -1106,102 +1126,102 @@ public class SummaryHelper extends HelperBase {
 
         StringBuilder buf = new StringBuilder(2048);
         buf.append("<table id=\"sidebarconf\"><tr><th title=\"Mark section for removal from the sidebar\">")
-           .append(_t("Remove"))
-           .append("</th><th>")
-           .append(_t("Name"))
-           .append("</th><th colspan=\"2\">")
-           .append(_t("Order"))
-           .append("</th></tr>\n");
+        .append(_t("Remove"))
+        .append("</th><th>")
+        .append(_t("Name"))
+        .append("</th><th colspan=\"2\">")
+        .append(_t("Order"))
+        .append("</th></tr>\n");
         for (String section : sections) {
             int i = sections.indexOf(section);
             String name = sectionNames.get(section);
             if (name == null)
                 continue;
             buf.append("<tr><td align=\"center\"><input type=\"checkbox\" class=\"optbox\" id=\"")
-               .append(name)
-               .append("\" name=\"delete_")
-               .append(i)
-               .append("\"></td><td align=\"left\"><label for=\"")
-               .append(name)
-               .append("\">")
-               .append(_t(name))
-               .append("</label></td><td align=\"right\"><input type=\"hidden\" name=\"order_")
-               .append(i).append('_').append(section)
-               .append("\" value=\"")
-               .append(i)
-               .append("\">");
+            .append(name)
+            .append("\" name=\"delete_")
+            .append(i)
+            .append("\"></td><td align=\"left\"><label for=\"")
+            .append(name)
+            .append("\">")
+            .append(_t(name))
+            .append("</label></td><td align=\"right\"><input type=\"hidden\" name=\"order_")
+            .append(i).append('_').append(section)
+            .append("\" value=\"")
+            .append(i)
+            .append("\">");
             if (i > 0) {
                 buf.append("<button type=\"submit\" class=\"buttonTop\" name=\"action\" value=\"move_")
-                   .append(i)
-                   .append("_top\"><img alt=\"")
-                   .append(_t("Top"))
-                   .append("\" src=\"")
-                   .append(imgPath)
-                   .append("move_top.png")
-                   .append("\" title=\"")
-                   .append(_t("Move to top"))
-                   .append("\"/></button>");
+                .append(i)
+                .append("_top\"><img alt=\"")
+                .append(_t("Top"))
+                .append("\" src=\"")
+                .append(imgPath)
+                .append("move_top.png")
+                .append("\" title=\"")
+                .append(_t("Move to top"))
+                .append("\"/></button>");
                 buf.append("<button type=\"submit\" class=\"buttonUp\" name=\"action\" value=\"move_")
-                   .append(i)
-                   .append("_up\"><img alt=\"")
-                   .append(_t("Up"))
-                   .append("\" src=\"")
-                   .append(imgPath)
-                   .append("move_up.png")
-                   .append("\" title=\"")
-                   .append(_t("Move up"))
-                   .append("\"/></button>");
+                .append(i)
+                .append("_up\"><img alt=\"")
+                .append(_t("Up"))
+                .append("\" src=\"")
+                .append(imgPath)
+                .append("move_up.png")
+                .append("\" title=\"")
+                .append(_t("Move up"))
+                .append("\"/></button>");
             }
             buf.append("</td><td align=\"left\">");
             if (i < sections.size() - 1) {
                 buf.append("<button type=\"submit\" class=\"buttonDown\" name=\"action\" value=\"move_")
-                   .append(i)
-                   .append("_down\"><img alt=\"")
-                   .append(_t("Down"))
-                   .append("\" src=\"")
-                   .append(imgPath)
-                   .append("move_down.png")
-                   .append("\" title=\"")
-                   .append(_t("Move down"))
-                   .append("\"/></button>");
+                .append(i)
+                .append("_down\"><img alt=\"")
+                .append(_t("Down"))
+                .append("\" src=\"")
+                .append(imgPath)
+                .append("move_down.png")
+                .append("\" title=\"")
+                .append(_t("Move down"))
+                .append("\"/></button>");
                 buf.append("<button type=\"submit\" class=\"buttonBottom\" name=\"action\" value=\"move_")
-                   .append(i)
-                   .append("_bottom\"><img alt=\"")
-                   .append(_t("Bottom"))
-                   .append("\" src=\"")
-                   .append(imgPath)
-                   .append("move_bottom.png")
-                   .append("\" title=\"")
-                   .append(_t("Move to bottom"))
-                   .append("\"/></button>");
+                .append(i)
+                .append("_bottom\"><img alt=\"")
+                .append(_t("Bottom"))
+                .append("\" src=\"")
+                .append(imgPath)
+                .append("move_bottom.png")
+                .append("\" title=\"")
+                .append(_t("Move to bottom"))
+                .append("\"/></button>");
             }
             buf.append("</td></tr>\n");
         }
         buf.append("<tr><td align=\"center\">" +
                    "<input type=\"submit\" name=\"action\" class=\"delete\" value=\"")
-           .append(_t("Delete selected"))
-           .append("\"></td><td align=\"left\">")
-           .append("<select name=\"name\">\n" +
-                   "<option value=\"\" selected=\"selected\">")
-           .append(_t("Select a section to add"))
-           .append("</option>\n");
+        .append(_t("Delete selected"))
+        .append("\"></td><td align=\"left\">")
+        .append("<select name=\"name\">\n" +
+                "<option value=\"\" selected=\"selected\">")
+        .append(_t("Select a section to add"))
+        .append("</option>\n");
 
         for (Map.Entry<String, String> e : sortedSections.entrySet()) {
             String name = e.getKey();
             String s = e.getValue();
             buf.append("<option value=\"").append(s).append("\">")
-               .append(name).append("</option>\n");
+            .append(name).append("</option>\n");
         }
 
         buf.append("</select>\n" +
                    "<input type=\"hidden\" name=\"order\" value=\"")
-           .append(sections.size())
-           .append("\"></td>" +
-                   "<td align=\"center\" colspan=\"2\">" +
-                   "<input type=\"submit\" name=\"action\" class=\"add\" value=\"")
-           .append(_t("Add item"))
-           .append("\"></td></tr>")
-           .append("</table>\n");
+        .append(sections.size())
+        .append("\"></td>" +
+                "<td align=\"center\" colspan=\"2\">" +
+                "<input type=\"submit\" name=\"action\" class=\"add\" value=\"")
+        .append(_t("Add item"))
+        .append("\"></td></tr>")
+        .append("</table>\n");
         return buf.toString();
     }
 }

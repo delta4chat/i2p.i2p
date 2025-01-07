@@ -47,7 +47,7 @@ public class JspC {
     private static final boolean REPRODUCIBLE = Boolean.parseBoolean(System.getProperty("build.reproducible"));
     // if true, we must get the Tomcat version out of the jasper jar's manifest
     private static final boolean SYSTEM_TOMCAT = Boolean.parseBoolean(System.getProperty("with-libtomcat8-java")) ||
-                                                 Boolean.parseBoolean(System.getProperty("with-libtomcat9-java"));
+            Boolean.parseBoolean(System.getProperty("with-libtomcat9-java"));
     // path to the jasper jar
     private static final String JASPER_JAR = System.getProperty("jasper.jar");
 
@@ -55,18 +55,18 @@ public class JspC {
      *  @throws IllegalArgumentException
      */
     public static void main(String args[]) {
-       if (REPRODUCIBLE)
-           args = fixupArgs(args);
-       try {
-           String cls = "org.apache.jasper.JspC";
-           Class<?> c = Class.forName(cls, true, ClassLoader.getSystemClassLoader());
-           Method main = c.getMethod("main", String[].class);
-           main.invoke(null, (Object) args);
-           System.exit(0);
-       } catch (Exception e) {
-           e.printStackTrace();
-           System.exit(1);
-       }
+        if (REPRODUCIBLE)
+            args = fixupArgs(args);
+        try {
+            String cls = "org.apache.jasper.JspC";
+            Class<?> c = Class.forName(cls, true, ClassLoader.getSystemClassLoader());
+            Method main = c.getMethod("main", String[].class);
+            main.invoke(null, (Object) args);
+            System.exit(0);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
     }
 
     /**
@@ -158,7 +158,10 @@ public class JspC {
         } catch (IOException ioe) {
             return null;
         } finally {
-            if (in != null) try { in.close(); } catch (IOException e) {}
+            if (in != null) try {
+                    in.close();
+                }
+                catch (IOException e) {}
         }
     }
 }

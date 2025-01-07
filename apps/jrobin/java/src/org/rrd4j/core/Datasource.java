@@ -71,11 +71,11 @@ public class Datasource implements RrdUpdater<Datasource> {
 
     String dump() throws IOException {
         return "== DATASOURCE ==\n" +
-                "DS:" + dsName.get() + ":" + dsType.name() + ":" +
-                heartbeat.get() + ":" + minValue.get() + ":" +
-                maxValue.get() + "\nlastValue:" + lastValue.get() +
-                " nanSeconds:" + nanSeconds.get() +
-                " accumValue:" + accumValue.get() + "\n";
+               "DS:" + dsName.get() + ":" + dsType.name() + ":" +
+               heartbeat.get() + ":" + minValue.get() + ":" +
+               maxValue.get() + "\nlastValue:" + lastValue.get() +
+               " nanSeconds:" + nanSeconds.get() +
+               " accumValue:" + accumValue.get() + "\n";
     }
 
     /**
@@ -192,7 +192,7 @@ public class Datasource implements RrdUpdater<Datasource> {
     }
 
     private double calculateUpdateValue(long oldTime, double oldValue,
-            long newTime, double newValue) throws IOException {
+                                        long newTime, double newValue) throws IOException {
         double updateValue = Double.NaN;
         if (newTime - oldTime <= heartbeat.get()) {
             switch (dsType.get()) {

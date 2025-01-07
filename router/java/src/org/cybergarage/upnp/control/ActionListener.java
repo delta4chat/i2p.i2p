@@ -10,7 +10,7 @@
 *
 *	01/16/03
 *		- first revision.
-*	
+*
 ******************************************************************/
 
 package org.cybergarage.upnp.control;
@@ -19,5 +19,5 @@ import org.cybergarage.upnp.*;
 
 public interface ActionListener
 {
-	public boolean actionControlReceived(Action action);
+    public boolean actionControlReceived(Action action);
 }

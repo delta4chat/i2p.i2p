@@ -39,22 +39,22 @@ public class InternalServerSocket extends ServerSocket {
      *  @param port &gt; 0
      */
     public InternalServerSocket(int port) throws IOException {
-         if (port <= 0)
-             throw new IOException("Bad port: " + port);
-         _port = Integer.valueOf(port);
-         InternalServerSocket previous = _sockets.putIfAbsent(_port, this);
-         if (previous != null)
-             throw new IOException("Internal port in use: " + port);
-         _running = true;
-         _acceptQueue = new LinkedBlockingQueue<InternalSocket>();
-         //if (_log.shouldLog(Log.DEBUG))
-         //    _log.debug("Registered " + _port);
+        if (port <= 0)
+            throw new IOException("Bad port: " + port);
+        _port = Integer.valueOf(port);
+        InternalServerSocket previous = _sockets.putIfAbsent(_port, this);
+        if (previous != null)
+            throw new IOException("Internal port in use: " + port);
+        _running = true;
+        _acceptQueue = new LinkedBlockingQueue<InternalSocket>();
+        //if (_log.shouldLog(Log.DEBUG))
+        //    _log.debug("Registered " + _port);
     }
 
     @Override
     public void close() {
-         //if (_log.shouldLog(Log.DEBUG))
-         //   _log.debug("Closing " + _port);
+        //if (_log.shouldLog(Log.DEBUG))
+        //   _log.debug("Closing " + _port);
         _running = false;
         _sockets.remove(_port);
         _acceptQueue.clear();
@@ -99,7 +99,7 @@ public class InternalServerSocket extends ServerSocket {
     static void internalConnect(int port, InternalSocket clientSock) throws IOException {
         InternalServerSocket iss = _sockets.get(Integer.valueOf(port));
         if (iss == null)
-             throw new IOException("No server for port: " + port);
+            throw new IOException("No server for port: " + port);
         TimeoutPipedInputStream cis = new TimeoutPipedInputStream(64*1024);
         TimeoutPipedInputStream sis = new TimeoutPipedInputStream(64*1024);
         PipedOutputStream cos = new TimeoutPipedOutputStream(sis);
@@ -111,7 +111,7 @@ public class InternalServerSocket extends ServerSocket {
 
     private void queueConnection(InternalSocket sock) throws IOException {
         if (!_running)
-             throw new IOException("Server closed for port: " + _port);
+            throw new IOException("Server closed for port: " + _port);
         //if (_log.shouldLog(Log.DEBUG))
         //    _log.debug("Queueing " + _port);
         try {

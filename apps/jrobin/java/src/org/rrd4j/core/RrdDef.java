@@ -361,7 +361,7 @@ public class RrdDef {
      */
     public void addDatasource(String rrdToolDsDef) {
         IllegalArgumentException illArgException = new IllegalArgumentException(
-                "Wrong rrdtool-like datasource definition: " + rrdToolDsDef);
+            "Wrong rrdtool-like datasource definition: " + rrdToolDsDef);
 
         if (rrdToolDsDef == null) throw illArgException;
 
@@ -480,7 +480,7 @@ public class RrdDef {
      */
     public void addArchive(String rrdToolArcDef) {
         IllegalArgumentException illArgException = new IllegalArgumentException(
-                "Wrong rrdtool-like archive definition: " + rrdToolArcDef);
+            "Wrong rrdtool-like archive definition: " + rrdToolArcDef);
         StringTokenizer tokenizer = new StringTokenizer(rrdToolArcDef, ":");
         if (tokenizer.countTokens() != 5) {
             throw illArgException;
@@ -684,7 +684,7 @@ public class RrdDef {
      * with {@link org.rrd4j.core.RrdDefTemplate} class.</p>
      * <p>If <code>compatible</code> is set to true, it returns an XML compatible with previous RRD4J's versions, using
      * a path, instead of an URI.</p>
-     * 
+     *
      *
      * @param compatible Compatible with previous versions.
      * @return XML formatted string representing this RrdDef object
@@ -767,8 +767,8 @@ public class RrdDef {
         }
         return (24L + 48L * dsCount + 16L * arcCount +
                 20L * dsCount * arcCount + 8L * dsCount * rowsCount) +
-                (1L + 2L * dsCount + arcCount) * 2L * RrdPrimitive.STRING_LENGTH +
-                postStorePayload;
+               (1L + 2L * dsCount + arcCount) * 2L * RrdPrimitive.STRING_LENGTH +
+               postStorePayload;
     }
 
     /**

@@ -51,7 +51,7 @@ public class A extends InternetAddressRR<Inet4Address> {
     }
 
     public static A parse(DataInputStream dis)
-            throws IOException {
+    throws IOException {
         byte[] ip = new byte[4];
         dis.readFully(ip);
         return new A(ip);

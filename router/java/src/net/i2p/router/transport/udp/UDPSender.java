@@ -40,7 +40,7 @@ class UDPSender {
     private static final int MAX_QUEUE_SIZE = 768;
     private static final int CODEL_TARGET = 100;
     private static final int CODEL_INTERVAL = 500;
-    
+
     public UDPSender(RouterContext ctx, DatagramSocket socket, String name, SocketListener lsnr) {
         _context = ctx;
         _dummy = false; // ctx.commSystem().isDummy();
@@ -65,7 +65,7 @@ class UDPSender {
         // used in RouterWatchdog
         _context.statManager().createRequiredRateStat("udp.sendException", "Send fails (Windows exception?)", "udp", new long[] { 60*1000, 10*60*1000 });
     }
-    
+
     /**
      *  Cannot be restarted (socket is final)
      */
@@ -76,7 +76,7 @@ class UDPSender {
         I2PThread t = new I2PThread(_runner, _name, true);
         t.start();
     }
-    
+
     public synchronized void shutdown() {
         if (!_keepRunning)
             return;
@@ -92,7 +92,7 @@ class UDPSender {
         }
         _outboundQueue.clear();
     }
-    
+
     /**
      *  Clear outbound queue, probably in preparation for sending destroy() to everybody.
      *  @since 0.9.2
@@ -100,14 +100,14 @@ class UDPSender {
     public void clear() {
         _outboundQueue.clear();
     }
-    
-/*********
-    public DatagramSocket updateListeningPort(DatagramSocket socket, int newPort) {
-        return _runner.updateListeningPort(socket, newPort);
-    }
-**********/
 
-    
+    /*********
+        public DatagramSocket updateListeningPort(DatagramSocket socket, int newPort) {
+            return _runner.updateListeningPort(socket, newPort);
+        }
+    **********/
+
+
     /**
      * Add the packet to the queue.  This may block until there is space
      * available, if requested, otherwise it returns immediately
@@ -117,57 +117,57 @@ class UDPSender {
      */
     @Deprecated
     public void add(UDPPacket packet, int blockTime) {
-     /********
-        //long expiration = _context.clock().now() + blockTime;
-        int remaining = -1;
-        long lifetime = -1;
-        boolean added = false;
-        int removed = 0;
-        while ( (_keepRunning) && (remaining < 0) ) {
-            //try {
-                synchronized (_outboundQueue) {
-                    // clear out any too-old packets
-                    UDPPacket head = null;
-                    if (!_outboundQueue.isEmpty()) {
-                        head = (UDPPacket)_outboundQueue.get(0);
-                        while (head.getLifetime() > MAX_HEAD_LIFETIME) {
-                            _outboundQueue.remove(0);
-                            removed++;
-                            if (!_outboundQueue.isEmpty())
-                                head = (UDPPacket)_outboundQueue.get(0);
-                            else
-                                break;
-                        }
-                    }
-                    
-                    if (true || (_outboundQueue.size() < MAX_QUEUED)) {
-                        lifetime = packet.getLifetime();
-                        _outboundQueue.add(packet);
-                        added = true;
-                        remaining = _outboundQueue.size();
-                        _outboundQueue.notifyAll();
-                    } else {
-                        long remainingTime = expiration - _context.clock().now();
-                        if (remainingTime > 0) {
-                            _outboundQueue.wait(remainingTime);
-                        } else {
-                            remaining = _outboundQueue.size();
-                            _outboundQueue.notifyAll();
-                        }
-                        lifetime = packet.getLifetime();
-                    }
-                }
-            //} catch (InterruptedException ie) {}
-        }
-        _context.statManager().addRateData("udp.sendQueueSize", remaining, lifetime);
-        if (!added)
-            _context.statManager().addRateData("udp.sendQueueFailed", remaining, lifetime);
-        if (removed > 0)
-            _context.statManager().addRateData("udp.sendQueueTrimmed", removed, remaining);
-        if (_log.shouldLog(Log.DEBUG))
-            _log.debug("Added the packet onto the queue with " + remaining + " remaining and a lifetime of " + lifetime);
-        return remaining;
-     ********/
+        /********
+           //long expiration = _context.clock().now() + blockTime;
+           int remaining = -1;
+           long lifetime = -1;
+           boolean added = false;
+           int removed = 0;
+           while ( (_keepRunning) && (remaining < 0) ) {
+               //try {
+                   synchronized (_outboundQueue) {
+                       // clear out any too-old packets
+                       UDPPacket head = null;
+                       if (!_outboundQueue.isEmpty()) {
+                           head = (UDPPacket)_outboundQueue.get(0);
+                           while (head.getLifetime() > MAX_HEAD_LIFETIME) {
+                               _outboundQueue.remove(0);
+                               removed++;
+                               if (!_outboundQueue.isEmpty())
+                                   head = (UDPPacket)_outboundQueue.get(0);
+                               else
+                                   break;
+                           }
+                       }
+
+                       if (true || (_outboundQueue.size() < MAX_QUEUED)) {
+                           lifetime = packet.getLifetime();
+                           _outboundQueue.add(packet);
+                           added = true;
+                           remaining = _outboundQueue.size();
+                           _outboundQueue.notifyAll();
+                       } else {
+                           long remainingTime = expiration - _context.clock().now();
+                           if (remainingTime > 0) {
+                               _outboundQueue.wait(remainingTime);
+                           } else {
+                               remaining = _outboundQueue.size();
+                               _outboundQueue.notifyAll();
+                           }
+                           lifetime = packet.getLifetime();
+                       }
+                   }
+               //} catch (InterruptedException ie) {}
+           }
+           _context.statManager().addRateData("udp.sendQueueSize", remaining, lifetime);
+           if (!added)
+               _context.statManager().addRateData("udp.sendQueueFailed", remaining, lifetime);
+           if (removed > 0)
+               _context.statManager().addRateData("udp.sendQueueTrimmed", removed, remaining);
+           if (_log.shouldLog(Log.DEBUG))
+               _log.debug("Added the packet onto the queue with " + remaining + " remaining and a lifetime of " + lifetime);
+           return remaining;
+        ********/
         add(packet);
     }
 
@@ -204,7 +204,7 @@ class UDPSender {
             _log.debug("Added the packet onto the queue with a lifetime of " + packet.getLifetime());
         }
     }
-    
+
     private class Runner implements Runnable {
         //private volatile boolean _socketChanged;
 
@@ -217,7 +217,7 @@ class UDPSender {
                 //    Thread.currentThread().setName(_name);
                 //    _socketChanged = false;
                 //}
-                
+
                 UDPPacket packet = getNextPacket();
                 if (packet != null) {
                     if (_log.shouldLog(Log.DEBUG))
@@ -241,27 +241,27 @@ class UDPSender {
                             }
                         }
                     }
-                    
+
                     long afterBW = _context.clock().now();
-                    
+
                     //if (_log.shouldLog(Log.DEBUG)) {
-                        //if (len > 128)
-                        //    len = 128;
-                        //_log.debug("Sending packet: (size="+size + "/"+size2 +")\nraw: " + Base64.encode(packet.getPacket().getData(), 0, size));
+                    //if (len > 128)
+                    //    len = 128;
+                    //_log.debug("Sending packet: (size="+size + "/"+size2 +")\nraw: " + Base64.encode(packet.getPacket().getData(), 0, size));
                     //}
-                    
+
                     //packet.getPacket().setLength(size);
                     try {
                         //long before = _context.clock().now();
                         //synchronized (Runner.this) {
-                            // synchronization lets us update safely
-                            //_log.debug("Break out datagram for " + packet);
-                            DatagramPacket dp = packet.getPacket();
-                            //if (_log.shouldLog(Log.DEBUG))
-                            //    _log.debug("Just before socket.send of " + packet);
-                            _socket.send(dp);
-                            //if (_log.shouldLog(Log.DEBUG))
-                            //    _log.debug("Just after socket.send of " + packet);
+                        // synchronization lets us update safely
+                        //_log.debug("Break out datagram for " + packet);
+                        DatagramPacket dp = packet.getPacket();
+                        //if (_log.shouldLog(Log.DEBUG))
+                        //    _log.debug("Just before socket.send of " + packet);
+                        _socket.send(dp);
+                        //if (_log.shouldLog(Log.DEBUG))
+                        //    _log.debug("Just after socket.send of " + packet);
                         //}
                         //long sendTime = _context.clock().now() - before;
                         // less than 50 microsec
@@ -286,7 +286,7 @@ class UDPSender {
                             }
                         }
                     }
-                    
+
                     // back to the cache
                     packet.release();
                 }
@@ -313,17 +313,17 @@ class UDPSender {
             return packet;
         }
 
-     /******
-        public DatagramSocket updateListeningPort(DatagramSocket socket, int newPort) {
-            _name = "UDPSend on " + newPort;
-            DatagramSocket old = null;
-            synchronized (Runner.this) {
-                old = _socket;
-                _socket = socket;
-            }
-            _socketChanged = true;
-            return old;
-        }
-      *****/
+        /******
+           public DatagramSocket updateListeningPort(DatagramSocket socket, int newPort) {
+               _name = "UDPSend on " + newPort;
+               DatagramSocket old = null;
+               synchronized (Runner.this) {
+                   old = _socket;
+                   _socket = socket;
+               }
+               _socketChanged = true;
+               return old;
+           }
+         *****/
     }
 }

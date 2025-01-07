@@ -55,16 +55,16 @@ public class ConfigurationManager {
      * to determine user parameters.
      * @param settingNames Command line arguments to the application
      */
-/****
-    public void loadArguments(String[] settingNames) {
-        for (int i = 0; i < settingNames.length; i++) {
-            String settingName = settingNames[i];
-            if (settingName.startsWith("--")) {
-                parseConfigStr(settingName.substring(2));
+    /****
+        public void loadArguments(String[] settingNames) {
+            for (int i = 0; i < settingNames.length; i++) {
+                String settingName = settingNames[i];
+                if (settingName.startsWith("--")) {
+                    parseConfigStr(settingName.substring(2));
+                }
             }
         }
-    }
-****/
+    ****/
 
     /**
      * Reads configuration from file, every line is parsed as key=value.

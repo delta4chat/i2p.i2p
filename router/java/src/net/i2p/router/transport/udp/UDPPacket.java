@@ -47,14 +47,14 @@ class UDPPacket implements CDPQEntry {
     // private boolean _isInbound;
     private FIFOBandwidthLimiter.Request _bandwidthRequest;
     private long _seqNum;
-  
+
     private static class PacketFactory implements TryCache.ObjectFactory<UDPPacket> {
         static RouterContext context;
         public UDPPacket newInstance() {
             return new UDPPacket(context);
         }
     }
-    
+
     //  Warning - this mixes contexts in a multi-router JVM
     private static final TryCache<UDPPacket> _packetCache;
     private static final TryCache.ObjectFactory<UDPPacket> _packetFactory;
@@ -72,7 +72,7 @@ class UDPPacket implements CDPQEntry {
             _packetFactory = null;
         }
     }
-    
+
     /**
      *  Actually it is one less than this, we assume
      *  if a received packet is this big it is truncated.
@@ -88,7 +88,7 @@ class UDPPacket implements CDPQEntry {
     static final int MAX_PACKET_SIZE = 1572;
     public static final int IV_SIZE = 16;
     public static final int MAC_SIZE = 16;
-    
+
     /** Message types, 4 bits max */
     public static final int PAYLOAD_TYPE_SESSION_REQUEST = 0;
     public static final int PAYLOAD_TYPE_SESSION_CREATED = 1;
@@ -101,7 +101,7 @@ class UDPPacket implements CDPQEntry {
     /** @since 0.8.1 */
     public static final int PAYLOAD_TYPE_SESSION_DESTROY = 8;
     public static final int MAX_PAYLOAD_TYPE = PAYLOAD_TYPE_SESSION_DESTROY;
-    
+
     // various flag fields for use in the header
     /**
      *  Defined in the spec from the beginning, Unused
@@ -131,9 +131,9 @@ class UDPPacket implements CDPQEntry {
     public static final byte DATA_FLAG_WANT_REPLY = (1 << 2);
     /** unused */
     public static final byte DATA_FLAG_EXTENDED = (1 << 1);
-    
+
     public static final byte BITFIELD_CONTINUATION = (byte)(1 << 7);
-    
+
     private static final int MAX_VALIDATE_SIZE = MAX_PACKET_SIZE;
 
     private UDPPacket(RouterContext ctx) {
@@ -174,59 +174,91 @@ class UDPPacket implements CDPQEntry {
      *  CDPQEntry
      *  @since 0.9.53
      */
-    public void setSeqNum(long num) { _seqNum = num; }
+    public void setSeqNum(long num) {
+        _seqNum = num;
+    }
 
     /**
      *  CDPQEntry
      *  @since 0.9.53
      */
-    public long getSeqNum() { return _seqNum; }
-
-
-    
-  /****
-    public void writeData(byte src[], int offset, int len) { 
-        verifyNotReleased();
-        System.arraycopy(src, offset, _data, 0, len);
-        _packet.setLength(len);
-        resetBegin();
+    public long getSeqNum() {
+        return _seqNum;
     }
-  ****/
+
+
+
+    /****
+      public void writeData(byte src[], int offset, int len) {
+          verifyNotReleased();
+          System.arraycopy(src, offset, _data, 0, len);
+          _packet.setLength(len);
+          resetBegin();
+      }
+    ****/
 
     /** */
-    public synchronized DatagramPacket getPacket() { verifyNotReleased(); return _packet; }
-    public int getPriority() { return _priority; }
+    public synchronized DatagramPacket getPacket() {
+        verifyNotReleased();
+        return _packet;
+    }
+    public int getPriority() {
+        return _priority;
+    }
 
     /**
      *  @since 0.9.53
      */
-    public void setPriority(int pri) { _priority = pri; }
+    public void setPriority(int pri) {
+        _priority = pri;
+    }
 
     //public long getExpiration() { verifyNotReleased(); return _expiration; }
-    public synchronized long getBegin() { verifyNotReleased(); return _initializeTime; }
-    public long getLifetime() { /** verifyNotReleased(); */ return _context.clock().now() - _initializeTime; }
-    public synchronized void resetBegin() { _initializeTime = _context.clock().now(); }
+    public synchronized long getBegin() {
+        verifyNotReleased();
+        return _initializeTime;
+    }
+    public long getLifetime() {
+        /** verifyNotReleased(); */ return _context.clock().now() - _initializeTime;
+    }
+    public synchronized void resetBegin() {
+        _initializeTime = _context.clock().now();
+    }
     /** flag this packet as a particular type for accounting purposes */
-    public synchronized void markType(int type) { verifyNotReleased(); _markedType = type; }
-    /** 
+    public synchronized void markType(int type) {
+        verifyNotReleased();
+        _markedType = type;
+    }
+    /**
      * flag this packet as a particular type for accounting purposes, with
      * 1 implying the packet is an ACK, otherwise it is a data packet
      *
      */
-    public synchronized int getMarkedType() { verifyNotReleased(); return _markedType; }
-    
+    public synchronized int getMarkedType() {
+        verifyNotReleased();
+        return _markedType;
+    }
+
     private int _messageType;
     private int _fragmentCount;
     /** only for debugging and stats, does not go on the wire */
-    int getMessageType() { return _messageType; }
+    int getMessageType() {
+        return _messageType;
+    }
     /** only for debugging and stats, does not go on the wire */
-    void setMessageType(int type) { _messageType = type; }
+    void setMessageType(int type) {
+        _messageType = type;
+    }
 
     /** only for debugging and stats */
-    int getFragmentCount() { return _fragmentCount; }
+    int getFragmentCount() {
+        return _fragmentCount;
+    }
 
     /** only for debugging and stats */
-    void setFragmentCount(int count) { _fragmentCount = count; }
+    void setFragmentCount(int count) {
+        _fragmentCount = count;
+    }
 
     synchronized RemoteHostId getRemoteHost() {
         if (_remoteHost == null) {
@@ -246,30 +278,38 @@ class UDPPacket implements CDPQEntry {
      *  For CDQ
      *  @since 0.9.3
      */
-    public void setEnqueueTime(long now) { _enqueueTime = now; }
+    public void setEnqueueTime(long now) {
+        _enqueueTime = now;
+    }
 
     /** a packet handler has pulled it off the inbound queue */
-    synchronized void received() { _receivedTime = _context.clock().now(); }
+    synchronized void received() {
+        _receivedTime = _context.clock().now();
+    }
 
     /** a packet handler has decrypted and verified the packet and is about to parse out the good bits */
     //void beforeReceiveFragments() { _beforeReceiveFragments = _context.clock().now(); }
     /** a packet handler has finished parsing out the good bits */
-    //void afterHandling() { _afterHandlingTime = _context.clock().now(); } 
-      
+    //void afterHandling() { _afterHandlingTime = _context.clock().now(); }
+
     /**
      *  For CDQ
      *  @since 0.9.3
      */
-    public long getEnqueueTime() { return _enqueueTime; }
+    public long getEnqueueTime() {
+        return _enqueueTime;
+    }
 
     /** a packet handler has pulled it off the inbound queue */
-    synchronized long getTimeSinceReceived() { return (_receivedTime > 0 ? _context.clock().now() - _receivedTime : 0); }
+    synchronized long getTimeSinceReceived() {
+        return (_receivedTime > 0 ? _context.clock().now() - _receivedTime : 0);
+    }
 
     /** a packet handler has decrypted and verified the packet and is about to parse out the good bits */
     //long getTimeSinceReceiveFragments() { return (_beforeReceiveFragments > 0 ? _context.clock().now() - _beforeReceiveFragments : 0); }
     /** a packet handler has finished parsing out the good bits */
     //long getTimeSinceHandling() { return (_afterHandlingTime > 0 ? _context.clock().now() - _afterHandlingTime : 0); }
-    
+
     /**
      *  So that we can compete with NTCP, we want to request bandwidth
      *  in parallel, on the way into the queue, not on the way out.
@@ -282,7 +322,7 @@ class UDPPacket implements CDPQEntry {
         verifyNotReleased();
         _bandwidthRequest = _context.bandwidthLimiter().requestInbound(_packet.getLength(), "UDP receiver");
     }
-    
+
     /**
      *  So that we can compete with NTCP, we want to request bandwidth
      *  in parallel, on the way into the queue, not on the way out.
@@ -293,7 +333,7 @@ class UDPPacket implements CDPQEntry {
         verifyNotReleased();
         _bandwidthRequest = _context.bandwidthLimiter().requestOutbound(_packet.getLength(), 0, "UDP sender");
     }
-    
+
     /**
      *  So that we can compete with NTCP, we want to request bandwidth
      *  in parallel, on the way into the queue, not on the way out.
@@ -315,7 +355,7 @@ class UDPPacket implements CDPQEntry {
     //long getAfterValidate() { return _afterValidate; }
     /** how many times we tried to validate the packet */
     //int getValidateCount() { return _validateCount; }
-    
+
     @Override
     public String toString() {
         synchronized(this) {
@@ -344,7 +384,7 @@ class UDPPacket implements CDPQEntry {
         //buf.append("\ndata=").append(Base64.encode(_packet.getData(), _packet.getOffset(), _packet.getLength()));
         return buf.toString();
     }
-    
+
     /**
      *  @param inbound unused
      */
@@ -386,7 +426,7 @@ class UDPPacket implements CDPQEntry {
             return;
         _packetCache.release(this);
     }
-    
+
     /**
      *  Call at shutdown/startup to not hold ctx refs
      *  @since 0.9.2

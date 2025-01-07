@@ -16,7 +16,7 @@ import java.util.Properties;
 
 /**
  * Simple config file handler.
- * 
+ *
  * Warning - browser needs double quotes and double backslashes on Windows
  * e.g.
  * browser="C:\\Program Files\\Mozilla Firefox\\firefox.exe"
@@ -32,7 +32,7 @@ public class ConfigFile {
 
     /**
      * Initializes the {@link ConfigFile} object.
-     * 
+     *
      * @param  configFile The config file to use.
      * @return            <code>false</code> if the given config file cannot be
      *                    located or accessed, otherwise <code>true</code>.
@@ -66,7 +66,10 @@ public class ConfigFile {
             rv = false;
         } finally {
             if (fileInputStream != null) {
-                try { fileInputStream.close(); } catch (IOException e) {}
+                try {
+                    fileInputStream.close();
+                }
+                catch (IOException e) {}
             }
         }
         return rv;
@@ -83,7 +86,10 @@ public class ConfigFile {
             rv = false;
         } finally {
             if (fileOutputStream != null) {
-                try { fileOutputStream.close(); } catch (IOException e) {}
+                try {
+                    fileOutputStream.close();
+                }
+                catch (IOException e) {}
             }
         }
         return rv;

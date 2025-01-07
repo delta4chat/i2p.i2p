@@ -91,7 +91,7 @@ public class Blocklist {
     private boolean _started;
     // temp
     private final Map<Hash, String> _peerBlocklist = new HashMap<Hash, String>(4);
-    
+
     private static final String PROP_BLOCKLIST_ENABLED = "router.blocklist.enable";
     private static final String PROP_BLOCKLIST_DETAIL = "router.blocklist.detail";
     private static final String PROP_BLOCKLIST_FILE = "router.blocklist.file";
@@ -113,7 +113,7 @@ public class Blocklist {
     private final Map<Integer, Object> _singleIPBlocklist = new LHMCache<Integer, Object>(MAX_IPV4_SINGLES);
     private final Map<BigInteger, Object> _singleIPv6Blocklist;
 
-    private static final Object DUMMY = Integer.valueOf(0);    
+    private static final Object DUMMY = Integer.valueOf(0);
 
     /**
      *  For Update Manager
@@ -139,7 +139,7 @@ public class Blocklist {
                     Addresses.isConnectedIPv6();
         _singleIPv6Blocklist = _haveIPv6 ? new LHMCache<BigInteger, Object>(MAX_IPV6_SINGLES) : null;
     }
-    
+
     /** only for testing with main() */
     private Blocklist() {
         _context = null;
@@ -178,7 +178,7 @@ public class Blocklist {
         blFile = new File(_context.getBaseDir(), BLOCKLIST_TOR_FILE);
         files.add(new BLFile(blFile, ID_TOR));
         if (_context.router().isHidden() ||
-            _context.getBooleanProperty(GeoIP.PROP_BLOCK_MY_COUNTRY)) {
+                _context.getBooleanProperty(GeoIP.PROP_BLOCK_MY_COUNTRY)) {
             blFile = new File(_context.getConfigDir(), BLOCKLIST_COUNTRY_FILE);
             files.add(new BLFile(blFile, ID_COUNTRY));
         }
@@ -187,7 +187,7 @@ public class Blocklist {
         if (file != null && !file.equals(BLOCKLIST_FILE_DEFAULT)) {
             blFile = new File(file);
             if (!blFile.isAbsolute())
-                 blFile = new File(_context.getConfigDir(), file);
+                blFile = new File(_context.getConfigDir(), file);
             files.add(new BLFile(blFile, ID_USER));
         }
         Job job = new ReadinJob(files);
@@ -207,7 +207,10 @@ public class Blocklist {
         public final File file;
         public final String id;
         public long version;
-        public BLFile(File f, String s) { file = f; id = s; }
+        public BLFile(File f, String s) {
+            file = f;
+            id = s;
+        }
     }
 
     /**
@@ -229,7 +232,7 @@ public class Blocklist {
                 if (umgr != null) {
                     for (BLFile blf : blfs) {
                         if (blf.version > 0)
-                               umgr.notifyInstalled(UpdateType.BLOCKLIST, blf.id, Long.toString(blf.version));
+                            umgr.notifyInstalled(UpdateType.BLOCKLIST, blf.id, Long.toString(blf.version));
                     }
                 } else {
                     _log.warn("No update manager");
@@ -249,7 +252,9 @@ public class Blocklist {
             _files = files;
         }
 
-        public String getName() { return "Read Blocklist"; }
+        public String getName() {
+            return "Read Blocklist";
+        }
 
         public void runJob() {
             synchronized (_lock) {
@@ -274,15 +279,15 @@ public class Blocklist {
 
         private int process() {
             int count = 0;
-                try {
-                    for (BLFile blf : _files) {
-                        count = readBlocklistFile(blf, _blocklist, count);
-                    }
-                } catch (OutOfMemoryError oom) {
-                    _log.log(Log.CRIT, "OOM processing the blocklist");
-                    disable();
-                    return 0;
+            try {
+                for (BLFile blf : _files) {
+                    count = readBlocklistFile(blf, _blocklist, count);
                 }
+            } catch (OutOfMemoryError oom) {
+                _log.log(Log.CRIT, "OOM processing the blocklist");
+                disable();
+                return 0;
+            }
             for (Hash peer : _peerBlocklist.keySet()) {
                 String reason;
                 String comment = _peerBlocklist.get(peer);
@@ -349,39 +354,39 @@ public class Blocklist {
         }
     }
 
-   /**
-    * Read in and parse the blocklist.
-    * The blocklist need not be sorted, and may contain overlapping entries.
-    *
-    * Acceptable formats (IPV4 only):
-    *   #comment (# must be in column 1)
-    *   comment:IP-IP
-    *   comment:morecomments:IP-IP
-    *   IP-IP
-    *   (comments also allowed before any of the following)
-    *   IP/masklength
-    *   IP
-    *   hostname (DNS looked up at list readin time, not dynamically, so may not be much use)
-    *   44-byte Base64 router hash
-    *
-    * Acceptable formats (IPV6 only):
-    *   comment:IPv6 (must replace : with ; e.g. abcd;1234;0;12;;ff)
-    *   IPv6 (must replace : with ; e.g. abcd;1234;0;12;;ff)
-    *
-    * No whitespace allowed after the last ':'.
-    *
-    * For further information and downloads:
-    *   http://www.bluetack.co.uk/forums/index.php?autocom=faq&CODE=02&qid=17
-    *   http://blocklist.googlepages.com/
-    *   http://www.cymru.com/Documents/bogon-list.html
-    *
-    *
-    * Must call allocate() before and merge() after.
-    *
-    *  @param blocklist out parameter, entries stored here
-    *  @param count current number of entries
-    *  @return new number of entries
-    */
+    /**
+     * Read in and parse the blocklist.
+     * The blocklist need not be sorted, and may contain overlapping entries.
+     *
+     * Acceptable formats (IPV4 only):
+     *   #comment (# must be in column 1)
+     *   comment:IP-IP
+     *   comment:morecomments:IP-IP
+     *   IP-IP
+     *   (comments also allowed before any of the following)
+     *   IP/masklength
+     *   IP
+     *   hostname (DNS looked up at list readin time, not dynamically, so may not be much use)
+     *   44-byte Base64 router hash
+     *
+     * Acceptable formats (IPV6 only):
+     *   comment:IPv6 (must replace : with ; e.g. abcd;1234;0;12;;ff)
+     *   IPv6 (must replace : with ; e.g. abcd;1234;0;12;;ff)
+     *
+     * No whitespace allowed after the last ':'.
+     *
+     * For further information and downloads:
+     *   http://www.bluetack.co.uk/forums/index.php?autocom=faq&CODE=02&qid=17
+     *   http://blocklist.googlepages.com/
+     *   http://www.cymru.com/Documents/bogon-list.html
+     *
+     *
+     * Must call allocate() before and merge() after.
+     *
+     *  @param blocklist out parameter, entries stored here
+     *  @param count current number of entries
+     *  @return new number of entries
+     */
     private int readBlocklistFile(BLFile blf, long[] blocklist, int count) {
         File blFile = blf.file;
         if (blFile == null || (!blFile.exists()) || blFile.length() <= 0) {
@@ -400,7 +405,7 @@ public class Blocklist {
         BufferedReader br = null;
         try {
             br = new BufferedReader(new InputStreamReader(
-                    new FileInputStream(blFile), "UTF-8"));
+                                        new FileInputStream(blFile), "UTF-8"));
             String source = blFile.toString();
             String buf = null;
             while ((buf = br.readLine()) != null) {
@@ -421,9 +426,9 @@ public class Blocklist {
                     //    add(ip1, source);
                     //    feedcount++;
                     //} else {
-                        byte[] ip2 = e.ip2;
-                        store(ip1, ip2, blocklist, count++);
-                        ipcount += 1 + toInt(ip2) - toInt(ip1); // includes dups, oh well
+                    byte[] ip2 = e.ip2;
+                    store(ip1, ip2, blocklist, count++);
+                    ipcount += 1 + toInt(ip2) - toInt(ip1); // includes dups, oh well
                     //}
                 } else {
                     // IPv6
@@ -439,7 +444,10 @@ public class Blocklist {
             _log.log(Log.CRIT, "OOM reading the blocklist");
             return 0;
         } finally {
-            if (br != null) try { br.close(); } catch (IOException ioe) {}
+            if (br != null) try {
+                    br.close();
+                }
+                catch (IOException ioe) {}
         }
 
         if (_wrapSave != null) {
@@ -509,10 +517,10 @@ public class Blocklist {
         final Hash peer;
 
         public Entry(String c, Hash h, byte[] i1, byte[] i2) {
-             comment = c;
-             peer = h;
-             ip1 = i1;
-             ip2 = i2;
+            comment = c;
+            peer = h;
+            ip1 = i1;
+            ip2 = i2;
         }
     }
 
@@ -588,9 +596,9 @@ public class Blocklist {
 
                 }
                 for (int i = 0; i < 4; i++) {
-                     if ((ip2[i] & 0xff) > (ip1[i] & 0xff))
+                    if ((ip2[i] & 0xff) > (ip1[i] & 0xff))
                         break;
-                     if ((ip2[i] & 0xff) < (ip1[i] & 0xff))
+                    if ((ip2[i] & 0xff) < (ip1[i] & 0xff))
                         throw new NumberFormatException(); // backwards
                 }
             } else if (mask >= 0) {
@@ -633,7 +641,7 @@ public class Blocklist {
         BufferedReader br = null;
         try {
             br = new BufferedReader(new InputStreamReader(
-                    new FileInputStream(blFile), "ISO-8859-1"));
+                                        new FileInputStream(blFile), "ISO-8859-1"));
             String s;
             while ((s = br.readLine()) != null) {
                 if (s.length() > 0 && !s.startsWith("#"))
@@ -644,11 +652,14 @@ public class Blocklist {
                 _log.warn("Error reading the blocklist file", ioe);
             return 0;
         } finally {
-            if (br != null) try { br.close(); } catch (IOException ioe) {}
+            if (br != null) try {
+                    br.close();
+                }
+                catch (IOException ioe) {}
         }
         return lines;
     }
-    
+
     /**
      * Merge and remove overlapping entries from a sorted list.
      * Returns number of removed entries.
@@ -892,8 +903,8 @@ public class Blocklist {
             }
             if (!dup)
                 rv.add(pib);
-         }
-         return rv;
+        }
+        return rv;
     }
 
     /**
@@ -972,7 +983,7 @@ public class Blocklist {
      * is a sorted array of longs.
      * The array is sorted in signed order, but we don't care.
      * Each long is ((from << 32) | to)
-     */ 
+     */
     private boolean isBlocklisted(int ip) {
         if (isOnSingleList(ip))
             return true;
@@ -992,7 +1003,7 @@ public class Blocklist {
      * Public for console only, not a public API
      *
      * @since 0.9.45 split out from above, public since 0.9.48 for console
-     */ 
+     */
     public boolean isPermanentlyBlocklisted(int ip) {
         return isPermanentlyBlocklisted(ip, _blocklist, _blocklistSize);
     }
@@ -1004,7 +1015,7 @@ public class Blocklist {
      * Each long is ((from << 32) | to)
      *
      * @since 0.9.48 split out from above
-     */ 
+     */
     private static boolean isPermanentlyBlocklisted(int ip, long[] blocklist, int blocklistSize) {
         int hi = blocklistSize - 1;
         if (hi <= 0)
@@ -1020,9 +1031,9 @@ public class Blocklist {
             // make sure we get the last one
             if (hi - lo <= 1) {
                 if (lo == cur)
-                    cur = hi;        
-                else        
-                    cur = lo;        
+                    cur = hi;
+                else
+                    cur = lo;
                 break;
             } else {
                 cur = lo + ((hi - lo) / 2);
@@ -1031,17 +1042,17 @@ public class Blocklist {
         return match(ip, blocklist[cur]);
     }
 
-/*
-    // Is the IP included in the entry _blocklist[cur] ?
-    private boolean match(int ip, int cur) {
-        return match(ip, _blocklist[cur]);
-    }
-*/
+    /*
+        // Is the IP included in the entry _blocklist[cur] ?
+        private boolean match(int ip, int cur) {
+            return match(ip, _blocklist[cur]);
+        }
+    */
 
     // Is the IP included in the compressed entry?
     private static boolean match(int ip, long entry) {
         if (getFrom(entry) > ip)
-                return false;
+            return false;
         return (ip <= getTo(entry));
     }
 
@@ -1147,8 +1158,8 @@ public class Blocklist {
         String reason = _x("IP banned by blocklist.txt entry {0}");
         String sip = Addresses.toString(ip);
         if ("127.0.0.1".equals(sip) ||
-            "0:0:0:0:0:0:0:1".equals(sip) ||
-            sip.startsWith("192.168.")) {
+                "0:0:0:0:0:0:0:1".equals(sip) ||
+                sip.startsWith("192.168.")) {
             // i2pd bug, possibly at startup, don't ban forever
             _context.banlist().banlistRouter(peer, reason, sip, null,
                                              _context.clock().now() + Banlist.BANLIST_DURATION_LOCALHOST);
@@ -1180,7 +1191,9 @@ public class Blocklist {
             _peer = p;
             _ips = ips;
         }
-        public String getName() { return "Ban Peer by IP"; }
+        public String getName() {
+            return "Ban Peer by IP";
+        }
         public void runJob() {
             banlistForever(_peer, _ips);
             synchronized (_inProcess) {
@@ -1206,7 +1219,7 @@ public class Blocklist {
         if (file != null) {
             blFile = new File(file);
             if (!blFile.isAbsolute())
-                 blFile = new File(_context.getConfigDir(), file);
+                blFile = new File(_context.getConfigDir(), file);
             if (!blFile.exists())
                 blFile = null;
         }
@@ -1229,7 +1242,7 @@ public class Blocklist {
             BufferedReader br = null;
             try {
                 br = new BufferedReader(new InputStreamReader(
-                        new FileInputStream(blFile), "UTF-8"));
+                                            new FileInputStream(blFile), "UTF-8"));
                 String buf = null;
                 // assume the file is unsorted, so go through the whole thing
                 while ((buf = br.readLine()) != null) {
@@ -1238,7 +1251,10 @@ public class Blocklist {
                         continue;
                     }
                     if (match(ipint, toEntry(e.ip1, e.ip2))) {
-                        try { br.close(); } catch (IOException ioe) {}
+                        try {
+                            br.close();
+                        }
+                        catch (IOException ioe) {}
                         String reason = _x("IP banned by blocklist.txt entry {0}");
                         // only one translate parameter for now
                         //for (int i = 0; i < 4; i++) {
@@ -1257,7 +1273,10 @@ public class Blocklist {
                 if (_log.shouldLog(Log.WARN))
                     _log.warn("Error reading the blocklist file", ioe);
             } finally {
-                if (br != null) try { br.close(); } catch (IOException ioe) {}
+                if (br != null) try {
+                        br.close();
+                    }
+                    catch (IOException ioe) {}
             }
         }
         // We already banlisted in banlist(peer), that's good enough
@@ -1292,7 +1311,7 @@ public class Blocklist {
             return Collections.<BigInteger>emptyList();
         if (_singleIPv6Blocklist != null) {
             synchronized(_singleIPv6Blocklist) {
-                    return new ArrayList<BigInteger>(_singleIPv6Blocklist.keySet());
+                return new ArrayList<BigInteger>(_singleIPv6Blocklist.keySet());
             }
         }
         return Collections.<BigInteger>emptyList();
@@ -1358,24 +1377,24 @@ public class Blocklist {
         return s;
     }
 
-/****
-    public static void main(String args[]) throws Exception {
-        Blocklist b = new Blocklist(new Router().getContext());
-        if (args != null && args.length == 1) {
-            File f = new File(args[0]);
-            b.allocate(Collections.singletonList(f));
-            int count = b.readBlocklistFile(f, 0);
-            b.merge(count);
-            Writer w = new java.io.OutputStreamWriter(System.out);
-            b.renderStatusHTML(w);
+    /****
+        public static void main(String args[]) throws Exception {
+            Blocklist b = new Blocklist(new Router().getContext());
+            if (args != null && args.length == 1) {
+                File f = new File(args[0]);
+                b.allocate(Collections.singletonList(f));
+                int count = b.readBlocklistFile(f, 0);
+                b.merge(count);
+                Writer w = new java.io.OutputStreamWriter(System.out);
+                b.renderStatusHTML(w);
+            }
+            System.out.println("Saved " + b._blocklistSize + " records");
+            String tests[] = {"0.0.0.0", "0.0.0.1", "0.0.0.2", "0.0.0.255", "1.0.0.0",
+                                            "3.3.3.3", "77.1.2.3", "127.0.0.0", "127.127.127.127", "128.0.0.0",
+                                            "129.1.2.3", "255.255.255.254", "255.255.255.255"};
+            for (int i = 0; i < tests.length; i++) {
+                System.out.println("Testing " + tests[i] + " returns " + b.isBlocklisted(tests[i]));
+            }
         }
-        System.out.println("Saved " + b._blocklistSize + " records");
-        String tests[] = {"0.0.0.0", "0.0.0.1", "0.0.0.2", "0.0.0.255", "1.0.0.0",
-                                        "3.3.3.3", "77.1.2.3", "127.0.0.0", "127.127.127.127", "128.0.0.0",
-                                        "129.1.2.3", "255.255.255.254", "255.255.255.255"};
-        for (int i = 0; i < tests.length; i++) {
-            System.out.println("Testing " + tests[i] + " returns " + b.isBlocklisted(tests[i]));
-        }
-    }
-****/
+    ****/
 }

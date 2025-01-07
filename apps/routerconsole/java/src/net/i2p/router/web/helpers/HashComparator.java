@@ -18,7 +18,9 @@ class HashComparator implements Comparator<Hash>, Serializable {
     /**
      * Thread safe, no state
      */
-    public static HashComparator getInstance() { return _instance; }
+    public static HashComparator getInstance() {
+        return _instance;
+    }
 
     public int compare(Hash l, Hash r) {
         return DataHelper.compareTo(l.getData(), r.getData());

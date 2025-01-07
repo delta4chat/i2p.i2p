@@ -64,74 +64,74 @@ public class I2PSocketException extends SocketException {
     @Override
     public String getMessage() {
         switch (_status) {
-            case MessageStatusMessage.STATUS_SEND_BEST_EFFORT_FAILURE:
-            case MessageStatusMessage.STATUS_SEND_GUARANTEED_FAILURE:
-                return _x("Message timeout");
+        case MessageStatusMessage.STATUS_SEND_BEST_EFFORT_FAILURE:
+        case MessageStatusMessage.STATUS_SEND_GUARANTEED_FAILURE:
+            return _x("Message timeout");
 
-            case MessageStatusMessage.STATUS_SEND_FAILURE_LOCAL:
-                return _x("Failed delivery to local destination");
+        case MessageStatusMessage.STATUS_SEND_FAILURE_LOCAL:
+            return _x("Failed delivery to local destination");
 
-            case MessageStatusMessage.STATUS_SEND_FAILURE_ROUTER:
-                return _x("Local router failure");
+        case MessageStatusMessage.STATUS_SEND_FAILURE_ROUTER:
+            return _x("Local router failure");
 
-            case MessageStatusMessage.STATUS_SEND_FAILURE_NETWORK:
-                return _x("Local network failure");
+        case MessageStatusMessage.STATUS_SEND_FAILURE_NETWORK:
+            return _x("Local network failure");
 
-            case MessageStatusMessage.STATUS_SEND_FAILURE_BAD_SESSION:
-                return _x("Session closed");
+        case MessageStatusMessage.STATUS_SEND_FAILURE_BAD_SESSION:
+            return _x("Session closed");
 
-            case MessageStatusMessage.STATUS_SEND_FAILURE_BAD_MESSAGE:
-                return _x("Invalid message");
+        case MessageStatusMessage.STATUS_SEND_FAILURE_BAD_MESSAGE:
+            return _x("Invalid message");
 
-            case MessageStatusMessage.STATUS_SEND_FAILURE_BAD_OPTIONS:
-                return _x("Invalid message options");
+        case MessageStatusMessage.STATUS_SEND_FAILURE_BAD_OPTIONS:
+            return _x("Invalid message options");
 
-            case MessageStatusMessage.STATUS_SEND_FAILURE_OVERFLOW:
-                return _x("Buffer overflow");
+        case MessageStatusMessage.STATUS_SEND_FAILURE_OVERFLOW:
+            return _x("Buffer overflow");
 
-            case MessageStatusMessage.STATUS_SEND_FAILURE_EXPIRED:
-                return _x("Message expired");
+        case MessageStatusMessage.STATUS_SEND_FAILURE_EXPIRED:
+            return _x("Message expired");
 
-            case MessageStatusMessage.STATUS_SEND_FAILURE_LOCAL_LEASESET:
-                return _x("Local lease set invalid");
+        case MessageStatusMessage.STATUS_SEND_FAILURE_LOCAL_LEASESET:
+            return _x("Local lease set invalid");
 
-            case MessageStatusMessage.STATUS_SEND_FAILURE_NO_TUNNELS:
-                return _x("No local tunnels");
+        case MessageStatusMessage.STATUS_SEND_FAILURE_NO_TUNNELS:
+            return _x("No local tunnels");
 
-            case MessageStatusMessage.STATUS_SEND_FAILURE_UNSUPPORTED_ENCRYPTION:
-                return _x("Unsupported encryption options");
+        case MessageStatusMessage.STATUS_SEND_FAILURE_UNSUPPORTED_ENCRYPTION:
+            return _x("Unsupported encryption options");
 
-            case MessageStatusMessage.STATUS_SEND_FAILURE_DESTINATION:
-                return _x("Invalid destination");
+        case MessageStatusMessage.STATUS_SEND_FAILURE_DESTINATION:
+            return _x("Invalid destination");
 
-            case MessageStatusMessage.STATUS_SEND_FAILURE_BAD_LEASESET:
-                return _x("Local router failure");
+        case MessageStatusMessage.STATUS_SEND_FAILURE_BAD_LEASESET:
+            return _x("Local router failure");
 
-            case MessageStatusMessage.STATUS_SEND_FAILURE_EXPIRED_LEASESET:
-                return _x("Destination lease set expired");
+        case MessageStatusMessage.STATUS_SEND_FAILURE_EXPIRED_LEASESET:
+            return _x("Destination lease set expired");
 
-            case MessageStatusMessage.STATUS_SEND_FAILURE_NO_LEASESET:
-                return _x("Destination lease set not found");
+        case MessageStatusMessage.STATUS_SEND_FAILURE_NO_LEASESET:
+            return _x("Destination lease set not found");
 
-            // don't translate for now
-            case MessageStatusMessage.STATUS_SEND_FAILURE_META_LEASESET:
-                return "Meta lease set";
+        // don't translate for now
+        case MessageStatusMessage.STATUS_SEND_FAILURE_META_LEASESET:
+            return "Meta lease set";
 
-            case MessageStatusMessage.STATUS_SEND_FAILURE_LOOPBACK:
-                return "local loopback denied, set i2cp.disableLoopback=true to test sending to yourself through tunnels";
+        case MessageStatusMessage.STATUS_SEND_FAILURE_LOOPBACK:
+            return "local loopback denied, set i2cp.disableLoopback=true to test sending to yourself through tunnels";
 
-            case SendMessageStatusListener.STATUS_CANCELLED:
-                return _x("Local destination shutdown");
+        case SendMessageStatusListener.STATUS_CANCELLED:
+            return _x("Local destination shutdown");
 
-            case STATUS_CONNECTION_RESET:
-                return _x("Connection was reset");
+        case STATUS_CONNECTION_RESET:
+            return _x("Connection was reset");
 
-            case CUSTOM:
-                return super.getMessage();
+        case CUSTOM:
+            return super.getMessage();
 
-            default:
-                // Translate this one here, can't do it later
-                return _t("Failure code") + ": " + _status;
+        default:
+            // Translate this one here, can't do it later
+            return _t("Failure code") + ": " + _status;
         }
     }
 

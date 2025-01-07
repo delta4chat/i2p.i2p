@@ -39,7 +39,7 @@ class SourcedPlotElement extends PlotElement {
             if (Double.isNaN(parentValues[i])) {
                 stacked[i] = procValues[i];
             }
-            else if (Double.isNaN(procValues[i])){
+            else if (Double.isNaN(procValues[i])) {
                 stacked[i] = parentValues[i];
             }
             else {

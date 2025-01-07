@@ -2,9 +2,9 @@ package net.i2p.data;
 
 /*
  * free (adj.): unencumbered; not under the control of others
- * Written by jrandom in 2003 and released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
- * It probably won't make your computer catch on fire, or eat 
+ * Written by jrandom in 2003 and released into the public domain
+ * with no warranty of any kind, either expressed or implied.
+ * It probably won't make your computer catch on fire, or eat
  * your children, but it might.  Use at your own risk.
  *
  */
@@ -147,7 +147,7 @@ public class LeaseSet extends DatabaseEntry {
      */
     public PublicKey getEncryptionKey(Set<EncType> supported) {
         if (supported.contains(EncType.ELGAMAL_2048))
-                return _encryptionKey;
+            return _encryptionKey;
         return null;
     }
 
@@ -179,7 +179,7 @@ public class LeaseSet extends DatabaseEntry {
      */
     public void setSigningKey(SigningPublicKey key) {
         if (key != null && _destination != null &&
-            key.getType() != _destination.getSigningPublicKey().getType())
+                key.getType() != _destination.getSigningPublicKey().getType())
             throw new IllegalArgumentException("Signing key type mismatch");
         _signingKey = key;
     }
@@ -293,7 +293,7 @@ public class LeaseSet extends DatabaseEntry {
 
     /**
      * Determine whether ANY lease is currently valid, at least within a given
-     * fudge factor 
+     * fudge factor
      *
      * @param fudge milliseconds fudge factor to allow between the current time
      * @return true if there are current leases, false otherwise
@@ -329,7 +329,7 @@ public class LeaseSet extends DatabaseEntry {
             _byteified = rv;
         return rv;
     }
-    
+
     /**
      *  This does NOT validate the signature
      *
@@ -362,13 +362,13 @@ public class LeaseSet extends DatabaseEntry {
         _signature = new Signature(type);
         _signature.readBytes(in);
     }
-    
+
     /**
      *  This does NOT validate the signature
      */
     public void writeBytes(OutputStream out) throws DataFormatException, IOException {
         if ((_destination == null) || (_encryptionKey == null) || (_signingKey == null)
-            || (_signature == null)) throw new DataFormatException("Not enough data to write out a LeaseSet");
+                || (_signature == null)) throw new DataFormatException("Not enough data to write out a LeaseSet");
 
         _destination.writeBytes(out);
         _encryptionKey.writeBytes(out);
@@ -379,31 +379,31 @@ public class LeaseSet extends DatabaseEntry {
         }
         _signature.writeBytes(out);
     }
-    
+
     /**
      *  Number of bytes, NOT including signature
      */
     public int size() {
         return _destination.size()
-             + PublicKey.KEYSIZE_BYTES // encryptionKey
-             + _signingKey.length() // signingKey
-             + 1 // number of leases
-             + _leases.size() * 44;
+               + PublicKey.KEYSIZE_BYTES // encryptionKey
+               + _signingKey.length() // signingKey
+               + 1 // number of leases
+               + _leases.size() * 44;
     }
-    
+
     @Override
     public boolean equals(Object object) {
         if (object == this) return true;
         if ((object == null) || !(object instanceof LeaseSet)) return false;
         LeaseSet ls = (LeaseSet) object;
         return
-               DataHelper.eq(_signature, ls.getSignature())
-               && DataHelper.eq(_leases, ls._leases)
-               && DataHelper.eq(getEncryptionKey(), ls.getEncryptionKey())
-               && DataHelper.eq(_signingKey, ls.getSigningKey())
-               && DataHelper.eq(_destination, ls.getDestination());
+            DataHelper.eq(_signature, ls.getSignature())
+            && DataHelper.eq(_leases, ls._leases)
+            && DataHelper.eq(getEncryptionKey(), ls.getEncryptionKey())
+            && DataHelper.eq(_signingKey, ls.getSigningKey())
+            && DataHelper.eq(_destination, ls.getDestination());
     }
-    
+
     /** the destination has enough randomness in it to use it by itself for speed */
     @Override
     public int hashCode() {
@@ -411,7 +411,7 @@ public class LeaseSet extends DatabaseEntry {
             return 0;
         return _destination.hashCode();
     }
-    
+
     @Override
     public String toString() {
         StringBuilder buf = new StringBuilder(128);
@@ -552,13 +552,13 @@ public class LeaseSet extends DatabaseEntry {
      */
     private synchronized boolean isEncrypted() {
         if (_decrypted)
-           return true;
+            return true;
         // If the encryption key is not set yet, it can't have been encrypted yet.
         // Router-side I2CP sets the destination (but not the encryption key)
         // on an unsigned LS which is pending signature (and possibly encryption)
         // by the client, and we don't want to attempt 'decryption' on it.
         if (_checked || _encryptionKey == null || _destination == null)
-           return false;
+            return false;
         SessionKey key = I2PAppContext.getGlobalContext().keyRing().get(_destination.calculateHash());
         if (key != null) {
             try {

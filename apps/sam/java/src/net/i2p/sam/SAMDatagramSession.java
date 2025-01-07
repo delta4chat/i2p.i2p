@@ -1,9 +1,9 @@
 package net.i2p.sam;
 /*
  * free (adj.): unencumbered; not under the control of others
- * Written by human in 2004 and released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
- * It probably won't  make your computer catch on fire, or eat 
+ * Written by human in 2004 and released into the public domain
+ * with no warranty of any kind, either expressed or implied.
+ * It probably won't  make your computer catch on fire, or eat
  * your children, but it might.  Use at your own risk.
  *
  */
@@ -43,11 +43,11 @@ class SAMDatagramSession extends SAMMessageSession {
      * @param recv Object that will receive incoming data
      * @throws IOException
      * @throws DataFormatException
-     * @throws I2PSessionException 
+     * @throws I2PSessionException
      */
     protected SAMDatagramSession(String dest, Properties props,
-                              SAMDatagramReceiver recv) throws IOException, 
-                              DataFormatException, I2PSessionException {
+                                 SAMDatagramReceiver recv) throws IOException,
+        DataFormatException, I2PSessionException {
         super(dest, props);
         this.recv = recv;
         dgramMaker = new I2PDatagramMaker(getI2PSession());
@@ -63,11 +63,11 @@ class SAMDatagramSession extends SAMMessageSession {
      * @param recv Object that will receive incoming data
      * @throws IOException
      * @throws DataFormatException
-     * @throws I2PSessionException 
+     * @throws I2PSessionException
      */
     public SAMDatagramSession(InputStream destStream, Properties props,
-                              SAMDatagramReceiver recv) throws IOException, 
-                              DataFormatException, I2PSessionException {
+                              SAMDatagramReceiver recv) throws IOException,
+        DataFormatException, I2PSessionException {
         super(destStream, props);
         this.recv = recv;
         dgramMaker = new I2PDatagramMaker(getI2PSession());
@@ -80,8 +80,8 @@ class SAMDatagramSession extends SAMMessageSession {
      * @since 0.9.25
      */
     protected SAMDatagramSession(I2PSession sess, Properties props, int listenPort,
-                              SAMDatagramReceiver recv) throws IOException, 
-                              DataFormatException, I2PSessionException {
+                                 SAMDatagramReceiver recv) throws IOException,
+        DataFormatException, I2PSessionException {
         super(sess, I2PSession.PROTO_DATAGRAM, listenPort);
         this.recv = recv;
         dgramMaker = new I2PDatagramMaker(getI2PSession());
@@ -118,7 +118,7 @@ class SAMDatagramSession extends SAMMessageSession {
                              int fromPort, int toPort,
                              boolean sendLeaseSet, int sendTags,
                              int tagThreshold, int expiration)
-                                 throws DataFormatException, I2PSessionException {
+    throws DataFormatException, I2PSessionException {
         if (data.length > DGRAM_SIZE_MAX)
             throw new DataFormatException("Datagram size exceeded (" + data.length + ")");
         byte[] dgram ;

@@ -51,22 +51,22 @@ public class I2PTunnelIRCClient extends I2PTunnelClientBase {
      *                                  valid config to contact the router
      */
     public I2PTunnelIRCClient(
-                              int localPort,
-                              String destinations,
-                              Logging l, 
-                              boolean ownDest,
-                              EventDispatcher notifyThis,
-                              I2PTunnel tunnel, String pkf) throws IllegalArgumentException {
-        super(localPort, 
-              ownDest, 
-              l, 
-              notifyThis, 
+        int localPort,
+        String destinations,
+        Logging l,
+        boolean ownDest,
+        EventDispatcher notifyThis,
+        I2PTunnel tunnel, String pkf) throws IllegalArgumentException {
+        super(localPort,
+              ownDest,
+              l,
+              notifyThis,
               "IRC Client on " + tunnel.listenHost + ':' + localPort, tunnel, pkf);
         // force connect delay and bulk profile
         Properties opts = tunnel.getClientOptions();
         opts.setProperty("i2p.streaming.connectDelay", "200");
         opts.remove("i2p.streaming.maxWindowSize");
-        
+
         _addrs = new ArrayList<I2PSocketAddress>(4);
         buildAddresses(destinations);
 
@@ -84,7 +84,7 @@ public class I2PTunnelIRCClient extends I2PTunnelClientBase {
             throw new IllegalArgumentException("No valid target destinations found");
             //return;
         }
-        
+
         setName("IRC Client on " + tunnel.listenHost + ':' + localPort);
 
         _dccEnabled = Boolean.parseBoolean(tunnel.getClientOptions().getProperty(PROP_DCC));
@@ -92,7 +92,7 @@ public class I2PTunnelIRCClient extends I2PTunnelClientBase {
 
         notifyEvent("openIRCClientResult", "ok");
     }
-    
+
     /** @since 0.9.9 moved from constructor */
     private void buildAddresses(String destinations) {
         if (destinations == null)
@@ -118,7 +118,7 @@ public class I2PTunnelIRCClient extends I2PTunnelClientBase {
                                   ", you must add it to your address book for it to work.");
                     }
                 } catch (IllegalArgumentException iae) {
-                     l.log("Bad destination " + destination + " - " + iae);
+                    l.log("Bad destination " + destination + " - " + iae);
                 }
             }
         }
@@ -186,7 +186,10 @@ public class I2PTunnelIRCClient extends I2PTunnelClientBase {
             // only because we are running it inline
             closeSocket(s);
             if (i2ps != null) {
-                try { i2ps.close(); } catch (IOException ioe) {}
+                try {
+                    i2ps.close();
+                }
+                catch (IOException ioe) {}
                 synchronized (sockLock) {
                     mySockets.remove(i2ps);
                 }
@@ -194,7 +197,7 @@ public class I2PTunnelIRCClient extends I2PTunnelClientBase {
         }
 
     }
-    
+
     private final I2PSocketAddress pickDestination() {
         synchronized(_addrs) {
             int size = _addrs.size();
@@ -255,93 +258,93 @@ public class I2PTunnelIRCClient extends I2PTunnelClientBase {
     //  Start of the DCCHelper interface
     //
 
-  private class DCC implements DCCHelper {
+    private class DCC implements DCCHelper {
 
-    private final byte[] _localAddr;
+        private final byte[] _localAddr;
 
-    /**
-     *  @param local Our IP address, from the IRC client's perspective
-     */
-    public DCC(byte[] local) {
-        if (local.length == 4)
-            _localAddr = local;
-        else
-            _localAddr = new byte[] {127, 0, 0, 1};
-    }
-
-    public boolean isEnabled() {
-        return _dccEnabled;
-    }
-
-    public String getB32Hostname() {
-        return sockMgr.getSession().getMyDestination().toBase32();
-    }
-
-    public byte[] getLocalAddress() {
-        return _localAddr;
-    }
-
-    public int newOutgoing(byte[] ip, int port, String type) {
-        I2PTunnelDCCServer server;
-        synchronized(this) {
-            if (_DCCServer == null) {
-                if (_log.shouldLog(Log.INFO))
-                    _log.info("Starting DCC Server");
-                _DCCServer = new I2PTunnelDCCServer(sockMgr, l, I2PTunnelIRCClient.this, getTunnel());
-                // TODO add some prudent tunnel options (or is it too late?)
-                _DCCServer.startRunning();
-            }
-            server = _DCCServer;
+        /**
+         *  @param local Our IP address, from the IRC client's perspective
+         */
+        public DCC(byte[] local) {
+            if (local.length == 4)
+                _localAddr = local;
+            else
+                _localAddr = new byte[] {127, 0, 0, 1};
         }
-        int rv = server.newOutgoing(ip, port, type);
-        if (_log.shouldLog(Log.INFO))
-            _log.info("New outgoing " + type + ' ' + port + " returns " + rv);
-        return rv;
-    }
 
-    public int newIncoming(String b32, int port, String type) {
-        DCCClientManager tracker;
-        synchronized(this) {
-            if (_DCCClientManager == null) {
-                if (_log.shouldLog(Log.INFO))
-                    _log.info("Starting DCC Client");
-                _DCCClientManager = new DCCClientManager(sockMgr, l, I2PTunnelIRCClient.this, getTunnel());
-            }
-            tracker = _DCCClientManager;
+        public boolean isEnabled() {
+            return _dccEnabled;
         }
-        // The tracker starts our client
-        int rv = tracker.newIncoming(b32, port, type);
-        if (_log.shouldLog(Log.INFO))
-            _log.info("New incoming " + type + ' ' + b32 + ' ' + port + " returns " + rv);
-        return rv;
-    }
 
-    public int resumeOutgoing(int port) {
-        DCCClientManager tracker = _DCCClientManager;
-        if (tracker != null)
-            return tracker.resumeOutgoing(port);
-        return -1;
-    }
+        public String getB32Hostname() {
+            return sockMgr.getSession().getMyDestination().toBase32();
+        }
 
-    public int resumeIncoming(int port) {
-        I2PTunnelDCCServer server = _DCCServer;
-        if (server != null)
-            return server.resumeIncoming(port);
-        return -1;
-    }
+        public byte[] getLocalAddress() {
+            return _localAddr;
+        }
 
-    public int acceptOutgoing(int port) {
-        I2PTunnelDCCServer server = _DCCServer;
-        if (server != null)
-            return server.acceptOutgoing(port);
-        return -1;
-    }
+        public int newOutgoing(byte[] ip, int port, String type) {
+            I2PTunnelDCCServer server;
+            synchronized(this) {
+                if (_DCCServer == null) {
+                    if (_log.shouldLog(Log.INFO))
+                        _log.info("Starting DCC Server");
+                    _DCCServer = new I2PTunnelDCCServer(sockMgr, l, I2PTunnelIRCClient.this, getTunnel());
+                    // TODO add some prudent tunnel options (or is it too late?)
+                    _DCCServer.startRunning();
+                }
+                server = _DCCServer;
+            }
+            int rv = server.newOutgoing(ip, port, type);
+            if (_log.shouldLog(Log.INFO))
+                _log.info("New outgoing " + type + ' ' + port + " returns " + rv);
+            return rv;
+        }
 
-    public int acceptIncoming(int port) {
-        DCCClientManager tracker = _DCCClientManager;
-        if (tracker != null)
-            return tracker.acceptIncoming(port);
-        return -1;
+        public int newIncoming(String b32, int port, String type) {
+            DCCClientManager tracker;
+            synchronized(this) {
+                if (_DCCClientManager == null) {
+                    if (_log.shouldLog(Log.INFO))
+                        _log.info("Starting DCC Client");
+                    _DCCClientManager = new DCCClientManager(sockMgr, l, I2PTunnelIRCClient.this, getTunnel());
+                }
+                tracker = _DCCClientManager;
+            }
+            // The tracker starts our client
+            int rv = tracker.newIncoming(b32, port, type);
+            if (_log.shouldLog(Log.INFO))
+                _log.info("New incoming " + type + ' ' + b32 + ' ' + port + " returns " + rv);
+            return rv;
+        }
+
+        public int resumeOutgoing(int port) {
+            DCCClientManager tracker = _DCCClientManager;
+            if (tracker != null)
+                return tracker.resumeOutgoing(port);
+            return -1;
+        }
+
+        public int resumeIncoming(int port) {
+            I2PTunnelDCCServer server = _DCCServer;
+            if (server != null)
+                return server.resumeIncoming(port);
+            return -1;
+        }
+
+        public int acceptOutgoing(int port) {
+            I2PTunnelDCCServer server = _DCCServer;
+            if (server != null)
+                return server.acceptOutgoing(port);
+            return -1;
+        }
+
+        public int acceptIncoming(int port) {
+            DCCClientManager tracker = _DCCClientManager;
+            if (tracker != null)
+                return tracker.acceptIncoming(port);
+            return -1;
+        }
     }
-  }
 }

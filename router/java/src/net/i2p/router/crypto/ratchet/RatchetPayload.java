@@ -96,7 +96,7 @@ class RatchetPayload {
      */
     public static int processPayload(I2PAppContext ctx, PayloadCallback cb,
                                      byte[] payload, int off, int length, boolean isHandshake)
-                                     throws IOException, DataFormatException, I2NPMessageException {
+    throws IOException, DataFormatException, I2NPMessageException {
         int blocks = 0;
         boolean gotPadding = false;
         boolean gotTermination = false;
@@ -116,94 +116,94 @@ class RatchetPayload {
                                       '\n' + net.i2p.util.HexDump.dump(payload, off, length));
             }
             switch (type) {
-                // don't modify i inside switch
+            // don't modify i inside switch
 
-                case BLOCK_DATETIME:
-                    if (len != 4)
-                        throw new IOException("Bad length for DATETIME: " + len);
-                    long time = DataHelper.fromLong(payload, i, 4) * 1000;
-                    cb.gotDateTime(time);
-                    break;
+            case BLOCK_DATETIME:
+                if (len != 4)
+                    throw new IOException("Bad length for DATETIME: " + len);
+                long time = DataHelper.fromLong(payload, i, 4) * 1000;
+                cb.gotDateTime(time);
+                break;
 
-                case BLOCK_OPTIONS:
-                    byte[] options = new byte[len];
-                    System.arraycopy(payload, i, options, 0, len);
-                    cb.gotOptions(options, isHandshake);
-                    break;
+            case BLOCK_OPTIONS:
+                byte[] options = new byte[len];
+                System.arraycopy(payload, i, options, 0, len);
+                cb.gotOptions(options, isHandshake);
+                break;
 
-                case BLOCK_GARLIC:
-                    GarlicClove clove = new GarlicClove(ctx);
-                    clove.readBytesRatchet(payload, i, len);
-                    cb.gotGarlic(clove);
-                    break;
+            case BLOCK_GARLIC:
+                GarlicClove clove = new GarlicClove(ctx);
+                clove.readBytesRatchet(payload, i, len);
+                cb.gotGarlic(clove);
+                break;
 
-                case BLOCK_NEXTKEY:
-                  {
-                    if (len != 3 && len != 35)
-                        throw new IOException("Bad length for NEXTKEY: " + len);
-                    boolean hasKey = (payload[i] & 0x01) != 0;
-                    boolean isReverse = (payload[i] & 0x02) != 0;
-                    boolean isRequest = (payload[i] & 0x04) != 0;
-                    int id = (int) DataHelper.fromLong(payload, i + 1, 2);
-                    NextSessionKey nsk;
-                    if (hasKey) {
-                        byte[] data = new byte[32];
-                        System.arraycopy(payload, i + 3, data, 0, 32);
-                        nsk = new NextSessionKey(data, id, isReverse, isRequest);
-                    } else {
-                        nsk = new NextSessionKey(id, isReverse, isRequest);
-                    }
-                    cb.gotNextKey(nsk);
-                  }
-                    break;
+            case BLOCK_NEXTKEY:
+            {
+                if (len != 3 && len != 35)
+                    throw new IOException("Bad length for NEXTKEY: " + len);
+                boolean hasKey = (payload[i] & 0x01) != 0;
+                boolean isReverse = (payload[i] & 0x02) != 0;
+                boolean isRequest = (payload[i] & 0x04) != 0;
+                int id = (int) DataHelper.fromLong(payload, i + 1, 2);
+                NextSessionKey nsk;
+                if (hasKey) {
+                    byte[] data = new byte[32];
+                    System.arraycopy(payload, i + 3, data, 0, 32);
+                    nsk = new NextSessionKey(data, id, isReverse, isRequest);
+                } else {
+                    nsk = new NextSessionKey(id, isReverse, isRequest);
+                }
+                cb.gotNextKey(nsk);
+            }
+            break;
 
-                case BLOCK_ACK:
-                  {
-                    if (len < 4 || (len % 4) != 0)
-                        throw new IOException("Bad length for ACK: " + len);
-                    for (int j = i; j < i + len; j += 4) {
-                        int id = (int) DataHelper.fromLong(payload, j, 2);
-                        int n = (int) DataHelper.fromLong(payload, j + 2, 2);
-                        cb.gotAck(id, n);
-                    }
-                  }
-                    break;
+            case BLOCK_ACK:
+            {
+                if (len < 4 || (len % 4) != 0)
+                    throw new IOException("Bad length for ACK: " + len);
+                for (int j = i; j < i + len; j += 4) {
+                    int id = (int) DataHelper.fromLong(payload, j, 2);
+                    int n = (int) DataHelper.fromLong(payload, j + 2, 2);
+                    cb.gotAck(id, n);
+                }
+            }
+            break;
 
-                case BLOCK_ACKREQ:
-                    if (len < 1)
-                        throw new IOException("Bad length for ACKREQ: " + len);
-                    cb.gotAckRequest();
-                    break;
+            case BLOCK_ACKREQ:
+                if (len < 1)
+                    throw new IOException("Bad length for ACKREQ: " + len);
+                cb.gotAckRequest();
+                break;
 
-                case BLOCK_TERMINATION:
-                    if (isHandshake)
-                        throw new IOException("Illegal block in handshake: " + type);
-                    if (len < 1)
-                        throw new IOException("Bad length for TERMINATION: " + len);
-                    int rsn = payload[i] & 0xff;
-                    cb.gotTermination(rsn);
-                    gotTermination = true;
-                    break;
+            case BLOCK_TERMINATION:
+                if (isHandshake)
+                    throw new IOException("Illegal block in handshake: " + type);
+                if (len < 1)
+                    throw new IOException("Bad length for TERMINATION: " + len);
+                int rsn = payload[i] & 0xff;
+                cb.gotTermination(rsn);
+                gotTermination = true;
+                break;
 
-                case BLOCK_MSGNUM:
-                    if (isHandshake)
-                        throw new IOException("Illegal block in handshake: " + type);
-                    if (len < 2)
-                        throw new IOException("Bad length for PN: " + len);
-                    int pn = (int) DataHelper.fromLong(payload, i, 2);
-                    cb.gotPN(pn);
-                    break;
+            case BLOCK_MSGNUM:
+                if (isHandshake)
+                    throw new IOException("Illegal block in handshake: " + type);
+                if (len < 2)
+                    throw new IOException("Bad length for PN: " + len);
+                int pn = (int) DataHelper.fromLong(payload, i, 2);
+                cb.gotPN(pn);
+                break;
 
-                case BLOCK_PADDING:
-                    gotPadding = true;
-                    cb.gotPadding(len, length);
-                    break;
+            case BLOCK_PADDING:
+                gotPadding = true;
+                cb.gotPadding(len, length);
+                break;
 
-                default:
-                    if (isHandshake)
-                        throw new IOException("Illegal block in handshake: " + type);
-                    cb.gotUnknown(type, len);
-                    break;
+            default:
+                if (isHandshake)
+                    throw new IOException("Illegal block in handshake: " + type);
+                cb.gotUnknown(type, len);
+                break;
 
             }
             i += len;
@@ -473,7 +473,7 @@ class RatchetPayload {
             return off + 2;
         }
     }
-    
+
     /**
      * Big endian.
      * Same as DataHelper.toLong(target, offset, 4, value) but allows negative value

@@ -27,34 +27,34 @@ public class RouterPasswordManager extends PasswordManager {
     private static final String PROP_I2CP_OLD_PW = I2PClient.PROP_PW;
     private static final String PROP_I2CP_OLD_USER = I2PClient.PROP_USER;
     private static final String PROP_I2CP_NEW = "i2cp.auth";
-/****
-    // migrate these to b64
-    private static final String[] MIGRATE_FROM = {
-        // This has a separate router.reseedProxy.username prop,
-        // so let's not mess with it
-        "router.reseedProxy.password", 
-        // Don't migrate these until we have a console form for them,
-        // which we aren't likely to ever bother with
-        "routerconsole.keyPassword",
-        "routerconsole.keystorePassword",
-        "i2cp.keyPassword",
-        "i2cp.keystorePassword"
-    };
-    private static final String[] MIGRATE_TO = {
-        "router.reseedProxy.auth", 
-        "routerconsole.ssl.key.auth",
-        "routerconsole.ssl.keystore.auth",
-        "i2cp.ssl.key.auth",
-        "i2cp.ssl.keystore.auth"
-    };
-****/
+    /****
+        // migrate these to b64
+        private static final String[] MIGRATE_FROM = {
+            // This has a separate router.reseedProxy.username prop,
+            // so let's not mess with it
+            "router.reseedProxy.password",
+            // Don't migrate these until we have a console form for them,
+            // which we aren't likely to ever bother with
+            "routerconsole.keyPassword",
+            "routerconsole.keystorePassword",
+            "i2cp.keyPassword",
+            "i2cp.keystorePassword"
+        };
+        private static final String[] MIGRATE_TO = {
+            "router.reseedProxy.auth",
+            "routerconsole.ssl.key.auth",
+            "routerconsole.ssl.keystore.auth",
+            "i2cp.ssl.key.auth",
+            "i2cp.ssl.keystore.auth"
+        };
+    ****/
 
     public RouterPasswordManager(RouterContext ctx) {
         super(ctx);
         _context = ctx;
         migrate();
     }
-    
+
     /**
      *  Migrate from plaintext to salt/hash
      *
@@ -68,19 +68,19 @@ public class RouterPasswordManager extends PasswordManager {
             String user = _context.getProperty(PROP_I2CP_OLD_USER);
             String pw = _context.getProperty(PROP_I2CP_OLD_PW);
             if (pw != null && user != null && pw.length() > 0 && user.length() > 0) {
-                    saveHash(PROP_I2CP_NEW, user, pw);
+                saveHash(PROP_I2CP_NEW, user, pw);
             }
             // obfuscation of plaintext passwords
             Map<String, String> toAdd = new HashMap<String, String>(5);
             List<String> toDel = new ArrayList<String>(5);
-         /****
-            for (int i = 0; i < MIGRATE_FROM.length; i++) {
-                if ((pw = _context.getProperty(MIGRATE_FROM[i])) != null) {
-                    toAdd.put(MIGRATE_TO[i], Base64.encode(DataHelper.getUTF8(pw)));
-                    toDel.add(MIGRATE_FROM[i]);
-                }
-            }
-          ****/
+            /****
+               for (int i = 0; i < MIGRATE_FROM.length; i++) {
+                   if ((pw = _context.getProperty(MIGRATE_FROM[i])) != null) {
+                       toAdd.put(MIGRATE_TO[i], Base64.encode(DataHelper.getUTF8(pw)));
+                       toDel.add(MIGRATE_FROM[i]);
+                   }
+               }
+             ****/
             toDel.add(PROP_I2CP_OLD_USER);
             toDel.add(PROP_I2CP_OLD_PW);
             toAdd.put(PROP_MIGRATED, "true");
@@ -99,7 +99,7 @@ public class RouterPasswordManager extends PasswordManager {
     public boolean save(String realm, String user, String pw) {
         return saveHash(realm, user, pw);
     }
-    
+
     /**
      *  This will fail if pw contains a '#'
      *  or if user contains '#' or '=' or starts with '!'
@@ -121,8 +121,8 @@ public class RouterPasswordManager extends PasswordManager {
         toDel.add(pfx + PROP_SHASH);
         return _context.router().saveConfig(toAdd, toDel);
     }
-    
-    
+
+
     /**
      *  This will fail if
      *  if user contains '#' or '=' or starts with '!'
@@ -145,7 +145,7 @@ public class RouterPasswordManager extends PasswordManager {
         toDel.add(pfx + PROP_SHASH);
         return _context.router().saveConfig(toAdd, toDel);
     }
-    
+
     /**
      *  This will fail if
      *  user contains '#' or '=' or starts with '!'

@@ -133,7 +133,7 @@ public class TunnelControllerGroup implements ClientApp {
                     ctx.logManager().getLog(TunnelControllerGroup.class).warn("Old context in TCG");
                     _instance.shutdown();
                     _instance = new TunnelControllerGroup(ctx, null, null);
-                 }
+                }
             }
             return _instance;
         }
@@ -191,7 +191,7 @@ public class TunnelControllerGroup implements ClientApp {
      * @return an array of exactly 2 strings, where [0] is the the value for
      * _configFile and [1] is the value for _configDirectory
     */
-    private String[] setupArguments(String args[]){
+    private String[] setupArguments(String args[]) {
         String configFile = DEFAULT_CONFIG_FILE;
         String configDirectory = CONFIG_DIR;
         File check = new File(args[0]);
@@ -202,7 +202,7 @@ public class TunnelControllerGroup implements ClientApp {
         } else if (check.isDirectory()) {
             configDirectory = args[0];
         }
-        return new String[]{configFile, configDirectory};
+        return new String[] {configFile, configDirectory};
     }
 
     /**
@@ -253,7 +253,7 @@ public class TunnelControllerGroup implements ClientApp {
         startControllers();
         if (_mgr != null)
             _mgr.register(this);
-            // RouterAppManager registers its own shutdown hook
+        // RouterAppManager registers its own shutdown hook
         else
             _context.addShutdownTask(new Shutdown());
     }
@@ -396,7 +396,7 @@ public class TunnelControllerGroup implements ClientApp {
                         shouldMigrate = false;
                     } else {
                         _log.logAlways(Log.WARN, "Migrated tunnel configurations to " + dir +
-                                                 " from " + cfgFile);
+                                       " from " + cfgFile);
                     }
                 } else {
                     _log.logAlways(Log.WARN, "Not migrating tunnel configurations");
@@ -407,7 +407,7 @@ public class TunnelControllerGroup implements ClientApp {
                 throw new IllegalArgumentException("Unable to load the controllers from " + cfgFile, ioe);
             }
         } else if (!shouldMigrate) {
-                throw new IllegalArgumentException("Unable to load the controllers from " + cfgFile);
+            throw new IllegalArgumentException("Unable to load the controllers from " + cfgFile);
         }
         _controllersLock.writeLock().lock();
         try {
@@ -770,7 +770,7 @@ public class TunnelControllerGroup implements ClientApp {
      * @since 0.9.42
      */
     public synchronized void saveConfig(TunnelController tc) throws IOException {
-        if (!shouldMigrate()){
+        if (!shouldMigrate()) {
             saveConfig();
             return;
         }
@@ -867,7 +867,7 @@ public class TunnelControllerGroup implements ClientApp {
             _log.info("Seeking controller configs in " + folder.toString());
         File[] listOfFiles = folder.listFiles(new FileSuffixFilter(".config"));
         List<File> files = new ArrayList<File>();
-        if (listOfFiles != null && listOfFiles.length > 0){
+        if (listOfFiles != null && listOfFiles.length > 0) {
             for (File afile : listOfFiles) {
                 files.add(afile);
                 if (_log.shouldLog(Log.INFO))
@@ -957,7 +957,7 @@ public class TunnelControllerGroup implements ClientApp {
             cfgFile = new File(_context.getConfigDir(), _configFile);
         rv.addAll(getControllers(cfgFile));
         return rv;
-     }
+    }
 
     /**
      * Retrieve a list of tunnels known.
@@ -1080,8 +1080,8 @@ public class TunnelControllerGroup implements ClientApp {
      */
     static class CustomThreadPoolExecutor extends ThreadPoolExecutor {
         public CustomThreadPoolExecutor() {
-             super(0, Integer.MAX_VALUE, HANDLER_KEEPALIVE_MS, TimeUnit.MILLISECONDS,
-                   new SynchronousQueue<Runnable>(), new CustomThreadFactory());
+            super(0, Integer.MAX_VALUE, HANDLER_KEEPALIVE_MS, TimeUnit.MILLISECONDS,
+                  new SynchronousQueue<Runnable>(), new CustomThreadFactory());
         }
     }
 

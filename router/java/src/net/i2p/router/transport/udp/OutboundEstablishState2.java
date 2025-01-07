@@ -33,7 +33,7 @@ import net.i2p.util.Addresses;
 import net.i2p.util.Log;
 
 /**
- * Data for a new connection being established, where we initiated the 
+ * Data for a new connection being established, where we initiated the
  * connection with a remote peer.  In other words, we are Alice and
  * they are Bob.
  *
@@ -272,11 +272,11 @@ class OutboundEstablishState2 extends OutboundEstablishState implements SSU2Payl
         }
         _handshakeState.getRemotePublicKey().setPublicKey(publicKey, 0);
         _handshakeState.getLocalKeyPair().setKeys(_transport.getSSU2StaticPrivKey(), 0,
-                                                  _transport.getSSU2StaticPubKey(), 0);
+                _transport.getSSU2StaticPubKey(), 0);
         // we must invalidate any old saved session request
         _sessReqForReTX = null;
     }
-    
+
     private void processPayload(byte[] payload, int offset, int length, boolean isHandshake) throws GeneralSecurityException {
         try {
             int blocks = SSU2Payload.processPayload(_context, this, payload, offset, length, isHandshake, null);
@@ -390,7 +390,7 @@ class OutboundEstablishState2 extends OutboundEstablishState implements SSU2Payl
                     _context.clock().setOffset(0 - skew, true);
                     if (skew != 0)
                         _log.logAlways(Log.WARN, "NTP failure, SSU2 adjusted clock by " + skewString +
-                                                 " source router: " + bob.toBase64());
+                                       " source router: " + bob.toBase64());
 
                     if (!_context.clock().getUpdatedSuccessfully()) {
                         // clock update was either rejected or is pending.
@@ -462,10 +462,18 @@ class OutboundEstablishState2 extends OutboundEstablishState implements SSU2Payl
     // SSU 2 things
 
     @Override
-    public int getVersion() { return 2; }
-    public long getSendConnID() { return _sendConnID; }
-    public long getRcvConnID() { return _rcvConnID; }
-    public long getToken() { return _token; }
+    public int getVersion() {
+        return 2;
+    }
+    public long getSendConnID() {
+        return _sendConnID;
+    }
+    public long getRcvConnID() {
+        return _rcvConnID;
+    }
+    public long getToken() {
+        return _token;
+    }
     /**
      *  @return may be null
      */
@@ -474,16 +482,30 @@ class OutboundEstablishState2 extends OutboundEstablishState implements SSU2Payl
             return null;
         return _transport.getEstablisher().getInboundToken(_remoteHostId);
     }
-    public HandshakeState getHandshakeState() { return _handshakeState; }
-    public byte[] getSendHeaderEncryptKey1() { return _headerEncryptKey1; }
-    public byte[] getRcvHeaderEncryptKey1() { return _headerEncryptKey1; }
-    public byte[] getSendHeaderEncryptKey2() { return _sendHeaderEncryptKey2; }
+    public HandshakeState getHandshakeState() {
+        return _handshakeState;
+    }
+    public byte[] getSendHeaderEncryptKey1() {
+        return _headerEncryptKey1;
+    }
+    public byte[] getRcvHeaderEncryptKey1() {
+        return _headerEncryptKey1;
+    }
+    public byte[] getSendHeaderEncryptKey2() {
+        return _sendHeaderEncryptKey2;
+    }
     /**
      *  @return null before Session Request is sent (i.e. we sent a Token Request first)
      */
-    public byte[] getRcvHeaderEncryptKey2() { return _rcvHeaderEncryptKey2; }
-    public byte[] getRcvRetryHeaderEncryptKey2() { return _rcvRetryHeaderEncryptKey2; }
-    public InetSocketAddress getSentAddress() { return _bobSocketAddress; }
+    public byte[] getRcvHeaderEncryptKey2() {
+        return _rcvHeaderEncryptKey2;
+    }
+    public byte[] getRcvRetryHeaderEncryptKey2() {
+        return _rcvRetryHeaderEncryptKey2;
+    }
+    public InetSocketAddress getSentAddress() {
+        return _bobSocketAddress;
+    }
 
     /**
      *  What is the largest packet we can send to the peer?
@@ -562,7 +584,7 @@ class OutboundEstablishState2 extends OutboundEstablishState implements SSU2Payl
         // we do the state check here, after all the validation,
         // so we can check for termination first.
         if (_currentState != OutboundState.OB_STATE_TOKEN_REQUEST_SENT &&
-            _currentState != OutboundState.OB_STATE_REQUEST_SENT) {
+                _currentState != OutboundState.OB_STATE_REQUEST_SENT) {
             // not fatal
             if (_log.shouldWarn())
                 _log.warn("Got out-of-order Retry with token " + token + " on: " + this);
@@ -607,7 +629,7 @@ class OutboundEstablishState2 extends OutboundEstablishState implements SSU2Payl
      */
     private void locked_receiveSessionCreated(UDPPacket packet) throws GeneralSecurityException {
         if (_currentState != OutboundState.OB_STATE_REQUEST_SENT &&
-            _currentState != OutboundState.OB_STATE_REQUEST_SENT_NEW_TOKEN) {
+                _currentState != OutboundState.OB_STATE_REQUEST_SENT_NEW_TOKEN) {
             // ignore dups
             if (_log.shouldLog(Log.WARN))
                 _log.warn("Invalid state for session created: " + this);
@@ -655,15 +677,15 @@ class OutboundEstablishState2 extends OutboundEstablishState implements SSU2Payl
             _rtt = (int) (_nextSend - _requestSentTime);
         _skew = (_nextSend - _timeReceived) - (_rtt / 2);
         if (!_context.clock().getUpdatedSuccessfully() &&
-            _timeReceived > BuildTime.getEarliestTime() &&
-            _timeReceived < BuildTime.getLatestTime()) {
+                _timeReceived > BuildTime.getEarliestTime() &&
+                _timeReceived < BuildTime.getLatestTime()) {
             // adjust the clock one time, so we don't have to wait for NTCP to do it
             _context.clock().setOffset(0 - _skew, true);
             if (_skew != 0) {
                 String skewString = DataHelper.formatDuration(Math.abs(_skew));
                 Hash bob = _remotePeer.calculateHash();
                 _log.logAlways(Log.WARN, "NTP failure, SSU2 adjusted clock by " + skewString +
-                                         " source router: " + bob.toBase64());
+                               " source router: " + bob.toBase64());
             }
         }
         // Unlikely, we would have gotten a termination from him and failed already,
@@ -759,18 +781,18 @@ class OutboundEstablishState2 extends OutboundEstablishState implements SSU2Payl
             sender.initializeKey(d_ab, 0);
             ChaChaPolyCipherState rcvr = new ChaChaPolyCipherState();
             rcvr.initializeKey(d_ba, 0);
-          /****
-            if (_log.shouldDebug())
-                _log.debug("split()\nGenerated Chain key:              " + Base64.encode(ckd) +
-                           "\nGenerated split key for A->B:     " + Base64.encode(k_ab) +
-                           "\nGenerated split key for B->A:     " + Base64.encode(k_ba) +
-                           "\nGenerated encrypt key for A->B:   " + Base64.encode(d_ab) +
-                           "\nGenerated encrypt key for B->A:   " + Base64.encode(d_ba) +
-                           "\nIntro key for Alice:              " + Base64.encode(_transport.getSSU2StaticIntroKey()) +
-                           "\nIntro key for Bob:                " + Base64.encode(_sendHeaderEncryptKey1) +
-                           "\nGenerated header key 2 for A->B:  " + Base64.encode(h_ab) +
-                           "\nGenerated header key 2 for B->A:  " + Base64.encode(h_ba));
-            ****/
+            /****
+              if (_log.shouldDebug())
+                  _log.debug("split()\nGenerated Chain key:              " + Base64.encode(ckd) +
+                             "\nGenerated split key for A->B:     " + Base64.encode(k_ab) +
+                             "\nGenerated split key for B->A:     " + Base64.encode(k_ba) +
+                             "\nGenerated encrypt key for A->B:   " + Base64.encode(d_ab) +
+                             "\nGenerated encrypt key for B->A:   " + Base64.encode(d_ba) +
+                             "\nIntro key for Alice:              " + Base64.encode(_transport.getSSU2StaticIntroKey()) +
+                             "\nIntro key for Bob:                " + Base64.encode(_sendHeaderEncryptKey1) +
+                             "\nGenerated header key 2 for A->B:  " + Base64.encode(h_ab) +
+                             "\nGenerated header key 2 for B->A:  " + Base64.encode(h_ba));
+              ****/
             Arrays.fill(ckd, (byte) 0);
             Arrays.fill(k_ab, (byte) 0);
             Arrays.fill(k_ba, (byte) 0);

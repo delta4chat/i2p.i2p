@@ -42,7 +42,7 @@ class SSLClientListenerRunner extends ClientListenerRunner {
     public SSLClientListenerRunner(RouterContext context, ClientManager manager, int port) {
         super(context, manager, port);
     }
-    
+
     /**
      * @return success if it exists and we have a password, or it was created successfully.
      */
@@ -107,7 +107,7 @@ class SSLClientListenerRunner extends ClientListenerRunner {
         return success;
     }
 
-    /** 
+    /**
      * Pull the cert back OUT of the keystore and save it as ascii
      * so the clients can get to it.
      */
@@ -124,7 +124,7 @@ class SSLClientListenerRunner extends ClientListenerRunner {
         }
     }
 
-    /** 
+    /**
      * Sets up the SSLContext and sets the socket factory.
      * @return success
      */
@@ -153,12 +153,15 @@ class SSLClientListenerRunner extends ClientListenerRunner {
         } catch (IOException ioe) {
             _log.error("Error loading SSL keys", ioe);
         } finally {
-            if (fis != null) try { fis.close(); } catch (IOException ioe) {}
+            if (fis != null) try {
+                    fis.close();
+                }
+                catch (IOException ioe) {}
         }
         return false;
     }
 
-    /** 
+    /**
      * Get a SSLServerSocket.
      */
     @Override
@@ -169,8 +172,8 @@ class SSLClientListenerRunner extends ClientListenerRunner {
                 _log.info("Listening on port " + _port + " on all interfaces");
             rv = _factory.createServerSocket(_port);
         } else {
-            String listenInterface = _context.getProperty(ClientManagerFacadeImpl.PROP_CLIENT_HOST, 
-                                                          ClientManagerFacadeImpl.DEFAULT_HOST);
+            String listenInterface = _context.getProperty(ClientManagerFacadeImpl.PROP_CLIENT_HOST,
+                                     ClientManagerFacadeImpl.DEFAULT_HOST);
             if (_log.shouldLog(Log.INFO))
                 _log.info("Listening on port " + _port + " of the specific interface: " + listenInterface);
             rv = _factory.createServerSocket(_port, 0, InetAddress.getByName(listenInterface));
@@ -179,7 +182,7 @@ class SSLClientListenerRunner extends ClientListenerRunner {
         return rv;
     }
 
-    /** 
+    /**
      * Create (if necessary) and load the key store, then run.
      */
     @Override
@@ -208,7 +211,7 @@ class SSLClientListenerRunner extends ClientListenerRunner {
             return rv;
         } catch (IOException ioe) {}
         if (_log.shouldLog(Log.WARN))
-             _log.warn("Peer did not authenticate themselves as I2CP quickly enough, dropping");
+            _log.warn("Peer did not authenticate themselves as I2CP quickly enough, dropping");
         return false;
     }
 }

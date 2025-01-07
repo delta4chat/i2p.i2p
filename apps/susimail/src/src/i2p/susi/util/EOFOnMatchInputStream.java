@@ -61,7 +61,7 @@ public class EOFOnMatchInputStream extends PushbackInputStream implements ReadCo
      */
     public long getRead() {
         if (cis != null)
-        	return cis.getRead() - (size - pos);
+            return cis.getRead() - (size - pos);
         return 0;
     }
 
@@ -69,7 +69,7 @@ public class EOFOnMatchInputStream extends PushbackInputStream implements ReadCo
      *  @return true if we returned EOF because we hit the match
      */
     public boolean wasFound() {
-        return pos <= 0; 
+        return pos <= 0;
     }
 
     /**
@@ -77,31 +77,31 @@ public class EOFOnMatchInputStream extends PushbackInputStream implements ReadCo
      *
      *  @return number of bytes buffered
      */
-/*
-    public int getBuffered() {
-        return size - pos;
-    }
-*/
+    /*
+        public int getBuffered() {
+            return size - pos;
+        }
+    */
 
     /**
      *  Debug only. Return the buffer.
      *
      *  @return the buffer
      */
-/*
-    public byte[] getBuffer() {
-        int len = getBuffered();
-        byte[] b = new byte[len];
-        if (len <= 0)
-            return b;
-        System.arraycopy(buf, pos, b, 0, len);
-        return reverse(b);
-    }
-*/
+    /*
+        public byte[] getBuffer() {
+            int len = getBuffered();
+            byte[] b = new byte[len];
+            if (len <= 0)
+                return b;
+            System.arraycopy(buf, pos, b, 0, len);
+            return reverse(b);
+        }
+    */
 
     @Override
     public int read() throws IOException {
-        if (pos <= 0) 
+        if (pos <= 0)
             return -1;
         while(true) {
             // read, pushback, compare
@@ -124,7 +124,7 @@ public class EOFOnMatchInputStream extends PushbackInputStream implements ReadCo
                 return pop();
             }
             // partial or full match
-            if (pos <= 0) 
+            if (pos <= 0)
                 return -1;   // full match
             // partial match, go around again
         }
@@ -169,26 +169,26 @@ public class EOFOnMatchInputStream extends PushbackInputStream implements ReadCo
         return rv;
     }
 
-/****
-    public static void main(String[] args) {
-        String match = "xxa";
-        String test = "xxbxaxoaaxxyyyyyyxxxazzzz"; 
-        byte[] m = DataHelper.getASCII(match);
-        byte[] in = DataHelper.getASCII(test); 
-        try {
-            InputStream eof = new EOFOnMatchInputStream(new java.io.ByteArrayInputStream(in), m);
-            byte[] out = new byte[in.length + 10];
-            int read = eof.read(out);
-            if (read != test.indexOf(match))
-                System.out.println("EOFOMIS test failed, read " + read);
-            else if (!DataHelper.eq(in, 0, out, 0, read))
-                System.out.println("EOFOMIS test failed, bad data");
-            else
-                System.out.println("EOFOMIS test passed");
-        } catch (Exception e) {
-            System.out.println("EOFOMIS test failed");
-            e.printStackTrace();
+    /****
+        public static void main(String[] args) {
+            String match = "xxa";
+            String test = "xxbxaxoaaxxyyyyyyxxxazzzz";
+            byte[] m = DataHelper.getASCII(match);
+            byte[] in = DataHelper.getASCII(test);
+            try {
+                InputStream eof = new EOFOnMatchInputStream(new java.io.ByteArrayInputStream(in), m);
+                byte[] out = new byte[in.length + 10];
+                int read = eof.read(out);
+                if (read != test.indexOf(match))
+                    System.out.println("EOFOMIS test failed, read " + read);
+                else if (!DataHelper.eq(in, 0, out, 0, read))
+                    System.out.println("EOFOMIS test failed, bad data");
+                else
+                    System.out.println("EOFOMIS test passed");
+            } catch (Exception e) {
+                System.out.println("EOFOMIS test failed");
+                e.printStackTrace();
+            }
         }
-    }
-****/
-}    
+    ****/
+}

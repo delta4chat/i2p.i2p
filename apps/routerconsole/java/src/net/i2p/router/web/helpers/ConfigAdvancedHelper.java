@@ -37,9 +37,9 @@ public class ConfigAdvancedHelper extends HelperBase {
         for (Map.Entry<String, String> e : sorted.entrySet()) {
             String key = e.getKey();
             if (!adv &&
-                ( _hideKeys.contains(key) ||
-                  key.startsWith("i2cp.auth.") ||
-                  key.startsWith(PROP_AUTH_PFX))) {
+                    ( _hideKeys.contains(key) ||
+                      key.startsWith("i2cp.auth.") ||
+                      key.startsWith(PROP_AUTH_PFX))) {
                 continue;
             }
             String name = DataHelper.escapeHTML(key);
@@ -58,8 +58,8 @@ public class ConfigAdvancedHelper extends HelperBase {
     public String getFFChecked(int mode) {
         String ff = _context.getProperty(PROP_FLOODFILL_PARTICIPANT, "auto");
         if ((mode == 0 && ff.equals("false")) ||
-            (mode == 1 && ff.equals("true")) ||
-            (mode == 2 && ff.equals("auto")))
+                (mode == 1 && ff.equals("true")) ||
+                (mode == 2 && ff.equals("auto")))
             return CHECKED;
         return "";
     }

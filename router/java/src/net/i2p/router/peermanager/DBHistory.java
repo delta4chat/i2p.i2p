@@ -34,7 +34,7 @@ public class DBHistory {
     private long _unpromptedDbStoreNew;
     private long _unpromptedDbStoreOld;
     private final String _statGroup;
-    
+
     public DBHistory(RouterContext context, String statGroup) {
         _context = context;
         _log = context.logManager().getLog(DBHistory.class);
@@ -43,7 +43,7 @@ public class DBHistory {
         _failedLookupRate = new RateStat("dbHistory.failedLookupRate", "How often does this peer to respond to a lookup?", statGroup, new long[] { 10*60*1000l, 60*60*1000l, 24*60*60*1000l });
         _invalidReplyRate = new RateStat("dbHistory.invalidReplyRate", "How often does this peer give us a bad (nonexistant, forged, etc) peer?", statGroup, new long[] { 30*60*1000l });
     }
-    
+
     /** how many times we have sent them a db lookup and received the value back from them
      */
     //public long getSuccessfulLookups() { return _successfulLookups; }
@@ -78,45 +78,61 @@ public class DBHistory {
 
     /** when did they last send us a request?
      */
-   // public long getLastLookupReceived() { return _lastLookupReceived; }
+    // public long getLastLookupReceived() { return _lastLookupReceived; }
 
     /**
      *  Not persisted until 0.9.24
      *  @since 0.7.8
      */
-    public long getLastLookupSuccessful() { return _lastLookupSuccessful; }
+    public long getLastLookupSuccessful() {
+        return _lastLookupSuccessful;
+    }
 
     /**
      *  Not persisted until 0.9.24
      *  @since 0.7.8
      */
-    public long getLastLookupFailed() { return _lastLookupFailed; }
+    public long getLastLookupFailed() {
+        return _lastLookupFailed;
+    }
 
     /**
      *  Not persisted until 0.9.24
      *  @since 0.7.8
      */
-    public long getLastStoreSuccessful() { return _lastStoreSuccessful; }
+    public long getLastStoreSuccessful() {
+        return _lastStoreSuccessful;
+    }
 
     /**
      *  Not persisted until 0.9.24
      *  @since 0.7.8
      */
-    public long getLastStoreFailed() { return _lastStoreFailed; }
+    public long getLastStoreFailed() {
+        return _lastStoreFailed;
+    }
 
     /** how many times have they sent us data we didn't ask for and that we've never seen? */
-    public long getUnpromptedDbStoreNew() { return _unpromptedDbStoreNew; }
+    public long getUnpromptedDbStoreNew() {
+        return _unpromptedDbStoreNew;
+    }
     /** how many times have they sent us data we didn't ask for but that we have seen? */
-    public long getUnpromptedDbStoreOld() { return _unpromptedDbStoreOld; }
+    public long getUnpromptedDbStoreOld() {
+        return _unpromptedDbStoreOld;
+    }
     /**
      * how often does the peer fail to reply to a lookup request, broken into 1 hour and 1 day periods.
      *
      */
-    public RateStat getFailedLookupRate() { return _failedLookupRate; }
-    
+    public RateStat getFailedLookupRate() {
+        return _failedLookupRate;
+    }
+
     /** not sure how much this is used, to be investigated */
-    public RateStat getInvalidReplyRate() { return _invalidReplyRate; }
-    
+    public RateStat getInvalidReplyRate() {
+        return _invalidReplyRate;
+    }
+
     /**
      * Note that the peer was not only able to respond to the lookup, but sent us
      * the data we wanted!
@@ -179,7 +195,7 @@ public class DBHistory {
         //_lookupReplyOld += oldPeers;
         //_lookupReplyInvalid += invalid;
         //_lookupReplyDuplicate += duplicate;
-        
+
         if (invalid > 0) {
             _invalidReplyRate.addData(invalid);
         }
@@ -189,22 +205,22 @@ public class DBHistory {
      * Note that the peer sent us a lookup
      *
      */
-/****
-    public void lookupReceived() {
-        long now = _context.clock().now();
-        long delay = now - _lastLookupReceived;
-        _lastLookupReceived = now;
-        _lookupsReceived++;
-        if (_avgDelayBetweenLookupsReceived <= 0) {
-            _avgDelayBetweenLookupsReceived = delay;
-        } else {
-            if (delay > _avgDelayBetweenLookupsReceived)
-                _avgDelayBetweenLookupsReceived = _avgDelayBetweenLookupsReceived + (delay / _lookupsReceived);
-            else
-                _avgDelayBetweenLookupsReceived = _avgDelayBetweenLookupsReceived - (delay / _lookupsReceived);
+    /****
+        public void lookupReceived() {
+            long now = _context.clock().now();
+            long delay = now - _lastLookupReceived;
+            _lastLookupReceived = now;
+            _lookupsReceived++;
+            if (_avgDelayBetweenLookupsReceived <= 0) {
+                _avgDelayBetweenLookupsReceived = delay;
+            } else {
+                if (delay > _avgDelayBetweenLookupsReceived)
+                    _avgDelayBetweenLookupsReceived = _avgDelayBetweenLookupsReceived + (delay / _lookupsReceived);
+                else
+                    _avgDelayBetweenLookupsReceived = _avgDelayBetweenLookupsReceived - (delay / _lookupsReceived);
+            }
         }
-    }
-****/
+    ****/
 
     /**
      * Note that the peer sent us a data point without us asking for it
@@ -216,7 +232,7 @@ public class DBHistory {
         else
             _unpromptedDbStoreOld++;
     }
-    
+
     //public void setSuccessfulLookups(long num) { _successfulLookups = num; }
     //public void setFailedLookups(long num) { _failedLookups = num; }
     //public void setLookupReplyNew(long num) { _lookupReplyNew = num; }
@@ -226,18 +242,22 @@ public class DBHistory {
     //public void setLookupsReceived(long num) { _lookupsReceived = num; }
     //public void setAvgDelayBetweenLookupsReceived(long ms) { _avgDelayBetweenLookupsReceived = ms; }
     //public void setLastLookupReceived(long when) { _lastLookupReceived = when; }
-    public void setUnpromptedDbStoreNew(long num) { _unpromptedDbStoreNew = num; }
-    public void setUnpromptedDbStoreOld(long num) { _unpromptedDbStoreOld = num; }
-    
+    public void setUnpromptedDbStoreNew(long num) {
+        _unpromptedDbStoreNew = num;
+    }
+    public void setUnpromptedDbStoreOld(long num) {
+        _unpromptedDbStoreOld = num;
+    }
+
     public void coalesceStats() {
         if (_log.shouldLog(Log.DEBUG))
             _log.debug("Coallescing stats");
         _failedLookupRate.coalesceStats();
         _invalidReplyRate.coalesceStats();
     }
-    
+
     private final static String NL = System.getProperty("line.separator");
-    
+
     /**
      * write out the data from the profile to the stream
      * includes comments
@@ -279,7 +299,7 @@ public class DBHistory {
         _failedLookupRate.store(out, "dbHistory.failedLookupRate", addComments);
         _invalidReplyRate.store(out, "dbHistory.invalidReplyRate", addComments);
     }
-    
+
     private static void add(StringBuilder buf, boolean addComments, String name, long val, String description) {
         if (addComments)
             buf.append("# ").append(name.toUpperCase(Locale.US)).append(NL).append("# ").append(description).append(NL);
@@ -287,8 +307,8 @@ public class DBHistory {
         if (addComments)
             buf.append(NL);
     }
-    
-    
+
+
     public void load(Properties props) {
         //_successfulLookups = getLong(props, "dbHistory.successfulLookups");
         //_failedLookups = getLong(props, "dbHistory.failedLookups");
@@ -312,14 +332,14 @@ public class DBHistory {
         } catch (IllegalArgumentException iae) {
             _log.warn("DB History failed lookup rate is corrupt, resetting", iae);
         }
-        
-        try { 
+
+        try {
             _invalidReplyRate.load(props, "dbHistory.invalidReplyRate", true);
         } catch (IllegalArgumentException iae) {
             _log.warn("DB History invalid reply rate is corrupt", iae);
         }
     }
-    
+
     private final static long getLong(Properties props, String key) {
         return ProfilePersistenceHelper.getLong(props, key);
     }

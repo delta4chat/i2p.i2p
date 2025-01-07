@@ -2,9 +2,9 @@ package net.i2p.data.router;
 
 /*
  * free (adj.): unencumbered; not under the control of others
- * Written by jrandom in 2003 and released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
- * It probably won't make your computer catch on fire, or eat 
+ * Written by jrandom in 2003 and released into the public domain
+ * with no warranty of any kind, either expressed or implied.
+ * It probably won't make your computer catch on fire, or eat
  * your children, but it might.  Use at your own risk.
  *
  */
@@ -172,7 +172,7 @@ public class RouterAddress extends DataStructureImpl {
     }
 
     /**
-     * Retrieve the transport specific options necessary for communication 
+     * Retrieve the transport specific options necessary for communication
      *
      * @deprecated use getOptionsMap()
      * @return sorted, non-null, NOT a copy, do not modify
@@ -183,7 +183,7 @@ public class RouterAddress extends DataStructureImpl {
     }
 
     /**
-     * Retrieve the transport specific options necessary for communication 
+     * Retrieve the transport specific options necessary for communication
      *
      * @return an unmodifiable view, non-null, sorted
      * @since 0.8.13
@@ -212,7 +212,7 @@ public class RouterAddress extends DataStructureImpl {
             throw new IllegalStateException();
         _options.putAll(options);
     }
-    
+
     /**
      *  Caching version of InetAddress.getByName(getOption("host")).getAddress(), which is slow.
      *  Caches numeric hostnames, and negative caches also.
@@ -237,7 +237,7 @@ public class RouterAddress extends DataStructureImpl {
         }
         return _ip;
     }
-    
+
     /**
      *  Convenience, same as getOption("host").
      *  Does no parsing, so faster than getIP().
@@ -248,7 +248,7 @@ public class RouterAddress extends DataStructureImpl {
     public String getHost() {
         return _options.getProperty(PROP_HOST);
     }
-    
+
     /**
      *  Caching version of Integer.parseInt(getOption("port"))
      *  Caches valid ports 1-65535 only.
@@ -294,7 +294,7 @@ public class RouterAddress extends DataStructureImpl {
             _transportStyle = "SSU2";
         DataHelper.readProperties(in, _options);
     }
-    
+
     /**
      *  As of 0.9.3, expiration MUST be all zeros as it is ignored on
      *  readin and the signature will fail.
@@ -307,7 +307,7 @@ public class RouterAddress extends DataStructureImpl {
         DataHelper.writeString(out, _transportStyle);
         DataHelper.writeProperties(out, _options);
     }
-    
+
     /**
      * Transport, host, and port only.
      * Never look at cost or other properties.
@@ -318,17 +318,17 @@ public class RouterAddress extends DataStructureImpl {
         if ((object == null) || !(object instanceof RouterAddress)) return false;
         RouterAddress addr = (RouterAddress) object;
         boolean rv =
-               getPort() == addr.getPort() &&
-               DataHelper.eq(getHost(), addr.getHost()) &&
-               DataHelper.eq(_transportStyle, addr._transportStyle);
-               //DataHelper.eq(_options, addr._options) &&
-               //DataHelper.eq(_expiration, addr._expiration);
+            getPort() == addr.getPort() &&
+            DataHelper.eq(getHost(), addr.getHost()) &&
+            DataHelper.eq(_transportStyle, addr._transportStyle);
+        //DataHelper.eq(_options, addr._options) &&
+        //DataHelper.eq(_expiration, addr._expiration);
         if (!rv || !_transportStyle.equals("SSU"))
-               return rv;
+            return rv;
         // SSU 4/6 caps
         return DataHelper.eq(_options.getProperty("caps"), addr._options.getProperty("caps"));
     }
-    
+
     /**
      *  Everything, including Transport, host, port, options, and cost
      *  @param addr may be null
@@ -336,11 +336,11 @@ public class RouterAddress extends DataStructureImpl {
      */
     public boolean deepEquals(RouterAddress addr) {
         return
-               equals(addr) &&
-               _cost == addr._cost &&
-               _options.equals(addr._options);
+            equals(addr) &&
+            _cost == addr._cost &&
+            _options.equals(addr._options);
     }
-    
+
     /**
      * Just use a few items for speed (expiration is always null).
      * Never look at cost or other properties.
@@ -351,7 +351,7 @@ public class RouterAddress extends DataStructureImpl {
                DataHelper.hashCode(getIP()) ^
                getPort();
     }
-    
+
     /**
      *  This is used on peers.jsp so sort options so it looks better.
      *  We don't just use OrderedProperties for _options because DataHelper.writeProperties()

@@ -2,9 +2,9 @@ package net.i2p.data.i2cp;
 
 /*
  * free (adj.): unencumbered; not under the control of others
- * Written by jrandom in 2003 and released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
- * It probably won't make your computer catch on fire, or eat 
+ * Written by jrandom in 2003 and released into the public domain
+ * with no warranty of any kind, either expressed or implied.
+ * It probably won't make your computer catch on fire, or eat
  * your children, but it might.  Use at your own risk.
  *
  */
@@ -102,9 +102,9 @@ public class CreateLeaseSetMessage extends I2CPMessageImpl {
         if ((_sessionId == null) || (_signingPrivateKey == null) || (_privateKey == null) || (_leaseSet == null))
             throw new I2CPMessageException("Unable to write out the message as there is not enough data");
         int size = 4 // sessionId
-                 + _signingPrivateKey.length()
-                 + PrivateKey.KEYSIZE_BYTES
-                 + _leaseSet.size();
+                   + _signingPrivateKey.length()
+                   + PrivateKey.KEYSIZE_BYTES
+                   + _leaseSet.size();
         ByteArrayStream os = new ByteArrayStream(size);
         try {
             _sessionId.writeBytes(os);

@@ -36,89 +36,89 @@ public class HomeHelper extends HelperBase {
     private static final String PROP_SEARCH = "routerconsole.showSearch";
     private static final String bottomWrap = "<br>\n" +
             "<div class=\"clearer\">&nbsp;</div>\n" +
-                "</div>\n" + 
-                "</div>\n";
+            "</div>\n" +
+            "</div>\n";
 
-/*
+    /*
 
-Policy adapted from http://zzz.i2p/topics/236 last updated there 2016-08.
-Subject to change without notice.
+    Policy adapted from http://zzz.i2p/topics/236 last updated there 2016-08.
+    Subject to change without notice.
 
-How to get my Eepsite added to the Router Console home page
+    How to get my Eepsite added to the Router Console home page
 
-If your site is:
+    If your site is:
 
-- Broadly useful, in good taste, and of general interest to the I2P community
-- Is not an image board (chan)
-- Is not a general image host or file host unless it has strict editorial control and TOS (but even so we probably won't accept it)
-- If it contains user-generated content, or is a forum, tracker, file host, wiki, or anything allowing user comments,
-  it has English (and native language if different) terms of service posted that prohibit extremely inappropriate things.
-- If it is an index of i2p sites, it does not link to sites that are extremely inappropriate.
-- Reliably up for a few months at least
-- Will be up 24/7 except for maintenance, updates, etc
-- Decently fast (home DSL/cable is fine)
-- On a router running the current release
+    - Broadly useful, in good taste, and of general interest to the I2P community
+    - Is not an image board (chan)
+    - Is not a general image host or file host unless it has strict editorial control and TOS (but even so we probably won't accept it)
+    - If it contains user-generated content, or is a forum, tracker, file host, wiki, or anything allowing user comments,
+      it has English (and native language if different) terms of service posted that prohibit extremely inappropriate things.
+    - If it is an index of i2p sites, it does not link to sites that are extremely inappropriate.
+    - Reliably up for a few months at least
+    - Will be up 24/7 except for maintenance, updates, etc
+    - Decently fast (home DSL/cable is fine)
+    - On a router running the current release
 
-...then contact a dev.
+    ...then contact a dev.
 
-** You MUST include the following info ** :
+    ** You MUST include the following info ** :
 
-- Affirm that you are the owner of the site in question. We do not add links to sites without permission.
-- The hostname
-- The registration authentication string, or the registration site or feed where it is available
-- An email address
-- The URL to link to
-- The URL of your English terms of service if available or necessary
-- If the site is not in English, a brief description of the site in English
-- A URL to a 32x32 transparent png icon to display. We will copy this icon into the router console source and serve it locally.
-  64x64 is ok also but it will be scaled to 32x32.
-- The license of the icon.
-- (Optional) A one or two-word label in English. If not provided we will use example.i2p
-- (Optional) a few words or a sentence in English for a popup (tooltip)
-- Affirm that you will regularly update the router to the latest release
+    - Affirm that you are the owner of the site in question. We do not add links to sites without permission.
+    - The hostname
+    - The registration authentication string, or the registration site or feed where it is available
+    - An email address
+    - The URL to link to
+    - The URL of your English terms of service if available or necessary
+    - If the site is not in English, a brief description of the site in English
+    - A URL to a 32x32 transparent png icon to display. We will copy this icon into the router console source and serve it locally.
+      64x64 is ok also but it will be scaled to 32x32.
+    - The license of the icon.
+    - (Optional) A one or two-word label in English. If not provided we will use example.i2p
+    - (Optional) a few words or a sentence in English for a popup (tooltip)
+    - Affirm that you will regularly update the router to the latest release
 
-Translations will happen through our normal translation process.
+    Translations will happen through our normal translation process.
 
-Other criteria:
+    Other criteria:
 
-Your site should not require browsers to load clearnet resources.
-Please test your site to ensure that clearnet Javascript, CSS, fonts and images are not embedded.
-Your submission may be rejected for this reason.
+    Your site should not require browsers to load clearnet resources.
+    Please test your site to ensure that clearnet Javascript, CSS, fonts and images are not embedded.
+    Your submission may be rejected for this reason.
 
-All decisions on inclusion will be made at a dev meeting, generally in IRC #i2p-dev
-on a Tuesday at 8 PM UTC about 2-4 weeks before a scheduled release.
-The group decision at the meeting is final.
+    All decisions on inclusion will be made at a dev meeting, generally in IRC #i2p-dev
+    on a Tuesday at 8 PM UTC about 2-4 weeks before a scheduled release.
+    The group decision at the meeting is final.
 
-Space is limited. Not all requests will be accepted, even if they meet all the above criteria.
+    Space is limited. Not all requests will be accepted, even if they meet all the above criteria.
 
-(end of content adapted from zzz.i2p)
+    (end of content adapted from zzz.i2p)
 
-Steps for the devs after receiving a submission:
+    Steps for the devs after receiving a submission:
 
-- Verify hostname was not previously used or registered anywhere by another site
-- Verify compatibility with all criteria
-- Verify icon is consistent with the console home page style and will look fine in both themes
-- Verify icon license compatibility with our licenses
-- Validate authentication string unless submitted to a registration site that does that
-- Pick the right category or discuss with submitter
-- Ensure display name is short and reasonable and translatable
-- Ensure description is short and reasonable and translatable
-- Resolve any issues with submitter
-- Add to agenda for a monthly meeting before the scheduled tag freeze
+    - Verify hostname was not previously used or registered anywhere by another site
+    - Verify compatibility with all criteria
+    - Verify icon is consistent with the console home page style and will look fine in both themes
+    - Verify icon license compatibility with our licenses
+    - Validate authentication string unless submitted to a registration site that does that
+    - Pick the right category or discuss with submitter
+    - Ensure display name is short and reasonable and translatable
+    - Ensure description is short and reasonable and translatable
+    - Resolve any issues with submitter
+    - Add to agenda for a monthly meeting before the scheduled tag freeze
 
-Steps for the devs after approval at a meeting:
+    Steps for the devs after approval at a meeting:
 
-- Add to the bottom of the correct category below
-- Ensure display name is tagged and does not contain commas unless the hostname alone
-- Ensure description is tagged and does not contain commas
-- Check in the icon in the right place with a description of the license in the checkin comment
-- Add to installer/resources/hosts.txt WITHOUT the authentication string and check in
-- Check in this file HomeHelper.java
-- Test
-- Add to i2p.www i2p2www/static/hosts.txt WITH the authentication string and check in
-  (don't forget this step!)
+    - Add to the bottom of the correct category below
+    - Ensure display name is tagged and does not contain commas unless the hostname alone
+    - Ensure description is tagged and does not contain commas
+    - Check in the icon in the right place with a description of the license in the checkin comment
+    - Add to installer/resources/hosts.txt WITHOUT the authentication string and check in
+    - Check in this file HomeHelper.java
+    - Test
+    - Add to i2p.www i2p2www/static/hosts.txt WITH the authentication string and check in
+      (don't forget this step!)
 
-*/
+    */
 
     // No commas allowed in text strings!
     static final String DEFAULT_SERVICES =
@@ -203,13 +203,13 @@ Steps for the devs after approval at a meeting:
     /** @since 0.9.47 */
     private String topWrap(String headline) {
         String str = "<div class=\"ag2\">\n" +
-            "<h4 class=\"app\">" +
-            headline +
-            "</h4>\n" +
-            "<div class=\"homeapps\">\n";
+                     "<h4 class=\"app\">" +
+                     headline +
+                     "</h4>\n" +
+                     "<div class=\"homeapps\">\n";
         return str;
     }
-    
+
     public String getServices() {
         String table = homeTable(PROP_SERVICES, DEFAULT_SERVICES, null);
         if (table.length() == 0) {
@@ -221,7 +221,7 @@ Steps for the devs after approval at a meeting:
         buf.append(bottomWrap);
         return buf.toString();
     }
-    
+
     /** @since 0.9.47 */
     public String getPlugins() {
         List<App> plugins = NavHelper.getInstance(_context).getClientApps(_context);
@@ -235,7 +235,7 @@ Steps for the devs after approval at a meeting:
         buf.append(bottomWrap);
         return buf.toString();
     }
-    
+
     /** @since 0.9.44 */
     public String getConfig() {
         String table = homeTable(PROP_CONFIG, DEFAULT_CONFIG, null);
@@ -311,7 +311,7 @@ Steps for the devs after approval at a meeting:
             return _t("The HTTP proxy is not up");
         return "<img src=\"http://console.i2p/onepixel.png?" + _context.random().nextInt() + "\"" +
                " alt=\"" + _t("Your browser is not properly configured to use the HTTP proxy at {0}",
-                             _context.getProperty(ConfigUpdateHandler.PROP_PROXY_HOST, ConfigUpdateHandler.DEFAULT_PROXY_HOST) + ':' + port) +
+                              _context.getProperty(ConfigUpdateHandler.PROP_PROXY_HOST, ConfigUpdateHandler.DEFAULT_PROXY_HOST) + ':' + port) +
                "\">";
     }
 
@@ -430,16 +430,16 @@ Steps for the devs after approval at a meeting:
                        "<div class=\"appimg" + plugin + "\">" +
                        // usability: add tabindex -1 so we avoid 2 tabs per app
                        "<a href=\"").append(url).append("\" tabindex=\"-1\">" +
-                       "<img alt=\"\" title=\"").append(app.desc).append("\" src=\"").append(app.icon)
-               // version the icons because they may change
-               .append(app.icon.contains("?") ? "&amp;" : "?").append(CoreVersion.VERSION).append("\"></a>" +
-                       "</div>\n" +
-                       "<table><tr><td>" +
-                       "<div class=\"applabel\">" +
-                       "<a href=\"").append(url).append("\" title=\"").append(app.desc).append("\">").append(app.name).append("</a>" +
-                       "</div>" +
-                       "</td></tr></table>\n" +
-                       "</div>");
+                               "<img alt=\"\" title=\"").append(app.desc).append("\" src=\"").append(app.icon)
+            // version the icons because they may change
+            .append(app.icon.contains("?") ? "&amp;" : "?").append(CoreVersion.VERSION).append("\"></a>" +
+                    "</div>\n" +
+                    "<table><tr><td>" +
+                    "<div class=\"applabel\">" +
+                    "<a href=\"").append(url).append("\" title=\"").append(app.desc).append("\">").append(app.name).append("</a>" +
+                            "</div>" +
+                            "</td></tr></table>\n" +
+                            "</div>");
         }
         buf.append("</div>\n");
         return buf.toString();
@@ -448,31 +448,31 @@ Steps for the devs after approval at a meeting:
     private String renderConfig(Collection<App> apps) {
         StringBuilder buf = new StringBuilder(1024);
         buf.append("<table class=\"homelinkedit\"><tr><th title=\"")
-           .append(_t("Mark for deletion"))
-           .append("\">")
-           .append(_t("Remove"))
-           .append("</th><th></th><th>")
-           .append(_t("Name"))
-           .append("</th><th>")
-           .append(_t("URL"))
-           .append("</th></tr>\n");
+        .append(_t("Mark for deletion"))
+        .append("\">")
+        .append(_t("Remove"))
+        .append("</th><th></th><th>")
+        .append(_t("Name"))
+        .append("</th><th>")
+        .append(_t("URL"))
+        .append("</th></tr>\n");
         for (App app : apps) {
             buf.append("<tr><td align=\"center\"><input type=\"checkbox\" class=\"optbox\" name=\"delete_")
-               .append(app.name)
-               .append("\" id=\"")
-               .append(app.name)
-               .append("\"></td><td align=\"center\">");
+            .append(app.name)
+            .append("\" id=\"")
+            .append(app.name)
+            .append("\"></td><td align=\"center\">");
             if (app.icon != null) {
                 buf.append("<img height=\"16\" alt=\"\" src=\"").append(app.icon).append("\">");
             }
             buf.append("</td><td align=\"left\"><label for=\"")
-               .append(app.name)
-               .append("\">")
-               .append(DataHelper.escapeHTML(app.name))
-               .append("</label></td><td align=\"left\"><a href=\"");
+            .append(app.name)
+            .append("\">")
+            .append(DataHelper.escapeHTML(app.name))
+            .append("</label></td><td align=\"left\"><a href=\"");
             String url = DataHelper.escapeHTML(app.url);
             buf.append(url)
-               .append("\">");
+            .append("\">");
             // truncate before escaping
             if (app.url.length() > 50)
                 buf.append(DataHelper.escapeHTML(app.url.substring(0, 48))).append("&hellip;");
@@ -481,9 +481,9 @@ Steps for the devs after approval at a meeting:
             buf.append("</a></td></tr>\n");
         }
         buf.append("<tr id=\"addnew\"><td colspan=\"2\" align=\"center\"><b>")
-           .append(_t("Add")).append(":</b>" +
-                   "</td><td align=\"left\"><input type=\"text\" name=\"nofilter_name\" required></td>" +
-                   "<td align=\"left\"><input type=\"text\" size=\"40\" name=\"nofilter_url\" required></td></tr>");
+        .append(_t("Add")).append(":</b>" +
+                                  "</td><td align=\"left\"><input type=\"text\" name=\"nofilter_name\" required></td>" +
+                                  "<td align=\"left\"><input type=\"text\" size=\"40\" name=\"nofilter_url\" required></td></tr>");
         buf.append("</table>\n");
         return buf.toString();
     }

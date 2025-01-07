@@ -24,8 +24,8 @@ final class BufferHolder {
                 this.buffer = ByteBuffer.wrap(new byte[(int) channel.size()]);
                 if (channel.read(this.buffer) != this.buffer.capacity()) {
                     throw new IOException("Unable to read "
-                            + database.getName()
-                            + " into memory. Unexpected end of stream.");
+                                          + database.getName()
+                                          + " into memory. Unexpected end of stream.");
                 }
             } else {
                 this.buffer = channel.map(MapMode.READ_ONLY, 0, channel.size());

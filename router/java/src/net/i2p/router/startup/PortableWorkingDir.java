@@ -87,7 +87,7 @@ public class PortableWorkingDir {
         if (!test.exists()) {
             setupSystemOut(cwd);
             System.err.println("ERROR - Cannot find I2P installation in " + cwd +
-                  " - Will probably be just a router with no apps or console at all!");
+                               " - Will probably be just a router with no apps or console at all!");
             // we are probably doomed...
             return cwd;
         }
@@ -148,5 +148,5 @@ public class PortableWorkingDir {
         }
     }
 
-    
+
 }

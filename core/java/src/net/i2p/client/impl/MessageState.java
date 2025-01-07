@@ -105,13 +105,13 @@ class MessageState {
         while (true) {
             long timeToWait = expiration - _context.clock().now();
             if (timeToWait <= 0) {
-                if (_log.shouldLog(Log.WARN)) 
+                if (_log.shouldLog(Log.WARN))
                     _log.warn(_prefix + "Expired waiting for the status");
                 return;
             }
             synchronized (this) {
                 if (_state != State.INIT) {
-                    if (_log.shouldLog(Log.DEBUG)) 
+                    if (_log.shouldLog(Log.DEBUG))
                         _log.debug(_prefix + "Received a confirm (one way or the other)");
                     return;
                 }
@@ -128,51 +128,51 @@ class MessageState {
      */
     private void locked_update(int status) {
         switch (status) {
-            case MessageStatusMessage.STATUS_SEND_ACCEPTED:
-                // only trumps init
-                if (_state == State.INIT)
-                    _state = State.ACCEPTED;
-                break;
+        case MessageStatusMessage.STATUS_SEND_ACCEPTED:
+            // only trumps init
+            if (_state == State.INIT)
+                _state = State.ACCEPTED;
+            break;
 
-            case MessageStatusMessage.STATUS_SEND_BEST_EFFORT_FAILURE:
-            case MessageStatusMessage.STATUS_SEND_GUARANTEED_FAILURE:
-                // does not trump failure or success
-                if (_state != State.FAIL && _state != State.SUCCESS)
-                    _state = State.PROBABLE_FAIL;
-                break;
+        case MessageStatusMessage.STATUS_SEND_BEST_EFFORT_FAILURE:
+        case MessageStatusMessage.STATUS_SEND_GUARANTEED_FAILURE:
+            // does not trump failure or success
+            if (_state != State.FAIL && _state != State.SUCCESS)
+                _state = State.PROBABLE_FAIL;
+            break;
 
-            case MessageStatusMessage.STATUS_SEND_FAILURE_LOCAL:
-            case MessageStatusMessage.STATUS_SEND_FAILURE_ROUTER:
-            case MessageStatusMessage.STATUS_SEND_FAILURE_NETWORK:
-            case MessageStatusMessage.STATUS_SEND_FAILURE_BAD_SESSION:
-            case MessageStatusMessage.STATUS_SEND_FAILURE_BAD_MESSAGE:
-            case MessageStatusMessage.STATUS_SEND_FAILURE_BAD_OPTIONS:
-            case MessageStatusMessage.STATUS_SEND_FAILURE_OVERFLOW:
-            case MessageStatusMessage.STATUS_SEND_FAILURE_EXPIRED:
-            case MessageStatusMessage.STATUS_SEND_FAILURE_LOCAL_LEASESET:
-            case MessageStatusMessage.STATUS_SEND_FAILURE_NO_TUNNELS:
-            case MessageStatusMessage.STATUS_SEND_FAILURE_UNSUPPORTED_ENCRYPTION:
-            case MessageStatusMessage.STATUS_SEND_FAILURE_DESTINATION:
-            case MessageStatusMessage.STATUS_SEND_FAILURE_BAD_LEASESET:
-            case MessageStatusMessage.STATUS_SEND_FAILURE_EXPIRED_LEASESET:
-            case MessageStatusMessage.STATUS_SEND_FAILURE_NO_LEASESET:
-            case MessageStatusMessage.STATUS_SEND_FAILURE_META_LEASESET:
-            case MessageStatusMessage.STATUS_SEND_FAILURE_LOOPBACK:
-            case SendMessageStatusListener.STATUS_CANCELLED:
-                // does not trump success
-                if (_state != State.SUCCESS)
-                    _state = State.FAIL;
-                break;
+        case MessageStatusMessage.STATUS_SEND_FAILURE_LOCAL:
+        case MessageStatusMessage.STATUS_SEND_FAILURE_ROUTER:
+        case MessageStatusMessage.STATUS_SEND_FAILURE_NETWORK:
+        case MessageStatusMessage.STATUS_SEND_FAILURE_BAD_SESSION:
+        case MessageStatusMessage.STATUS_SEND_FAILURE_BAD_MESSAGE:
+        case MessageStatusMessage.STATUS_SEND_FAILURE_BAD_OPTIONS:
+        case MessageStatusMessage.STATUS_SEND_FAILURE_OVERFLOW:
+        case MessageStatusMessage.STATUS_SEND_FAILURE_EXPIRED:
+        case MessageStatusMessage.STATUS_SEND_FAILURE_LOCAL_LEASESET:
+        case MessageStatusMessage.STATUS_SEND_FAILURE_NO_TUNNELS:
+        case MessageStatusMessage.STATUS_SEND_FAILURE_UNSUPPORTED_ENCRYPTION:
+        case MessageStatusMessage.STATUS_SEND_FAILURE_DESTINATION:
+        case MessageStatusMessage.STATUS_SEND_FAILURE_BAD_LEASESET:
+        case MessageStatusMessage.STATUS_SEND_FAILURE_EXPIRED_LEASESET:
+        case MessageStatusMessage.STATUS_SEND_FAILURE_NO_LEASESET:
+        case MessageStatusMessage.STATUS_SEND_FAILURE_META_LEASESET:
+        case MessageStatusMessage.STATUS_SEND_FAILURE_LOOPBACK:
+        case SendMessageStatusListener.STATUS_CANCELLED:
+            // does not trump success
+            if (_state != State.SUCCESS)
+                _state = State.FAIL;
+            break;
 
-            case MessageStatusMessage.STATUS_SEND_BEST_EFFORT_SUCCESS:
-            case MessageStatusMessage.STATUS_SEND_GUARANTEED_SUCCESS:
-            case MessageStatusMessage.STATUS_SEND_SUCCESS_LOCAL:
-                // trumps all
-                _state = State.SUCCESS;
-                break;
+        case MessageStatusMessage.STATUS_SEND_BEST_EFFORT_SUCCESS:
+        case MessageStatusMessage.STATUS_SEND_GUARANTEED_SUCCESS:
+        case MessageStatusMessage.STATUS_SEND_SUCCESS_LOCAL:
+            // trumps all
+            _state = State.SUCCESS;
+            break;
 
-            default:
-                break;
+        default:
+            break;
         }
     }
 

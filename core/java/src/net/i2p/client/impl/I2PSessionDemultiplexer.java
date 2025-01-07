@@ -52,7 +52,7 @@ public class I2PSessionDemultiplexer implements I2PSessionMuxedListener {
             } else {
                 if (_log.shouldLog(Log.WARN))
                     _log.warn("No listener found for proto: " + proto + " port: " + toport + " msg id: " + msgId +
-                           " from pool of " + _listeners.size() + " listeners");
+                              " from pool of " + _listeners.size() + " listeners");
             }
             try {
                 session.receiveMessage(msgId);
@@ -89,7 +89,7 @@ public class I2PSessionDemultiplexer implements I2PSessionMuxedListener {
             lsnrs = new HashSet<I2PSessionMuxedListener>(lsnrs);
         for (I2PSessionMuxedListener l : lsnrs) {
             if (_log.shouldInfo())
-                 _log.info("Sending errorOccurred() \"" + message + "\" to " + l);
+                _log.info("Sending errorOccurred() \"" + message + "\" to " + l);
             l.errorOccurred(session, message, error);
         }
     }

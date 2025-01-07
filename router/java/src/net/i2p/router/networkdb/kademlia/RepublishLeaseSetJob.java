@@ -1,9 +1,9 @@
 package net.i2p.router.networkdb.kademlia;
 /*
  * free (adj.): unencumbered; not under the control of others
- * Written by jrandom in 2003 and released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
- * It probably won't make your computer catch on fire, or eat 
+ * Written by jrandom in 2003 and released into the public domain
+ * with no warranty of any kind, either expressed or implied.
+ * It probably won't make your computer catch on fire, or eat
  * your children, but it might.  Use at your own risk.
  *
  */
@@ -28,7 +28,7 @@ class RepublishLeaseSetJob extends JobImpl {
     private final KademliaNetworkDatabaseFacade _facade;
     /** this is actually last attempted publish */
     private long _lastPublished;
-    
+
     public RepublishLeaseSetJob(RouterContext ctx, KademliaNetworkDatabaseFacade facade, Hash destHash) {
         super(ctx);
         _log = ctx.logManager().getLog(RepublishLeaseSetJob.class);
@@ -36,12 +36,14 @@ class RepublishLeaseSetJob extends JobImpl {
         _dest = destHash;
     }
 
-    public String getName() { return "Republish a local leaseSet"; }
+    public String getName() {
+        return "Republish a local leaseSet";
+    }
 
     public void runJob() {
         if (!getContext().clientManager().shouldPublishLeaseSet(_dest))
             return;
-        
+
         try {
             if (getContext().clientManager().isLocal(_dest)) {
                 LeaseSet ls = _facade.lookupLeaseSetLocally(_dest);
@@ -64,7 +66,7 @@ class RepublishLeaseSetJob extends JobImpl {
             } else {
                 if (_log.shouldLog(Log.INFO))
                     _log.info("Client " + _dest.toBase32() + " is no longer local, so no more republishing their leaseSet");
-            }                
+            }
             _facade.stopPublishing(_dest);
         } catch (RuntimeException re) {
             if (_log.shouldLog(Log.ERROR))
@@ -73,7 +75,7 @@ class RepublishLeaseSetJob extends JobImpl {
             throw re;
         }
     }
-    
+
     void requeueRepublish() {
         if (_log.shouldWarn())
             _log.warn("Failed publishing of the leaseSet for " + _dest.toBase32());
@@ -92,12 +94,14 @@ class RepublishLeaseSetJob extends JobImpl {
     private class OnRepublishFailure extends JobImpl {
         private final LeaseSet _ls;
 
-        public OnRepublishFailure(LeaseSet ls) { 
-            super(RepublishLeaseSetJob.this.getContext()); 
+        public OnRepublishFailure(LeaseSet ls) {
+            super(RepublishLeaseSetJob.this.getContext());
             _ls = ls;
         }
 
-        public String getName() { return "Publish leaseSet failed"; }
+        public String getName() {
+            return "Publish leaseSet failed";
+        }
 
         public void runJob() {
             // Don't requeue if there's a newer LS, KNDF will have already done that

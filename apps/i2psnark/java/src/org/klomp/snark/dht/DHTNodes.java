@@ -154,12 +154,12 @@ class DHTNodes {
             long now = _context.clock().now();
             int peerCount = 0;
             for (Iterator<NodeInfo> iter = DHTNodes.this.values().iterator(); iter.hasNext(); ) {
-                 NodeInfo peer = iter.next();
-                 if (peer.lastSeen() < now - _expireTime) {
-                     iter.remove();
-                     _kad.remove(peer.getNID());
-                 } else {
-                     peerCount++;
+                NodeInfo peer = iter.next();
+                if (peer.lastSeen() < now - _expireTime) {
+                    iter.remove();
+                    _kad.remove(peer.getNID());
+                } else {
+                    peerCount++;
                 }
             }
 
@@ -170,8 +170,8 @@ class DHTNodes {
 
             if (_log.shouldLog(Log.DEBUG))
                 _log.debug("DHT storage cleaner done, now with " +
-                         peerCount + " peers, " +
-                         DataHelper.formatDuration(_expireTime) + " expiration");
+                           peerCount + " peers, " +
+                           DataHelper.formatDuration(_expireTime) + " expiration");
 
             schedule(CLEAN_TIME);
         }

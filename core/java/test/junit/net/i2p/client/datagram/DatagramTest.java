@@ -1,13 +1,13 @@
 package net.i2p.client.datagram;
 /*
  * free (adj.): unencumbered; not under the control of others
- * Written by jrandom in 2003 and released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
- * It probably won't make your computer catch on fire, or eat 
+ * Written by jrandom in 2003 and released into the public domain
+ * with no warranty of any kind, either expressed or implied.
+ * It probably won't make your computer catch on fire, or eat
  * your children, but it might.  Use at your own risk.
  *
  */
- 
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
@@ -29,14 +29,14 @@ import net.i2p.data.Hash;
 public class DatagramTest extends TestCase {
     private I2PClient _client;
 
-    public void setUp(){
+    public void setUp() {
     }
 
     protected void tearDown() {
         System.gc();
     }
 
-    public void testDatagram() throws Exception{
+    public void testDatagram() throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         I2PClient client = I2PClientFactory.createClient();
         Destination d = client.createDestination(out);
@@ -57,7 +57,7 @@ public class DatagramTest extends TestCase {
         assertEquals(d, dd.extractSender());
     }
 
-    public void testBadagram() throws Exception{
+    public void testBadagram() throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         I2PClient client = I2PClientFactory.createClient();
         Destination d = client.createDestination(out);
@@ -74,25 +74,25 @@ public class DatagramTest extends TestCase {
         dd.loadI2PDatagram(data);
 
         boolean error = false;
-        try{
+        try {
             dd.getPayload();
-        }catch(I2PInvalidDatagramException i2pide){
+        } catch(I2PInvalidDatagramException i2pide) {
             error = true;
         }
         assertTrue(error);
 
         error = false;
-        try{
+        try {
             dd.getSender();
-        }catch(I2PInvalidDatagramException i2pide){
+        } catch(I2PInvalidDatagramException i2pide) {
             error = true;
         }
         assertTrue(error);
 
         error = false;
-        try{
+        try {
             dd.getHash();
-        }catch(I2PInvalidDatagramException i2pide){
+        } catch(I2PInvalidDatagramException i2pide) {
             error = true;
         }
         assertTrue(error);

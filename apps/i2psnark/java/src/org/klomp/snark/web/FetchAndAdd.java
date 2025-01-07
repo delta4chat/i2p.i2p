@@ -1,8 +1,8 @@
 package org.klomp.snark.web;
 
 /*
- * Released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
+ * Released into the public domain
+ * with no warranty of any kind, either expressed or implied.
  */
 
 import java.io.File;
@@ -101,7 +101,7 @@ public class FetchAndAdd extends Snark implements EepGet.StatusListener, Runnabl
             add(file);
         } else {
             _mgr.addMessageNoEscape(_t("Torrent was not retrieved from {0}", urlify(_url)) +
-                            ((_failCause != null) ? (": " + DataHelper.stripHTML(_failCause)) : ""));
+                                    ((_failCause != null) ? (": " + DataHelper.stripHTML(_failCause)) : ""));
         }
         if (file != null)
             file.delete();
@@ -160,7 +160,10 @@ public class FetchAndAdd extends Snark implements EepGet.StatusListener, Runnabl
             in = new FileInputStream(file);
             byte[] fileInfoHash = new byte[20];
             String name = MetaInfo.getNameAndInfoHash(in, fileInfoHash);
-            try { in.close(); } catch (IOException ioe) {}
+            try {
+                in.close();
+            }
+            catch (IOException ioe) {}
             Snark snark = _mgr.getTorrentByInfoHash(fileInfoHash);
             if (snark != null) {
                 _mgr.addMessage(_t("Torrent with this info hash is already running: {0}", snark.getBaseName()));
@@ -194,7 +197,10 @@ public class FetchAndAdd extends Snark implements EepGet.StatusListener, Runnabl
         } catch (OutOfMemoryError oom) {
             _mgr.addMessageNoEscape(_t("ERROR - Out of memory, cannot create torrent from {0}", urlify(_url)) + ": " + DataHelper.stripHTML(oom.getMessage()));
         } finally {
-            try { if (in != null) in.close(); } catch (IOException ioe) {}
+            try {
+                if (in != null) in.close();
+            }
+            catch (IOException ioe) {}
         }
     }
 
@@ -204,12 +210,12 @@ public class FetchAndAdd extends Snark implements EepGet.StatusListener, Runnabl
     public synchronized void startTorrent() {
         if (_isRunning)
             return;
-         // reset counters in case starting a second time
-         _remaining = -1;
-         // leave the total if we knew it before
-         //_total = -1;
-         _transferred = 0;
-         _failCause = null;
+        // reset counters in case starting a second time
+        _remaining = -1;
+        // leave the total if we knew it before
+        //_total = -1;
+        _transferred = 0;
+        _failCause = null;
         _started = _util.getContext().clock().now();
         _isRunning = true;
         _active = false;

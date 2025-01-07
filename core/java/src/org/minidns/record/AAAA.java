@@ -44,7 +44,7 @@ public class AAAA extends InternetAddressRR<Inet6Address> {
     }
 
     public static AAAA parse(DataInputStream dis)
-            throws IOException {
+    throws IOException {
         byte[] ip = new byte[16];
         dis.readFully(ip);
         return new AAAA(ip);
@@ -58,8 +58,8 @@ public class AAAA extends InternetAddressRR<Inet6Address> {
                 sb.append(':');
             }
             sb.append(Integer.toHexString(
-                ((ip[i] & 0xff) << 8) + (ip[i + 1] & 0xff)
-            ));
+                          ((ip[i] & 0xff) << 8) + (ip[i + 1] & 0xff)
+                      ));
         }
         return sb.toString();
     }

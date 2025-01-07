@@ -141,8 +141,8 @@ class ExploratoryPeerSelector extends TunnelPeerSelector {
             int len = tps.getLength();
             boolean pickFurthest = true;
             if (len <= 0 ||
-                tps.getLengthOverride() == 0 ||
-                len + tps.getLengthVariance() <= 0) {
+                    tps.getLengthOverride() == 0 ||
+                    len + tps.getLengthVariance() <= 0) {
                 // leave it true
             } else {
                 for (TunnelInfo ti : tp.listTunnels()) {

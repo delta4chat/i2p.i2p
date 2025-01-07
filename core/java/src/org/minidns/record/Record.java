@@ -32,7 +32,7 @@ public final class Record<D extends Data> {
 
     /**
      * The resource record type.
-     * 
+     *
      * @see <a href=
      *      "http://www.iana.org/assignments/dns-parameters/dns-parameters.xhtml#dns-parameters-4">
      *      IANA DNS Parameters - Resource Record (RR) TYPEs</a>
@@ -149,7 +149,7 @@ public final class Record<D extends Data> {
 
         /**
          * Create a new record type.
-         * 
+         *
          * @param value The binary value of this type.
          */
         TYPE(int value) {
@@ -239,7 +239,7 @@ public final class Record<D extends Data> {
          * names.
          */
         private static final HashMap<Integer, CLASS> INVERSE_LUT =
-                                            new HashMap<Integer, CLASS>();
+        new HashMap<Integer, CLASS>();
 
         static {
             // Initialize the interal reverse lookup table.
@@ -297,7 +297,7 @@ public final class Record<D extends Data> {
 
     /**
      * The value of the class field of a RR.
-     * 
+     *
      * According to RFC 2671 (OPT RR) this is not necessarily representable
      * using clazz field and unicastQuery bit
      */
@@ -339,70 +339,70 @@ public final class Record<D extends Data> {
         int payloadLength = dis.readUnsignedShort();
         Data payloadData;
         switch (type) {
-            case SOA:
-                payloadData = SOA.parse(dis, data);
-                break;
-            case SRV:
-                payloadData = SRV.parse(dis, data);
-                break;
-            case MX:
-                payloadData = MX.parse(dis, data);
-                break;
-            case AAAA:
-                payloadData = AAAA.parse(dis);
-                break;
-            case A:
-                payloadData = A.parse(dis);
-                break;
-            case NS:
-                payloadData = NS.parse(dis, data);
-                break;
-            case CNAME:
-                payloadData = CNAME.parse(dis, data);
-                break;
-            case DNAME:
-                payloadData = DNAME.parse(dis, data);
-                break;
-            case PTR:
-                payloadData = PTR.parse(dis, data);
-                break;
-            case TXT:
-                payloadData = TXT.parse(dis, payloadLength);
-                break;
-            case OPT:
-                payloadData = OPT.parse(dis, payloadLength);
-                break;
-            case DNSKEY:
-                payloadData = DNSKEY.parse(dis, payloadLength);
-                break;
-            case RRSIG:
-                payloadData = RRSIG.parse(dis, data, payloadLength);
-                break;
-            case DS:
-                payloadData = DS.parse(dis, payloadLength);
-                break;
-            case NSEC:
-                payloadData = NSEC.parse(dis, data, payloadLength);
-                break;
-            case NSEC3:
-                payloadData = NSEC3.parse(dis, payloadLength);
-                break;
-            case NSEC3PARAM:
-                payloadData = NSEC3PARAM.parse(dis);
-                break;
-            case TLSA:
-                payloadData = TLSA.parse(dis, payloadLength);
-                break;
-            case OPENPGPKEY:
-                payloadData = OPENPGPKEY.parse(dis, payloadLength);
-                break;
-            case DLV:
-                payloadData = DLV.parse(dis, payloadLength);
-                break;
-            case UNKNOWN:
-            default:
-                payloadData = UNKNOWN.parse(dis, payloadLength, type);
-                break;
+        case SOA:
+            payloadData = SOA.parse(dis, data);
+            break;
+        case SRV:
+            payloadData = SRV.parse(dis, data);
+            break;
+        case MX:
+            payloadData = MX.parse(dis, data);
+            break;
+        case AAAA:
+            payloadData = AAAA.parse(dis);
+            break;
+        case A:
+            payloadData = A.parse(dis);
+            break;
+        case NS:
+            payloadData = NS.parse(dis, data);
+            break;
+        case CNAME:
+            payloadData = CNAME.parse(dis, data);
+            break;
+        case DNAME:
+            payloadData = DNAME.parse(dis, data);
+            break;
+        case PTR:
+            payloadData = PTR.parse(dis, data);
+            break;
+        case TXT:
+            payloadData = TXT.parse(dis, payloadLength);
+            break;
+        case OPT:
+            payloadData = OPT.parse(dis, payloadLength);
+            break;
+        case DNSKEY:
+            payloadData = DNSKEY.parse(dis, payloadLength);
+            break;
+        case RRSIG:
+            payloadData = RRSIG.parse(dis, data, payloadLength);
+            break;
+        case DS:
+            payloadData = DS.parse(dis, payloadLength);
+            break;
+        case NSEC:
+            payloadData = NSEC.parse(dis, data, payloadLength);
+            break;
+        case NSEC3:
+            payloadData = NSEC3.parse(dis, payloadLength);
+            break;
+        case NSEC3PARAM:
+            payloadData = NSEC3PARAM.parse(dis);
+            break;
+        case TLSA:
+            payloadData = TLSA.parse(dis, payloadLength);
+            break;
+        case OPENPGPKEY:
+            payloadData = OPENPGPKEY.parse(dis, payloadLength);
+            break;
+        case DLV:
+            payloadData = DLV.parse(dis, payloadLength);
+            break;
+        case UNKNOWN:
+        default:
+            payloadData = UNKNOWN.parse(dis, payloadLength, type);
+            break;
         }
         return new Record<>(name, type, clazz, clazzValue, ttl, payloadData, unicastQuery);
     }
@@ -454,8 +454,8 @@ public final class Record<D extends Data> {
     public byte[] toByteArray() {
         if (bytes == null) {
             int totalSize = name.size()
-                    + 10 // 2 byte short type + 2 byte short classValue + 4 byte int ttl + 2 byte short payload length.
-                    + payloadData.length();
+                            + 10 // 2 byte short type + 2 byte short classValue + 4 byte int ttl + 2 byte short payload length.
+                            + payloadData.length();
             ByteArrayOutputStream baos = new ByteArrayOutputStream(totalSize);
             DataOutputStream dos = new DataOutputStream(baos);
             try {

@@ -173,7 +173,7 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
 
         /**
          * Set the rrd as readonly
-         * 
+         *
          * @return the same builder.
          */
         public Builder readOnly() {
@@ -220,11 +220,11 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
             return this;
         }
 
-       /**
-         * Set when the builder will be used to import external data with a predefined source: XML or RRDTool.
-         * @param externalPath an URI-like indication of RRD data to import
-         * @return the same builder.
-         */
+        /**
+          * Set when the builder will be used to import external data with a predefined source: XML or RRDTool.
+          * @param externalPath an URI-like indication of RRD data to import
+          * @return the same builder.
+          */
         public Builder setExternalPath(String externalPath) {
             this.externalPath = externalPath;
             this.importer = null;
@@ -968,7 +968,7 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
         long lastTime = header.getLastUpdateTime();
         if (lastTime >= newTime) {
             throw new IllegalArgumentException("Bad sample time: " + newTime +
-                    ". Last update time was " + lastTime + ", at least one second step is required");
+                                               ". Last update time was " + lastTime + ", at least one second step is required");
         }
         double[] newValues = sample.getValues();
         for (int i = 0; i < datasources.length; i++) {
@@ -1290,14 +1290,14 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
         // add datasources
         for (Datasource datasource : datasources) {
             DsDef dsDef = new DsDef(datasource.getName(),
-                    datasource.getType(), datasource.getHeartbeat(),
-                    datasource.getMinValue(), datasource.getMaxValue());
+                                    datasource.getType(), datasource.getHeartbeat(),
+                                    datasource.getMinValue(), datasource.getMaxValue());
             rrdDef.addDatasource(dsDef);
         }
         // add archives
         for (Archive archive : archives) {
             ArcDef arcDef = new ArcDef(archive.getConsolFun(),
-                    archive.getXff(), archive.getSteps(), archive.getRows());
+                                       archive.getXff(), archive.getSteps(), archive.getRows());
             rrdDef.addArchive(arcDef);
         }
         return rrdDef;

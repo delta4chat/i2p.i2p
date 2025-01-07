@@ -204,7 +204,10 @@ public class BlocklistEntries {
             ioe.printStackTrace();
             System.exit(1);
         } finally {
-            if (br != null) try { br.close(); } catch (IOException ioe) {}
+            if (br != null) try {
+                    br.close();
+                }
+                catch (IOException ioe) {}
         }
         if (elist.isEmpty() && rlist.isEmpty()) {
             System.err.println("Signing empty blocklist");

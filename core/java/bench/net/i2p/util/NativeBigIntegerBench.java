@@ -78,8 +78,8 @@ public class NativeBigIntegerBench {
 
     public static void main(String args[]) throws RunnerException {
         Options opt = new OptionsBuilder()
-                .include(NativeBigIntegerBench.class.getSimpleName())
-                .build();
+        .include(NativeBigIntegerBench.class.getSimpleName())
+        .build();
 
         new Runner(opt).run();
     }

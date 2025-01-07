@@ -339,10 +339,10 @@ public class Util {
      */
     public static boolean parseBoolean(String valueStr) {
         return valueStr !=null && (valueStr.equalsIgnoreCase("true") ||
-                valueStr.equalsIgnoreCase("on") ||
-                valueStr.equalsIgnoreCase("yes") ||
-                valueStr.equalsIgnoreCase("y") ||
-                valueStr.equalsIgnoreCase("1"));
+                                   valueStr.equalsIgnoreCase("on") ||
+                                   valueStr.equalsIgnoreCase("yes") ||
+                                   valueStr.equalsIgnoreCase("y") ||
+                                   valueStr.equalsIgnoreCase("1"));
     }
 
     /**
@@ -366,7 +366,7 @@ public class Util {
         else {
             String a = c.substring(6);
             return new Color(Integer.parseInt(r, 16), Integer.parseInt(g, 16),
-                    Integer.parseInt(b, 16), Integer.parseInt(a, 16));
+                             Integer.parseInt(b, 16), Integer.parseInt(a, 16));
         }
     }
 
@@ -432,7 +432,7 @@ public class Util {
         Path path2 = Paths.get(pathname2);
         if (Files.exists(path1) != Files.exists(path2)) {
             return false;
-        } else if (Files.exists(path1) && Files.exists(path2)){
+        } else if (Files.exists(path1) && Files.exists(path2)) {
             path1 = Paths.get(pathname1).toRealPath().normalize();
             path2 = Paths.get(pathname2).toRealPath().normalize();
             return Files.isSameFile(path1, path2);
@@ -452,7 +452,7 @@ public class Util {
     }
 
     static int getMatchingArchiveIndex(RrdDb rrd1, int arcIndex, RrdDb rrd2)
-            throws IOException {
+    throws IOException {
         Archive archive = rrd1.getArchive(arcIndex);
         ConsolFun consolFun = archive.getConsolFun();
         int steps = archive.getSteps();
@@ -496,7 +496,7 @@ public class Util {
         }
         catch (ParseException e) {
             throw new IllegalArgumentException("Time/date not in " + ISO_DATE_FORMAT +
-                    " format: " + timeStr);
+                                               " format: " + timeStr);
         }
     }
 
@@ -756,7 +756,7 @@ public class Util {
      *
      * @param file File object representing file on the disk
      * @return Last modification time in seconds (without milliseconds)
-     * @throws IOException 
+     * @throws IOException
      */
     public static long getLastModifiedTime(String file) throws IOException {
         return Files.getLastModifiedTime(Paths.get(file)).to(TimeUnit.SECONDS);

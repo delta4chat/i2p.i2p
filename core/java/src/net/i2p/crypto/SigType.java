@@ -138,19 +138,33 @@ public enum SigType {
     }
 
     /** the unique identifier for this type */
-    public int getCode() { return code; }
+    public int getCode() {
+        return code;
+    }
     /** the length of the public key, in bytes */
-    public int getPubkeyLen() { return pubkeyLen; }
+    public int getPubkeyLen() {
+        return pubkeyLen;
+    }
     /** the length of the private key, in bytes */
-    public int getPrivkeyLen() { return privkeyLen; }
+    public int getPrivkeyLen() {
+        return privkeyLen;
+    }
     /** the length of the hash, in bytes */
-    public int getHashLen() { return hashLen; }
+    public int getHashLen() {
+        return hashLen;
+    }
     /** the length of the signature, in bytes */
-    public int getSigLen() { return sigLen; }
+    public int getSigLen() {
+        return sigLen;
+    }
     /** the standard base algorithm name used for the Java crypto factories */
-    public SigAlgo getBaseAlgorithm() { return base; }
+    public SigAlgo getBaseAlgorithm() {
+        return base;
+    }
     /** the standard name used for the Java crypto factories */
-    public String getAlgorithmName() { return algoName; }
+    public String getAlgorithmName() {
+        return algoName;
+    }
     /**
      *  The elliptic curve ECParameterSpec for ECDSA; DSAParameterSpec for DSA
      *  @throws InvalidParameterSpecException if the algorithm is not available on this JVM.
@@ -180,16 +194,16 @@ public enum SigType {
      */
     public SimpleDataStructure getHashInstance() {
         switch (getHashLen()) {
-            case 20:
-                return new SHA1Hash();
-            case 32:
-                return new Hash();
-            case 48:
-                return new Hash384();
-            case 64:
-                return new Hash512();
-            default:
-                throw new UnsupportedOperationException("Unsupported hash length: " + getHashLen());
+        case 20:
+            return new SHA1Hash();
+        case 32:
+            return new Hash();
+        case 48:
+            return new Hash384();
+        case 64:
+            return new Hash512();
+        default:
+            throw new UnsupportedOperationException("Unsupported hash length: " + getHashLen());
         }
     }
 

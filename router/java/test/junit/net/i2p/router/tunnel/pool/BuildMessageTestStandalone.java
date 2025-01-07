@@ -40,7 +40,7 @@ import net.i2p.util.Log;
  * Simple test to create an encrypted TunnelBuildMessage, decrypt its layers (as it would be
  * during transmission), inject replies, then handle the TunnelBuildReplyMessage (unwrapping
  * the reply encryption and reading the replies).
- * 
+ *
  * ===
  * Update 1/5/2013 :
  * This test is renamed so it does not match the JUnit wildcard.
@@ -51,7 +51,7 @@ public class BuildMessageTestStandalone extends TestCase {
     private PublicKey _pubKeys[];
     private Hash _replyRouter;
     private long _replyTunnel;
-    
+
     public void testBuildMessage() {
         RouterContext ctx = new RouterContext(null);
         for (int i = 1; i <= 6; i++) {
@@ -75,7 +75,7 @@ public class BuildMessageTestStandalone extends TestCase {
         SigningPublicKey k3 = (SigningPublicKey) kp[0];
         SigningPrivateKey k4 = (SigningPrivateKey) kp[1];
         ctx.keyManager().setKeys(k1, k2, k3, k4);
-        
+
         List<Integer> order = pickOrder();
         TunnelCreatorConfig cfg = createConfig(ctx, testType);
         _replyRouter = new Hash();
@@ -83,7 +83,7 @@ public class BuildMessageTestStandalone extends TestCase {
         Arrays.fill(h, (byte)0xFF);
         _replyRouter.setData(h);
         _replyTunnel = 42;
-        
+
         // populate and encrypt the message
         TunnelBuildMessage msg;
         if (testType == 3 || testType == 6) {
@@ -102,12 +102,12 @@ public class BuildMessageTestStandalone extends TestCase {
             BuildMessageGenerator.createRecord(i, hop, msg, cfg, _replyRouter, _replyTunnel, ctx, key);
         }
         BuildMessageGenerator.layeredEncrypt(ctx, msg, cfg, order);
-        
+
         log.debug("\n================================================================" +
-                  "\nMessage fully encrypted" + 
+                  "\nMessage fully encrypted" +
                   "\n" + cfg.toStringFull() +
                   "\n================================================================");
-        
+
         if (testType == 3 || testType == 6) {
             // test read/write for new messages
             byte[] data = msg.toByteArray();
@@ -121,7 +121,7 @@ public class BuildMessageTestStandalone extends TestCase {
         }
         // now msg is fully encrypted, so lets go through the hops, decrypting and replying
         // as necessary
-        
+
         BuildMessageProcessor proc = new BuildMessageProcessor(ctx);
         // skip cfg(0) which is the gateway (us) for outbound
         // skip cfg(end) which is the endpoint (us) for inbound
@@ -158,14 +158,14 @@ public class BuildMessageTestStandalone extends TestCase {
             msg.setRecord(ourSlot, reply);
 
             if (testType == 1 || testType == 4) {
-                log.debug("Read slot " + ourSlot + " containing hop " + i + " @ " + _peers[i].toBase64() 
+                log.debug("Read slot " + ourSlot + " containing hop " + i + " @ " + _peers[i].toBase64()
                           + " receives on " + ourId + " sending to " + nextId
                           + " replyKey " + Base64.encode(req.readReplyKey().getData())
                           + " replyIV " + Base64.encode(req.readReplyIV())
                           + " on " + nextPeer.toBase64()
                           + " inGW? " + isInGW + " outEnd? " + isOutEnd + " time difference " + (now-time));
             } else if (testType == 2 || testType == 5) {
-                log.debug("Read slot " + ourSlot + " containing hop " + i + " @ " + _peers[i].toBase64() 
+                log.debug("Read slot " + ourSlot + " containing hop " + i + " @ " + _peers[i].toBase64()
                           + " receives on " + ourId + " sending to " + nextId
                           + " replyKey " + Base64.encode(req.readReplyKey().getData())
                           + " replyIV " + Base64.encode(req.readReplyIV())
@@ -174,7 +174,7 @@ public class BuildMessageTestStandalone extends TestCase {
                           + " on " + nextPeer.toBase64()
                           + " inGW? " + isInGW + " outEnd? " + isOutEnd + " time difference " + (now-time));
             } else {
-                log.debug("Read slot " + ourSlot + " containing hop " + i + " @ " + _peers[i].toBase64() 
+                log.debug("Read slot " + ourSlot + " containing hop " + i + " @ " + _peers[i].toBase64()
                           + " receives on " + ourId + " sending to " + nextId
                           + " chachaKey " + Base64.encode(req.getChaChaReplyKey().getData())
                           + " chachaAD " + Base64.encode(req.getChaChaReplyAD())
@@ -182,12 +182,12 @@ public class BuildMessageTestStandalone extends TestCase {
                           + " inGW? " + isInGW + " outEnd? " + isOutEnd + " time difference " + (now-time));
             }
         }
-        
-        
+
+
         log.debug("\n================================================================" +
                   "\nAll hops traversed and replies gathered" +
                   "\n================================================================");
-        
+
         // now all of the replies are populated, toss 'em into a reply message and handle it
         TunnelBuildReplyMessage reply;
         if (testType == 3) {
@@ -224,13 +224,13 @@ public class BuildMessageTestStandalone extends TestCase {
             if (statuses[record] != 0)
                 allAgree = false;
         }
-        
+
         log.debug("\n================================================================" +
-                  "\nTest " + testType + " complete, all peers agree? " + allAgree + 
+                  "\nTest " + testType + " complete, all peers agree? " + allAgree +
                   "\n================================================================");
         assertTrue("All peers agree", allAgree);
     }
-    
+
     private static final List<Integer> pickOrder() {
         // pseudorandom, yet consistent (so we can be repeatable)
         // slot -> hop
@@ -273,7 +273,7 @@ public class BuildMessageTestStandalone extends TestCase {
             _pubKeys[i] = kp.getPublic();
             _privKeys[i] = kp.getPrivate();
         }
-        
+
         TunnelCreatorConfig cfg = new TCConfig(null, _peers.length, isInbound);
         long now = ctx.clock().now();
         // peers[] is ordered gateway first (unlike in production code)

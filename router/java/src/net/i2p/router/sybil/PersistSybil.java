@@ -85,7 +85,10 @@ public class PersistSybil {
                 buf.setLength(0);
             }
         } finally {
-            if (out != null) try { out.close(); } catch (IOException ioe) {}
+            if (out != null) try {
+                    out.close();
+                }
+                catch (IOException ioe) {}
         }
     }
 
@@ -103,7 +106,7 @@ public class PersistSybil {
         for (File file : files) {
             try {
                 String name = file.getName();
-                long d = Long.parseLong(name.substring(PFX.length(), name.length() - SFX.length())); 
+                long d = Long.parseLong(name.substring(PFX.length(), name.length() - SFX.length()));
                 rv.add(Long.valueOf(d));
             } catch (NumberFormatException nfe) {}
         }
@@ -144,7 +147,10 @@ public class PersistSybil {
                 rv.put(h, p);
             }
         } finally {
-            if (in != null) try { in.close(); } catch (IOException ioe) {}
+            if (in != null) try {
+                    in.close();
+                }
+                catch (IOException ioe) {}
         }
         return rv;
     }
@@ -176,7 +182,10 @@ public class PersistSybil {
                     rv.put(date, p);
                 }
             } finally {
-                if (in != null) try { in.close(); } catch (IOException ioe) {}
+                if (in != null) try {
+                        in.close();
+                    }
+                    catch (IOException ioe) {}
             }
         }
         return rv;
@@ -215,7 +224,7 @@ public class PersistSybil {
         for (File file : files) {
             try {
                 String name = file.getName();
-                long d = Long.parseLong(name.substring(PFX.length(), name.length() - SFX.length())); 
+                long d = Long.parseLong(name.substring(PFX.length(), name.length() - SFX.length()));
                 if (d < cutoff) {
                     if (file.delete())
                         deleted++;
@@ -260,8 +269,8 @@ public class PersistSybil {
         File f = getBlocklistFile();
         String prev = _context.getProperty("router.previousFullVersion");
         if (prev != null &&
-            VersionComparator.comp(prev, "2.5.0-3") < 0 &&
-            VersionComparator.comp(RouterVersion.FULL_VERSION, "2.5.0-3") >= 0) {
+                VersionComparator.comp(prev, "2.5.0-3") < 0 &&
+                VersionComparator.comp(RouterVersion.FULL_VERSION, "2.5.0-3") >= 0) {
             // clear out and start over
             f.delete();
             return null;
@@ -284,7 +293,7 @@ public class PersistSybil {
             BufferedReader br = null;
             try {
                 br = new BufferedReader(new InputStreamReader(
-                        new FileInputStream(blFile), "UTF-8"));
+                                            new FileInputStream(blFile), "UTF-8"));
                 rv = new HashMap<String, Long>();
                 String buf = null;
                 long now = _context.clock().now() + 5*60*1000L;
@@ -306,7 +315,10 @@ public class PersistSybil {
                 if (_log.shouldWarn())
                     _log.warn("Error reading the blocklist file", ioe);
             } finally {
-                if (br != null) try { br.close(); } catch (IOException ioe) {}
+                if (br != null) try {
+                        br.close();
+                    }
+                    catch (IOException ioe) {}
             }
         }
         return rv;
@@ -352,7 +364,10 @@ public class PersistSybil {
             if (_log.shouldWarn())
                 _log.warn("Error writing the blocklist file", ioe);
         } finally {
-            if (out != null) try { out.close(); } catch (IOException ioe) {}
+            if (out != null) try {
+                    out.close();
+                }
+                catch (IOException ioe) {}
         }
     }
 
@@ -368,38 +383,38 @@ public class PersistSybil {
         }
     }
 
-/****
-    public static void main(String[] args) {
-        I2PAppContext ctx = I2PAppContext.getGlobalContext();
-        PersistSybil ps = new PersistSybil(ctx);
-        byte[] b = new byte[32];
-        ctx.random().nextBytes(b);
-        Hash h = new Hash(b);
-        String rsn = "Test reason";
-        Points p = new Points(1.234, rsn);
-        rsn = "Test reason2";
-        p.addPoints(2.345, rsn);
-        Map<Hash, Points> map = new HashMap<Hash, Points>();
-        map.put(h, p);
-        b = new byte[32];
-        ctx.random().nextBytes(b);
-        h = new Hash(b);
-        map.put(h, p);
-        try {
-            long now = System.currentTimeMillis();
-            System.out.println("storing entries: " + map.size());
-            ps.store(System.currentTimeMillis(), map);
-            List<Long> dates = ps.load();
-            System.out.println("Found sets: " + dates.size());
-            map = ps.load(Long.valueOf(now));
-            System.out.println("loaded entries: " + map.size());
-            for (Map.Entry<Hash, Points> e : map.entrySet()) {
-                System.out.println(e.getKey().toString() + ": " + e.getValue());
+    /****
+        public static void main(String[] args) {
+            I2PAppContext ctx = I2PAppContext.getGlobalContext();
+            PersistSybil ps = new PersistSybil(ctx);
+            byte[] b = new byte[32];
+            ctx.random().nextBytes(b);
+            Hash h = new Hash(b);
+            String rsn = "Test reason";
+            Points p = new Points(1.234, rsn);
+            rsn = "Test reason2";
+            p.addPoints(2.345, rsn);
+            Map<Hash, Points> map = new HashMap<Hash, Points>();
+            map.put(h, p);
+            b = new byte[32];
+            ctx.random().nextBytes(b);
+            h = new Hash(b);
+            map.put(h, p);
+            try {
+                long now = System.currentTimeMillis();
+                System.out.println("storing entries: " + map.size());
+                ps.store(System.currentTimeMillis(), map);
+                List<Long> dates = ps.load();
+                System.out.println("Found sets: " + dates.size());
+                map = ps.load(Long.valueOf(now));
+                System.out.println("loaded entries: " + map.size());
+                for (Map.Entry<Hash, Points> e : map.entrySet()) {
+                    System.out.println(e.getKey().toString() + ": " + e.getValue());
+                }
+            } catch (IOException ioe) {
+                System.out.println("store error from " + args[0]);
+                ioe.printStackTrace();
             }
-        } catch (IOException ioe) {
-            System.out.println("store error from " + args[0]);
-            ioe.printStackTrace();
         }
-    }
-****/
+    ****/
 }

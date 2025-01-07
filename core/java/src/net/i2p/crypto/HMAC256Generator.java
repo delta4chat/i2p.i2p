@@ -37,7 +37,7 @@ public final class HMAC256Generator extends HMACGenerator {
         super();
         _macs = new LinkedBlockingQueue<Mac>(CACHE_SIZE);
     }
-    
+
     /**
      *  Calculate the HMAC of the data with the given key.
      *  Outputs 32 bytes to target starting at targetOffset.
@@ -50,7 +50,7 @@ public final class HMAC256Generator extends HMACGenerator {
     public void calculate(SessionKey key, byte data[], int offset, int length, byte target[], int targetOffset) {
         calculate(key.getData(), data, offset, length, target, targetOffset);
     }
-    
+
     /**
      *  Calculate the HMAC of the data with the given key.
      *  Outputs 32 bytes to target starting at targetOffset.
@@ -72,7 +72,7 @@ public final class HMAC256Generator extends HMACGenerator {
             throw new IllegalArgumentException("HmacSHA256", e);
         }
     }
-    
+
     /**
      *  Verify the MAC inline, reducing some unnecessary memory churn.
      *
@@ -94,7 +94,7 @@ public final class HMAC256Generator extends HMACGenerator {
         releaseTmp(calc);
         return eq;
     }
-    
+
     /**
      *  Package private for HKDF.
      *
@@ -112,7 +112,7 @@ public final class HMAC256Generator extends HMACGenerator {
         }
         return rv;
     }
-    
+
     /**
      *  Mac will be reset and initialized with a zero key.
      *  Package private for HKDF.
@@ -120,8 +120,8 @@ public final class HMAC256Generator extends HMACGenerator {
      *  @since 0.9.48
      */
     void release(Mac mac) {
-         if (CACHE) {
-             try {
+        if (CACHE) {
+            try {
                 mac.init(ZERO_KEY);
             } catch (GeneralSecurityException e) {
                 return;
@@ -129,7 +129,7 @@ public final class HMAC256Generator extends HMACGenerator {
             _macs.offer(mac);
         }
     }
-    
+
     /**
      *  Like SecretKeySpec but doesn't copy the key in the construtor, for speed.
      *  It still returns a copy in getEncoded(), because Mac relies
@@ -141,35 +141,43 @@ public final class HMAC256Generator extends HMACGenerator {
     static final class HMACKey implements SecretKey {
         private final byte[] _data;
 
-        public HMACKey(byte[] data) { _data = data; }
-
-        public String getAlgorithm() { return "HmacSHA256"; }
-        public byte[] getEncoded() { return Arrays.copyOf(_data, 32); }
-        public String getFormat() { return "RAW"; }
-    }
-
-/******
-    private static class Sha256ForMAC extends Sha256Standalone implements Digest {
-        public String getAlgorithmName() { return "sha256 for hmac"; }
-        public int getDigestSize() { return 32; }
-        public int doFinal(byte[] out, int outOff) {
-            byte rv[] = digest();
-            System.arraycopy(rv, 0, out, outOff, rv.length);
-            reset();
-            return rv.length;
+        public HMACKey(byte[] data) {
+            _data = data;
         }
-        
+
+        public String getAlgorithm() {
+            return "HmacSHA256";
+        }
+        public byte[] getEncoded() {
+            return Arrays.copyOf(_data, 32);
+        }
+        public String getFormat() {
+            return "RAW";
+        }
     }
-    
-    public static void main(String args[]) {
-        I2PAppContext ctx = I2PAppContext.getGlobalContext();
-        byte data[] = new byte[64];
-        ctx.random().nextBytes(data);
-        SessionKey key = ctx.keyGenerator().generateSessionKey();
-        Hash mac = ctx.hmac256().calculate(key, data);
-        System.out.println(Base64.encode(mac.getData()));
-    }
-******/
+
+    /******
+        private static class Sha256ForMAC extends Sha256Standalone implements Digest {
+            public String getAlgorithmName() { return "sha256 for hmac"; }
+            public int getDigestSize() { return 32; }
+            public int doFinal(byte[] out, int outOff) {
+                byte rv[] = digest();
+                System.arraycopy(rv, 0, out, outOff, rv.length);
+                reset();
+                return rv.length;
+            }
+
+        }
+
+        public static void main(String args[]) {
+            I2PAppContext ctx = I2PAppContext.getGlobalContext();
+            byte data[] = new byte[64];
+            ctx.random().nextBytes(data);
+            SessionKey key = ctx.keyGenerator().generateSessionKey();
+            Hash mac = ctx.hmac256().calculate(key, data);
+            System.out.println(Base64.encode(mac.getData()));
+        }
+    ******/
 
     /**
      *  Test the BC and the JVM's implementations for speed
@@ -180,73 +188,73 @@ public final class HMAC256Generator extends HMACGenerator {
      *    JVM 8065 ms
      *
      */
-/****
-    private static final int LENGTH = 33;
+    /****
+        private static final int LENGTH = 33;
 
-    public static void main(String args[]) {
-        I2PAppContext ctx = I2PAppContext.getGlobalContext();
-        byte[] rand = new byte[32];
-        byte[] data = new byte[LENGTH];
-        SecretKey keyObj = null;
-        SessionKey key = new SessionKey(rand);
+        public static void main(String args[]) {
+            I2PAppContext ctx = I2PAppContext.getGlobalContext();
+            byte[] rand = new byte[32];
+            byte[] data = new byte[LENGTH];
+            SecretKey keyObj = null;
+            SessionKey key = new SessionKey(rand);
 
-        HMAC256Generator gen = new HMAC256Generator(I2PAppContext.getGlobalContext());
-        byte[] result = new byte[32];
-        Mac mac;
-        try {
-            mac = Mac.getInstance("HmacSHA256");
-        } catch (NoSuchAlgorithmException e) {
-            System.err.println("Fatal: " + e);
-            return;
-        }
-        // warmup and comparison
-        System.out.println("Warmup and comparison:");
-        int RUNS = 25000;
-        for (int i = 0; i < RUNS; i++) {
-            ctx.random().nextBytes(rand);
-            ctx.random().nextBytes(data);
-            keyObj = new SecretKeySpec(rand, "HmacSHA256");
-            byte[] keyBytes = keyObj.getEncoded();
-            if (!DataHelper.eq(rand, keyBytes))
-                System.out.println("secret key in != out");
-            gen.calculate(rand, data, 0, data.length, result, 0);
+            HMAC256Generator gen = new HMAC256Generator(I2PAppContext.getGlobalContext());
+            byte[] result = new byte[32];
+            Mac mac;
             try {
-                mac.init(keyObj);
-            } catch (GeneralSecurityException e) {
+                mac = Mac.getInstance("HmacSHA256");
+            } catch (NoSuchAlgorithmException e) {
                 System.err.println("Fatal: " + e);
                 return;
             }
-            byte[] result2 = mac.doFinal(data);
-            if (!DataHelper.eq(result, result2)) {
-                throw new IllegalStateException("Mismatch on run " + i + ": result1:\n" +
-                                                net.i2p.util.HexDump.dump(result) +
-                                                "result1:\n" +
-                                                net.i2p.util.HexDump.dump(result2));
+            // warmup and comparison
+            System.out.println("Warmup and comparison:");
+            int RUNS = 25000;
+            for (int i = 0; i < RUNS; i++) {
+                ctx.random().nextBytes(rand);
+                ctx.random().nextBytes(data);
+                keyObj = new SecretKeySpec(rand, "HmacSHA256");
+                byte[] keyBytes = keyObj.getEncoded();
+                if (!DataHelper.eq(rand, keyBytes))
+                    System.out.println("secret key in != out");
+                gen.calculate(rand, data, 0, data.length, result, 0);
+                try {
+                    mac.init(keyObj);
+                } catch (GeneralSecurityException e) {
+                    System.err.println("Fatal: " + e);
+                    return;
+                }
+                byte[] result2 = mac.doFinal(data);
+                if (!DataHelper.eq(result, result2)) {
+                    throw new IllegalStateException("Mismatch on run " + i + ": result1:\n" +
+                                                    net.i2p.util.HexDump.dump(result) +
+                                                    "result1:\n" +
+                                                    net.i2p.util.HexDump.dump(result2));
+                }
             }
-        }
 
-        // real thing
-        System.out.println("Passed");
-        CACHE = false;
-        System.out.println("Without Cache Test:");
-        RUNS = 1000000;
-        long start = System.currentTimeMillis();
-        for (int i = 0; i < RUNS; i++) {
-            gen.calculate(rand, data, 0, data.length, result, 0);
-        }
-        long time = System.currentTimeMillis() - start;
-        System.out.println("Time for " + RUNS + " HMAC-SHA256 computations:");
-        System.out.println("BC time (ms): " + time);
+            // real thing
+            System.out.println("Passed");
+            CACHE = false;
+            System.out.println("Without Cache Test:");
+            RUNS = 1000000;
+            long start = System.currentTimeMillis();
+            for (int i = 0; i < RUNS; i++) {
+                gen.calculate(rand, data, 0, data.length, result, 0);
+            }
+            long time = System.currentTimeMillis() - start;
+            System.out.println("Time for " + RUNS + " HMAC-SHA256 computations:");
+            System.out.println("BC time (ms): " + time);
 
-        CACHE = true;
-        System.out.println("With Cache Test:");
-        start = System.currentTimeMillis();
-        for (int i = 0; i < RUNS; i++) {
-            gen.calculate(rand, data, 0, data.length, result, 0);
-        }
-        time = System.currentTimeMillis() - start;
+            CACHE = true;
+            System.out.println("With Cache Test:");
+            start = System.currentTimeMillis();
+            for (int i = 0; i < RUNS; i++) {
+                gen.calculate(rand, data, 0, data.length, result, 0);
+            }
+            time = System.currentTimeMillis() - start;
 
-        System.out.println("JVM time (ms): " + time);
-    }
-****/
+            System.out.println("JVM time (ms): " + time);
+        }
+    ****/
 }

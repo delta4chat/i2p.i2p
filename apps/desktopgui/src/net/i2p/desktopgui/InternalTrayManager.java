@@ -27,17 +27,17 @@ import net.i2p.util.Translate;
  *  Full access to router context.
  */
 class InternalTrayManager extends TrayManager {
-	
+
     private final RouterContext _context;
     private final Log log;
     private final Main _main;
     private MenuItem _statusItem, _browserItem, _configItem, _restartItem, _stopItem,
-                     _restartHardItem, _stopHardItem, _cancelItem;
+            _restartHardItem, _stopHardItem, _cancelItem;
     private JMenuItem _jstatusItem, _jbrowserItem, _jconfigItem, _jrestartItem, _jstopItem,
-                      _jrestartHardItem, _jstopHardItem, _jcancelItem;
+            _jrestartHardItem, _jstopHardItem, _jcancelItem;
 
     private static final boolean CONSOLE_ENABLED = Desktop.isDesktopSupported() &&
-                                                   Desktop.getDesktop().isSupported(Action.BROWSE);
+            Desktop.getDesktop().isSupported(Action.BROWSE);
     private static final String CONSOLE_BUNDLE_NAME = "net.i2p.router.web.messages";
 
     public InternalTrayManager(RouterContext ctx, Main main, boolean useSwing) {
@@ -57,7 +57,7 @@ class InternalTrayManager extends TrayManager {
 
     public synchronized PopupMenu getMainMenu() {
         PopupMenu popup = new PopupMenu();
-        
+
         final MenuItem statusItem = new MenuItem("");
 
         final MenuItem browserLauncher;
@@ -71,12 +71,12 @@ class InternalTrayManager extends TrayManager {
                         protected Object doInBackground() throws Exception {
                             return null;
                         }
-                        
+
                         @Override
                         protected void done() {
                             launchBrowser();
                         }
-                    }.execute();
+                    } .execute();
                 }
             });
         } else {
@@ -95,7 +95,7 @@ class InternalTrayManager extends TrayManager {
                         configureDesktopgui(false);
                         return null;
                     }
-                }.execute();
+                } .execute();
             }
         });
 
@@ -111,7 +111,7 @@ class InternalTrayManager extends TrayManager {
                             RouterManager.restartGracefully(_context);
                             return null;
                         }
-                    }.execute();
+                    } .execute();
                 }
             });
         } else {
@@ -128,7 +128,7 @@ class InternalTrayManager extends TrayManager {
                         RouterManager.shutDownGracefully(_context);
                         return null;
                     }
-                }.execute();
+                } .execute();
             }
         });
 
@@ -144,7 +144,7 @@ class InternalTrayManager extends TrayManager {
                             RouterManager.restart(_context);
                             return null;
                         }
-                    }.execute();
+                    } .execute();
                 }
             });
         } else {
@@ -161,7 +161,7 @@ class InternalTrayManager extends TrayManager {
                         RouterManager.shutDown(_context);
                         return null;
                     }
-                }.execute();
+                } .execute();
             }
         });
 
@@ -175,7 +175,7 @@ class InternalTrayManager extends TrayManager {
                         RouterManager.cancelShutdown(_context);
                         return null;
                     }
-                }.execute();
+                } .execute();
             }
         });
 
@@ -198,7 +198,7 @@ class InternalTrayManager extends TrayManager {
             popup.add(restartItem2);
         popup.add(stopItem2);
         popup.add(cancelItem);
-        
+
         _statusItem = statusItem;
         _browserItem = browserLauncher;
         _configItem = desktopguiConfigurationLauncher;
@@ -213,7 +213,7 @@ class InternalTrayManager extends TrayManager {
 
     public synchronized JPopupMenu getSwingMainMenu() {
         JPopupMenu popup = new JPopupMenu();
-        
+
         final JMenuItem statusItem = new JMenuItem("");
 
         final JMenuItem browserLauncher;
@@ -227,12 +227,12 @@ class InternalTrayManager extends TrayManager {
                         protected Object doInBackground() throws Exception {
                             return null;
                         }
-                        
+
                         @Override
                         protected void done() {
                             launchBrowser();
                         }
-                    }.execute();
+                    } .execute();
                 }
             });
         } else {
@@ -251,7 +251,7 @@ class InternalTrayManager extends TrayManager {
                         configureDesktopgui(false);
                         return null;
                     }
-                }.execute();
+                } .execute();
             }
         });
 
@@ -267,7 +267,7 @@ class InternalTrayManager extends TrayManager {
                             RouterManager.restartGracefully(_context);
                             return null;
                         }
-                    }.execute();
+                    } .execute();
                 }
             });
         } else {
@@ -284,7 +284,7 @@ class InternalTrayManager extends TrayManager {
                         RouterManager.shutDownGracefully(_context);
                         return null;
                     }
-                }.execute();
+                } .execute();
             }
         });
 
@@ -300,7 +300,7 @@ class InternalTrayManager extends TrayManager {
                             RouterManager.restart(_context);
                             return null;
                         }
-                    }.execute();
+                    } .execute();
                 }
             });
         } else {
@@ -317,7 +317,7 @@ class InternalTrayManager extends TrayManager {
                         RouterManager.shutDown(_context);
                         return null;
                     }
-                }.execute();
+                } .execute();
             }
         });
 
@@ -331,7 +331,7 @@ class InternalTrayManager extends TrayManager {
                         RouterManager.cancelShutdown(_context);
                         return null;
                     }
-                }.execute();
+                } .execute();
             }
         });
 
@@ -354,7 +354,7 @@ class InternalTrayManager extends TrayManager {
             popup.add(restartItem2);
         popup.add(stopItem2);
         popup.add(cancelItem);
-        
+
         _jstatusItem = statusItem;
         _jbrowserItem = browserLauncher;
         _jconfigItem = desktopguiConfigurationLauncher;
@@ -477,6 +477,6 @@ class InternalTrayManager extends TrayManager {
             launcher.openUrl(url);
         } catch (IOException e1) {
             log.log(Log.WARN, "Failed to open browser!", e1);
-        }    
+        }
     }
 }

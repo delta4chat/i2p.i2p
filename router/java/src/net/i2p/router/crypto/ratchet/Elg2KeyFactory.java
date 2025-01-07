@@ -72,7 +72,7 @@ public class Elg2KeyFactory extends I2PThread implements KeyFactory {
         if (!SystemVersion.isWindows())
             setPriority(Thread.NORM_PRIORITY - 1);
     }
-        
+
     /**
      *  Note that this stops the singleton precalc thread.
      *  You don't want to do this if there are multiple routers in the JVM.
@@ -169,10 +169,10 @@ public class Elg2KeyFactory extends I2PThread implements KeyFactory {
      * to be put back onto the queue for reuse.
      */
     public void returnUnused(Elg2KeyPair kp) {
-/*
-        if (_keys.offer(kp))
-            _context.statManager().addRateData("crypto.EDHReused", 1);
-*/
+        /*
+                if (_keys.offer(kp))
+                    _context.statManager().addRateData("crypto.EDHReused", 1);
+        */
     }
 
     /** @return true if successful, false if full */

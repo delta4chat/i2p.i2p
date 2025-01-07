@@ -121,7 +121,7 @@ public final class SelfSignedGenerator {
      *  rv[3] is a Java X509CRL
      */
     public static Object[] generate(String cname, String ou, String o, String l, String st, String c,
-                             int validDays, SigType type) throws GeneralSecurityException {
+                                    int validDays, SigType type) throws GeneralSecurityException {
         return generate(cname, null, ou, o, l, st, c, validDays, type);
     }
 
@@ -144,7 +144,7 @@ public final class SelfSignedGenerator {
      *  @since 0.9.34 added altNames param
      */
     public static Object[] generate(String cname, Set<String> altNames, String ou, String o, String l, String st, String c,
-                             int validDays, SigType type) throws GeneralSecurityException {
+                                    int validDays, SigType type) throws GeneralSecurityException {
         SimpleDataStructure[] keys = KeyGenerator.getInstance().generateSigningKeys(type);
         SigningPublicKey pub = (SigningPublicKey) keys[0];
         SigningPrivateKey priv = (SigningPrivateKey) keys[1];
@@ -166,7 +166,7 @@ public final class SelfSignedGenerator {
      *  @since 0.9.46
      */
     public static X509Certificate generate(SigningPrivateKey priv, String cname,
-                                            int validDays) throws GeneralSecurityException {
+                                           int validDays) throws GeneralSecurityException {
         SigningPublicKey pub = priv.toPublic();
         PublicKey jpub = SigUtil.toJavaKey(pub);
         PrivateKey jpriv = SigUtil.toJavaKey(priv);
@@ -198,19 +198,19 @@ public final class SelfSignedGenerator {
                                      int validDays) throws GeneralSecurityException {
         String oid;
         switch (type) {
-            case DSA_SHA1:
-            case ECDSA_SHA256_P256:
-            case ECDSA_SHA384_P384:
-            case ECDSA_SHA512_P521:
-            case RSA_SHA256_2048:
-            case RSA_SHA384_3072:
-            case RSA_SHA512_4096:
-            case EdDSA_SHA512_Ed25519:
-            case EdDSA_SHA512_Ed25519ph:
-                oid = type.getOID();
-                break;
-            default:
-                throw new GeneralSecurityException("Unsupported: " + type);
+        case DSA_SHA1:
+        case ECDSA_SHA256_P256:
+        case ECDSA_SHA384_P384:
+        case ECDSA_SHA512_P521:
+        case RSA_SHA256_2048:
+        case RSA_SHA384_3072:
+        case RSA_SHA512_4096:
+        case EdDSA_SHA512_Ed25519:
+        case EdDSA_SHA512_Ed25519ph:
+            oid = type.getOID();
+            break;
+        default:
+            throw new GeneralSecurityException("Unsupported: " + type);
         }
         byte[] sigoid = getEncodedOIDSeq(oid);
 
@@ -272,7 +272,7 @@ public final class SelfSignedGenerator {
         if (!cpub.equals(jpub)) {
             boolean ok = false;
             if ((jpub instanceof EdDSAPublicKey) &&
-                cpub.getClass().getName().equals("sun.security.x509.X509Key")) {
+                    cpub.getClass().getName().equals("sun.security.x509.X509Key")) {
                 // X509Certificate will sometimes contain an X509Key rather than the EdDSAPublicKey itself; the contained
                 // key is valid but needs to be instanced as an EdDSAPublicKey before it can be used.
                 try {
@@ -316,7 +316,7 @@ public final class SelfSignedGenerator {
         SigningPublicKey pub = KeyGenerator.getSigningPublicKey(priv);
         PublicKey jpub = SigUtil.toJavaKey(pub);
         if (type == null)
-                throw new GeneralSecurityException("Unsupported: " + jpriv);
+            throw new GeneralSecurityException("Unsupported: " + jpriv);
         return generate(jpub, jpriv, priv, type, cname, altNames, ou, o, l, st, c, validDays);
     }
 
@@ -356,16 +356,16 @@ public final class SelfSignedGenerator {
         cb[idx++] = 0;
         System.arraycopy(sigbytes, 0, cb, idx, sigbytes.length);
 
-     /****
-        if (DEBUG) {
-            System.out.println("CRL Sig OID");
-            System.out.println(HexDump.dump(sigoid));
-            System.out.println("CRL Signature");
-            System.out.println(HexDump.dump(sigbytes));
-            System.out.println("Whole CRL");
-            System.out.println(HexDump.dump(cb));
-        }
-      ****/
+        /****
+           if (DEBUG) {
+               System.out.println("CRL Sig OID");
+               System.out.println(HexDump.dump(sigoid));
+               System.out.println("CRL Signature");
+               System.out.println(HexDump.dump(sigbytes));
+               System.out.println("Whole CRL");
+               System.out.println(HexDump.dump(cb));
+           }
+         ****/
 
         ByteArrayInputStream bais = new ByteArrayInputStream(cb);
 
@@ -393,7 +393,7 @@ public final class SelfSignedGenerator {
      *  @param c The C (country) in the distinguished name, non-null before 0.9.28, may be null as of 0.9.28
      */
     private static byte[] genTBS(String cname, Set<String> altNames, String ou, String o, String l, String st, String c,
-                          int validDays, byte[] sigoid, PublicKey jpub) throws GeneralSecurityException {
+                                 int validDays, byte[] sigoid, PublicKey jpub) throws GeneralSecurityException {
         // a0 ???, int = 2
         byte[] version = { (byte) 0xa0, 3, 2, 1, 2 };
 
@@ -802,7 +802,7 @@ public final class SelfSignedGenerator {
         for (String n : altNames) {
             byte[] b;
             if (Addresses.isIPv4Address(n) ||
-                Addresses.isIPv6Address(n)) {
+                    Addresses.isIPv6Address(n)) {
                 b = Addresses.getIP(n);
                 if (b == null)  // shouldn't happen
                     throw new IllegalArgumentException("fail " + n);
@@ -1007,47 +1007,47 @@ public final class SelfSignedGenerator {
         } else {
             usage();
         }
-/****
-        try {
-            int i = 0;
-            for (SigType t : java.util.EnumSet.allOf(SigType.class)) {
-                if (t.isAvailable())
-                    test("test" + i, t);
-                i++;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-****/
+        /****
+                try {
+                    int i = 0;
+                    for (SigType t : java.util.EnumSet.allOf(SigType.class)) {
+                        if (t.isAvailable())
+                            test("test" + i, t);
+                        i++;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+        ****/
     }
 
     private static void usage() {
         System.err.println("Usage: selfsignedgenerator keygen [-t type|code] [-p keystorepw] [-r crlFile.crl] publicKeyFile.crt keystore.ks localhost\n" +
                            "       selfsignedgenerator renew  [-p keystorepw] publicKeyFile.crt keystore.ks");
     }
-/****
-    private static final void test(String name, SigType type) throws Exception {
-            Object[] rv = generate("cname@example.com", "ou", "o", null, "st", "c", 3652, type);
-            //PublicKey jpub = (PublicKey) rv[0];
-            PrivateKey jpriv = (PrivateKey) rv[1];
-            X509Certificate cert = (X509Certificate) rv[2];
-            X509CRL crl = (X509CRL) rv[3];
-            File ks = new File(name + ".ks");
-            List<X509Certificate> certs = new ArrayList<X509Certificate>(1);
-            certs.add(cert);
-            KeyStoreUtil.storePrivateKey(ks, "changeit", "foo", "foobar", jpriv, certs);
-            System.out.println("Private key saved to " + ks + " with alias foo, password foobar, keystore password changeit");
-            File cf = new File(name + ".crt");
-            CertUtil.saveCert(cert, cf);
-            System.out.println("Certificate saved to " + cf);
-            File pf = new File(name + ".priv");
-            FileOutputStream pfs = new SecureFileOutputStream(pf);
-            KeyStoreUtil.exportPrivateKey(ks, "changeit", "foo", "foobar", pfs);
-            pfs.close();
-            System.out.println("Private key saved to " + pf);
-            File cr = new File(name + ".crl");
-            CertUtil.saveCRL(crl, cr);
-            System.out.println("CRL saved to " + cr);
-    }
-****/
+    /****
+        private static final void test(String name, SigType type) throws Exception {
+                Object[] rv = generate("cname@example.com", "ou", "o", null, "st", "c", 3652, type);
+                //PublicKey jpub = (PublicKey) rv[0];
+                PrivateKey jpriv = (PrivateKey) rv[1];
+                X509Certificate cert = (X509Certificate) rv[2];
+                X509CRL crl = (X509CRL) rv[3];
+                File ks = new File(name + ".ks");
+                List<X509Certificate> certs = new ArrayList<X509Certificate>(1);
+                certs.add(cert);
+                KeyStoreUtil.storePrivateKey(ks, "changeit", "foo", "foobar", jpriv, certs);
+                System.out.println("Private key saved to " + ks + " with alias foo, password foobar, keystore password changeit");
+                File cf = new File(name + ".crt");
+                CertUtil.saveCert(cert, cf);
+                System.out.println("Certificate saved to " + cf);
+                File pf = new File(name + ".priv");
+                FileOutputStream pfs = new SecureFileOutputStream(pf);
+                KeyStoreUtil.exportPrivateKey(ks, "changeit", "foo", "foobar", pfs);
+                pfs.close();
+                System.out.println("Private key saved to " + pf);
+                File cr = new File(name + ".crl");
+                CertUtil.saveCRL(crl, cr);
+                System.out.println("CRL saved to " + cr);
+        }
+    ****/
 }

@@ -150,7 +150,7 @@ public class GeneralHelper {
                 String intfc = props.getProperty(TunnelController.PROP_INTFC);
                 Set<String> altNames = new HashSet<String>(4);
                 if (intfc != null && !intfc.equals("0.0.0.0") && !intfc.equals("::") &&
-                    !intfc.equals("0:0:0:0:0:0:0:0"))
+                        !intfc.equals("0:0:0:0:0:0:0:0"))
                     altNames.add(intfc);
                 String tgts = props.getProperty(TunnelController.PROP_DEST);
                 if (tgts != null) {
@@ -177,7 +177,7 @@ public class GeneralHelper {
                     }
                 } catch (IOException ioe) {
                     msgs.add("Failed to create new self-signed certificate for tunnel " +
-                            getTunnelName(tcg, tunnel) + ", check logs: " + ioe);
+                             getTunnelName(tcg, tunnel) + ", check logs: " + ioe);
                 }
             }
         }
@@ -310,7 +310,7 @@ public class GeneralHelper {
      *                    be null if not known.
      */
     public static List<String> deleteTunnel(
-            I2PAppContext context, TunnelControllerGroup tcg, int tunnel, String privKeyFile) {
+        I2PAppContext context, TunnelControllerGroup tcg, int tunnel, String privKeyFile) {
         List<String> msgs;
         TunnelController cur = getController(tcg, tunnel);
         if (cur == null) {
@@ -322,7 +322,7 @@ public class GeneralHelper {
         msgs = tcg.removeController(cur);
         try {
             tcg.removeConfig(cur);
-        }catch (IOException ioe){
+        } catch (IOException ioe) {
             msgs.add(ioe.toString());
         }
 
@@ -334,7 +334,7 @@ public class GeneralHelper {
         if (pk == null)
             pk = privKeyFile;
         if (pk != null && pk.startsWith("i2ptunnel") && pk.endsWith("-privKeys.dat") &&
-            ((!TunnelController.isClient(cur.getType())) || cur.getPersistentClientKey())) {
+                ((!TunnelController.isClient(cur.getType())) || cur.getPersistentClientKey())) {
             File pkf = new File(context.getConfigDir(), pk);
             if (pkf.exists()) {
                 String name = cur.getName();
@@ -509,8 +509,8 @@ public class GeneralHelper {
         if (tun == null) return "";
         String rv;
         if (TunnelController.TYPE_STD_CLIENT.equals(tun.getType()) ||
-            TunnelController.TYPE_IRC_CLIENT.equals(tun.getType()) ||
-            TunnelController.TYPE_STREAMR_CLIENT.equals(tun.getType()))
+                TunnelController.TYPE_IRC_CLIENT.equals(tun.getType()) ||
+                TunnelController.TYPE_STREAMR_CLIENT.equals(tun.getType()))
             rv = tun.getTargetDestination();
         else
             rv = tun.getProxyList();
@@ -721,7 +721,7 @@ public class GeneralHelper {
             rv = "";
         return rv;
     }
-    
+
     /**
      *  List of b64 name : b64key
      *  Pubkeys for DH, privkeys for PSK
@@ -735,8 +735,8 @@ public class GeneralHelper {
         int i = 0;
         String p;
         while ((p = getProperty(tunnel, pfx + i, null)) != null) {
-             rv.add(p);
-             i++;
+            rv.add(p);
+            i++;
         }
         return rv;
     }
@@ -752,7 +752,7 @@ public class GeneralHelper {
         if (tunnel >= 0) {
             ttype = getTunnelType(tunnel);
             if (!TunnelController.isClient(ttype) ||
-                getBooleanProperty(tunnel, "persistentClientKey")) {
+                    getBooleanProperty(tunnel, "persistentClientKey")) {
                 Destination d = getDestination(tunnel);
                 if (d != null) {
                     type = d.getSigType();
@@ -769,13 +769,13 @@ public class GeneralHelper {
         if (type == null) {
             // same default logic as in TunnelController.setConfig()
             if (!TunnelController.isClient(ttype) ||
-                TunnelController.TYPE_IRC_CLIENT.equals(ttype) ||
-                TunnelController.TYPE_SOCKS_IRC.equals(ttype) ||
-                TunnelController.TYPE_SOCKS.equals(ttype) ||
-                TunnelController.TYPE_STREAMR_CLIENT.equals(ttype) ||
-                TunnelController.TYPE_STD_CLIENT.equals(ttype) ||
-                TunnelController.TYPE_CONNECT.equals(ttype) ||
-                TunnelController.TYPE_HTTP_CLIENT.equals(ttype))
+                    TunnelController.TYPE_IRC_CLIENT.equals(ttype) ||
+                    TunnelController.TYPE_SOCKS_IRC.equals(ttype) ||
+                    TunnelController.TYPE_SOCKS.equals(ttype) ||
+                    TunnelController.TYPE_STREAMR_CLIENT.equals(ttype) ||
+                    TunnelController.TYPE_STD_CLIENT.equals(ttype) ||
+                    TunnelController.TYPE_CONNECT.equals(ttype) ||
+                    TunnelController.TYPE_HTTP_CLIENT.equals(ttype))
                 type = TunnelController.PREFERRED_SIGTYPE;
             else
                 type = SigType.DSA_SHA1;
@@ -797,11 +797,11 @@ public class GeneralHelper {
         String type = tun.getType();
         String dflt;
         if (tun.isClient() &&
-            (TunnelController.TYPE_HTTP_CLIENT.equals(type) ||
-             TunnelController.TYPE_IRC_CLIENT.equals(type) ||
-             TunnelController.TYPE_SOCKS_IRC.equals(type) ||
-             TunnelController.TYPE_STREAMR_CLIENT.equals(type) ||
-             Boolean.parseBoolean(tun.getSharedClient()))) {
+                (TunnelController.TYPE_HTTP_CLIENT.equals(type) ||
+                 TunnelController.TYPE_IRC_CLIENT.equals(type) ||
+                 TunnelController.TYPE_SOCKS_IRC.equals(type) ||
+                 TunnelController.TYPE_STREAMR_CLIENT.equals(type) ||
+                 Boolean.parseBoolean(tun.getSharedClient()))) {
             dflt = "4,0";
         } else if (TunnelController.TYPE_HTTP_SERVER.equals(type) ||
                    TunnelController.TYPE_IRC_SERVER.equals(type) ||
@@ -1089,7 +1089,7 @@ public class GeneralHelper {
                 // leave in for HTTP and Connect so it can get migrated to MD5
                 // hide for SOCKS until migrated to MD5
                 if ((!isMD5Proxy) &&
-                    TunnelConfig._nonProxyNoShowSet.contains(key))
+                        TunnelConfig._nonProxyNoShowSet.contains(key))
                     continue;
                 if (key.startsWith("i2cp.leaseSetClient."))
                     continue;

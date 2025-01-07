@@ -167,8 +167,8 @@ class NodeInfo extends SimpleDataStructure {
         byte[] nb = nID.getData();
         byte[] hb = hash.getData();
         if ((!DataHelper.eq(nb, 0, hb, 0, 4)) ||
-            ((nb[4] ^ (port >> 8)) & 0xff) != (hb[4] & 0xff) ||
-            ((nb[5] ^ port) & 0xff) != (hb[5] & 0xff))
+                ((nb[4] ^ (port >> 8)) & 0xff) != (hb[4] & 0xff) ||
+                ((nb[5] ^ port) & 0xff) != (hb[5] & 0xff))
             throw new IllegalArgumentException("NID/Hash mismatch");
     }
 

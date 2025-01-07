@@ -1,9 +1,9 @@
 package net.i2p.router.client;
 /*
  * free (adj.): unencumbered; not under the control of others
- * Written by jrandom in 2003 and released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
- * It probably won't make your computer catch on fire, or eat 
+ * Written by jrandom in 2003 and released into the public domain
+ * with no warranty of any kind, either expressed or implied.
+ * It probably won't make your computer catch on fire, or eat
  * your children, but it might.  Use at your own risk.
  *
  */
@@ -71,7 +71,7 @@ class ClientMessageEventListener implements I2CPMessageReader.I2CPMessageEventLi
     protected final ClientConnectionRunner _runner;
     private final boolean  _enforceAuth;
     private volatile boolean _authorized;
-    
+
     private static final String PROP_AUTH = "i2cp.auth";
     /** if true, user/pw must be in GetDateMessage */
     private static final String PROP_AUTH_STRICT = "i2cp.strictAuth";
@@ -88,7 +88,7 @@ class ClientMessageEventListener implements I2CPMessageReader.I2CPMessageEventLi
             _authorized = true;
         _context.statManager().createRateStat("client.distributeTime", "How long it took to inject the client message into the router", "ClientMessages", new long[] { 60*1000, 10*60*1000, 60*60*1000 });
     }
-    
+
     /**
      * Handle an incoming message and dispatch it to the appropriate handler
      *
@@ -106,62 +106,62 @@ class ClientMessageEventListener implements I2CPMessageReader.I2CPMessageEventLi
             // Default true as of 0.9.16
             boolean strict = _context.getBooleanPropertyDefaultTrue(PROP_AUTH_STRICT);
             if ((strict && type != GetDateMessage.MESSAGE_TYPE) ||
-                (type != CreateSessionMessage.MESSAGE_TYPE &&
-                 type != GetDateMessage.MESSAGE_TYPE &&
-                 type != DestLookupMessage.MESSAGE_TYPE &&
-                 type != GetBandwidthLimitsMessage.MESSAGE_TYPE)) {
+                    (type != CreateSessionMessage.MESSAGE_TYPE &&
+                     type != GetDateMessage.MESSAGE_TYPE &&
+                     type != DestLookupMessage.MESSAGE_TYPE &&
+                     type != GetBandwidthLimitsMessage.MESSAGE_TYPE)) {
                 _log.error("Received message type " + type + " without required authentication");
                 _runner.disconnectClient("Authorization required");
                 return;
             }
         }
         switch (message.getType()) {
-            case GetDateMessage.MESSAGE_TYPE:
-                handleGetDate((GetDateMessage)message);
-                break;
-            case SetDateMessage.MESSAGE_TYPE:
-                handleSetDate((SetDateMessage)message);
-                break;
-            case CreateSessionMessage.MESSAGE_TYPE:
-                handleCreateSession((CreateSessionMessage)message);
-                break;
-            case SendMessageMessage.MESSAGE_TYPE:
-                handleSendMessage((SendMessageMessage)message);
-                break;
-            case SendMessageExpiresMessage.MESSAGE_TYPE:
-                handleSendMessage((SendMessageExpiresMessage)message);
-                break;
-            case ReceiveMessageBeginMessage.MESSAGE_TYPE:
-                handleReceiveBegin((ReceiveMessageBeginMessage)message);
-                break;
-            case ReceiveMessageEndMessage.MESSAGE_TYPE:
-                handleReceiveEnd((ReceiveMessageEndMessage)message);
-                break;
-            case CreateLeaseSetMessage.MESSAGE_TYPE:
-            case CreateLeaseSet2Message.MESSAGE_TYPE:
-                handleCreateLeaseSet((CreateLeaseSetMessage)message);
-                break;
-            case DestroySessionMessage.MESSAGE_TYPE:
-                handleDestroySession((DestroySessionMessage)message);
-                break;
-            case DestLookupMessage.MESSAGE_TYPE:
-                handleDestLookup((DestLookupMessage)message);
-                break;
-            case HostLookupMessage.MESSAGE_TYPE:
-                handleHostLookup((HostLookupMessage)message);
-                break;
-            case ReconfigureSessionMessage.MESSAGE_TYPE:
-                handleReconfigureSession((ReconfigureSessionMessage)message);
-                break;
-            case GetBandwidthLimitsMessage.MESSAGE_TYPE:
-                handleGetBWLimits((GetBandwidthLimitsMessage)message);
-                break;
-            case BlindingInfoMessage.MESSAGE_TYPE:
-                handleBlindingInfo((BlindingInfoMessage)message);
-                break;
-            default:
-                if (_log.shouldLog(Log.ERROR))
-                    _log.error("Unhandled I2CP type received: " + message.getType());
+        case GetDateMessage.MESSAGE_TYPE:
+            handleGetDate((GetDateMessage)message);
+            break;
+        case SetDateMessage.MESSAGE_TYPE:
+            handleSetDate((SetDateMessage)message);
+            break;
+        case CreateSessionMessage.MESSAGE_TYPE:
+            handleCreateSession((CreateSessionMessage)message);
+            break;
+        case SendMessageMessage.MESSAGE_TYPE:
+            handleSendMessage((SendMessageMessage)message);
+            break;
+        case SendMessageExpiresMessage.MESSAGE_TYPE:
+            handleSendMessage((SendMessageExpiresMessage)message);
+            break;
+        case ReceiveMessageBeginMessage.MESSAGE_TYPE:
+            handleReceiveBegin((ReceiveMessageBeginMessage)message);
+            break;
+        case ReceiveMessageEndMessage.MESSAGE_TYPE:
+            handleReceiveEnd((ReceiveMessageEndMessage)message);
+            break;
+        case CreateLeaseSetMessage.MESSAGE_TYPE:
+        case CreateLeaseSet2Message.MESSAGE_TYPE:
+            handleCreateLeaseSet((CreateLeaseSetMessage)message);
+            break;
+        case DestroySessionMessage.MESSAGE_TYPE:
+            handleDestroySession((DestroySessionMessage)message);
+            break;
+        case DestLookupMessage.MESSAGE_TYPE:
+            handleDestLookup((DestLookupMessage)message);
+            break;
+        case HostLookupMessage.MESSAGE_TYPE:
+            handleHostLookup((HostLookupMessage)message);
+            break;
+        case ReconfigureSessionMessage.MESSAGE_TYPE:
+            handleReconfigureSession((ReconfigureSessionMessage)message);
+            break;
+        case GetBandwidthLimitsMessage.MESSAGE_TYPE:
+            handleGetBWLimits((GetBandwidthLimitsMessage)message);
+            break;
+        case BlindingInfoMessage.MESSAGE_TYPE:
+            handleBlindingInfo((BlindingInfoMessage)message);
+            break;
+        default:
+            if (_log.shouldLog(Log.ERROR))
+                _log.error("Unhandled I2CP type received: " + message.getType());
         }
     }
 
@@ -178,12 +178,12 @@ class ClientMessageEventListener implements I2CPMessageReader.I2CPMessageEventLi
         _runner.disconnectClient(error.toString());
         _runner.stopRunning();
     }
-  
+
     public void disconnected(I2CPMessageReader reader) {
         if (_runner.isDead()) return;
         _runner.disconnected();
     }
-    
+
     /**
      *  Defaults in GetDateMessage options are NOT honored.
      *  Defaults are not serialized out-of-JVM, and the router does not recognize defaults in-JVM.
@@ -212,8 +212,8 @@ class ClientMessageEventListener implements I2CPMessageReader.I2CPMessageEventLi
     private void handleSetDate(SetDateMessage message) {
         //_context.clock().setNow(message.getDate().getTime());
     }
-    
-    /** 
+
+    /**
      * Handle a CreateSessionMessage.
      * On errors, we could perhaps send a SessionStatusMessage with STATUS_INVALID before
      * sending the DisconnectMessage... but right now the client will send _us_ a
@@ -313,7 +313,7 @@ class ClientMessageEventListener implements I2CPMessageReader.I2CPMessageEventLi
         if ("5".equals(lsType)) {
             SigType stype = dest.getSigningPublicKey().getType();
             if (stype != SigType.EdDSA_SHA512_Ed25519 &&
-                stype != SigType.RedDSA_SHA512_Ed25519) {
+                    stype != SigType.RedDSA_SHA512_Ed25519) {
                 _runner.disconnectClient("Invalid sig type for encrypted LS");
                 return;
             }
@@ -387,7 +387,7 @@ class ClientMessageEventListener implements I2CPMessageReader.I2CPMessageEventLi
             }
         }
     }
-    
+
     /**
      *  Side effect - sets _authorized.
      *  Side effect - disconnects session if not authorized.
@@ -434,7 +434,7 @@ class ClientMessageEventListener implements I2CPMessageReader.I2CPMessageEventLi
     protected void startCreateSessionJob(SessionConfig config) {
         _context.jobQueue().addJob(new CreateSessionJob(_context, config));
     }
-    
+
     /**
      * Handle a SendMessageMessage: give it a message Id, have the ClientManager distribute
      * it, and send the client an ACCEPTED message
@@ -458,7 +458,7 @@ class ClientMessageEventListener implements I2CPMessageReader.I2CPMessageEventLi
                 status.setMessageId(_runner.getNextMessageId());
                 status.setSessionId(sid.getSessionId());
                 status.setSize(0);
-                status.setNonce(message.getNonce()); 
+                status.setNonce(message.getNonce());
                 status.setStatus(MessageStatusMessage.STATUS_SEND_FAILURE_BAD_SESSION);
                 try {
                     _runner.doSend(status);
@@ -483,7 +483,7 @@ class ClientMessageEventListener implements I2CPMessageReader.I2CPMessageEventLi
             status.setMessageId(_runner.getNextMessageId());
             status.setSessionId(sid.getSessionId());
             status.setSize(0);
-            status.setNonce(message.getNonce()); 
+            status.setNonce(message.getNonce());
             status.setStatus(MessageStatusMessage.STATUS_SEND_FAILURE_ROUTER);
             try {
                 _runner.doSend(status);
@@ -501,9 +501,9 @@ class ClientMessageEventListener implements I2CPMessageReader.I2CPMessageEventLi
             _log.debug("Took too long to distribute the message (which holds up the ack): " + timeToDistribute);
     }
 
-    
+
     /**
-     * The client asked for a message, so we send it to them.  
+     * The client asked for a message, so we send it to them.
      *
      * This is only when not in fast receive mode.
      * In the default fast receive mode, data is sent in MessageReceivedJob.
@@ -515,8 +515,8 @@ class ClientMessageEventListener implements I2CPMessageReader.I2CPMessageEventLi
         Payload payload = _runner.getPayload(new MessageId(message.getMessageId()));
         if (payload == null) {
             if (_log.shouldLog(Log.WARN))
-                _log.warn("Payload for message id [" + message.getMessageId() 
-                           + "] is null!  Dropped or Unknown message id");
+                _log.warn("Payload for message id [" + message.getMessageId()
+                          + "] is null!  Dropped or Unknown message id");
             return;
         }
         // TODO validate session id
@@ -532,17 +532,17 @@ class ClientMessageEventListener implements I2CPMessageReader.I2CPMessageEventLi
             _runner.removePayload(new MessageId(message.getMessageId()));
         }
     }
-    
+
     /**
      * The client told us that the message has been received completely.  This currently
-     * does not do any security checking prior to removing the message from the 
+     * does not do any security checking prior to removing the message from the
      * pending queue, though it should.
      *
      */
     private void handleReceiveEnd(ReceiveMessageEndMessage message) {
         _runner.removePayload(new MessageId(message.getMessageId()));
     }
-    
+
     private void handleDestroySession(DestroySessionMessage message) {
         SessionId id = message.getSessionId();
         if (id != null) {
@@ -559,7 +559,7 @@ class ClientMessageEventListener implements I2CPMessageReader.I2CPMessageEventLi
                 _log.info("Still " + left + " sessions left");
         }
     }
-    
+
     /** override for testing */
     protected void handleCreateLeaseSet(CreateLeaseSetMessage message) {
         LeaseSet ls = message.getLeaseSet();
@@ -571,8 +571,8 @@ class ClientMessageEventListener implements I2CPMessageReader.I2CPMessageEventLi
         }
         int type = ls.getType();
         if (type != DatabaseEntry.KEY_TYPE_META_LS2 &&
-            type != DatabaseEntry.KEY_TYPE_ENCRYPTED_LS2 &&
-            message.getPrivateKey() == null) {
+                type != DatabaseEntry.KEY_TYPE_ENCRYPTED_LS2 &&
+                message.getPrivateKey() == null) {
             if (_log.shouldLog(Log.ERROR))
                 _log.error("Null private keys: " + message);
             _runner.disconnectClient("Invalid CreateLeaseSetMessage - null private keys");
@@ -641,7 +641,7 @@ class ClientMessageEventListener implements I2CPMessageReader.I2CPMessageEventLi
         if (type != DatabaseEntry.KEY_TYPE_META_LS2) {
             LeaseSetKeys keys = _context.keyManager().getKeys(dest);
             if (keys == null ||
-                !message.getPrivateKey().equals(keys.getDecryptionKey())) {
+                    !message.getPrivateKey().equals(keys.getDecryptionKey())) {
                 // Verify and register crypto keys if new or if changed
                 // Private crypto key should never change, and if it does,
                 // one of the checks below will fail
@@ -736,7 +736,7 @@ class ClientMessageEventListener implements I2CPMessageReader.I2CPMessageEventLi
     protected void handleDestLookup(DestLookupMessage message) {
         // no session id in DLM
         _context.jobQueue().addJob(new LookupDestJob(_context, _runner, message.getHash(),
-                                                     _runner.getDestHash()));
+                                   _runner.getDestHash()));
     }
 
     /**
@@ -759,8 +759,8 @@ class ClientMessageEventListener implements I2CPMessageReader.I2CPMessageEventLi
             // h may still be null, an LS lookup for b32 will go out expl. tunnels
         }
         _context.jobQueue().addJob(new LookupDestJob(_context, _runner, message.getReqID(),
-                                                     message.getTimeout(), sid,
-                                                     message.getHash(), message.getHostname(), h));
+                                   message.getTimeout(), sid,
+                                   message.getHash(), message.getHostname(), h));
     }
 
     /**
@@ -801,12 +801,12 @@ class ClientMessageEventListener implements I2CPMessageReader.I2CPMessageEventLi
         props.putAll(cfg.getOptions());
         settings.readFromProperties(props);
         _context.tunnelManager().setInboundSettings(dest,
-                                                    settings.getInboundSettings());
+                settings.getInboundSettings());
         _context.tunnelManager().setOutboundSettings(dest,
-                                                     settings.getOutboundSettings());
+                settings.getOutboundSettings());
         sendStatusMessage(id, SessionStatusMessage.STATUS_UPDATED);
     }
-    
+
     private void sendStatusMessage(SessionId id, int status) {
         SessionStatusMessage msg = new SessionStatusMessage();
         msg.setSessionId(id);
@@ -875,7 +875,7 @@ class ClientMessageEventListener implements I2CPMessageReader.I2CPMessageEventLi
             String osec = obd.getSecret();
             String nsec = bd.getSecret();
             if ((nkey != null && !nkey.equals(okey)) ||
-                (nsec != null && !nsec.equals(osec))) {
+                    (nsec != null && !nsec.equals(osec))) {
                 // don't lose destination
                 if (obd.getDestination() != null && bd.getDestination() == null) {
                     try {

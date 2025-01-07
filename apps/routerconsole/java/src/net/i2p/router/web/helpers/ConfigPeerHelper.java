@@ -14,7 +14,7 @@ import net.i2p.util.Addresses;
 public class ConfigPeerHelper extends HelperBase {
 
     private static final int MAX_DISPLAY = 1000;
-    
+
     public String getBlocklistSummary() {
         StringWriter out = new StringWriter(4*1024);
         Blocklist bl = _context.blocklist();
@@ -36,27 +36,27 @@ public class ConfigPeerHelper extends HelperBase {
             }
             // first 0 - 127
             for (Integer ii : singles) {
-                 int ip = ii.intValue();
-                 if (ip < 0)
-                     continue;
-                 // don't display if on the permanent blocklist also
-                 if (bl.isPermanentlyBlocklisted(ip))
-                     continue;
-                 out.write("<tr><td align=\"center\">");
-                 out.write(Blocklist.toStr(ip));
-                 out.write("</td></tr>\n");
+                int ip = ii.intValue();
+                if (ip < 0)
+                    continue;
+                // don't display if on the permanent blocklist also
+                if (bl.isPermanentlyBlocklisted(ip))
+                    continue;
+                out.write("<tr><td align=\"center\">");
+                out.write(Blocklist.toStr(ip));
+                out.write("</td></tr>\n");
             }
             // then 128 - 255
             for (Integer ii : singles) {
-                 int ip = ii.intValue();
-                 if (ip >= 0)
-                     break;
-                 // don't display if on the permanent blocklist also
-                 if (bl.isPermanentlyBlocklisted(ip))
-                     continue;
-                 out.write("<tr><td align=\"center\">");
-                 out.write(Blocklist.toStr(ip));
-                 out.write("</td></tr>\n");
+                int ip = ii.intValue();
+                if (ip >= 0)
+                    break;
+                // don't display if on the permanent blocklist also
+                if (bl.isPermanentlyBlocklisted(ip))
+                    continue;
+                out.write("<tr><td align=\"center\">");
+                out.write(Blocklist.toStr(ip));
+                out.write("</td></tr>\n");
             }
             // then IPv6
             if (!s6.isEmpty()) {
@@ -65,9 +65,9 @@ public class ConfigPeerHelper extends HelperBase {
                 out.write("</b></td></tr>");
                 Collections.sort(s6);
                 for (BigInteger bi : s6) {
-                     out.write("<tr><td align=\"center\">");
-                     out.write(Addresses.toString(toIPBytes(bi)));
-                     out.write("</td></tr>\n");
+                    out.write("<tr><td align=\"center\">");
+                    out.write(Addresses.toString(toIPBytes(bi)));
+                    out.write("</td></tr>\n");
                 }
             }
         } else {

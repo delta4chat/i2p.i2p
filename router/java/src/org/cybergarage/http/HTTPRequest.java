@@ -66,9 +66,9 @@ import java.util.StringTokenizer;
 
 import org.cybergarage.util.Debug;
 /**
- * 
+ *
  * This class rappresnet an HTTP <b>request</b>, and act as HTTP client when it sends the request<br>
- * 
+ *
  * @author Satoshi "skonno" Konno
  * @author Stefano "Kismet" Lenzi
  * @version 1.8
@@ -76,483 +76,485 @@ import org.cybergarage.util.Debug;
  */
 public class HTTPRequest extends HTTPPacket
 {
-	////////////////////////////////////////////////
-	//	Constructor
-	////////////////////////////////////////////////
-	
-	public HTTPRequest()
-	{
-		setVersion(HTTP.VERSION_10);
-	}
+    ////////////////////////////////////////////////
+    //	Constructor
+    ////////////////////////////////////////////////
 
-	public HTTPRequest(InputStream in)
-	{
-		super(in);
-	}
+    public HTTPRequest()
+    {
+        setVersion(HTTP.VERSION_10);
+    }
 
-	public HTTPRequest(HTTPSocket httpSock)
-	{
-		this(httpSock.getInputStream());
-		setSocket(httpSock);
-	}
+    public HTTPRequest(InputStream in)
+    {
+        super(in);
+    }
 
-	////////////////////////////////////////////////
-	//	Method
-	////////////////////////////////////////////////
+    public HTTPRequest(HTTPSocket httpSock)
+    {
+        this(httpSock.getInputStream());
+        setSocket(httpSock);
+    }
 
-	private String method = null;
+    ////////////////////////////////////////////////
+    //	Method
+    ////////////////////////////////////////////////
 
-	public void setMethod(String value)
-	{
-		method = value;
-	}
-		
-	public String getMethod()
-	{
-		if (method != null)
-			return method;
-		return getFirstLineToken(0);
-	}
+    private String method = null;
 
-	public boolean isMethod(String method)
-	{
-		String headerMethod = getMethod();
-		if (headerMethod == null)
-			return false;
-		return headerMethod.equalsIgnoreCase(method);
-	}
+    public void setMethod(String value)
+    {
+        method = value;
+    }
 
-	public boolean isGetRequest()
-	{
-		return isMethod(HTTP.GET);
-	}
+    public String getMethod()
+    {
+        if (method != null)
+            return method;
+        return getFirstLineToken(0);
+    }
 
-	public boolean isPostRequest()
-	{
-		return isMethod(HTTP.POST);
-	}
+    public boolean isMethod(String method)
+    {
+        String headerMethod = getMethod();
+        if (headerMethod == null)
+            return false;
+        return headerMethod.equalsIgnoreCase(method);
+    }
 
-	public boolean isHeadRequest()
-	{
-		return isMethod(HTTP.HEAD);
-	}
-	
-	public boolean isSubscribeRequest()
-	{
-		return isMethod(HTTP.SUBSCRIBE);
-	}
+    public boolean isGetRequest()
+    {
+        return isMethod(HTTP.GET);
+    }
 
-	public boolean isUnsubscribeRequest()
-	{
-		return isMethod(HTTP.UNSUBSCRIBE);
-	}
+    public boolean isPostRequest()
+    {
+        return isMethod(HTTP.POST);
+    }
 
-	public boolean isNotifyRequest()
-	{
-		return isMethod(HTTP.NOTIFY);
-	}
- 
-	////////////////////////////////////////////////
-	//	URI
-	////////////////////////////////////////////////
+    public boolean isHeadRequest()
+    {
+        return isMethod(HTTP.HEAD);
+    }
 
-	private String uri = null;
+    public boolean isSubscribeRequest()
+    {
+        return isMethod(HTTP.SUBSCRIBE);
+    }
 
-	public void setURI(String value, boolean isCheckRelativeURL)
-	{
-		uri = value;
-		if (isCheckRelativeURL == false)
-			return;
-		// Thanks for Giordano Sassaroli <sassarol@cefriel.it> (09/02/03)
-		uri = HTTP.toRelativeURL(uri);
-	}
+    public boolean isUnsubscribeRequest()
+    {
+        return isMethod(HTTP.UNSUBSCRIBE);
+    }
 
-	public void setURI(String value)
-	{
-		setURI(value, false);
-	}
+    public boolean isNotifyRequest()
+    {
+        return isMethod(HTTP.NOTIFY);
+    }
 
-	public String getURI()
-	{
-		if (uri != null)
-			return uri;
-		return getFirstLineToken(1);
-	}
+    ////////////////////////////////////////////////
+    //	URI
+    ////////////////////////////////////////////////
 
-	////////////////////////////////////////////////
-	//	URI Parameter
-	////////////////////////////////////////////////
-	
-	public ParameterList getParameterList()
-	{
-		ParameterList paramList = new ParameterList();
-		String uri = getURI();
-		if (uri == null)
-			return paramList;
-		int paramIdx = uri.indexOf('?');
-		if (paramIdx < 0)
-			return paramList;
-		while (0 < paramIdx) {
-			int eqIdx = uri.indexOf('=', (paramIdx+1));
-			String name = uri.substring(paramIdx+1, eqIdx);
-			int nextParamIdx = uri.indexOf('&', (eqIdx+1));
-			String value = uri.substring(eqIdx+1, (0 < nextParamIdx) ? nextParamIdx : uri.length());
-			Parameter param = new Parameter(name, value);
-			paramList.add(param);
-			paramIdx = nextParamIdx;
-		}
-		return paramList;
-	}
-	
-	public String getParameterValue(String name)
-	{
-		ParameterList paramList = getParameterList();
-		return paramList.getValue(name);
-	}
-	
-	////////////////////////////////////////////////
-	//	SOAPAction
-	////////////////////////////////////////////////
+    private String uri = null;
 
-	public boolean isSOAPAction()
-	{
-		return hasHeader(HTTP.SOAP_ACTION);
-	}
+    public void setURI(String value, boolean isCheckRelativeURL)
+    {
+        uri = value;
+        if (isCheckRelativeURL == false)
+            return;
+        // Thanks for Giordano Sassaroli <sassarol@cefriel.it> (09/02/03)
+        uri = HTTP.toRelativeURL(uri);
+    }
 
-	////////////////////////////////////////////////
-	// Host / Port	
-	////////////////////////////////////////////////
-	
-	private String requestHost = "";
-	
-	public void setRequestHost(String host)
-	{
-		requestHost = host;
-	}
+    public void setURI(String value)
+    {
+        setURI(value, false);
+    }
 
-	public String getRequestHost()
-	{
-		return requestHost;
-	}
+    public String getURI()
+    {
+        if (uri != null)
+            return uri;
+        return getFirstLineToken(1);
+    }
 
-	private int requestPort = -1;
-	
-	public void setRequestPort(int host)
-	{
-		requestPort = host;
-	}
+    ////////////////////////////////////////////////
+    //	URI Parameter
+    ////////////////////////////////////////////////
 
-	public int getRequestPort()
-	{
-		return requestPort;
-	}
-	
-	////////////////////////////////////////////////
-	//	Socket
-	////////////////////////////////////////////////
+    public ParameterList getParameterList()
+    {
+        ParameterList paramList = new ParameterList();
+        String uri = getURI();
+        if (uri == null)
+            return paramList;
+        int paramIdx = uri.indexOf('?');
+        if (paramIdx < 0)
+            return paramList;
+        while (0 < paramIdx) {
+            int eqIdx = uri.indexOf('=', (paramIdx+1));
+            String name = uri.substring(paramIdx+1, eqIdx);
+            int nextParamIdx = uri.indexOf('&', (eqIdx+1));
+            String value = uri.substring(eqIdx+1, (0 < nextParamIdx) ? nextParamIdx : uri.length());
+            Parameter param = new Parameter(name, value);
+            paramList.add(param);
+            paramIdx = nextParamIdx;
+        }
+        return paramList;
+    }
 
-	private HTTPSocket httpSocket = null;
+    public String getParameterValue(String name)
+    {
+        ParameterList paramList = getParameterList();
+        return paramList.getValue(name);
+    }
 
-	public void setSocket(HTTPSocket value)
-	{
-		httpSocket = value;
-	}
-		
-	public HTTPSocket getSocket()
-	{
-		return httpSocket;
-	}
+    ////////////////////////////////////////////////
+    //	SOAPAction
+    ////////////////////////////////////////////////
 
-	/////////////////////////// /////////////////////
-	//	local address/port
-	////////////////////////////////////////////////
+    public boolean isSOAPAction()
+    {
+        return hasHeader(HTTP.SOAP_ACTION);
+    }
 
-	public String getLocalAddress()
-	{
-		return getSocket().getLocalAddress();	
-	}
+    ////////////////////////////////////////////////
+    // Host / Port
+    ////////////////////////////////////////////////
 
-	public int getLocalPort()
-	{
-		return getSocket().getLocalPort();	
-	}
+    private String requestHost = "";
 
-	////////////////////////////////////////////////
-	//	parseRequest
-	////////////////////////////////////////////////
+    public void setRequestHost(String host)
+    {
+        requestHost = host;
+    }
 
-	public boolean parseRequestLine(String lineStr)
-	{
-		StringTokenizer st = new StringTokenizer(lineStr, HTTP.REQEST_LINE_DELIM);
-		if (st.hasMoreTokens() == false)
-			return false;
-		setMethod(st.nextToken());
-		if (st.hasMoreTokens() == false)
-			return false;
-		setURI(st.nextToken());
-		if (st.hasMoreTokens() == false)
-			return false;
-		setVersion(st.nextToken());
-		return true;
-     }
+    public String getRequestHost()
+    {
+        return requestHost;
+    }
 
-	////////////////////////////////////////////////
-	//	First Line
-	////////////////////////////////////////////////
+    private int requestPort = -1;
 
-	public String getHTTPVersion()
-	{
-		if (hasFirstLine() == true)
-			return getFirstLineToken(2);
-		return "HTTP/" + super.getVersion();
-	}
+    public void setRequestPort(int host)
+    {
+        requestPort = host;
+    }
 
-	public String getFirstLineString()
-	{
-		return getMethod() + " " + getURI() + " " + getHTTPVersion() + HTTP.CRLF;
-	}
+    public int getRequestPort()
+    {
+        return requestPort;
+    }
 
-	////////////////////////////////////////////////
-	//	getHeader
-	////////////////////////////////////////////////
-	
-	public String getHeader()
-	{
-		StringBuffer str = new StringBuffer();
-		
-		str.append(getFirstLineString());
-		
-		String headerString  = getHeaderString();		
-		str.append(headerString);
-		
-		return str.toString();
-	}
-	
-	////////////////////////////////////////////////
-	//	isKeepAlive
-	////////////////////////////////////////////////
-	
-	public boolean isKeepAlive()
-	{
-		if (isCloseConnection() == true)
-			return false;
-		if (isKeepAliveConnection() == true)
-			return true;
-		String httpVer = getHTTPVersion();
-		boolean isHTTP10 = (0 < httpVer.indexOf("1.0")) ? true : false;
-		if (isHTTP10 == true)
-			return false;
-		return true;
-	}
+    ////////////////////////////////////////////////
+    //	Socket
+    ////////////////////////////////////////////////
 
-	////////////////////////////////////////////////
-	//	read
-	////////////////////////////////////////////////
-	
-	public boolean read()
-	{
-		return super.read(getSocket());
-	}
-	
-	////////////////////////////////////////////////
-	//	POST (Response)
-	////////////////////////////////////////////////
+    private HTTPSocket httpSocket = null;
 
-	public boolean post(HTTPResponse httpRes)
-	{
-		HTTPSocket httpSock = getSocket();
-		long offset = 0;
-		long length = httpRes.getContentLength();
-		if (hasContentRange() == true) {
-			long firstPos = getContentRangeFirstPosition();
-			long lastPos = getContentRangeLastPosition();
+    public void setSocket(HTTPSocket value)
+    {
+        httpSocket = value;
+    }
 
-			// Thanks for Brent Hills (10/26/04)
-			if (lastPos <= 0) 
-				lastPos = length - 1;
-			if ((firstPos > length ) || (lastPos > length))
-				return returnResponse(HTTPStatus.INVALID_RANGE);
-			httpRes.setContentRange(firstPos, lastPos, length);
-			httpRes.setStatusCode(HTTPStatus.PARTIAL_CONTENT);
-			
-			offset = firstPos;
-			length = lastPos - firstPos + 1;
-		}
-		return httpSock.post(httpRes, offset, length, isHeadRequest());
-		//httpSock.close();
-	}
+    public HTTPSocket getSocket()
+    {
+        return httpSocket;
+    }
 
-	////////////////////////////////////////////////
-	//	POST (Request)
-	////////////////////////////////////////////////
-	
-	private Socket postSocket = null;
-	
-	private String bindTo = null;
+    /////////////////////////// /////////////////////
+    //	local address/port
+    ////////////////////////////////////////////////
 
-	/**
-	 *  I2P - bind HTTP socket to specified local host address
-	 *
-	 *  @param host null to not bind to a particlar local address
-	 *  @since 0.9.50
-	 */
-	public void setBindHost(String host) { bindTo = host; }
+    public String getLocalAddress()
+    {
+        return getSocket().getLocalAddress();
+    }
 
-	public HTTPResponse post(String host, int port, boolean isKeepAlive)
-	{
-		HTTPResponse httpRes = new HTTPResponse();
+    public int getLocalPort()
+    {
+        return getSocket().getLocalPort();
+    }
 
-		setHost(host, port);
-		
-		setConnection((isKeepAlive == true) ? HTTP.KEEP_ALIVE : HTTP.CLOSE);
-		
-		boolean isHeaderRequest = isHeadRequest();
-		
-		OutputStream out = null;
-		InputStream in = null;
-		
- 		try {
- 			if (postSocket == null) {
-				// Mod for I2P
-				// We can't handle the default system soTimeout of 3 minutes or so
-				// as when the device goes away, this hangs the display of peers.jsp
-				// and who knows what else.
-				// Set the timeout to be nice and short, the device should be local and fast.
-				// Yeah, the UPnP standard is a minute or something, too bad.
-				// If he can't get back to us in a few seconds, forget it.
-				// And set the soTimeout to 2 second (for reads).
-				//postSocket = new Socket(host, port);
-				postSocket = new Socket();
-				if (bindTo != null) {
-					boolean fromv6 = bindTo.contains(":");
-					boolean tov6 = host.contains(":");
-					if (fromv6 == tov6) {
-						//Debug.warning("POST bindTo " + bindTo + " connect to " + host);
-						postSocket.bind(new InetSocketAddress(bindTo, 0));
-					} else {
-						Debug.warning("POST mismatch, NOT binding to " + bindTo + " connect to " + host);
-					}
-				}
-				postSocket.setSoTimeout(2000);
-				SocketAddress sa = new InetSocketAddress(host, port);
-				postSocket.connect(sa, 3000);
-			}
+    ////////////////////////////////////////////////
+    //	parseRequest
+    ////////////////////////////////////////////////
 
-			out = postSocket.getOutputStream();
-			PrintStream pout = new PrintStream(out);
-			pout.print(getHeader());
-			pout.print(HTTP.CRLF);
-			
-			boolean isChunkedRequest = isChunked();
-			
-			String content = getContentString();
-			int contentLength = 0;
-			if (content != null)
-				contentLength = content.length();
-			
-			if (0 < contentLength) {
-				if (isChunkedRequest == true) {
-					// Thanks for Lee Peik Feng <pflee@users.sourceforge.net> (07/07/05)
-					String chunSizeBuf = Long.toHexString(contentLength);
-					pout.print(chunSizeBuf);
-					pout.print(HTTP.CRLF);
-				}
-				pout.print(content);
-				if (isChunkedRequest == true)
-					pout.print(HTTP.CRLF);
-			}
+    public boolean parseRequestLine(String lineStr)
+    {
+        StringTokenizer st = new StringTokenizer(lineStr, HTTP.REQEST_LINE_DELIM);
+        if (st.hasMoreTokens() == false)
+            return false;
+        setMethod(st.nextToken());
+        if (st.hasMoreTokens() == false)
+            return false;
+        setURI(st.nextToken());
+        if (st.hasMoreTokens() == false)
+            return false;
+        setVersion(st.nextToken());
+        return true;
+    }
 
-			if (isChunkedRequest == true) {
-				pout.print("0");
-				pout.print(HTTP.CRLF);
-			}
-			
-			pout.flush();
+    ////////////////////////////////////////////////
+    //	First Line
+    ////////////////////////////////////////////////
 
-			in = postSocket.getInputStream();
-			httpRes.set(in, isHeaderRequest);		
-		} catch (SocketException e) {
-			httpRes.setStatusCode(HTTPStatus.INTERNAL_SERVER_ERROR);
-			Debug.warning(e);
-		} catch (IOException e) {
-			//Socket create but without connection
-			//TODO Blacklistening the device
-			httpRes.setStatusCode(HTTPStatus.INTERNAL_SERVER_ERROR);
-			Debug.warning(e);
-		} finally {
-			if (isKeepAlive == false) {	
-				try {
-					in.close();
-				} catch (Exception e) {};
-				if (in != null)
-				try {
-					out.close();
-				} catch (Exception e) {};
-				if (out != null)
-				try {
-					postSocket.close();
-				} catch (Exception e) {};
-				postSocket = null;
-			}
-		}
-		
-		return httpRes;
-	}
+    public String getHTTPVersion()
+    {
+        if (hasFirstLine() == true)
+            return getFirstLineToken(2);
+        return "HTTP/" + super.getVersion();
+    }
 
-	public HTTPResponse post(String host, int port)
-	{
-		return post(host, port, false);
-	}
+    public String getFirstLineString()
+    {
+        return getMethod() + " " + getURI() + " " + getHTTPVersion() + HTTP.CRLF;
+    }
 
-	////////////////////////////////////////////////
-	//	set
-	////////////////////////////////////////////////
+    ////////////////////////////////////////////////
+    //	getHeader
+    ////////////////////////////////////////////////
 
-	public void set(HTTPRequest httpReq)
-	{
-		set((HTTPPacket)httpReq);
-		setSocket(httpReq.getSocket());
-	}
+    public String getHeader()
+    {
+        StringBuffer str = new StringBuffer();
 
-	////////////////////////////////////////////////
-	//	OK/BAD_REQUEST
-	////////////////////////////////////////////////
+        str.append(getFirstLineString());
 
-	public boolean returnResponse(int statusCode)
-	{
-		HTTPResponse httpRes = new HTTPResponse();
-		httpRes.setStatusCode(statusCode);
-		httpRes.setContentLength(0);
-		return post(httpRes);
-	}
+        String headerString  = getHeaderString();
+        str.append(headerString);
 
-	public boolean returnOK()
-	{
-		return returnResponse(HTTPStatus.OK);
-	}
+        return str.toString();
+    }
 
-	public boolean returnBadRequest()
-	{
-		return returnResponse(HTTPStatus.BAD_REQUEST);
-	}
+    ////////////////////////////////////////////////
+    //	isKeepAlive
+    ////////////////////////////////////////////////
 
-	////////////////////////////////////////////////
-	//	toString
-	////////////////////////////////////////////////
-	
-	public String toString()
-	{
-		StringBuffer str = new StringBuffer();
+    public boolean isKeepAlive()
+    {
+        if (isCloseConnection() == true)
+            return false;
+        if (isKeepAliveConnection() == true)
+            return true;
+        String httpVer = getHTTPVersion();
+        boolean isHTTP10 = (0 < httpVer.indexOf("1.0")) ? true : false;
+        if (isHTTP10 == true)
+            return false;
+        return true;
+    }
 
-		str.append(getHeader());
-		str.append(HTTP.CRLF);
-		str.append(getContentString());
-		
-		return str.toString();
-	}
+    ////////////////////////////////////////////////
+    //	read
+    ////////////////////////////////////////////////
 
-	public void print()
-	{
-		Debug.message(toString());
-	}
+    public boolean read()
+    {
+        return super.read(getSocket());
+    }
+
+    ////////////////////////////////////////////////
+    //	POST (Response)
+    ////////////////////////////////////////////////
+
+    public boolean post(HTTPResponse httpRes)
+    {
+        HTTPSocket httpSock = getSocket();
+        long offset = 0;
+        long length = httpRes.getContentLength();
+        if (hasContentRange() == true) {
+            long firstPos = getContentRangeFirstPosition();
+            long lastPos = getContentRangeLastPosition();
+
+            // Thanks for Brent Hills (10/26/04)
+            if (lastPos <= 0)
+                lastPos = length - 1;
+            if ((firstPos > length ) || (lastPos > length))
+                return returnResponse(HTTPStatus.INVALID_RANGE);
+            httpRes.setContentRange(firstPos, lastPos, length);
+            httpRes.setStatusCode(HTTPStatus.PARTIAL_CONTENT);
+
+            offset = firstPos;
+            length = lastPos - firstPos + 1;
+        }
+        return httpSock.post(httpRes, offset, length, isHeadRequest());
+        //httpSock.close();
+    }
+
+    ////////////////////////////////////////////////
+    //	POST (Request)
+    ////////////////////////////////////////////////
+
+    private Socket postSocket = null;
+
+    private String bindTo = null;
+
+    /**
+     *  I2P - bind HTTP socket to specified local host address
+     *
+     *  @param host null to not bind to a particlar local address
+     *  @since 0.9.50
+     */
+    public void setBindHost(String host) {
+        bindTo = host;
+    }
+
+    public HTTPResponse post(String host, int port, boolean isKeepAlive)
+    {
+        HTTPResponse httpRes = new HTTPResponse();
+
+        setHost(host, port);
+
+        setConnection((isKeepAlive == true) ? HTTP.KEEP_ALIVE : HTTP.CLOSE);
+
+        boolean isHeaderRequest = isHeadRequest();
+
+        OutputStream out = null;
+        InputStream in = null;
+
+        try {
+            if (postSocket == null) {
+                // Mod for I2P
+                // We can't handle the default system soTimeout of 3 minutes or so
+                // as when the device goes away, this hangs the display of peers.jsp
+                // and who knows what else.
+                // Set the timeout to be nice and short, the device should be local and fast.
+                // Yeah, the UPnP standard is a minute or something, too bad.
+                // If he can't get back to us in a few seconds, forget it.
+                // And set the soTimeout to 2 second (for reads).
+                //postSocket = new Socket(host, port);
+                postSocket = new Socket();
+                if (bindTo != null) {
+                    boolean fromv6 = bindTo.contains(":");
+                    boolean tov6 = host.contains(":");
+                    if (fromv6 == tov6) {
+                        //Debug.warning("POST bindTo " + bindTo + " connect to " + host);
+                        postSocket.bind(new InetSocketAddress(bindTo, 0));
+                    } else {
+                        Debug.warning("POST mismatch, NOT binding to " + bindTo + " connect to " + host);
+                    }
+                }
+                postSocket.setSoTimeout(2000);
+                SocketAddress sa = new InetSocketAddress(host, port);
+                postSocket.connect(sa, 3000);
+            }
+
+            out = postSocket.getOutputStream();
+            PrintStream pout = new PrintStream(out);
+            pout.print(getHeader());
+            pout.print(HTTP.CRLF);
+
+            boolean isChunkedRequest = isChunked();
+
+            String content = getContentString();
+            int contentLength = 0;
+            if (content != null)
+                contentLength = content.length();
+
+            if (0 < contentLength) {
+                if (isChunkedRequest == true) {
+                    // Thanks for Lee Peik Feng <pflee@users.sourceforge.net> (07/07/05)
+                    String chunSizeBuf = Long.toHexString(contentLength);
+                    pout.print(chunSizeBuf);
+                    pout.print(HTTP.CRLF);
+                }
+                pout.print(content);
+                if (isChunkedRequest == true)
+                    pout.print(HTTP.CRLF);
+            }
+
+            if (isChunkedRequest == true) {
+                pout.print("0");
+                pout.print(HTTP.CRLF);
+            }
+
+            pout.flush();
+
+            in = postSocket.getInputStream();
+            httpRes.set(in, isHeaderRequest);
+        } catch (SocketException e) {
+            httpRes.setStatusCode(HTTPStatus.INTERNAL_SERVER_ERROR);
+            Debug.warning(e);
+        } catch (IOException e) {
+            //Socket create but without connection
+            //TODO Blacklistening the device
+            httpRes.setStatusCode(HTTPStatus.INTERNAL_SERVER_ERROR);
+            Debug.warning(e);
+        } finally {
+            if (isKeepAlive == false) {
+                try {
+                    in.close();
+                } catch (Exception e) {};
+                if (in != null)
+                    try {
+                        out.close();
+                    } catch (Exception e) {};
+                if (out != null)
+                    try {
+                        postSocket.close();
+                    } catch (Exception e) {};
+                postSocket = null;
+            }
+        }
+
+        return httpRes;
+    }
+
+    public HTTPResponse post(String host, int port)
+    {
+        return post(host, port, false);
+    }
+
+    ////////////////////////////////////////////////
+    //	set
+    ////////////////////////////////////////////////
+
+    public void set(HTTPRequest httpReq)
+    {
+        set((HTTPPacket)httpReq);
+        setSocket(httpReq.getSocket());
+    }
+
+    ////////////////////////////////////////////////
+    //	OK/BAD_REQUEST
+    ////////////////////////////////////////////////
+
+    public boolean returnResponse(int statusCode)
+    {
+        HTTPResponse httpRes = new HTTPResponse();
+        httpRes.setStatusCode(statusCode);
+        httpRes.setContentLength(0);
+        return post(httpRes);
+    }
+
+    public boolean returnOK()
+    {
+        return returnResponse(HTTPStatus.OK);
+    }
+
+    public boolean returnBadRequest()
+    {
+        return returnResponse(HTTPStatus.BAD_REQUEST);
+    }
+
+    ////////////////////////////////////////////////
+    //	toString
+    ////////////////////////////////////////////////
+
+    public String toString()
+    {
+        StringBuffer str = new StringBuffer();
+
+        str.append(getHeader());
+        str.append(HTTP.CRLF);
+        str.append(getContentString());
+
+        return str.toString();
+    }
+
+    public void print()
+    {
+        Debug.message(toString());
+    }
 }

@@ -160,7 +160,7 @@ public class BlindingInfoMessage extends I2CPMessageImpl {
         if (id == null || blindType == null)
             throw new IllegalArgumentException();
         if (authType != BlindData.AUTH_NONE && authType != BlindData.AUTH_DH &&
-            authType != BlindData.AUTH_PSK)
+                authType != BlindData.AUTH_PSK)
             throw new IllegalArgumentException("Bad auth type");
         if (authType == BlindData.AUTH_NONE && privKey != null)
             throw new IllegalArgumentException("no key required");

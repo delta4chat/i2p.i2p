@@ -78,7 +78,7 @@ public class OutboundCache {
      *
      * If not found,
      * fetch the next lease that we should try sending through, randomly chosen
-     * from within the sorted leaseSet (NOT sorted by # of failures through each 
+     * from within the sorted leaseSet (NOT sorted by # of failures through each
      * lease).
      *
      * Concurrent.
@@ -107,7 +107,7 @@ public class OutboundCache {
     private final RouterContext _context;
 
     private static final int CLEAN_INTERVAL = 5*60*1000;
-    
+
     public OutboundCache(RouterContext ctx) {
         _context = ctx;
         _context.simpleTimer2().addPeriodicEvent(new OCMOSJCacheCleaner(), CLEAN_INTERVAL, CLEAN_INTERVAL);
@@ -150,7 +150,7 @@ public class OutboundCache {
      */
     void clearCaches(HashPair hashPair, Lease lease, TunnelInfo inTunnel, TunnelInfo outTunnel) {
         if (inTunnel != null) {   // if we wanted an ack, we sent our lease too
-                leaseSetCache.remove(hashPair);
+            leaseSetCache.remove(hashPair);
         }
         if (lease != null) {
             // remove only if still equal to lease (concurrent)

@@ -39,7 +39,7 @@ public abstract class ImageWorker {
         g2d.rotate(angle);
     }
 
-     protected void reset() {
+    protected void reset() {
         reset(g2d);
     }
 
@@ -170,12 +170,12 @@ public abstract class ImageWorker {
 
     protected void setAntiAliasing(boolean enable) {
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                enable ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);
+                             enable ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);
     }
 
     protected void setTextAntiAliasing(boolean enable) {
         g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-                enable ? RenderingHints.VALUE_TEXT_ANTIALIAS_ON : RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
+                             enable ? RenderingHints.VALUE_TEXT_ANTIALIAS_ON : RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
     }
 
     protected void loadImage(RrdGraphDef.ImageSource imageSource, int x, int y, int w, int h) throws IOException {
@@ -202,7 +202,7 @@ public abstract class ImageWorker {
     }
 
     protected byte[] getImageBytes() throws IOException {
-        try (ByteArrayOutputStream stream = new ByteArrayOutputStream(IMG_BUFFER_CAPACITY)){
+        try (ByteArrayOutputStream stream = new ByteArrayOutputStream(IMG_BUFFER_CAPACITY)) {
             makeImage(stream);
             return stream.toByteArray();
         }

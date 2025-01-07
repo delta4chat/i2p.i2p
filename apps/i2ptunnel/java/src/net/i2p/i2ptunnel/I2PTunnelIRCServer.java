@@ -75,27 +75,27 @@ public class I2PTunnelIRCServer extends I2PTunnelServer implements Runnable {
     private static final int MAX_LINE_LENGTH = 1024;
     // application should ping timeout before this
     private static final long DEFAULT_IRC_READ_TIMEOUT = 10*60*1000;
-    
+
     private final static String ERR_UNAVAILABLE =
         ":ircserver.i2p 499 you :" +
-         "This I2P IRC server is unavailable. It may be down or undergoing maintenance. " +
-         "Please try again later." +
-         "\r\n";
+        "This I2P IRC server is unavailable. It may be down or undergoing maintenance. " +
+        "Please try again later." +
+        "\r\n";
 
     private final static String ERR_REGISTRATION =
         ":ircserver.i2p 499 you :" +
-         "Bad registration." +
-         "\r\n";
+        "Bad registration." +
+        "\r\n";
 
     private final static String ERR_TIMEOUT =
         ":ircserver.i2p 499 you :" +
-         "Timeout registering." +
-         "\r\n";
+        "Timeout registering." +
+        "\r\n";
 
     private final static String ERR_EOF =
         ":ircserver.i2p 499 you :" +
-         "EOF while registering." +
-         "\r\n";
+        "EOF while registering." +
+        "\r\n";
 
     private static final String[] BAD_PROTOCOLS = {
         "GET ", "HEAD ", "POST ", "GNUTELLA CONNECT", "\023BitTorrent protocol"
@@ -114,17 +114,17 @@ public class I2PTunnelIRCServer extends I2PTunnelServer implements Runnable {
 
         // get the properties of this server-tunnel
         Properties opts = tunnel.getClientOptions();
-        
+
         // get method of host faking
         this.method = opts.getProperty(PROP_METHOD, PROP_METHOD_DEFAULT);
         assert this.method != null;
-        
+
         // get the password for the webirc method
         this.webircPassword = opts.getProperty(PROP_WEBIRC_PASSWORD);
 
         // get the spoof IP for the webirc method
         this.webircSpoofIP = opts.getProperty(PROP_WEBIRC_SPOOF_IP, PROP_WEBIRC_SPOOF_IP_DEFAULT);
-        
+
         // get the cloaking passphrase
         String passphrase = opts.getProperty(PROP_CLOAK);
         if (passphrase == null) {
@@ -133,12 +133,12 @@ public class I2PTunnelIRCServer extends I2PTunnelServer implements Runnable {
         } else {
             this.cloakKey = SHA256Generator.getInstance().calculateHash(DataHelper.getUTF8(passphrase.trim())).getData();
         }
-        
+
         // get the fake hostmask to use
         this.hostname = opts.getProperty(PROP_HOSTNAME, PROP_HOSTNAME_DEFAULT);
         readTimeout = DEFAULT_IRC_READ_TIMEOUT;
     }
-    
+
     @Override
     protected void blockingHandle(I2PSocket socket) {
         if (_log.shouldLog(Log.INFO))
@@ -174,7 +174,10 @@ public class I2PTunnelIRCServer extends I2PTunnelServer implements Runnable {
                 socket.getOutputStream().write(ERR_REGISTRATION.getBytes("ISO-8859-1"));
             } catch (IOException ioe) {
             } finally {
-                 try { socket.close(); } catch (IOException ioe) {}
+                try {
+                    socket.close();
+                }
+                catch (IOException ioe) {}
             }
             if (_log.shouldLog(Log.WARN))
                 _log.warn("Error while receiving the new IRC Connection", ex);
@@ -185,7 +188,10 @@ public class I2PTunnelIRCServer extends I2PTunnelServer implements Runnable {
                 socket.getOutputStream().write(ERR_EOF.getBytes("ISO-8859-1"));
             } catch (IOException ioe) {
             } finally {
-                 try { socket.close(); } catch (IOException ioe) {}
+                try {
+                    socket.close();
+                }
+                catch (IOException ioe) {}
             }
             if (_log.shouldLog(Log.WARN))
                 _log.warn("Error while receiving the new IRC Connection", ex);
@@ -196,7 +202,10 @@ public class I2PTunnelIRCServer extends I2PTunnelServer implements Runnable {
                 socket.getOutputStream().write(ERR_TIMEOUT.getBytes("ISO-8859-1"));
             } catch (IOException ioe) {
             } finally {
-                 try { socket.close(); } catch (IOException ioe) {}
+                try {
+                    socket.close();
+                }
+                catch (IOException ioe) {}
             }
             if (_log.shouldLog(Log.WARN))
                 _log.warn("Error while receiving the new IRC Connection", ex);
@@ -237,14 +246,14 @@ public class I2PTunnelIRCServer extends I2PTunnelServer implements Runnable {
     private String cloakDest(Destination d) {
         String hf;
         String hc;
-        
+
         byte[] b = new byte[d.size() + this.cloakKey.length];
         System.arraycopy(b, 0, d.toByteArray(), 0, d.size());
         System.arraycopy(b, d.size(), this.cloakKey, 0, this.cloakKey.length);
         hc = Base32.encode(SHA256Generator.getInstance().calculateHash(b).getData());
-        
+
         hf = Base32.encode(d.calculateHash().getData());
-        
+
         return this.hostname.replace("%f", hf).replace("%c", hc);
     }
 
@@ -260,7 +269,7 @@ public class I2PTunnelIRCServer extends I2PTunnelServer implements Runnable {
     private static String filterRegistration(I2PSocket socket, String newHostname) throws IOException {
         StringBuilder buf = new StringBuilder(128);
         int lineCount = 0;
-        
+
         // slowloris / darkloris
         long expire = System.currentTimeMillis() + TOTAL_HEADER_TIMEOUT;
         while (true) {
@@ -313,7 +322,7 @@ public class I2PTunnelIRCServer extends I2PTunnelServer implements Runnable {
         //    _log.debug("All done, sending: " + buf.toString());
         return buf.toString();
     }
-    
+
     /**
      *  Read a line terminated by newline, with a total read timeout.
      *

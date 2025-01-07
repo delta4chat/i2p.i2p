@@ -14,40 +14,42 @@ public class ContentHelper extends HelperBase {
     private int _maxLines;
     private boolean _startAtBeginning;
     private String _lang;
-    
+
     /**
      * Caution, use absolute paths only for getContent() and getTextContent(),
      * do not assume files are in CWD.
      */
-    public void setPage(String page) { _page = page; }
+    public void setPage(String page) {
+        _page = page;
+    }
 
-    public void setStartAtBeginning(String moo) { 
-        _startAtBeginning = Boolean.parseBoolean(moo); 
+    public void setStartAtBeginning(String moo) {
+        _startAtBeginning = Boolean.parseBoolean(moo);
     }
 
     public void setLang(String l) {
-/*****
-        if((_lang == null || !_lang.equals(l)) && (l != null)) {
-            //Set language for router console
-            _lang = l;
- TODO - Temporary for 0.8.4
-        Needed for desktopgui. But there's no nonce protection.
-        Move the following to CSSHelper setLang(), or disable completely,
-        See comments in CSSHelper
-            if(_context == null) {
-                setContextId(null);
-            }
+        /*****
+                if((_lang == null || !_lang.equals(l)) && (l != null)) {
+                    //Set language for router console
+                    _lang = l;
+         TODO - Temporary for 0.8.4
+                Needed for desktopgui. But there's no nonce protection.
+                Move the following to CSSHelper setLang(), or disable completely,
+                See comments in CSSHelper
+                    if(_context == null) {
+                        setContextId(null);
+                    }
 
-            if (_context.getBooleanProperty("desktopgui.enabled")) {
-                //Set language persistently throughout I2P
-                _context.router().setConfigSetting(Messages.PROP_LANG, _lang);
-                _context.router().saveConfig();
-                _context.setProperty(Messages.PROP_LANG, _lang);
-            }
-        }
-*****/
+                    if (_context.getBooleanProperty("desktopgui.enabled")) {
+                        //Set language persistently throughout I2P
+                        _context.router().setConfigSetting(Messages.PROP_LANG, _lang);
+                        _context.router().saveConfig();
+                        _context.setProperty(Messages.PROP_LANG, _lang);
+                    }
+                }
+        *****/
     }
-    
+
     public void setMaxLines(String lines) {
         if (lines != null) {
             try {
@@ -58,17 +60,17 @@ public class ContentHelper extends HelperBase {
         } else {
             _maxLines = -1;
         }
-    } 
+    }
     public String getContent() {
         String str = FileUtil.readTextFile(filename(), _maxLines, _startAtBeginning);
-        if (str == null) 
+        if (str == null)
             return "";
-        else 
+        else
             return str;
-    } 
+    }
     public String getTextContent() {
         String str = FileUtil.readTextFile(filename(), _maxLines, _startAtBeginning);
-        if (str == null) 
+        if (str == null)
             return "";
         else {
             StringBuilder sb = new StringBuilder(str.length()+11);
@@ -76,14 +78,22 @@ public class ContentHelper extends HelperBase {
             for (int i=0; i < str.length(); i++) {
                 char c = str.charAt(i);
                 switch (str.charAt(i)) {
-                    case '<': sb.append("&lt;"); break;
-                    case '>': sb.append("&gt;"); break;
-                    case '&': sb.append("&amp;"); break;
-                    default: sb.append(c); break;
+                case '<':
+                    sb.append("&lt;");
+                    break;
+                case '>':
+                    sb.append("&gt;");
+                    break;
+                case '&':
+                    sb.append("&amp;");
+                    break;
+                default:
+                    sb.append(c);
+                    break;
                 }
             }
             return sb.append("</pre>").toString();
-	}
+        }
     }
 
     /**

@@ -40,82 +40,104 @@ import java.util.NoSuchElementException;
 	To get the key, call nextKey() BEFORE calling next().
 */
 public class SkipIterator<K extends Comparable<? super K>, V> implements ListIterator<V> {
-	protected SkipSpan<K, V> ss;
-	protected int index;
+    protected SkipSpan<K, V> ss;
+    protected int index;
 
-	protected SkipIterator() { }
+    protected SkipIterator() { }
 
-	public SkipIterator(SkipSpan<K, V> ss, int index) {
-		if(ss==null) { throw new NullPointerException(); }
-		this.ss = ss;
-		this.index = index;
-	}
+    public SkipIterator(SkipSpan<K, V> ss, int index) {
+        if(ss==null) {
+            throw new NullPointerException();
+        }
+        this.ss = ss;
+        this.index = index;
+    }
 
-	public boolean hasNext() {
-		if(index < ss.nKeys) { return true; }
-		return false;
-	}
+    public boolean hasNext() {
+        if(index < ss.nKeys) {
+            return true;
+        }
+        return false;
+    }
 
-	/**
-	 * @return the next value, and advances the index
-	 * @throws NoSuchElementException
-	 */
-	public V next() {
-		V o;
-		if(index < ss.nKeys) {
-			o = ss.vals[index];
-		} else {
-			throw new NoSuchElementException();
-		}
+    /**
+     * @return the next value, and advances the index
+     * @throws NoSuchElementException
+     */
+    public V next() {
+        V o;
+        if(index < ss.nKeys) {
+            o = ss.vals[index];
+        } else {
+            throw new NoSuchElementException();
+        }
 
-		if(index < (ss.nKeys-1)) {
-			index++;
-		} else if(ss.next != null) {
-			ss = ss.next;
-			index = 0;
-		} else {
-			index = ss.nKeys;
-		}
-		return o;
-	}
+        if(index < (ss.nKeys-1)) {
+            index++;
+        } else if(ss.next != null) {
+            ss = ss.next;
+            index = 0;
+        } else {
+            index = ss.nKeys;
+        }
+        return o;
+    }
 
-	/**
+    /**
          * The key. Does NOT advance the index.
-	 * @return the key for which the value will be returned in the subsequent call to next()
-	 * @throws NoSuchElementException
-	 */
-	public K nextKey() {
-		if(index < ss.nKeys) { return ss.keys[index]; }
-		throw new NoSuchElementException();
-	}
+     * @return the key for which the value will be returned in the subsequent call to next()
+     * @throws NoSuchElementException
+     */
+    public K nextKey() {
+        if(index < ss.nKeys) {
+            return ss.keys[index];
+        }
+        throw new NoSuchElementException();
+    }
 
-	public boolean hasPrevious() {
-		if(index > 0) { return true; }
-		if((ss.prev != null) && (ss.prev.nKeys > 0)) { return true; }
-		return false;
-	}
+    public boolean hasPrevious() {
+        if(index > 0) {
+            return true;
+        }
+        if((ss.prev != null) && (ss.prev.nKeys > 0)) {
+            return true;
+        }
+        return false;
+    }
 
-	/**
-	 * @return the previous value, and decrements the index
-	 * @throws NoSuchElementException
-	 */
-	public V previous() {
-		if(index > 0) {
-			index--;
-		} else if(ss.prev != null) {
-			ss = ss.prev;
-			if(ss.nKeys <= 0) { throw new NoSuchElementException(); }
-			index = (ss.nKeys - 1);
-		}
-		return ss.vals[index];
-	}
+    /**
+     * @return the previous value, and decrements the index
+     * @throws NoSuchElementException
+     */
+    public V previous() {
+        if(index > 0) {
+            index--;
+        } else if(ss.prev != null) {
+            ss = ss.prev;
+            if(ss.nKeys <= 0) {
+                throw new NoSuchElementException();
+            }
+            index = (ss.nKeys - 1);
+        }
+        return ss.vals[index];
+    }
 
 
-	// Optional methods
-	public void add(V o)	{ throw new UnsupportedOperationException(); }
-	public void remove()		{ throw new UnsupportedOperationException(); }
-	public void set(V o)	{ throw new UnsupportedOperationException(); }
-	public int nextIndex()		{ throw new UnsupportedOperationException(); }
-	public int previousIndex()	{ throw new UnsupportedOperationException(); }
+    // Optional methods
+    public void add(V o)	{
+        throw new UnsupportedOperationException();
+    }
+    public void remove()		{
+        throw new UnsupportedOperationException();
+    }
+    public void set(V o)	{
+        throw new UnsupportedOperationException();
+    }
+    public int nextIndex()		{
+        throw new UnsupportedOperationException();
+    }
+    public int previousIndex()	{
+        throw new UnsupportedOperationException();
+    }
 
 }

@@ -16,11 +16,11 @@ import net.i2p.router.RouterVersion;
 public class CommandLine extends net.i2p.router.CommandLine {
 
     protected static final List<String> NCLASSES = Arrays.asList(new String[] {
-        "com.vuze.plugins.mlab.MLabRunner",
-        "net.i2p.router.news.BlocklistEntries",
-        "net.i2p.router.news.NewsXMLParser",
-        "net.i2p.router.update.NewsHandler"
-    });
+                "com.vuze.plugins.mlab.MLabRunner",
+                "net.i2p.router.news.BlocklistEntries",
+                "net.i2p.router.news.NewsXMLParser",
+                "net.i2p.router.update.NewsHandler"
+            });
 
     protected CommandLine() {}
 

@@ -51,7 +51,7 @@ import java.util.stream.Stream;
  * <li>{@link org.rrd4j.core.RrdMemoryBackend}: objects of this class are created from the
  * {@link org.rrd4j.core.RrdMemoryBackendFactory} class. This backend stores all data in memory. Once
  * JVM exits, all data gets lost. The backend is extremely fast and memory hungry.
- * 
+ *
  * </ul>
  * <p>
  * Each backend factory used to be identified by its {@link #getName() name}. Constructors
@@ -93,7 +93,7 @@ public abstract class RrdBackendFactory implements Closeable {
 
     /**
      * The default factory type. It will also put in the active factories list.
-     * 
+     *
      */
     public static final String DEFAULTFACTORY = "NIO";
 
@@ -130,9 +130,9 @@ public abstract class RrdBackendFactory implements Closeable {
             return factory;
         } else {
             throw new IllegalArgumentException(
-                    "No backend factory found with the name specified ["
-                            + name + "]");
-        } 
+                "No backend factory found with the name specified ["
+                + name + "]");
+        }
     }
 
     /**
@@ -197,21 +197,21 @@ public abstract class RrdBackendFactory implements Closeable {
             activeFactories.add(getFactory(factoryName));
         } else {
             throw new IllegalStateException(
-                    "Could not change the default backend factory. "
-                            + "This method must be called before the first RRD gets created");
-        } 
+                "Could not change the default backend factory. "
+                + "This method must be called before the first RRD gets created");
+        }
     }
 
     /**
      * Set the list of active factories, i.e. the factory used to resolve URI.
-     * 
+     *
      * @param newFactories the new active factories.
      */
     public static synchronized void setActiveFactories(RrdBackendFactory... newFactories) {
         activeFactories.clear();
         activeFactories.addAll(Arrays.asList(newFactories));
     }
-    
+
     /**
      * Return the current active factories as a stream.
      * @return the Stream
@@ -223,7 +223,7 @@ public abstract class RrdBackendFactory implements Closeable {
 
     /**
      * Add factories to the list of active factories, i.e. the factory used to resolve URI.
-     * 
+     *
      * @deprecated Uses {@link #addActiveFactories(RrdBackendFactory...)} instead.
      * @param newFactories active factories to add.
      */
@@ -234,7 +234,7 @@ public abstract class RrdBackendFactory implements Closeable {
 
     /**
      * Add factories to the list of active factories, i.e. the factory used to resolve URI.
-     * 
+     *
      * @param newFactories active factories to add.
      */
     public static synchronized void addActiveFactories(RrdBackendFactory... newFactories) {
@@ -243,7 +243,7 @@ public abstract class RrdBackendFactory implements Closeable {
 
     /**
      * For a given URI, try to find a factory that can manage it in the list of active factories.
-     * 
+     *
      * @param uri URI to try.
      * @return a {@link RrdBackendFactory} that can manage that URI.
      * @throws IllegalArgumentException when no matching factory is found.
@@ -259,7 +259,7 @@ public abstract class RrdBackendFactory implements Closeable {
                 }
             }
             throw new IllegalArgumentException(
-                    "no matching backend factory for " + uri);
+                "no matching backend factory for " + uri);
         }
     }
 
@@ -268,7 +268,7 @@ public abstract class RrdBackendFactory implements Closeable {
     /**
      * Try to detect an URI from a path. It's needed because of Microsoft Windows path that look's like an URI
      * and to URL-encode the path.
-     * 
+     *
      * @param rrdpath a file URI that can be a Windows path
      * @return an URI
      */
@@ -304,7 +304,7 @@ public abstract class RrdBackendFactory implements Closeable {
     private static class ClosingReference extends PhantomReference<RrdDb> {
         private RrdBackend backend;
         public ClosingReference(RrdDb db, RrdBackend backend,
-                ReferenceQueue<? super RrdDb> q) {
+                                ReferenceQueue<? super RrdDb> q) {
             super(db, q);
             this.backend = backend;
         }
@@ -386,7 +386,7 @@ public abstract class RrdBackendFactory implements Closeable {
      * <li>if uri is opaque (scheme:nonabsolute), the scheme specific part is resolve as a relative path.
      * <li>query and fragment is kept as is.
      * </ul>
-     * 
+     *
      * @param rootUri the URI to match against
      * @param uri an URI that the current backend can handle.
      * @param relative if true, return an URI relative to the {@code rootUri}
@@ -427,7 +427,7 @@ public abstract class RrdBackendFactory implements Closeable {
         } catch (UnsupportedEncodingException e) {
             throw new IllegalArgumentException("UTF-8 is missing");
         }
-        String newUriString = String.format("%s://%s%s%s%s", scheme, authority, path , query, fragment);
+        String newUriString = String.format("%s://%s%s%s%s", scheme, authority, path, query, fragment);
         URI newURI = URI.create(newUriString);
         if (relative) {
             return rootUri.relativize(newURI);
@@ -438,7 +438,7 @@ public abstract class RrdBackendFactory implements Closeable {
 
     /**
      * Ensure that an URI is returned in a non-ambiguous way.
-     * 
+     *
      * @param uri a valid URI for this backend.
      * @return the canonized URI.
      */
@@ -448,7 +448,7 @@ public abstract class RrdBackendFactory implements Closeable {
 
     /**
      * Transform an path in a valid URI for this backend.
-     * 
+     *
      * @param path a path local to the current backend.
      * @return an URI that the current backend can handle.
      */
@@ -466,7 +466,7 @@ public abstract class RrdBackendFactory implements Closeable {
 
     /**
      * Extract the local path from an URI.
-     * 
+     *
      * @param uri The URI to parse.
      * @return the local path from the URI.
      */
@@ -499,7 +499,7 @@ public abstract class RrdBackendFactory implements Closeable {
 
     /**
      * Creates RrdBackend object for the given storage path.
-     * @param rrdDb 
+     * @param rrdDb
      *
      * @param uri     Storage uri
      * @param readOnly True, if the storage should be accessed in read/only mode.

@@ -49,7 +49,7 @@ public class VMCommSystem extends CommSystemFacade {
      * Mapping from Hash to VMCommSystem for all routers hooked together
      */
     private static Map<Hash, VMCommSystem> _commSystemFacades = Collections.synchronizedMap(new HashMap<Hash, VMCommSystem>(16));
-    
+
     public VMCommSystem(RouterContext context) {
         _context = context;
         _log = context.logManager().getLog(VMCommSystem.class);
@@ -72,13 +72,21 @@ public class VMCommSystem extends CommSystemFacade {
      *  @since 0.9.49 so some tests don't NPE
      */
     @Override
-    public X25519KeyFactory getXDHFactory() { return _xdhThread; }
-    
-    public int countActivePeers() { return _commSystemFacades.size() - 1; }
+    public X25519KeyFactory getXDHFactory() {
+        return _xdhThread;
+    }
 
-    public int countActiveSendPeers()  { return _commSystemFacades.size() - 1; }
+    public int countActivePeers() {
+        return _commSystemFacades.size() - 1;
+    }
 
-    public boolean isEstablished(Hash peer) { return _commSystemFacades.containsKey(peer); }
+    public int countActiveSendPeers()  {
+        return _commSystemFacades.size() - 1;
+    }
+
+    public boolean isEstablished(Hash peer) {
+        return _commSystemFacades.containsKey(peer);
+    }
 
     public List<Hash> getEstablished() {
         List<Hash> rv;
@@ -92,7 +100,7 @@ public class VMCommSystem extends CommSystemFacade {
     }
 
     /**
-     * The router wants us to send the given message to the peer.  Do so, or fire 
+     * The router wants us to send the given message to the peer.  Do so, or fire
      * off the failing job.
      */
     public void processMessage(OutNetMessage msg) {
@@ -103,7 +111,7 @@ public class VMCommSystem extends CommSystemFacade {
         long sendTime = now - msg.getSendBegin();
 
         boolean sendSuccessful = false;
-        
+
         if (peerSys == null) {
             _context.jobQueue().addJob(msg.getOnFailedSendJob());
             _context.statManager().updateFrequency("transport.sendMessageFailureFrequency");
@@ -121,12 +129,12 @@ public class VMCommSystem extends CommSystemFacade {
                 _context.statManager().addRateData("transport.sendMessageMedium", 1, sendTime);
             else
                 _context.statManager().addRateData("transport.sendMessageLarge", 1, sendTime);
-            
+
             peerSys.receive(data, _context.routerHash());
             //_context.jobQueue().addJob(new SendJob(peerSys, msg.getMessage(), _context));
             sendSuccessful = true;
         }
-        
+
         if (true) {
             I2NPMessage dmsg = msg.getMessage();
             String type = dmsg.getClass().getName();
@@ -134,10 +142,10 @@ public class VMCommSystem extends CommSystemFacade {
         }
 
         msg.discardData();
-        
+
         _context.statManager().addRateData("transport.sendProcessingTime", msg.getLifetime(), msg.getLifetime());
-    }    
-    
+    }
+
     private class ReceiveJob extends JobImpl {
         private Hash _from;
         private byte _msg[];
@@ -147,7 +155,7 @@ public class VMCommSystem extends CommSystemFacade {
             _ctx = us;
             _from = from;
             _msg = msg;
-            // bah, ueberspeed!  
+            // bah, ueberspeed!
             getTiming().setStartAfter(us.clock().now());
         }
         public void runJob() {
@@ -157,7 +165,7 @@ public class VMCommSystem extends CommSystemFacade {
                 int size = _msg.length;
                 _ctx.profileManager().messageReceived(_from, "vm", 1, size);
                 _ctx.statManager().addRateData("transport.receiveMessageSize", size, 1);
-                
+
                 if (size < 1024)
                     ReceiveJob.this.getContext().statManager().addRateData("transport.receiveMessageSmall", 1, 1);
                 else if (size <= 4096)
@@ -170,33 +178,35 @@ public class VMCommSystem extends CommSystemFacade {
                 _log.error("Error reading/formatting a VM message? Something is not right...", e);
             }
         }
-        public String getName() { return "Receive Message"; }
+        public String getName() {
+            return "Receive Message";
+        }
     }
-    
+
     /**
      * We send messages between comms as bytes so that we strip any router-local
-     * info.  For example, a router tags the # attempts to send through a 
+     * info.  For example, a router tags the # attempts to send through a
      * leaseSet, what type of tunnel a tunnelId is bound to, etc.
      *
      */
     public void receive(byte message[], Hash fromPeer) {
         _context.jobQueue().addJob(new ReceiveJob(fromPeer, message, _context));
     }
-    
+
     public void shutdown() {
         _commSystemFacades.remove(_context.routerHash());
     }
-    
+
     public void startup() {
         _commSystemFacades.put(_context.routerHash(), this);
     }
-    
+
     public void restart() {
         _commSystemFacades.remove(_context.routerHash());
         _commSystemFacades.put(_context.routerHash(), this);
     }
-    
-    public void renderStatusHTML(Writer out, String urlBase, int sortFlags) throws IOException { 
+
+    public void renderStatusHTML(Writer out, String urlBase, int sortFlags) throws IOException {
         out.write("Dummy! i2p.vmCommSystem=true!");
     }
 }

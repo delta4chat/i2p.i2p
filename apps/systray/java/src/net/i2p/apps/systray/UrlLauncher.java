@@ -1,6 +1,6 @@
 /*
  * I2P - An anonymous, secure, and fully-distributed communication network.
- * 
+ *
  * UrlLauncher.java
  * 2004 The I2P Project
  * http://www.i2p.net
@@ -40,8 +40,8 @@ import net.i2p.util.SystemVersion;
  * browsers if that was not successful.
  * <p>
  * Handles Galeon, Internet Explorer, Konqueror, Links, Lynx, Mozilla, Mozilla
- * Firefox, Netscape, Opera, and Safari.    
- * 
+ * Firefox, Netscape, Opera, and Safari.
+ *
  * @author hypercubus
  */
 public class UrlLauncher implements ClientApp {
@@ -64,29 +64,29 @@ public class UrlLauncher implements ClientApp {
      *  Browsers to try IN-ORDER
      */
     private static final String[] BROWSERS = {
-            // This debian script tries everything in $BROWSER, then gnome-www-browser and x-www-browser
-            // if X is running and www-browser otherwise. Those point to the user's preferred
-            // browser using the update-alternatives system.
-            "sensible-browser",
-            // another one that opens a preferred browser
-            "xdg-open",
-            // Try x-www-browser directly
-            "x-www-browser",
-            // general graphical browsers
-            "defaultbrowser",  // puppy linux
-            "opera -newpage",
-            "firefox",
-            "chromium-browser",
-            "mozilla",
-            "netscape",
-            "konqueror",
-            "galeon",
-            // Text Mode Browsers only below here
-            "www-browser",
-            "links",
-            "lynx"
+        // This debian script tries everything in $BROWSER, then gnome-www-browser and x-www-browser
+        // if X is running and www-browser otherwise. Those point to the user's preferred
+        // browser using the update-alternatives system.
+        "sensible-browser",
+        // another one that opens a preferred browser
+        "xdg-open",
+        // Try x-www-browser directly
+        "x-www-browser",
+        // general graphical browsers
+        "defaultbrowser",  // puppy linux
+        "opera -newpage",
+        "firefox",
+        "chromium-browser",
+        "mozilla",
+        "netscape",
+        "konqueror",
+        "galeon",
+        // Text Mode Browsers only below here
+        "www-browser",
+        "links",
+        "lynx"
     };
-            
+
     /**
      *  ClientApp constructor used from clients.config
      *
@@ -105,7 +105,7 @@ public class UrlLauncher implements ClientApp {
         _shellCommand = new ShellCommand();
         _state = INITIALIZED;
     }
-            
+
     /**
      *  Constructor from SysTray
      *
@@ -155,12 +155,15 @@ public class UrlLauncher implements ClientApp {
                     test.connect(sa, WAIT_TIME);
                     // it worked
                 } finally {
-                    if (test != null) try { test.close(); } catch (IOException ioe) {}
+                    if (test != null) try {
+                            test.close();
+                        }
+                        catch (IOException ioe) {}
                 }
                 // Jetty 6 seems to start the Connector before the
                 // webapp is completely ready
                 try {
-                   Thread.sleep(2*1000);
+                    Thread.sleep(2*1000);
                 } catch (InterruptedException ie) {}
                 return true;
             } catch (IOException e) {}
@@ -197,7 +200,7 @@ public class UrlLauncher implements ClientApp {
     private String getDefaultWindowsBrowser(String url) {
         String defaultBrowser;
         String key;
-        if (url.startsWith("https://")){
+        if (url.startsWith("https://")) {
             // User-Configured HTTPS Browser
             key = "HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\Shell\\Associations\\URLAssociations\\https\\UserChoice";
         } else {
@@ -304,7 +307,7 @@ public class UrlLauncher implements ClientApp {
         if (defaultValue != null) {
             if (!defaultValue.equals(""))
                 return defaultValue;
-        }else{
+        } else {
             defaultValue = followUserConfiguredBrowserToCommand(hkeyquery);
             if (defaultValue != null) {
                 if (!defaultValue.equals(""))
@@ -319,18 +322,18 @@ public class UrlLauncher implements ClientApp {
      * to launch the given URL using the default browser for that platform; if
      * unsuccessful, an attempt is made to launch the URL using the most common
      * browsers.
-     * 
+     *
      * As of 0.9.46, fails immediately if JVM is a Windows or Linux Service.
-     * 
+     *
      * BLOCKING. This repeatedly probes the server port at the given url
      * until it is apparently ready.
-     * 
+     *
      * @param  url The URL to open.
      * @return     <code>true</code> if the operation was successful, otherwise
      *             <code>false</code>.
-     * 
+     *
      * @throws IOException
-     */ 
+     */
     public boolean openUrl(String url) throws IOException {
         if (IS_SERVICE)
             return false;
@@ -347,14 +350,14 @@ public class UrlLauncher implements ClientApp {
                 if (osName.toLowerCase(Locale.US).startsWith("mac os x")) {
                     String[] args = new String[] { "open", url };
                     if (_log.shouldDebug()) _log.debug("Execute: " + Arrays.toString(args));
-                    if (_shellCommand.executeSilentAndWaitTimed(args , 5))
+                    if (_shellCommand.executeSilentAndWaitTimed(args, 5))
                         return true;
                 } else {
                     return false;
                 }
                 String[] args = new String[] { "iexplore", url };
                 if (_log.shouldDebug()) _log.debug("Execute: " + Arrays.toString(args));
-                if (_shellCommand.executeSilentAndWaitTimed(args , 5))
+                if (_shellCommand.executeSilentAndWaitTimed(args, 5))
                     return true;
             } else if (SystemVersion.isWindows()) {
                 String[] browserString  = new String[] { "C:\\Program Files\\Internet Explorer\\iexplore.exe", "-nohome", url };
@@ -391,16 +394,16 @@ public class UrlLauncher implements ClientApp {
      * Arguments may be surrounded by single or double quotes if
      * they contain spaces or tabs.
      * There is no mechanism to escape quotes or other chars with backslashes.
-     * 
+     *
      * As of 0.9.46, fails immediately if JVM is a Windows or Linux Service.
-     * 
+     *
      * BLOCKING. However, this does NOT probe the server port to see if it is ready.
-     * 
+     *
      * @param  url     The URL to open.
      * @param  browser The browser to use. See above for quoting rules.
      * @return         <code>true</code> if the operation was successful,
      *                 otherwise <code>false</code>.
-     * 
+     *
      * @throws IOException
      */
     public boolean openUrl(String url, String browser) throws IOException {
@@ -439,32 +442,32 @@ public class UrlLauncher implements ClientApp {
         for (int j = 0; j < args.length(); j++) {
             char c = args.charAt(j);
             switch (c) {
-                case '\'':
-                case '"':
-                    if (isQuoted) {
-                        String str = buf.toString().trim();
-                        if (str.length() > 0)
-                            argList.add(str);
-                        buf.setLength(0);
-                    }
-                    isQuoted = !isQuoted;
-                    break;
-                case ' ':
-                case '\t':
-                    // whitespace - if we're in a quoted section, keep this as part of the quote,
-                    // otherwise use it as a delim
-                    if (isQuoted) {
-                        buf.append(c);
-                    } else {
-                        String str = buf.toString().trim();
-                        if (str.length() > 0)
-                            argList.add(str);
-                        buf.setLength(0);
-                    }
-                    break;
-                default:
+            case '\'':
+            case '"':
+                if (isQuoted) {
+                    String str = buf.toString().trim();
+                    if (str.length() > 0)
+                        argList.add(str);
+                    buf.setLength(0);
+                }
+                isQuoted = !isQuoted;
+                break;
+            case ' ':
+            case '\t':
+                // whitespace - if we're in a quoted section, keep this as part of the quote,
+                // otherwise use it as a delim
+                if (isQuoted) {
                     buf.append(c);
-                    break;
+                } else {
+                    String str = buf.toString().trim();
+                    if (str.length() > 0)
+                        argList.add(str);
+                    buf.setLength(0);
+                }
+                break;
+            default:
+                buf.append(c);
+                break;
             }
         }
         if (buf.length() > 0) {
@@ -490,7 +493,7 @@ public class UrlLauncher implements ClientApp {
     }
 
     private static boolean validateUrlFormat(String urlString) {
-         try {
+        try {
             // just to check validity
             new URI(urlString);
         } catch (URISyntaxException e) {
@@ -502,7 +505,7 @@ public class UrlLauncher implements ClientApp {
     /**
      *  ClientApp interface
      *  As of 0.9.46, stops immediately if JVM is a Windows or Linux Service.
-     * 
+     *
      *  @since 0.9.18
      */
     public void startup() {
@@ -593,6 +596,6 @@ public class UrlLauncher implements ClientApp {
                 launcher.openUrl(args[0]);
             else
                 launcher.openUrl(I2PAppContext.getGlobalContext().portMapper().getConsoleURL());
-         } catch (IOException e) {}
+        } catch (IOException e) {}
     }
 }

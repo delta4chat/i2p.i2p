@@ -24,10 +24,10 @@ public class BlockfileNamingServiceTest extends TestCase {
     File hostsTxt, routerDir;
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-	public void setUp() throws Exception {
+    public void setUp() throws Exception {
         I2PAppContext ctx = new I2PAppContext();
         routerDir = ctx.getRouterDir();
-        
+
         // first load the list of hosts that will be queried
         InputStream is = getClass().getResourceAsStream("/hosts.txt");
         Properties props = new Properties();
@@ -36,7 +36,7 @@ public class BlockfileNamingServiceTest extends TestCase {
         _names = new ArrayList<String>((Set<String>) (Set) props.keySet());  // TODO-Java6: s/keySet()/stringPropertyNames()/
         Collections.shuffle(_names);
         is.close();
-        
+
         // then copy the hosts.txt file so that the naming service can load them
         hostsTxt = new File(routerDir, "hosts.txt");
         OutputStream os = new BufferedOutputStream(new FileOutputStream(hostsTxt));
@@ -45,7 +45,8 @@ public class BlockfileNamingServiceTest extends TestCase {
         int read = 0;
         while ((read = is.read(b)) > 0 )
             os.write(b,0,read);
-        os.flush(); os.close();
+        os.flush();
+        os.close();
         _bns = new BlockfileNamingService(ctx);
     }
 
@@ -59,23 +60,23 @@ public class BlockfileNamingServiceTest extends TestCase {
             hostsTxt.delete();
     }
 
-    public void testRepeatedLookup() throws Exception{
+    public void testRepeatedLookup() throws Exception {
         int found = 0;
         int notfound = 0;
         int rfound = 0;
         int rnotfound = 0;
         for (String name : _names) {
-             Destination dest = _bns.lookup(name);
-             if (dest != null) {
-                 found++;
-                 String reverse = _bns.reverseLookup(dest);
-                 if (reverse != null)
-                     rfound++;
-                 else
-                     rnotfound++;
-             } else {
-                 notfound++;
-             }
+            Destination dest = _bns.lookup(name);
+            if (dest != null) {
+                found++;
+                String reverse = _bns.reverseLookup(dest);
+                if (reverse != null)
+                    rfound++;
+                else
+                    rnotfound++;
+            } else {
+                notfound++;
+            }
         }
         assertEquals(0, notfound);
         assertEquals(0, rnotfound);

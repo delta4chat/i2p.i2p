@@ -137,7 +137,10 @@ public class JettyStart implements ClientApp {
                     in = new FileInputStream(f);
                     properties.load(in);
                 } finally {
-                    if (in != null) try { in.close(); } catch (IOException ioe) {}
+                    if (in != null) try {
+                            in.close();
+                        }
+                        catch (IOException ioe) {}
                 }
             } else {
                 URL configUrl = f.toURI().toURL();

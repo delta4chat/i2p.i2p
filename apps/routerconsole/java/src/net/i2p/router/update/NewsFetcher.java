@@ -84,8 +84,8 @@ class NewsFetcher extends UpdateRunner {
     private static final String BLOCKLIST_DIR = "docs/feed/blocklist";
     private static final String BLOCKLIST_FILE = "blocklist.txt";
     private static final long DEFAULT_TIMEOUT = 60*1000;
-    
-    public NewsFetcher(RouterContext ctx, ConsoleUpdateManager mgr, List<URI> uris) { 
+
+    public NewsFetcher(RouterContext ctx, ConsoleUpdateManager mgr, List<URI> uris) {
         this(ctx, mgr, uris, DEFAULT_TIMEOUT);
     }
 
@@ -94,7 +94,7 @@ class NewsFetcher extends UpdateRunner {
      *                 and we will log status to the sidebar
      *  @since 0.9.62
      */
-    public NewsFetcher(RouterContext ctx, ConsoleUpdateManager mgr, List<URI> uris, long timeout) { 
+    public NewsFetcher(RouterContext ctx, ConsoleUpdateManager mgr, List<URI> uris, long timeout) {
         super(ctx, mgr, NEWS, uris);
         _newsFile = new File(ctx.getRouterDir(), NewsHelper.NEWS_FILE);
         _tempFile = new File(ctx.getTempDir(), "tmp-" + ctx.random().nextLong() + TEMP_NEWS_FILE);
@@ -125,8 +125,8 @@ class NewsFetcher extends UpdateRunner {
         String proxyHost = _context.getProperty(ConfigUpdateHandler.PROP_PROXY_HOST, ConfigUpdateHandler.DEFAULT_PROXY_HOST);
         int proxyPort = ConfigUpdateHandler.proxyPort(_context);
         if (shouldProxy && proxyPort == ConfigUpdateHandler.DEFAULT_PROXY_PORT_INT &&
-            proxyHost.equals(ConfigUpdateHandler.DEFAULT_PROXY_HOST) &&
-            _context.portMapper().getPort(PortMapper.SVC_HTTP_PROXY) < 0) {
+                proxyHost.equals(ConfigUpdateHandler.DEFAULT_PROXY_HOST) &&
+                _context.portMapper().getPort(PortMapper.SVC_HTTP_PROXY) < 0) {
             if (_log.shouldWarn())
                 _log.warn("Cannot fetch news - HTTP client tunnel not running");
             return;
@@ -143,7 +143,7 @@ class NewsFetcher extends UpdateRunner {
 
             if (_tempFile.exists())
                 _tempFile.delete();
-        
+
             try {
                 EepGet get;
                 if (shouldProxy)
@@ -249,7 +249,7 @@ class NewsFetcher extends UpdateRunner {
         String lang = Translate.getLanguage(_context);
         return !lang.equals(old);
     }
-    
+
     // Fake XML parsing
     // Line must contain this, and full entry must be on one line
     private static final String VERSION_PREFIX = "<i2p.release ";
@@ -306,14 +306,14 @@ class NewsFetcher extends UpdateRunner {
                                 _mgr.notifyVersionConstraint(this, _currentURI, ROUTER_SIGNED, "", ver, msg);
                                 return;
                             }
-/*
-                            if (!FileUtil.isPack200Supported()) {
-                                String msg = _mgr._t("No Pack200 support in Java runtime.");
-                                _log.logAlways(Log.WARN, "Cannot update to version " + ver + ": " + msg);
-                                _mgr.notifyVersionConstraint(this, _currentURI, ROUTER_SIGNED, "", ver, msg);
-                                return;
-                            }
-*/
+                            /*
+                                                        if (!FileUtil.isPack200Supported()) {
+                                                            String msg = _mgr._t("No Pack200 support in Java runtime.");
+                                                            _log.logAlways(Log.WARN, "Cannot update to version " + ver + ": " + msg);
+                                                            _mgr.notifyVersionConstraint(this, _currentURI, ROUTER_SIGNED, "", ver, msg);
+                                                            return;
+                                                        }
+                            */
                             if (!ConfigUpdateHandler.USE_SU3_UPDATE) {
                                 String msg = _mgr._t("No update certificates installed.");
                                 _log.logAlways(Log.WARN, "Cannot update to version " + ver + ": " + msg);
@@ -347,13 +347,13 @@ class NewsFetcher extends UpdateRunner {
                             Map<UpdateMethod, List<URI>> sourceMap = new HashMap<UpdateMethod, List<URI>>(4);
                             // Must do su3 first
                             //if (ConfigUpdateHandler.USE_SU3_UPDATE) {
-                                addMethod(HTTP, args.get(I2P_SU3_KEY), sourceMap);
-                                addMethod(TORRENT, args.get(SU3_KEY), sourceMap);
-                                addMethod(HTTP_CLEARNET, args.get(CLEARNET_HTTP_SU3_KEY), sourceMap);
-                                addMethod(HTTPS_CLEARNET, args.get(CLEARNET_HTTPS_SU3_KEY), sourceMap);
-                                // notify about all sources at once
-                                _mgr.notifyVersionAvailable(this, _currentURI, ROUTER_SIGNED_SU3,
-                                                            "", sourceMap, ver, "");
+                            addMethod(HTTP, args.get(I2P_SU3_KEY), sourceMap);
+                            addMethod(TORRENT, args.get(SU3_KEY), sourceMap);
+                            addMethod(HTTP_CLEARNET, args.get(CLEARNET_HTTP_SU3_KEY), sourceMap);
+                            addMethod(HTTPS_CLEARNET, args.get(CLEARNET_HTTPS_SU3_KEY), sourceMap);
+                            // notify about all sources at once
+                            _mgr.notifyVersionAvailable(this, _currentURI, ROUTER_SIGNED_SU3,
+                                                        "", sourceMap, ver, "");
                             //  sourceMap.clear();
                             //}
                             // now do sud/su2 - DISABLED
@@ -384,13 +384,16 @@ class NewsFetcher extends UpdateRunner {
             _failMsg = "Error checking the news for an update: " + ioe;
             return;
         } finally {
-            if (in != null) try { in.close(); } catch (IOException ioe) {}
+            if (in != null) try {
+                    in.close();
+                }
+                catch (IOException ioe) {}
         }
-        
+
         if (_log.shouldLog(Log.WARN))
             _log.warn("No version found in news.xml file");
     }
-    
+
     /**
      *  Modified from LoadClientAppsJob and I2PTunnelHTTPClientBase
      *  All keys are mapped to lower case.
@@ -406,49 +409,49 @@ class NewsFetcher extends UpdateRunner {
         String key = null;
         for (int i = 0; i < data.length; i++) {
             switch (data[i]) {
-                case '\'':
-                case '"':
-                    if (isQuoted) {
-                        // keys never quoted
-                        if (key != null) {
-                            rv.put(key, buf.toString().trim());
-                            key = null;
-                        }
-                        buf.setLength(0);
+            case '\'':
+            case '"':
+                if (isQuoted) {
+                    // keys never quoted
+                    if (key != null) {
+                        rv.put(key, buf.toString().trim());
+                        key = null;
                     }
-                    isQuoted = !isQuoted;
-                    break;
+                    buf.setLength(0);
+                }
+                isQuoted = !isQuoted;
+                break;
 
-                case ' ':
-                case '\r':
-                case '\n':
-                case '\t':
-                case ',':
-                    // whitespace - if we're in a quoted section, keep this as part of the quote,
-                    // otherwise use it as a delim
-                    if (isQuoted) {
-                        buf.append(data[i]);
-                    } else {
-                        if (key != null) {
-                            rv.put(key, buf.toString().trim());
-                            key = null;
-                        }
-                        buf.setLength(0);
-                    }
-                    break;
-
-                case '=':
-                    if (isQuoted) {
-                        buf.append(data[i]);
-                    } else {
-                        key = buf.toString().trim().toLowerCase(Locale.US);
-                        buf.setLength(0);
-                    }
-                    break;
-
-                default:
+            case ' ':
+            case '\r':
+            case '\n':
+            case '\t':
+            case ',':
+                // whitespace - if we're in a quoted section, keep this as part of the quote,
+                // otherwise use it as a delim
+                if (isQuoted) {
                     buf.append(data[i]);
-                    break;
+                } else {
+                    if (key != null) {
+                        rv.put(key, buf.toString().trim());
+                        key = null;
+                    }
+                    buf.setLength(0);
+                }
+                break;
+
+            case '=':
+                if (isQuoted) {
+                    buf.append(data[i]);
+                } else {
+                    key = buf.toString().trim().toLowerCase(Locale.US);
+                    buf.setLength(0);
+                }
+                break;
+
+            default:
+                buf.append(data[i]);
+                break;
             }
         }
         if (key != null)
@@ -507,18 +510,18 @@ class NewsFetcher extends UpdateRunner {
     public void transferComplete(long alreadyTransferred, long bytesTransferred, long bytesRemaining, String url, String outputFile, boolean notModified) {
         if (_log.shouldLog(Log.INFO))
             _log.info("News fetched from " + url + " with " + (alreadyTransferred+bytesTransferred));
-        
+
         if (_tempFile.exists() && _tempFile.length() > 0) {
             File from;
             // sud/su2 disabled
             //if (url.endsWith(".su3") || url.contains(".su3?")) {
-                try {
-                    from = processSU3();
-                } catch (IOException ioe) {
-                    _log.error("Failed to extract the news file", ioe);
-                    _tempFile.delete();
-                    return;
-                }
+            try {
+                from = processSU3();
+            } catch (IOException ioe) {
+                _log.error("Failed to extract the news file", ioe);
+                _tempFile.delete();
+                return;
+            }
             //} else {
             //    from = _tempFile;
             //}
@@ -659,9 +662,9 @@ class NewsFetcher extends UpdateRunner {
             out = new SecureFileOutputStream(to);
             DataHelper.copy(in, out);
         } finally {
-            if (out != null) try { 
-                out.close(); 
-            } catch (IOException ioe) {}
+            if (out != null) try {
+                    out.close();
+                } catch (IOException ioe) {}
             ReusableGZIPInputStream.release(in);
         }
     }
@@ -708,7 +711,10 @@ class NewsFetcher extends UpdateRunner {
             } catch (IOException ioe) {
                 _log.error("Failed to write CRL", ioe);
             } finally {
-                if (out != null) try { out.close(); } catch (IOException ioe) {}
+                if (out != null) try {
+                        out.close();
+                    }
+                    catch (IOException ioe) {}
             }
             f.setLastModified(e.updated);
             i++;
@@ -802,9 +808,9 @@ class NewsFetcher extends UpdateRunner {
             _log.error("Error writing blocklist", ioe);
             fail = true;
         } finally {
-            if (out != null) try { 
-                out.close(); 
-            } catch (IOException ioe) {}
+            if (out != null) try {
+                    out.close();
+                } catch (IOException ioe) {}
         }
         if (!fail) {
             f.setLastModified(ble.updated);
@@ -884,9 +890,9 @@ class NewsFetcher extends UpdateRunner {
                 out.write("\n\n");
             }
         } finally {
-            if (out != null) try { 
-                out.close(); 
-            } catch (IOException ioe) {}
+            if (out != null) try {
+                    out.close();
+                } catch (IOException ioe) {}
         }
     }
 

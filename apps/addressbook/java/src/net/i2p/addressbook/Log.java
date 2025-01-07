@@ -1,16 +1,16 @@
 /*
  * Copyright (c) 2004 Ragnarok
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -33,9 +33,9 @@ import net.i2p.util.SecureFileOutputStream;
 
 /**
  * A simple log with automatic time stamping.
- * 
+ *
  * @author Ragnarok
- *  
+ *
  */
 class Log {
 
@@ -43,7 +43,7 @@ class Log {
 
     /**
      * Construct a Log instance that writes to the File file.
-     * 
+     *
      * @param file
      *            A File for the log to write to.
      */
@@ -53,7 +53,7 @@ class Log {
 
     /**
      * Write entry to a new line in the log, with appropriate time stamp.
-     * 
+     *
      * @param entry
      *            A String containing a message to append to the log.
      */
@@ -61,25 +61,28 @@ class Log {
         BufferedWriter bw = null;
         try {
             bw = new BufferedWriter(new OutputStreamWriter(new SecureFileOutputStream(this.file,
-                    true), "UTF-8"));
+                                    true), "UTF-8"));
             String timestamp = DataHelper.formatTime(I2PAppContext.getGlobalContext().clock().now());
             bw.write(timestamp + " -- " + entry);
             bw.newLine();
         } catch (IOException exp) {
         } finally {
             if (bw != null)
-                try { bw.close(); } catch (IOException ioe) {}
+                try {
+                    bw.close();
+                }
+                catch (IOException ioe) {}
         }
     }
 
     /**
      * Return the File that the Log is writing to.
-     * 
+     *
      * @return The File that the log is writing to.
      */
-/****
-    public File getFile() {
-        return this.file;
-    }
-****/
+    /****
+        public File getFile() {
+            return this.file;
+        }
+    ****/
 }

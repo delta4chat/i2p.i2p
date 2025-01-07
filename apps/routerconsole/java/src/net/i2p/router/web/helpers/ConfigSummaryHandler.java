@@ -18,7 +18,7 @@ import net.i2p.router.web.FormHandler;
  *  @since 0.9.1
  */
 public class ConfigSummaryHandler extends FormHandler {
-    
+
     @Override
     protected void processForm() {
         String group = getJettyString("group");

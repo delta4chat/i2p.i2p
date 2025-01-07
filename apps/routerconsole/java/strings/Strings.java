@@ -23,11 +23,11 @@ class Dummy {
         _t("SAM application bridge");
         _t("Application tunnels");
         _t("My I2P Site web server");
-        _t("I2P webserver (I2P Site)");        
+        _t("I2P webserver (I2P Site)");
         _t("Browser launch at startup");
         _t("I2P Router Console");
-        _t("Open Router Console in web browser at startup");        
-        
+        _t("Open Router Console in web browser at startup");
+
         // tunnel nicknames, taken from i2ptunnel.config so they will display
         // nicely under 'local destinations' in the summary bar
         // note that if the wording changes in i2ptunnel.config, we have to
@@ -36,7 +36,7 @@ class Dummy {
         _t("IRC proxy");
         _t("I2P Site");
         _t("I2P webserver");
-        _t("HTTP Proxy");        
+        _t("HTTP Proxy");
         // hardcoded in i2psnark
         _t("I2PSnark");
 

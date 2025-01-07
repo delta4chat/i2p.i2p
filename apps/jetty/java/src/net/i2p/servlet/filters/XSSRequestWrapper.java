@@ -96,10 +96,10 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper {
     public Map<String, String[]> getParameterMap() {
         Map<String, String[]> rv = new HashMap<String, String[]>();
         for (Enumeration<String> keys = getParameterNames(); keys.hasMoreElements(); ) {
-             String k = keys.nextElement();
-             String[] v = getParameterValues(k);
-             if (v != null)
-                 rv.put(k, v);
+            String k = keys.nextElement();
+            String[] v = getParameterValues(k);
+            if (v != null)
+                rv.put(k, v);
         }
         return Collections.unmodifiableMap(rv);
     }

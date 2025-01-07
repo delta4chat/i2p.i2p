@@ -2,9 +2,9 @@ package net.i2p.data;
 
 /*
  * free (adj.): unencumbered; not under the control of others
- * Written by jrandom in 2003 and released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
- * It probably won't make your computer catch on fire, or eat 
+ * Written by jrandom in 2003 and released into the public domain
+ * with no warranty of any kind, either expressed or implied.
+ * It probably won't make your computer catch on fire, or eat
  * your children, but it might.  Use at your own risk.
  *
  */
@@ -93,34 +93,34 @@ public class Lease extends DataStructureImpl {
      * to the destination through the current lease were successful.
      *
      */
-/****
-    public int getNumSuccess() {
-        return _numSuccess;
-    }
-****/
+    /****
+        public int getNumSuccess() {
+            return _numSuccess;
+        }
+    ****/
 
-/****
-    public void setNumSuccess(int num) {
-        _numSuccess = num;
-    }
-****/
+    /****
+        public void setNumSuccess(int num) {
+            _numSuccess = num;
+        }
+    ****/
 
     /**
      * Transient attribute of the lease, used to note how many times messages sent
      * to the destination through the current lease failed.
      *
      */
-/****
-    public int getNumFailure() {
-        return _numFailure;
-    }
-****/
+    /****
+        public int getNumFailure() {
+            return _numFailure;
+        }
+    ****/
 
-/****
-    public void setNumFailure(int num) {
-        _numFailure = num;
-    }
-****/
+    /****
+        public void setNumFailure(int num) {
+            _numFailure = num;
+        }
+    ****/
 
     /** has this lease already expired? */
     public boolean isExpired() {
@@ -131,7 +131,7 @@ public class Lease extends DataStructureImpl {
     public boolean isExpired(long fudgeFactor) {
         return _end < Clock.getInstance().now() - fudgeFactor;
     }
-    
+
     public void readBytes(InputStream in) throws DataFormatException, IOException {
         //_gateway = new Hash();
         //_gateway.readBytes(in);
@@ -140,7 +140,7 @@ public class Lease extends DataStructureImpl {
         _tunnelId.readBytes(in);
         _end = DataHelper.readLong(in, 8);
     }
-    
+
     public void writeBytes(OutputStream out) throws DataFormatException, IOException {
         if ((_gateway == null) || (_tunnelId == null))
             throw new DataFormatException("Not enough data to write out a Lease");
@@ -149,7 +149,7 @@ public class Lease extends DataStructureImpl {
         _tunnelId.writeBytes(out);
         DataHelper.writeLong(out, 8, _end);
     }
-    
+
     @Override
     public boolean equals(Object object) {
         if (object == this) return true;
@@ -160,13 +160,13 @@ public class Lease extends DataStructureImpl {
                && DataHelper.eq(_gateway, lse.getGateway());
 
     }
-    
+
     @Override
     public int hashCode() {
         return (int) _end ^ DataHelper.hashCode(_gateway)
                ^ DataHelper.hashCode(_tunnelId);
     }
-    
+
     @Override
     public String toString() {
         StringBuilder buf = new StringBuilder(128);

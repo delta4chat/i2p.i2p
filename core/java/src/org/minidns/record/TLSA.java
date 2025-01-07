@@ -47,7 +47,7 @@ public class TLSA extends Data {
 
         public final byte byteValue;
 
-         Selector(byte byteValue) {
+        Selector(byte byteValue) {
             this.byteValue = byteValue;
             SELECTOR_LUT.put(byteValue, this);
         }
@@ -142,10 +142,10 @@ public class TLSA extends Data {
     @Override
     public String toString() {
         return new StringBuilder()
-                .append(certUsageByte).append(' ')
-                .append(selectorByte).append(' ')
-                .append(matchingTypeByte).append(' ')
-                .append(new BigInteger(1, certificateAssociation).toString(16)).toString();
+               .append(certUsageByte).append(' ')
+               .append(selectorByte).append(' ')
+               .append(matchingTypeByte).append(' ')
+               .append(new BigInteger(1, certificateAssociation).toString(16)).toString();
     }
 
     public byte[] getCertificateAssociation() {

@@ -61,9 +61,18 @@ public class SOCKS5Client {
             out = sock.getOutputStream();
             connect(in, out, connHostName, connPort, configUser, configPW);
         } catch (IOException e) {
-            try { sock.close(); } catch (IOException ioe) {}
-            if (in != null) try { in.close(); } catch (IOException ioe) {}
-            if (out != null) try { out.close(); } catch (IOException ioe) {}
+            try {
+                sock.close();
+            }
+            catch (IOException ioe) {}
+            if (in != null) try {
+                    in.close();
+                }
+                catch (IOException ioe) {}
+            if (out != null) try {
+                    out.close();
+                }
+                catch (IOException ioe) {}
             throw e;
         }
     }
@@ -198,8 +207,14 @@ public class SOCKS5Client {
             // throw away the address in the response
             // todo pass the response through?
         } catch (IOException e) {
-            if (in != null) try { in.close(); } catch (IOException ioe) {}
-            if (out != null) try { out.close(); } catch (IOException ioe) {}
+            if (in != null) try {
+                    in.close();
+                }
+                catch (IOException ioe) {}
+            if (out != null) try {
+                    out.close();
+                }
+                catch (IOException ioe) {}
             throw e;
         }
     }

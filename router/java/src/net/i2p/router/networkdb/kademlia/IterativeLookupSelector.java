@@ -26,12 +26,14 @@ class IterativeLookupSelector implements MessageSelector {
         _log = ctx.logManager().getLog(getClass());
     }
 
-    public boolean continueMatching() { 
+    public boolean continueMatching() {
         // don't use remaining searches count
-        return (!_matchFound) && _context.clock().now() < getExpiration(); 
+        return (!_matchFound) && _context.clock().now() < getExpiration();
     }
 
-    public long getExpiration() { return (_matchFound ? -1 : _search.getExpiration()); }
+    public long getExpiration() {
+        return (_matchFound ? -1 : _search.getExpiration());
+    }
 
     /**
      *  This only returns true for DSMs, not for DSRMs.
@@ -64,7 +66,7 @@ class IterativeLookupSelector implements MessageSelector {
             }
         }
         return false;
-    }   
+    }
 
     /** @since 0.9.12 */
     public String toString() {

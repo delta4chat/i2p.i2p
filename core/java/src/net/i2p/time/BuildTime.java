@@ -28,7 +28,7 @@ import net.i2p.util.SystemVersion;
  *  @since 0.9.25 modded from FileDumpHelper
  */
 public class BuildTime {
-    
+
     private static final long _buildTime;
     private static final long _earliestTime;
     private static final long _latestTime;
@@ -142,7 +142,10 @@ public class BuildTime {
         } catch (IOException ioe) {
             return null;
         } finally {
-            if (in != null) try { in.close(); } catch (IOException e) {}
+            if (in != null) try {
+                    in.close();
+                }
+                catch (IOException e) {}
         }
     }
 

@@ -72,8 +72,8 @@ final class Decoder {
     Object decode(int offset) throws IOException {
         if (offset >= this.buffer.capacity()) {
             throw new InvalidDatabaseException(
-                    "The MaxMind DB file's data section contains bad data: "
-                            + "pointer larger than the database.");
+                "The MaxMind DB file's data section contains bad data: "
+                + "pointer larger than the database.");
         }
 
         this.buffer.position(offset);
@@ -113,9 +113,9 @@ final class Decoder {
 
             if (typeNum < 8) {
                 throw new InvalidDatabaseException(
-                        "Something went horribly wrong in the decoder. An extended type "
-                                + "resolved to a type number < 8 (" + typeNum
-                                + ")");
+                    "Something went horribly wrong in the decoder. An extended type "
+                    + "resolved to a type number < 8 (" + typeNum
+                    + ")");
             }
 
             type = Type.get(typeNum);
@@ -141,35 +141,35 @@ final class Decoder {
     }
 
     private Object decodeByType(Type type, int size)
-            throws IOException {
+    throws IOException {
         switch (type) {
-            case MAP:
-                return this.decodeMap(size);
-            case ARRAY:
-                return this.decodeArray(size);
-            case BOOLEAN:
-                return Decoder.decodeBoolean(size);
-            case UTF8_STRING:
-                return this.decodeString(size);
-            case DOUBLE:
-                return this.decodeDouble(size);
-            case FLOAT:
-                return this.decodeFloat(size);
-            case BYTES:
-                return this.getByteArray(size);
-            case UINT16:
-                return this.decodeUint16(size);
-            case UINT32:
-                return this.decodeUint32(size);
-            case INT32:
-                return this.decodeInt32(size);
-            case UINT64:
-                return this.decodeBigInteger(size);
-            case UINT128:
-                return this.decodeBigInteger(size);
-            default:
-                throw new InvalidDatabaseException(
-                        "Unknown or unexpected type: " + type.name());
+        case MAP:
+            return this.decodeMap(size);
+        case ARRAY:
+            return this.decodeArray(size);
+        case BOOLEAN:
+            return Decoder.decodeBoolean(size);
+        case UTF8_STRING:
+            return this.decodeString(size);
+        case DOUBLE:
+            return this.decodeDouble(size);
+        case FLOAT:
+            return this.decodeFloat(size);
+        case BYTES:
+            return this.getByteArray(size);
+        case UINT16:
+            return this.decodeUint16(size);
+        case UINT32:
+            return this.decodeUint32(size);
+        case INT32:
+            return this.decodeInt32(size);
+        case UINT64:
+            return this.decodeBigInteger(size);
+        case UINT128:
+            return this.decodeBigInteger(size);
+        default:
+            throw new InvalidDatabaseException(
+                "Unknown or unexpected type: " + type.name());
         }
     }
 
@@ -225,8 +225,8 @@ final class Decoder {
     private Double decodeDouble(int size) throws InvalidDatabaseException {
         if (size != 8) {
             throw new InvalidDatabaseException(
-                    "The MaxMind DB file's data section contains bad data: "
-                            + "invalid size of double.");
+                "The MaxMind DB file's data section contains bad data: "
+                + "invalid size of double.");
         }
         return Double.valueOf(this.buffer.getDouble());
     }
@@ -234,23 +234,23 @@ final class Decoder {
     private Float decodeFloat(int size) throws InvalidDatabaseException {
         if (size != 4) {
             throw new InvalidDatabaseException(
-                    "The MaxMind DB file's data section contains bad data: "
-                            + "invalid size of float.");
+                "The MaxMind DB file's data section contains bad data: "
+                + "invalid size of float.");
         }
         return Float.valueOf(this.buffer.getFloat());
     }
 
     private static Boolean decodeBoolean(int size)
-            throws InvalidDatabaseException {
+    throws InvalidDatabaseException {
         switch (size) {
-            case 0:
-                return Boolean.FALSE;
-            case 1:
-                return Boolean.TRUE;
-            default:
-                throw new InvalidDatabaseException(
-                        "The MaxMind DB file's data section contains bad data: "
-                                + "invalid size of boolean.");
+        case 0:
+            return Boolean.FALSE;
+        case 1:
+            return Boolean.TRUE;
+        default:
+            throw new InvalidDatabaseException(
+                "The MaxMind DB file's data section contains bad data: "
+                + "invalid size of boolean.");
         }
     }
 

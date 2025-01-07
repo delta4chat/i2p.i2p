@@ -20,7 +20,7 @@ import net.i2p.util.Addresses;
  * Used for both /config and /confignet
  */
 public class ConfigNetHelper extends HelperBase {
-    
+
     /** copied from various private components */
     final static String PROP_I2NP_NTCP_HOSTNAME = "i2np.ntcp.hostname";
     final static String PROP_I2NP_NTCP_PORT = "i2np.ntcp.port";
@@ -28,17 +28,17 @@ public class ConfigNetHelper extends HelperBase {
     final static String PROP_I2NP_NTCP_AUTO_IP = "i2np.ntcp.autoip";
 
     public String getUdphostname() {
-        return _context.getProperty(UDPTransport.PROP_EXTERNAL_HOST, ""); 
+        return _context.getProperty(UDPTransport.PROP_EXTERNAL_HOST, "");
     }
 
     public String getNtcphostname() {
         return _context.getProperty(PROP_I2NP_NTCP_HOSTNAME, "");
     }
 
-    public String getNtcpport() { 
-        return _context.getProperty(PROP_I2NP_NTCP_PORT, ""); 
+    public String getNtcpport() {
+        return _context.getProperty(PROP_I2NP_NTCP_PORT, "");
     }
-    
+
     /** @return host or "unknown" */
     public String getUdpIP() {
         String s = _context.getProperty(TransportUtil.SSU_IPV6_CONFIG);
@@ -73,15 +73,15 @@ public class ConfigNetHelper extends HelperBase {
      *  not the external port.
      */
     public String getUdpPort() {
-      /****
-        RouterAddress addr = _context.router().getRouterInfo().getTargetAddress("SSU");
-        if (addr == null)
-            return _t("unknown");
-        UDPAddress ua = new UDPAddress(addr);
-        if (ua.getPort() <= 0)
-            return _t("unknown");
-        return "" + ua.getPort();
-      ****/
+        /****
+          RouterAddress addr = _context.router().getRouterInfo().getTargetAddress("SSU");
+          if (addr == null)
+              return _t("unknown");
+          UDPAddress ua = new UDPAddress(addr);
+          if (ua.getPort() <= 0)
+              return _t("unknown");
+          return "" + ua.getPort();
+        ****/
         // Since we can't get to UDPTransport.getRequestedPort() from here, just use
         // configured port. If UDPTransport is changed such that the actual port
         // could be different, fix this.
@@ -115,24 +115,24 @@ public class ConfigNetHelper extends HelperBase {
     }
 
     public String getTcpAutoPortChecked(int mode) {
-        String port = _context.getProperty(PROP_I2NP_NTCP_PORT); 
+        String port = _context.getProperty(PROP_I2NP_NTCP_PORT);
         boolean specified = port != null && port.length() > 0;
         if ((mode == 1 && specified) ||
-            (mode == 2 && !specified))
+                (mode == 2 && !specified))
             return CHECKED;
         return "";
     }
 
     public String getTcpAutoIPChecked(int mode) {
         boolean enabled = TransportManager.isNTCPEnabled(_context);
-        String hostname = _context.getProperty(PROP_I2NP_NTCP_HOSTNAME); 
+        String hostname = _context.getProperty(PROP_I2NP_NTCP_HOSTNAME);
         boolean specified = hostname != null && hostname.length() > 0;
         String auto = _context.getProperty(PROP_I2NP_NTCP_AUTO_IP, "true");
         if ((mode == 0 && (!specified) && auto.equals("false") && enabled) ||
-            (mode == 1 && specified && auto.equals("false") && enabled) ||
-            (mode == 2 && auto.equals("true") && enabled) ||
-            (mode == 3 && auto.equals("always") && enabled) ||
-            (mode == 4 && !enabled))
+                (mode == 1 && specified && auto.equals("false") && enabled) ||
+                (mode == 2 && auto.equals("true") && enabled) ||
+                (mode == 3 && auto.equals("always") && enabled) ||
+                (mode == 4 && !enabled))
             return CHECKED;
         return "";
     }
@@ -143,11 +143,11 @@ public class ConfigNetHelper extends HelperBase {
         boolean hidden = _context.router().isHidden();
         String sources = _context.getProperty(UDPTransport.PROP_SOURCES, UDPTransport.DEFAULT_SOURCES);
         if ((mode == 0 && sources.equals("ssu") && !hidden) ||
-            (mode == 1 && specified && !hidden) ||
-            (mode == 2 && hidden) ||
-            (mode == 3 && sources.equals("local,upnp,ssu") && !hidden) ||
-            (mode == 4 && sources.equals("local,ssu") && !hidden) ||
-            (mode == 5 && sources.equals("upnp,ssu") && !hidden))
+                (mode == 1 && specified && !hidden) ||
+                (mode == 2 && hidden) ||
+                (mode == 3 && sources.equals("local,upnp,ssu") && !hidden) ||
+                (mode == 4 && sources.equals("local,ssu") && !hidden) ||
+                (mode == 5 && sources.equals("upnp,ssu") && !hidden))
             return CHECKED;
         return "";
     }
@@ -187,13 +187,13 @@ public class ConfigNetHelper extends HelperBase {
     public String getRequireIntroductionsChecked() {
         Status status = _context.commSystem().getStatus();
         switch (status) {
-            case OK:
-            case UNKNOWN:
-                return getChecked(UDPTransport.PROP_FORCE_INTRODUCERS);
-            case DIFFERENT:
-            case REJECT_UNSOLICITED:
-            default:
-                return CHECKED;
+        case OK:
+        case UNKNOWN:
+            return getChecked(UDPTransport.PROP_FORCE_INTRODUCERS);
+        case DIFFERENT:
+        case REJECT_UNSOLICITED:
+        default:
+            return CHECKED;
         }
     }
 
@@ -213,7 +213,7 @@ public class ConfigNetHelper extends HelperBase {
             return CHECKED;
         return "";
     }
-    
+
     public Set<String> getAddresses() {
         // exclude local, include IPv6, exclude IPv6 temporary
         return Addresses.getAddresses(false, false, true, false);
@@ -256,8 +256,8 @@ public class ConfigNetHelper extends HelperBase {
         }
         if (!addrs.isEmpty()) {
             buf.append("\n<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
-               .append(_t("Add hostname or IP"))
-               .append(": ");
+            .append(_t("Add hostname or IP"))
+            .append(": ");
         }
         buf.append("<input name=\"udpHost1\" type=\"text\" size=\"16\" >");
         return buf.toString();
@@ -305,54 +305,54 @@ public class ConfigNetHelper extends HelperBase {
         return Integer.toString(Math.round(_context.bandwidthLimiter().getOutboundBurstKBytesPerSecond() * 1.024f));
     }
 
-/*
-    public String getInboundBurstFactorBox() {
-        int numSeconds = 1;
-        int rateKBps = _context.bandwidthLimiter().getInboundBurstKBytesPerSecond();
-        int burstKB = _context.bandwidthLimiter().getInboundBurstBytes() / 1024;
-        if ( (rateKBps > 0) && (burstKB > 0) )
-            numSeconds = burstKB / rateKBps;
-        return getBurstFactor(numSeconds, "inboundburstfactor");
-    }
-    
-    public String getOutboundBurstFactorBox() {
-        int numSeconds = 1;
-        int rateKBps = _context.bandwidthLimiter().getOutboundBurstKBytesPerSecond();
-        int burstKB = _context.bandwidthLimiter().getOutboundBurstBytes() / 1024;
-        if ( (rateKBps > 0) && (burstKB > 0) )
-            numSeconds = burstKB / rateKBps;
-        return getBurstFactor(numSeconds, "outboundburstfactor");
-    }
-    
-    private static String getBurstFactor(int numSeconds, String name) {
-        StringBuilder buf = new StringBuilder(256);
-        buf.append("<select name=\"").append(name).append("\">\n");
-        boolean found = false;
-        for (int i = 10; i <= 70; i += 10) {
-            int val = i;
-            if (i == 70) {
-                if (found)
-                    break;
-                else
-                    val = numSeconds;
-            }
-            buf.append("<option value=\"").append(val).append("\" ");
-            if (val == numSeconds) {
-                buf.append("selected ");
-                found = true;
-            }
-            buf.append(">");
-            buf.append(val).append(" seconds</option>\n");
+    /*
+        public String getInboundBurstFactorBox() {
+            int numSeconds = 1;
+            int rateKBps = _context.bandwidthLimiter().getInboundBurstKBytesPerSecond();
+            int burstKB = _context.bandwidthLimiter().getInboundBurstBytes() / 1024;
+            if ( (rateKBps > 0) && (burstKB > 0) )
+                numSeconds = burstKB / rateKBps;
+            return getBurstFactor(numSeconds, "inboundburstfactor");
         }
-        buf.append("</select>\n");
-        return buf.toString();
-    }
-    
-    public String getEnableLoadTesting() {
-        return "";
-    }
-****/
-    
+
+        public String getOutboundBurstFactorBox() {
+            int numSeconds = 1;
+            int rateKBps = _context.bandwidthLimiter().getOutboundBurstKBytesPerSecond();
+            int burstKB = _context.bandwidthLimiter().getOutboundBurstBytes() / 1024;
+            if ( (rateKBps > 0) && (burstKB > 0) )
+                numSeconds = burstKB / rateKBps;
+            return getBurstFactor(numSeconds, "outboundburstfactor");
+        }
+
+        private static String getBurstFactor(int numSeconds, String name) {
+            StringBuilder buf = new StringBuilder(256);
+            buf.append("<select name=\"").append(name).append("\">\n");
+            boolean found = false;
+            for (int i = 10; i <= 70; i += 10) {
+                int val = i;
+                if (i == 70) {
+                    if (found)
+                        break;
+                    else
+                        val = numSeconds;
+                }
+                buf.append("<option value=\"").append(val).append("\" ");
+                if (val == numSeconds) {
+                    buf.append("selected ");
+                    found = true;
+                }
+                buf.append(">");
+                buf.append(val).append(" seconds</option>\n");
+            }
+            buf.append("</select>\n");
+            return buf.toString();
+        }
+
+        public String getEnableLoadTesting() {
+            return "";
+        }
+    ****/
+
     public String getSharePercentageBox() {
         int pct = (int) (100 * _context.router().getSharePercentage());
         StringBuilder buf = new StringBuilder(256);

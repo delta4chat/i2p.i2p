@@ -1,9 +1,9 @@
 package net.i2p.router.client;
 /*
  * free (adj.): unencumbered; not under the control of others
- * Written by jrandom in 2003 and released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
- * It probably won't make your computer catch on fire, or eat 
+ * Written by jrandom in 2003 and released into the public domain
+ * with no warranty of any kind, either expressed or implied.
+ * It probably won't make your computer catch on fire, or eat
  * your children, but it might.  Use at your own risk.
  *
  */
@@ -57,7 +57,7 @@ class LocalClientManager extends ClientManager {
      */
     @Override
     void distributeMessage(ClientConnectionRunner sender, Destination fromDest, Destination toDest, Payload payload,
-                           MessageId msgId, long messageNonce, long expiration, int flags) { 
+                           MessageId msgId, long messageNonce, long expiration, int flags) {
         // check if there is a runner for it
         ClientConnectionRunner runner = getRunner(toDest);
         if (runner != null) {
@@ -100,9 +100,13 @@ class LocalClientManager extends ClientManager {
                            Destination fromDest, Destination toDest, Payload payload,
                            MessageId msgId, long messageNonce) {
             super(ctx.simpleTimer2());
-            s = sender; r = runner; fd = fromDest;
-            td = toDest; pl = payload;
-            id = msgId; nonce = messageNonce;
+            s = sender;
+            r = runner;
+            fd = fromDest;
+            td = toDest;
+            pl = payload;
+            id = msgId;
+            nonce = messageNonce;
         }
 
         public void timeReached() {
@@ -122,32 +126,32 @@ class LocalClientManager extends ClientManager {
             while ((c = g.getopt()) != -1) {
                 switch (c) {
 
-                    case 'd':
-                        dropX1000 = (int) (1000 * Double.parseDouble(g.getOptarg()));
-                        if (dropX1000 < 0 || dropX1000 >= 100 * 1000)
-                            error = true;
-                        break;
-
-                    case 'j':
-                        jitter = Integer.parseInt(g.getOptarg());
-                        if (jitter < 0)
-                            error = true;
-                        break;
-
-                    case 'l':
-                        latency = Integer.parseInt(g.getOptarg());
-                        if (latency < 0)
-                            error = true;
-                        break;
-
-                    case 'p':
-                        port = Integer.parseInt(g.getOptarg());
-                        if (port < 1024 || port > 65535)
-                            error = true;
-                        break;
-
-                    default:
+                case 'd':
+                    dropX1000 = (int) (1000 * Double.parseDouble(g.getOptarg()));
+                    if (dropX1000 < 0 || dropX1000 >= 100 * 1000)
                         error = true;
+                    break;
+
+                case 'j':
+                    jitter = Integer.parseInt(g.getOptarg());
+                    if (jitter < 0)
+                        error = true;
+                    break;
+
+                case 'l':
+                    latency = Integer.parseInt(g.getOptarg());
+                    if (latency < 0)
+                        error = true;
+                    break;
+
+                case 'p':
+                    port = Integer.parseInt(g.getOptarg());
+                    if (port < 1024 || port > 65535)
+                        error = true;
+                    break;
+
+                default:
+                    error = true;
                 }
             }
         } catch (RuntimeException e) {
@@ -169,7 +173,10 @@ class LocalClientManager extends ClientManager {
         mgr.latency = latency;
         mgr.start();
         System.out.println("Listening on port " + port);
-        try { Thread.sleep(60*60*1000); } catch (InterruptedException ie) {}
+        try {
+            Thread.sleep(60*60*1000);
+        }
+        catch (InterruptedException ie) {}
         System.out.println("Done listening on port " + port);
     }
 

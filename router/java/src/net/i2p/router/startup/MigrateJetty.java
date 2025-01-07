@@ -61,7 +61,7 @@ abstract class MigrateJetty {
     private static final String BASE_CONTEXT = "contexts/base-context.xml";
     private static final String CGI_CONTEXT = "contexts/cgi-context.xml";
     private static final String PROP_JETTY9_MIGRATED = "router.startup.jetty9.migrated";
-    
+
     /**
      *  For each entry in apps, if the main class is an old Jetty class,
      *  migrate it to the new Jetty class, and update the Jetty config files.
@@ -108,14 +108,14 @@ abstract class MigrateJetty {
                 xmlFile = new File(ctx.getAppDir(), xml);
             if (!xmlFile.exists()) {
                 System.err.println("WARNING: XML file " + xmlFile +
-                               " not found, cannot migrate " + client);
+                                   " not found, cannot migrate " + client);
                 continue;
             }
             File eepsite = xmlFile.getParentFile();
             boolean ok = backupFile(xmlFile, backupSuffix);
             if (!ok) {
                 System.err.println("WARNING: Failed to backup up XML file " + xmlFile +
-                               ", cannot migrate " + client);
+                                   ", cannot migrate " + client);
                 continue;
             }
             if (app.className.equals(NEW_CLASS)) {
@@ -151,7 +151,7 @@ abstract class MigrateJetty {
             if (baseEep.equals(eepsite)) {
                 // non-split directory yet not an upgrade? shouldn't happen
                 System.err.println("Eepsite in non-split directory " + eepsite +
-                               ", cannot migrate " + client);
+                                   ", cannot migrate " + client);
                 continue;
             }
             // jetty.xml existed before in jetty 5 version, so check this new file
@@ -159,14 +159,14 @@ abstract class MigrateJetty {
             File baseContext = new File(baseEep, BASE_CONTEXT);
             if (!baseContext.exists()) {
                 System.err.println("WARNING: Cannot find new XML file template " + baseContext +
-                               ", cannot migrate " + client);
+                                   ", cannot migrate " + client);
                 continue;
             }
             String newPath = eepsite.getAbsolutePath() + File.separatorChar;
             ok = WorkingDir.migrateJettyXml(baseEep, eepsite, "jetty.xml", "./eepsite/", newPath);
             if (!ok) {
                 System.err.println("WARNING: Failed to modify XML file " + xmlFile +
-                               ", cannot migrate " + client);
+                                   ", cannot migrate " + client);
                 continue;
             }
             // now we're committed, so don't check any more failure codes
@@ -199,16 +199,16 @@ abstract class MigrateJetty {
                 try {
                     ClientAppConfig.writeClientAppConfig(ctx, apps);
                     System.err.println("WARNING: Migrated clients config file " + cfgFile +
-                                   " from Jetty 5/6 " + OLD_CLASS + '/' + OLD_CLASS_6 +
-                                   " to Jetty 9 " + NEW_CLASS);
+                                       " from Jetty 5/6 " + OLD_CLASS + '/' + OLD_CLASS_6 +
+                                       " to Jetty 9 " + NEW_CLASS);
                 } catch (IOException ioe) {
                     ok = false;
                 }
             }
             if (!ok) {
                 System.err.println("WARNING: Failed to migrate clients config file " + cfgFile +
-                               " from Jetty 5/6 " + OLD_CLASS + '/' + OLD_CLASS_6 +
-                               " to Jetty 9 " + NEW_CLASS);
+                                   " from Jetty 5/6 " + OLD_CLASS + '/' + OLD_CLASS_6 +
+                                   " to Jetty 9 " + NEW_CLASS);
             }
         }
         if (jetty9success)
@@ -253,8 +253,8 @@ abstract class MigrateJetty {
                 if (s.endsWith("\r"))
                     s = s.substring(0, s.length() - 1);
                 if (s.contains("Modified by I2P migration script for Jetty 9.") ||
-                    s.contains("This configuration supports Jetty 9.") ||
-                    s.contains("http://www.eclipse.org/jetty/configure_9_0.dtd")) {
+                        s.contains("This configuration supports Jetty 9.") ||
+                        s.contains("http://www.eclipse.org/jetty/configure_9_0.dtd")) {
                     if (!modified)
                         break;
                     // else we've modified it twice?
@@ -308,7 +308,7 @@ abstract class MigrateJetty {
                     out.println("            </Arg>");
                     modified = true;
                     continue;
-             // SSL starts here
+                    // SSL starts here
                 } else if (s.contains("org.eclipse.jetty.http.ssl.SslContextFactory")) {
                     s = s.replace("org.eclipse.jetty.http.ssl.SslContextFactory", "org.eclipse.jetty.util.ssl.SslContextFactory");
                     out.println("  <!-- Modified by I2P migration script for Jetty 9. Do not remove this line -->");
@@ -378,7 +378,7 @@ abstract class MigrateJetty {
                 } else if (s.contains("<Set name=\"TrustStore\">")) {
                     s = s.replace("<Set name=\"TrustStore\">", "<Set name=\"TrustStorePath\">");
                     modified = true;
-             // SSL ends here
+                    // SSL ends here
                 } else if (s.contains("class=\"org.eclipse.jetty.deploy.providers.ContextProvider\">")) {
                     // WebAppProvider now also does what ContextProvider used to do
                     out.println("        <!-- Modified by I2P migration script for Jetty 9. Do not remove this line -->");
@@ -417,7 +417,10 @@ abstract class MigrateJetty {
             }
             return false;
         } finally {
-            if (in != null) try { in.close(); } catch (IOException ioe) {}
+            if (in != null) try {
+                    in.close();
+                }
+                catch (IOException ioe) {}
             if (out != null) out.close();
         }
         if (modified) {

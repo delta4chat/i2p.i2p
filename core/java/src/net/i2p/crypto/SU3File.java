@@ -40,7 +40,7 @@ import net.i2p.util.SecureFileOutputStream;
 /**
  *  Succesor to the ".sud" format used in TrustedUpdate.
  *  Format specified in http://www.i2p2.de/updates
- * 
+ *
  *  @since 0.9.8
  */
 public class SU3File {
@@ -116,8 +116,12 @@ public class SU3File {
             this.code = code;
             this.name = name;
         }
-        public int getCode() { return code; }
-        public String getName() { return name; }
+        public int getCode() {
+            return code;
+        }
+        public String getName() {
+            return name;
+        }
 
         /** @return null if not supported */
         public static ContentType getByCode(int code) {
@@ -255,7 +259,10 @@ public class SU3File {
             ioe.initCause(dfe);
             throw ioe;
         } finally {
-            if (in != null) try { in.close(); } catch (IOException ioe) {}
+            if (in != null) try {
+                    in.close();
+                }
+                catch (IOException ioe) {}
         }
     }
 
@@ -457,7 +464,10 @@ public class SU3File {
             ioe.initCause(dfe);
             throw ioe;
         } finally {
-            if (in != null) try { in.close(); } catch (IOException ioe) {}
+            if (in != null) try {
+                    in.close();
+                }
+                catch (IOException ioe) {}
             if (out != null) {
                 // We will generally be reading this file right back in,
                 // so do a POSIX flush and sync to ensure it will be there.
@@ -465,7 +475,10 @@ public class SU3File {
                     out.flush();
                     out.getFD().sync();
                 } catch (IOException ioe) {}
-                try { out.close(); } catch (IOException ioe) {}
+                try {
+                    out.close();
+                }
+                catch (IOException ioe) {}
             }
             if (migrateTo != null && !rv)
                 migrateTo.delete();
@@ -553,8 +566,14 @@ public class SU3File {
             ioe.initCause(dfe);
             throw ioe;
         } finally {
-            if (in != null) try { in.close(); } catch (IOException ioe) {}
-            if (out != null) try { out.close(); } catch (IOException ioe) {}
+            if (in != null) try {
+                    in.close();
+                }
+                catch (IOException ioe) {}
+            if (out != null) try {
+                    out.close();
+                }
+                catch (IOException ioe) {}
             if (!ok)
                 _file.delete();
         }
@@ -564,7 +583,7 @@ public class SU3File {
      * Parses command line arguments when this class is used from the command
      * line.
      * Exits 1 on failure so this can be used in scripts.
-     * 
+     *
      * @param args Command line parameters.
      */
     public static void main(String[] args) {
@@ -582,7 +601,7 @@ public class SU3File {
             Getopt g = new Getopt("SU3File", args, "t:c:f:k:xp:r:");
             int c;
             while ((c = g.getopt()) != -1) {
-              switch (c) {
+                switch (c) {
                 case 't':
                     stype = g.getOptarg();
                     break;
@@ -614,8 +633,8 @@ public class SU3File {
                 case '?':
                 case ':':
                 default:
-                  error = true;
-              }
+                    error = true;
+                }
             }
 
             int idx = g.getOptind();
@@ -687,7 +706,7 @@ public class SU3File {
             if (!t.isAvailable())
                 continue;
             if (t == SigType.EdDSA_SHA512_Ed25519 ||
-                t == SigType.RedDSA_SHA512_Ed25519)
+                    t == SigType.RedDSA_SHA512_Ed25519)
                 continue; // not supported by keytool, and does double hashing right now
             buf.append("      ").append(t).append("\t(code: ").append(t.getCode()).append(')');
             if (t.getCode() == DEFAULT_SIG_CODE)
@@ -727,7 +746,7 @@ public class SU3File {
                 return ContentType.getByCode(code);
             } catch (NumberFormatException nfe) {
                 return null;
-             }
+            }
         }
     }
 
@@ -773,7 +792,7 @@ public class SU3File {
                 ftype = "EXE";
             else
                 ftype = Integer.toString(file._fileType);
-                System.out.println("FileType: " + ftype);
+            System.out.println("FileType: " + ftype);
             return !versionString.equals("");
         } catch (IOException ioe) {
             ioe.printStackTrace();
@@ -787,7 +806,7 @@ public class SU3File {
      *  @since 0.9.9
      */
     private static final boolean bulkSignCLI(String stype, String ctype, String dir,
-                                     String privateKeyFile, String version, String signerName, String kspass) {
+            String privateKeyFile, String version, String signerName, String kspass) {
         File d = new File(dir);
         if (!d.isDirectory()) {
             System.out.println("Directory does not exist: " + d);
@@ -974,28 +993,28 @@ public class SU3File {
                     outFile = outFile.substring(0, outFile.length() - 4);
                 String sfx;
                 switch (file.getFileType()) {
-                  case TYPE_ZIP:
+                case TYPE_ZIP:
                     sfx = ".zip";
                     break;
-                  case TYPE_XML:
+                case TYPE_XML:
                     sfx = ".xml";
                     break;
-                  case TYPE_HTML:
+                case TYPE_HTML:
                     sfx = ".html";
                     break;
-                  case TYPE_XML_GZ:
+                case TYPE_XML_GZ:
                     sfx = ".xml.gz";
                     break;
-                  case TYPE_TXT_GZ:
+                case TYPE_TXT_GZ:
                     sfx = ".txt.gz";
                     break;
-                  case TYPE_DMG:
+                case TYPE_DMG:
                     sfx = ".dmg";
                     break;
-                  case TYPE_EXE:
+                case TYPE_EXE:
                     sfx = ".exe";
                     break;
-                  default:
+                default:
                     sfx = ".extracted";
                     break;
                 }
@@ -1076,7 +1095,7 @@ public class SU3File {
         OutputStream out = null;
         try {
             Object[] rv =  KeyStoreUtil.createKeysAndCRL(ksFile, kspass, alias,
-                                                         alias, "I2P", 3652, type, keypw);
+                           alias, "I2P", 3652, type, keypw);
             X509Certificate cert = (X509Certificate) rv[2];
             out = new SecureFileOutputStream(publicKeyFile);
             CertUtil.exportCert(cert, out);
@@ -1095,7 +1114,10 @@ public class SU3File {
             ioe.printStackTrace();
             return false;
         } finally {
-            if (out != null) try { out.close(); } catch (IOException ioe) {}
+            if (out != null) try {
+                    out.close();
+                }
+                catch (IOException ioe) {}
         }
         return true;
     }

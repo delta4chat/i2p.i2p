@@ -21,53 +21,53 @@ import org.cybergarage.upnp.control.*;
 
 public class StateVariableData extends NodeData
 {
-	public StateVariableData() 
-	{
-	}
+    public StateVariableData()
+    {
+    }
 
-	////////////////////////////////////////////////
-	// value
-	////////////////////////////////////////////////
+    ////////////////////////////////////////////////
+    // value
+    ////////////////////////////////////////////////
 
-	private String value = "";
+    private String value = "";
 
-	public String getValue() {
-		return value;
-	}
+    public String getValue() {
+        return value;
+    }
 
-	public void setValue(String value) {
-		this.value = value;
-	}
+    public void setValue(String value) {
+        this.value = value;
+    }
 
-	////////////////////////////////////////////////
-	// QueryListener
-	////////////////////////////////////////////////
+    ////////////////////////////////////////////////
+    // QueryListener
+    ////////////////////////////////////////////////
 
-	private QueryListener queryListener = null;
+    private QueryListener queryListener = null;
 
-	public QueryListener getQueryListener() {
-		return queryListener;
-	}
+    public QueryListener getQueryListener() {
+        return queryListener;
+    }
 
-	public void setQueryListener(QueryListener queryListener) {
-		this.queryListener = queryListener;
-	}
-	
-	////////////////////////////////////////////////
-	// QueryResponse
-	////////////////////////////////////////////////
+    public void setQueryListener(QueryListener queryListener) {
+        this.queryListener = queryListener;
+    }
 
-	private QueryResponse queryRes = null;
+    ////////////////////////////////////////////////
+    // QueryResponse
+    ////////////////////////////////////////////////
 
-	public QueryResponse getQueryResponse() 
-	{
-		return queryRes;
-	}
+    private QueryResponse queryRes = null;
 
-	public void setQueryResponse(QueryResponse res) 
-	{
-		queryRes = res;
-	}
+    public QueryResponse getQueryResponse()
+    {
+        return queryRes;
+    }
+
+    public void setQueryResponse(QueryResponse res)
+    {
+        queryRes = res;
+    }
 
 }
 

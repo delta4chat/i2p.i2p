@@ -1,9 +1,9 @@
 package net.i2p.router;
 /*
  * free (adj.): unencumbered; not under the control of others
- * Written by jrandom in 2003 and released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
- * It probably won't make your computer catch on fire, or eat 
+ * Written by jrandom in 2003 and released into the public domain
+ * with no warranty of any kind, either expressed or implied.
+ * It probably won't make your computer catch on fire, or eat
  * your children, but it might.  Use at your own risk.
  *
  */
@@ -26,8 +26,8 @@ import net.i2p.util.I2PThread;
 import net.i2p.util.Log;
 
 /**
- * Manage a pool of inbound InNetMessages.  This pool is filled by the 
- * Network communication system when it receives messages, and various jobs 
+ * Manage a pool of inbound InNetMessages.  This pool is filled by the
+ * Network communication system when it receives messages, and various jobs
  * periodically retrieve them for processing.
  *
  * Actually, this doesn't 'pool' anything, since DISPATCH_DIRECT = true.
@@ -46,7 +46,7 @@ public class InNetMessagePool implements Service {
 
     private boolean _alive;
     private final boolean _dispatchThreaded;
-    
+
     /** Make this >= the max I2NP message type number (currently 24) */
     private static final int MAX_I2NP_MESSAGE_TYPE = 31;
 
@@ -84,7 +84,7 @@ public class InNetMessagePool implements Service {
     private static final String PROP_DISPATCH_DIRECT = "router.dispatchDirect";
     private static final boolean DEFAULT_DISPATCH_DIRECT = true;
     private final boolean DISPATCH_DIRECT;
-    
+
     public InNetMessagePool(RouterContext context) {
         _context = context;
         _handlerJobBuilders = new HandlerJobBuilder[MAX_I2NP_MESSAGE_TYPE + 1];
@@ -109,7 +109,7 @@ public class InNetMessagePool implements Service {
         _context.statManager().createRateStat("inNetPool.duplicate", "How often do we receive a duplicate message", "InNetPool", new long[] { 60*60*1000l });
         _context.statManager().createRateStat("inNetPool.droppedDbLookupResponseMessage", "How often we drop a slow-to-arrive db search response", "InNetPool", new long[] { 60*60*1000l });
     }
-  
+
     /**
      * @return previous builder for this message type, or null
      * @throws ArrayIndexOutOfBoundsException if i2npMessageType is greater than MAX_I2NP_MESSAGE_TYPE
@@ -122,7 +122,7 @@ public class InNetMessagePool implements Service {
 
     /**
      * Add a new message to the pool.
-     * If there is 
+     * If there is
      * a HandlerJobBuilder for the inbound message type, the message is loaded
      * into a job created by that builder and queued up for processing instead
      * (though if the builder doesn't create a job, it is added to the pool).
@@ -138,10 +138,10 @@ public class InNetMessagePool implements Service {
     public int add(I2NPMessage messageBody, RouterIdentity fromRouter, Hash fromRouterHash) {
         return add(messageBody, fromRouter, fromRouterHash, 0);
     }
-    
+
     /**
      * Add a new message to the pool.
-     * If there is 
+     * If there is
      * a HandlerJobBuilder for the inbound message type, the message is loaded
      * into a job created by that builder and queued up for processing instead
      * (though if the builder doesn't create a job, it is added to the pool)
@@ -163,19 +163,19 @@ public class InNetMessagePool implements Service {
         final boolean doHistory = history.getDoLog();
 
         long exp = messageBody.getMessageExpiration();
-        
+
         if (_log.shouldDebug())
-                _log.debug("Rcvd" 
-                          + " ID " + messageBody.getUniqueId()
-                          + " xor-ed ID " + messageBody.getUniqueId(msgIDBloomXor)
-                          + " exp. " + new Date(exp)
-                          + " type " + messageBody.getClass().getSimpleName());
-        
+            _log.debug("Rcvd"
+                       + " ID " + messageBody.getUniqueId()
+                       + " xor-ed ID " + messageBody.getUniqueId(msgIDBloomXor)
+                       + " exp. " + new Date(exp)
+                       + " type " + messageBody.getClass().getSimpleName());
+
         //if (messageBody instanceof DataMessage) {
         //    _context.statManager().getStatLog().addData(fromRouterHash.toBase64().substring(0,6), "udp.floodDataReceived", 1, 0);
         //    return 0;
         //}
-        
+
         int type = messageBody.getType();
         String invalidReason = null;
         if (type == TunnelDataMessage.MESSAGE_TYPE) {
@@ -185,56 +185,56 @@ public class InNetMessagePool implements Service {
         } else {
             invalidReason = _context.messageValidator().validateMessage(messageBody.getUniqueId(msgIDBloomXor), exp);
         }
-        
+
         if (invalidReason != null) {
             int level = Log.WARN;
             //if (messageBody instanceof TunnelCreateMessage)
             //    level = Log.INFO;
             if (_log.shouldLog(level))
                 _log.log(level, "Dropping message ID [" + messageBody.getUniqueId() + " xor-ed: " + messageBody.getUniqueId(msgIDBloomXor)
-                          + " expiring on " + exp + "]: " + messageBody.getClass().getSimpleName() + ": " + invalidReason 
-                          + ": " + messageBody);
+                         + " expiring on " + exp + "]: " + messageBody.getClass().getSimpleName() + ": " + invalidReason
+                         + ": " + messageBody);
             _context.statManager().addRateData("inNetPool.dropped", 1);
             // FIXME not necessarily a duplicate, could be expired too long ago / too far in future
             _context.statManager().addRateData("inNetPool.duplicate", 1);
             if (doHistory) {
                 history.droppedOtherMessage(messageBody, (fromRouter != null ? fromRouter.calculateHash() : fromRouterHash));
-                history.messageProcessingError(messageBody.getUniqueId(msgIDBloomXor), 
-                                                                messageBody.getClass().getSimpleName(), 
-                                                                "Duplicate/expired");
+                history.messageProcessingError(messageBody.getUniqueId(msgIDBloomXor),
+                                               messageBody.getClass().getSimpleName(),
+                                               "Duplicate/expired");
             }
             return -1;
         }
 
         boolean jobFound = false;
         boolean allowMatches = true;
-        
-        switch (type) { 
-          case TunnelGatewayMessage.MESSAGE_TYPE:
+
+        switch (type) {
+        case TunnelGatewayMessage.MESSAGE_TYPE:
             shortCircuitTunnelGateway(messageBody);
             allowMatches = false;
             break;
 
-          case TunnelDataMessage.MESSAGE_TYPE:
+        case TunnelDataMessage.MESSAGE_TYPE:
             shortCircuitTunnelData(messageBody, fromRouterHash);
             allowMatches = false;
             break;
 
-          // If a DSM has a reply job, run the DSM inline
-          // so the entry is stored in the netdb before the reply job runs.
-          // FloodOnlyLookupMatchJob no longer stores the entry
-          case DatabaseStoreMessage.MESSAGE_TYPE:
+        // If a DSM has a reply job, run the DSM inline
+        // so the entry is stored in the netdb before the reply job runs.
+        // FloodOnlyLookupMatchJob no longer stores the entry
+        case DatabaseStoreMessage.MESSAGE_TYPE:
             List<OutNetMessage> origMessages = _context.messageRegistry().getOriginalMessages(messageBody);
             HandlerJobBuilder dsmbuilder = _handlerJobBuilders[DatabaseStoreMessage.MESSAGE_TYPE];
             Job dsmjob = dsmbuilder.createJob(messageBody, fromRouter, fromRouterHash);
             int sz = origMessages.size();
             if (sz > 0) {
-               DatabaseStoreMessage dbsm = (DatabaseStoreMessage) messageBody;
-               dbsm.setReceivedAsReply();
-               // DSM inline, reply jobs on queue
-               if (dsmjob != null)
-                   dsmjob.runJob();
-               for (int i = 0; i < sz; i++) {
+                DatabaseStoreMessage dbsm = (DatabaseStoreMessage) messageBody;
+                dbsm.setReceivedAsReply();
+                // DSM inline, reply jobs on queue
+                if (dsmjob != null)
+                    dsmjob.runJob();
+                for (int i = 0; i < sz; i++) {
                     OutNetMessage omsg = origMessages.get(i);
                     ReplyJob job = omsg.getOnReplyJob();
                     if (job != null) {
@@ -257,9 +257,9 @@ public class InNetMessagePool implements Service {
                     }
                 }
             } else {
-               // DSM on queue, no reply jobs
-               if (dsmjob != null)
-                   _context.jobQueue().addJob(dsmjob);
+                // DSM on queue, no reply jobs
+                if (dsmjob != null)
+                    _context.jobQueue().addJob(dsmjob);
             }
             allowMatches = false;
             if (_log.shouldLog(Log.DEBUG))
@@ -269,17 +269,17 @@ public class InNetMessagePool implements Service {
                            + " message: " + messageBody);
             break;
 
-          default:
+        default:
             // why don't we allow type 0? There used to be a message of type 0 long ago...
             if ( (type > 0) && (type < _handlerJobBuilders.length) ) {
                 HandlerJobBuilder builder = _handlerJobBuilders[type];
 
                 if (_log.shouldLog(Log.DEBUG))
-                    _log.debug("Add msg to the pool - builder: " + builder 
+                    _log.debug("Add msg to the pool - builder: " + builder
                                + " type: " + messageBody.getClass().getSimpleName());
 
                 if (builder != null) {
-                    Job job = builder.createJob(messageBody, fromRouter, 
+                    Job job = builder.createJob(messageBody, fromRouter,
                                                 fromRouterHash);
                     if (job != null) {
                         _context.jobQueue().addJob(job);
@@ -298,13 +298,13 @@ public class InNetMessagePool implements Service {
 
             if (replies <= 0) {
                 // not handled as a reply
-                if (!jobFound) { 
+                if (!jobFound) {
                     // was not handled via HandlerJobBuilder
                     if (doHistory)
                         history.droppedOtherMessage(messageBody, (fromRouter != null ? fromRouter.calculateHash() : fromRouterHash));
 
-                    switch (type) { 
-                      case DeliveryStatusMessage.MESSAGE_TYPE:
+                    switch (type) {
+                    case DeliveryStatusMessage.MESSAGE_TYPE:
                         // Avoid logging side effect from a horrible UDP EstablishmentManager hack
                         // We could set up a separate stat for it but don't bother for now
                         long arr = ((DeliveryStatusMessage)messageBody).getArrival();
@@ -316,7 +316,7 @@ public class InNetMessagePool implements Service {
                         }
                         break;
 
-                      case DatabaseSearchReplyMessage.MESSAGE_TYPE:
+                    case DatabaseSearchReplyMessage.MESSAGE_TYPE:
                         // This is normal.
                         // The three netdb selectors,
                         // FloodOnlyLookupSelector, IterativeLookupSelector, and SearchMessageSelector
@@ -325,16 +325,16 @@ public class InNetMessagePool implements Service {
                         // to fetch the responses.
                         break;
 
-                      case DatabaseLookupMessage.MESSAGE_TYPE:
+                    case DatabaseLookupMessage.MESSAGE_TYPE:
                         if (_log.shouldLog(Log.DEBUG))
                             _log.debug("Dropping netDb lookup due to throttling");
                         break;
 
-                      default:
+                    default:
                         if (_log.shouldLog(Log.WARN))
-                            _log.warn("Message expiring on " 
+                            _log.warn("Message expiring on "
                                       + messageBody.getMessageExpiration()
-                                      + " was not handled by a HandlerJobBuilder - DROPPING: " + messageBody, 
+                                      + " was not handled by a HandlerJobBuilder - DROPPING: " + messageBody,
                                       new Exception("f00!"));
                         _context.statManager().addRateData("inNetPool.dropped", 1);
                         break;
@@ -342,9 +342,9 @@ public class InNetMessagePool implements Service {
                 } else {
                     if (doHistory) {
                         String mtype = messageBody.getClass().getName();
-                        history.receiveMessage(mtype, messageBody.getUniqueId(msgIDBloomXor), 
-                                                             messageBody.getMessageExpiration(), 
-                                                             fromRouterHash, true);	
+                        history.receiveMessage(mtype, messageBody.getUniqueId(msgIDBloomXor),
+                                               messageBody.getMessageExpiration(),
+                                               fromRouterHash, true);
                     }
                     return 0; // no queue
                 }
@@ -353,13 +353,13 @@ public class InNetMessagePool implements Service {
 
         if (doHistory) {
             String mtype = messageBody.getClass().getName();
-            history.receiveMessage(mtype, messageBody.getUniqueId(msgIDBloomXor), 
-                                                 messageBody.getMessageExpiration(), 
-                                                 fromRouterHash, true);	
+            history.receiveMessage(mtype, messageBody.getUniqueId(msgIDBloomXor),
+                                   messageBody.getMessageExpiration(),
+                                   fromRouterHash, true);
         }
         return 0; // no queue
     }
-    
+
     public int handleReplies(I2NPMessage messageBody) {
         List<OutNetMessage> origMessages = _context.messageRegistry().getOriginalMessages(messageBody);
         int sz = origMessages.size();
@@ -375,7 +375,7 @@ public class InNetMessagePool implements Service {
             OutNetMessage omsg = origMessages.get(i);
             ReplyJob job = omsg.getOnReplyJob();
             //if (_log.shouldLog(Log.DEBUG))
-            //    _log.debug("Original message [" + i + "] " + omsg.getReplySelector() 
+            //    _log.debug("Original message [" + i + "] " + omsg.getReplySelector()
             //               + " : " + omsg + ": reply job: " + job);
 
             if (job != null) {
@@ -385,17 +385,17 @@ public class InNetMessagePool implements Service {
         }
         return sz;
     }
-    
+
     // the following short circuits the tunnel dispatching - i'm not sure whether
     // we'll want to run the dispatching in jobs or whether it shuold go inline with
     // others and/or on other threads (e.g. transport threads).  lets try 'em both.
-    
+
     private void shortCircuitTunnelGateway(I2NPMessage messageBody) {
         if (DISPATCH_DIRECT) {
             doShortCircuitTunnelGateway(messageBody);
         } else {
-            synchronized (_pendingGatewayMessages) { 
-                _pendingGatewayMessages.add(messageBody); 
+            synchronized (_pendingGatewayMessages) {
+                _pendingGatewayMessages.add(messageBody);
                 _pendingGatewayMessages.notifyAll();
             }
             if (!_dispatchThreaded)
@@ -408,12 +408,12 @@ public class InNetMessagePool implements Service {
         //    _log.debug("Shortcut dispatch tunnelGateway message " + messageBody);
         _context.tunnelDispatcher().dispatch((TunnelGatewayMessage)messageBody);
     }
-    
+
     private void shortCircuitTunnelData(I2NPMessage messageBody, Hash from) {
         if (DISPATCH_DIRECT) {
             doShortCircuitTunnelData(messageBody, from);
         } else {
-            synchronized (_pendingDataMessages) { 
+            synchronized (_pendingDataMessages) {
                 _pendingDataMessages.add(messageBody);
                 _pendingDataMessagesFrom.add(from);
                 _pendingDataMessages.notifyAll();
@@ -428,14 +428,17 @@ public class InNetMessagePool implements Service {
         //    _log.debug("Shortcut dispatch tunnelData message " + messageBody);
         _context.tunnelDispatcher().dispatch((TunnelDataMessage)messageBody, from);
     }
-    
+
     public void renderStatusHTML(Writer out) {}
 
     /** does nothing since we aren't threaded */
-    public synchronized void restart() { 
-        shutdown(); 
-        try { Thread.sleep(100); } catch (InterruptedException ie) {}
-        startup(); 
+    public synchronized void restart() {
+        shutdown();
+        try {
+            Thread.sleep(100);
+        }
+        catch (InterruptedException ie) {}
+        startup();
     }
 
     /** does nothing since we aren't threaded */
@@ -449,7 +452,7 @@ public class InNetMessagePool implements Service {
             }
         }
     }
-    
+
     /** does nothing since we aren't threaded */
     public synchronized void startup() {
         _alive = true;
@@ -464,14 +467,16 @@ public class InNetMessagePool implements Service {
             gw.start();
         }
     }
-    
+
     /** unused unless DISPATCH_DIRECT == false */
     private class SharedShortCircuitDataJob extends JobImpl {
         public SharedShortCircuitDataJob(RouterContext ctx) {
             super(ctx);
         }
-        public String getName() { return "Dispatch tunnel participant message"; }
-        public void runJob() { 
+        public String getName() {
+            return "Dispatch tunnel participant message";
+        }
+        public void runJob() {
             int remaining = 0;
             I2NPMessage msg = null;
             Hash from = null;
@@ -483,7 +488,7 @@ public class InNetMessagePool implements Service {
                 remaining = _pendingDataMessages.size();
             }
             if (msg != null)
-                doShortCircuitTunnelData(msg, from); 
+                doShortCircuitTunnelData(msg, from);
             if (remaining > 0)
                 getContext().jobQueue().addJob(SharedShortCircuitDataJob.this);
         }
@@ -494,8 +499,10 @@ public class InNetMessagePool implements Service {
         public SharedShortCircuitGatewayJob(RouterContext ctx) {
             super(ctx);
         }
-        public String getName() { return "Dispatch tunnel gateway message"; }
-        public void runJob() { 
+        public String getName() {
+            return "Dispatch tunnel gateway message";
+        }
+        public void runJob() {
             I2NPMessage msg = null;
             int remaining = 0;
             synchronized (_pendingGatewayMessages) {
@@ -504,12 +511,12 @@ public class InNetMessagePool implements Service {
                 remaining = _pendingGatewayMessages.size();
             }
             if (msg != null)
-                doShortCircuitTunnelGateway(msg); 
+                doShortCircuitTunnelGateway(msg);
             if (remaining > 0)
                 getContext().jobQueue().addJob(SharedShortCircuitGatewayJob.this);
         }
     }
-    
+
     /** unused unless router.dispatchThreaded=true */
     private class TunnelGatewayDispatcher implements Runnable {
         public void run() {
@@ -529,7 +536,7 @@ public class InNetMessagePool implements Service {
                         _context.statManager().addRateData("pool.dispatchGatewayTime", elapsed);
                     }
                 } catch (InterruptedException ie) {
-                    
+
                 } catch (OutOfMemoryError oome) {
                     throw oome;
                 } catch (RuntimeException e) {
@@ -562,7 +569,7 @@ public class InNetMessagePool implements Service {
                         _context.statManager().addRateData("pool.dispatchDataTime", elapsed);
                     }
                 } catch (InterruptedException ie) {
-                    
+
                 } catch (OutOfMemoryError oome) {
                     throw oome;
                 } catch (RuntimeException e) {

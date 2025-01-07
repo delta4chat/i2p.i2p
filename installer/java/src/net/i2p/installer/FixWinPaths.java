@@ -21,7 +21,7 @@ import java.io.PrintStream;
  * Usage: <code>FixWinPaths [WrapperConfigFile]</code>
  * @since 0.9.5
  */
-public class FixWinPaths{
+public class FixWinPaths {
     public static void main(String args[]) {
         if(args.length != 1) {
             System.err.println("Usage: FixWinPaths [wrapper.conf]\r\n");

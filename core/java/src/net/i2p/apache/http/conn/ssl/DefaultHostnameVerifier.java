@@ -93,7 +93,7 @@ public final class DefaultHostnameVerifier implements HostnameVerifier {
     }
 
     public final void verify(
-            final String host, final X509Certificate cert) throws SSLException {
+        final String host, final X509Certificate cert) throws SSLException {
         final boolean ipv4 = InetAddressUtils.isIPv4Address(host);
         final boolean ipv6 = InetAddressUtils.isIPv6Address(host);
         final int subjectType = ipv4 || ipv6 ? IP_ADDRESS_TYPE : DNS_NAME_TYPE;
@@ -113,7 +113,7 @@ public final class DefaultHostnameVerifier implements HostnameVerifier {
             final String cn = extractCN(subjectPrincipal.getName(X500Principal.RFC2253));
             if (cn == null) {
                 throw new SSLException("Certificate subject for <" + host + "> doesn't contain " +
-                        "a common name and does not have alternative names");
+                                       "a common name and does not have alternative names");
             }
             matchCN(host, cn, this.publicSuffixMatcher);
         }
@@ -127,7 +127,7 @@ public final class DefaultHostnameVerifier implements HostnameVerifier {
             }
         }
         throw new SSLException("Certificate for <" + host + "> doesn't match any " +
-                "of the subject alternative names: " + subjectAlts);
+                               "of the subject alternative names: " + subjectAlts);
     }
 
     static void matchIPv6Address(final String host, final List<String> subjectAlts) throws SSLException {
@@ -140,7 +140,7 @@ public final class DefaultHostnameVerifier implements HostnameVerifier {
             }
         }
         throw new SSLException("Certificate for <" + host + "> doesn't match any " +
-                "of the subject alternative names: " + subjectAlts);
+                               "of the subject alternative names: " + subjectAlts);
     }
 
     static void matchDNSName(final String host, final List<String> subjectAlts,
@@ -154,14 +154,14 @@ public final class DefaultHostnameVerifier implements HostnameVerifier {
             }
         }
         throw new SSLException("Certificate for <" + host + "> doesn't match any " +
-                "of the subject alternative names: " + subjectAlts);
+                               "of the subject alternative names: " + subjectAlts);
     }
 
     static void matchCN(final String host, final String cn,
-                 final PublicSuffixMatcher publicSuffixMatcher) throws SSLException {
+                        final PublicSuffixMatcher publicSuffixMatcher) throws SSLException {
         if (!matchIdentityStrict(host, cn, publicSuffixMatcher)) {
             throw new SSLException("Certificate for <" + host + "> doesn't match " +
-                    "common name of the certificate subject: " + cn);
+                                   "common name of the certificate subject: " + cn);
         }
     }
 
@@ -170,7 +170,7 @@ public final class DefaultHostnameVerifier implements HostnameVerifier {
             return false;
         }
         return host.endsWith(domainRoot) && (host.length() == domainRoot.length()
-                || host.charAt(host.length() - domainRoot.length() - 1) == '.');
+                                             || host.charAt(host.length() - domainRoot.length() - 1) == '.');
     }
 
     private static boolean matchIdentity(final String host, final String identity,
@@ -200,7 +200,7 @@ public final class DefaultHostnameVerifier implements HostnameVerifier {
             // Additional sanity checks on content selected by wildcard can be done here
             if (strict) {
                 final String remainder = host.substring(
-                        prefix.length(), host.length() - suffix.length());
+                                             prefix.length(), host.length() - suffix.length());
                 if (remainder.contains(".")) {
                     return false;
                 }

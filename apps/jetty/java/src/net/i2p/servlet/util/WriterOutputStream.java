@@ -13,8 +13,12 @@ import java.io.Writer;
  */
 public class WriterOutputStream extends OutputStream {
     private final Writer _writer;
-    
-    public WriterOutputStream(Writer writer) { _writer = writer; }
 
-    public void write(int b) throws IOException { _writer.write(b); }
+    public WriterOutputStream(Writer writer) {
+        _writer = writer;
+    }
+
+    public void write(int b) throws IOException {
+        _writer.write(b);
+    }
 }

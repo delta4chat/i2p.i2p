@@ -49,7 +49,7 @@ import org.minidns.idna.MiniDnsIdna;
 public final class DnsName implements CharSequence, Serializable, Comparable<DnsName> {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1L;
 
@@ -420,7 +420,7 @@ public final class DnsName implements CharSequence, Serializable, Comparable<Dns
      * @throws IOException Should never happen.
      */
     public static DnsName parse(DataInputStream dis, byte[] data)
-            throws IOException {
+    throws IOException {
         int c = dis.readUnsignedByte();
         if ((c & 0xc0) == 0xc0) {
             c = ((c & 0x3f) << 8) + dis.readUnsignedByte();
@@ -451,7 +451,7 @@ public final class DnsName implements CharSequence, Serializable, Comparable<Dns
      * @throws IllegalStateException on cycles.
      */
     private static DnsName parse(byte[] data, int offset, HashSet<Integer> jumps)
-            throws IllegalStateException {
+    throws IllegalStateException {
         int c = data[offset] & 0xff;
         if ((c & 0xc0) == 0xc0) {
             c = ((c & 0x3f) << 8) + (data[offset + 1] & 0xff);

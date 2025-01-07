@@ -14,7 +14,7 @@ import net.i2p.router.TunnelInfo;
 import net.i2p.router.networkdb.kademlia.MessageWrapper.OneTimeSession;
 
 /**
- * Coordinate the info that the tunnel creator keeps track of, including what 
+ * Coordinate the info that the tunnel creator keeps track of, including what
  * peers are in the tunnel and what their configuration is
  *
  * See PooledTunnelCreatorConfig for the non-abstract class
@@ -48,7 +48,7 @@ public abstract class TunnelCreatorConfig implements TunnelInfo {
     private final byte[][] _AESReplyIVs;
     // short record OBEP only
     private OneTimeSession _garlicReplyKeys;
-    
+
     /**
      *  IV length for {@link #getAESReplyIV}
      *  @since 0.9.48 moved from HopConfig
@@ -57,8 +57,8 @@ public abstract class TunnelCreatorConfig implements TunnelInfo {
 
     // Make configurable? - but can't easily get to pool options from here
     private static final int MAX_CONSECUTIVE_TEST_FAILURES = 3;
-    
-    /** 
+
+    /**
      * For exploratory only (null destination)
      * @param length 1 minimum (0 hop is length 1)
      */
@@ -66,7 +66,7 @@ public abstract class TunnelCreatorConfig implements TunnelInfo {
         this(ctx, length, isInbound, null);
     }
 
-    /** 
+    /**
      * @param length 1 minimum (0 hop is length 1)
      * @param destination null for exploratory
      */
@@ -84,40 +84,54 @@ public abstract class TunnelCreatorConfig implements TunnelInfo {
         _AESReplyKeys = new SessionKey[length];
         _AESReplyIVs = new byte[length][];
     }
-    
+
     /**
      *  How many hops are there in the tunnel?
      *  INCLUDING US.
      *  i.e. one more than the TunnelCreatorConfig length.
      */
-    public int getLength() { return _config.length; }
-    
-    public Properties getOptions() { return null; }
-    
-    /** 
+    public int getLength() {
+        return _config.length;
+    }
+
+    public Properties getOptions() {
+        return null;
+    }
+
+    /**
      * retrieve the config for the given hop.  the gateway is
      * hop 0.
      */
-    public HopConfig getConfig(int hop) { return _config[hop]; }
+    public HopConfig getConfig(int hop) {
+        return _config[hop];
+    }
 
     /**
-     * retrieve the tunnelId that the given hop receives messages on.  
+     * retrieve the tunnelId that the given hop receives messages on.
      * the gateway is hop 0.
      *
      */
-    public TunnelId getReceiveTunnelId(int hop) { return _config[hop].getReceiveTunnel(); }
-    
+    public TunnelId getReceiveTunnelId(int hop) {
+        return _config[hop].getReceiveTunnel();
+    }
+
     /**
-     * retrieve the tunnelId that the given hop sends messages on.  
+     * retrieve the tunnelId that the given hop sends messages on.
      * the gateway is hop 0.
      *
      */
-    public TunnelId getSendTunnelId(int hop) { return _config[hop].getSendTunnel(); }
+    public TunnelId getSendTunnelId(int hop) {
+        return _config[hop].getSendTunnel();
+    }
 
     /** retrieve the peer at the given hop.  the gateway is hop 0 */
-    public Hash getPeer(int hop) { return _peers[hop]; }
-    public void setPeer(int hop, Hash peer) { _peers[hop] = peer; }
-    
+    public Hash getPeer(int hop) {
+        return _peers[hop];
+    }
+    public void setPeer(int hop, Hash peer) {
+        _peers[hop] = peer;
+    }
+
     /**
      *  For convenience
      *  @return getPeer(0)
@@ -146,34 +160,54 @@ public abstract class TunnelCreatorConfig implements TunnelInfo {
     }
 
     /** is this an inbound tunnel? */
-    public boolean isInbound() { return _isInbound; }
+    public boolean isInbound() {
+        return _isInbound;
+    }
 
     /**
      *  If this is a client tunnel, what destination is it for?
      *  @return null for exploratory
      */
-    public Hash getDestination() { return _destination; }
-    
-    public long getExpiration() { return _expiration; }
-    public void setExpiration(long when) { _expiration = when; }
-    
+    public Hash getDestination() {
+        return _destination;
+    }
+
+    public long getExpiration() {
+        return _expiration;
+    }
+    public void setExpiration(long when) {
+        _expiration = when;
+    }
+
     /** component ordering in the new style request */
-    public List<Integer> getReplyOrder() { return _order; }
-    public void setReplyOrder(List<Integer> order) { _order = order; }
+    public List<Integer> getReplyOrder() {
+        return _order;
+    }
+    public void setReplyOrder(List<Integer> order) {
+        _order = order;
+    }
 
     /** new style reply message id */
-    public long getReplyMessageId() { return _replyMessageId; }
-    public void setReplyMessageId(long id) { _replyMessageId = id; }
-    
+    public long getReplyMessageId() {
+        return _replyMessageId;
+    }
+    public void setReplyMessageId(long id) {
+        _replyMessageId = id;
+    }
+
     /** take note of a message being pumped through this tunnel */
-    public synchronized void incrementProcessedMessages() { _messagesProcessed++; }
-    public synchronized int getProcessedMessagesCount() { return _messagesProcessed; }
+    public synchronized void incrementProcessedMessages() {
+        _messagesProcessed++;
+    }
+    public synchronized int getProcessedMessagesCount() {
+        return _messagesProcessed;
+    }
 
     /**
      *  This calls profile manager tunnelDataPushed1m() for each peer
      */
-    public synchronized void incrementVerifiedBytesTransferred(int bytes) { 
-        _verifiedBytesTransferred += bytes; 
+    public synchronized void incrementVerifiedBytesTransferred(int bytes) {
+        _verifiedBytesTransferred += bytes;
         _peakThroughputCurrentTotal += bytes;
         long now = System.currentTimeMillis();
         long timeSince = now - _peakThroughputLastCoallesce;
@@ -193,23 +227,25 @@ public abstract class TunnelCreatorConfig implements TunnelInfo {
         }
     }
 
-    public synchronized long getVerifiedBytesTransferred() { return _verifiedBytesTransferred; }
-
-/**** unused
-    public synchronized double getPeakThroughputKBps() { 
-        double rv = 0;
-        for (int i = 0; i < THROUGHPUT_COUNT; i++)
-            rv += _peakThroughput[i];
-        rv /= (60d*1024d*THROUGHPUT_COUNT);
-        return rv;
+    public synchronized long getVerifiedBytesTransferred() {
+        return _verifiedBytesTransferred;
     }
 
-    public synchronized void setPeakThroughputKBps(double kBps) {
-        _peakThroughput[0] = kBps*60*1024;
-        //for (int i = 0; i < THROUGHPUT_COUNT; i++)
-        //    _peakThroughput[i] = kBps*60;
-    }
-****/
+    /**** unused
+        public synchronized double getPeakThroughputKBps() {
+            double rv = 0;
+            for (int i = 0; i < THROUGHPUT_COUNT; i++)
+                rv += _peakThroughput[i];
+            rv /= (60d*1024d*THROUGHPUT_COUNT);
+            return rv;
+        }
+
+        public synchronized void setPeakThroughputKBps(double kBps) {
+            _peakThroughput[0] = kBps*60*1024;
+            //for (int i = 0; i < THROUGHPUT_COUNT; i++)
+            //    _peakThroughput[i] = kBps*60;
+        }
+    ****/
 
     /**
      * The tunnel failed a test, so (maybe) stop using it
@@ -240,39 +276,51 @@ public abstract class TunnelCreatorConfig implements TunnelInfo {
      *
      * @since 0.9.53
      */
-    public boolean getTunnelFailed() { return _failures.get() > MAX_CONSECUTIVE_TEST_FAILURES; }
+    public boolean getTunnelFailed() {
+        return _failures.get() > MAX_CONSECUTIVE_TEST_FAILURES;
+    }
 
-    public int getTunnelFailures() { return _failures.get(); }
-    
+    public int getTunnelFailures() {
+        return _failures.get();
+    }
+
     public void testSuccessful(int ms) {
         _failures.set(0);
     }
-    
+
     /**
      *  Did we reuse this tunnel?
      *  @since 0.8.11
      */
-    public boolean wasReused() { return _reused; }
+    public boolean wasReused() {
+        return _reused;
+    }
 
     /**
      *  Note that we reused this tunnel
      *  @since 0.8.11
      */
-    public void setReused() { _reused = true; }
+    public void setReused() {
+        _reused = true;
+    }
 
     /**
      *  Outbound message priority - for outbound tunnels only
      *  @return -25 to +25, default 0
      *  @since 0.9.4
      */
-    public int getPriority() { return _priority; }
+    public int getPriority() {
+        return _priority;
+    }
 
     /**
      *  Outbound message priority - for outbound tunnels only
      *  @param priority -25 to +25, default 0
      *  @since 0.9.4
      */
-    public void setPriority(int priority) { _priority = priority; }
+    public void setPriority(int priority) {
+        _priority = priority;
+    }
 
     /**
      *  Key and IV to encrypt the reply sent for the tunnel creation crypto.
@@ -286,7 +334,7 @@ public abstract class TunnelCreatorConfig implements TunnelInfo {
         _AESReplyKeys[hop] = key;
         _AESReplyIVs[hop] = iv;
     }
-    
+
     /**
      *  Key to encrypt the reply sent for the tunnel creation crypto.
      *  Null for short build record.
@@ -295,7 +343,9 @@ public abstract class TunnelCreatorConfig implements TunnelInfo {
      *  @throws IllegalArgumentException if iv not 16 bytes
      *  @since 0.9.48 moved from HopConfig
      */
-    public SessionKey getAESReplyKey(int hop) { return _AESReplyKeys[hop]; }
+    public SessionKey getAESReplyKey(int hop) {
+        return _AESReplyKeys[hop];
+    }
 
     /**
      *  IV used to encrypt the reply sent for the tunnel creation crypto.
@@ -304,19 +354,25 @@ public abstract class TunnelCreatorConfig implements TunnelInfo {
      *  @return 16 bytes or null
      *  @since 0.9.48 moved from HopConfig
      */
-    public byte[] getAESReplyIV(int hop) { return _AESReplyIVs[hop]; }
+    public byte[] getAESReplyIV(int hop) {
+        return _AESReplyIVs[hop];
+    }
 
     /**
      *  Checksum for blank record
      *  @since 0.9.48
      */
-    public Hash getBlankHash() { return _blankHash; }
+    public Hash getBlankHash() {
+        return _blankHash;
+    }
 
     /**
      *  Checksum for blank record
      *  @since 0.9.48
      */
-    public void setBlankHash(Hash h) { _blankHash = h; }
+    public void setBlankHash(Hash h) {
+        _blankHash = h;
+    }
 
     /**
      *  Set ECIES reply key and IV
@@ -414,13 +470,13 @@ public abstract class TunnelCreatorConfig implements TunnelInfo {
             if (i + 1 < _peers.length)
                 buf.append("-->");
         }
-        
+
         buf.append(" exp. ").append(new Date(_expiration));
         if (_replyMessageId > 0)
             buf.append(" replyMsgID ").append(_replyMessageId);
         if (_messagesProcessed > 0)
             buf.append(" with ").append(_messagesProcessed).append("/").append(_verifiedBytesTransferred).append(" msgs/bytes");
-    
+
         int fails = _failures.get();
         if (fails > 0)
             buf.append(" with ").append(fails).append(" consec. failures");
@@ -434,13 +490,13 @@ public abstract class TunnelCreatorConfig implements TunnelInfo {
         StringBuilder buf = new StringBuilder(1024);
         buf.append(toString());
         for (int i = 0; i < _peers.length; i++) {
-             if (i == 0)
-                 buf.append("\nGW   ");
-             else if (i == _peers.length - 1)
-                 buf.append("\nEP   ");
-             else
-                 buf.append("\nHop ").append(i);
-             buf.append(": ").append(_config[i]);
+            if (i == 0)
+                buf.append("\nGW   ");
+            else if (i == _peers.length - 1)
+                buf.append("\nEP   ");
+            else
+                buf.append("\nHop ").append(i);
+            buf.append(": ").append(_config[i]);
         }
         if (_garlicReplyKeys != null) {
             buf.append("\nGarlic reply key: ").append(_garlicReplyKeys.key).append(" tag: ").append(_garlicReplyKeys.rtag);

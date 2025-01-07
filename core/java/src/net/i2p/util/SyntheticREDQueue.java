@@ -272,7 +272,7 @@ public class SyntheticREDQueue implements BandwidthEstimator {
      * Here we insert virtual null samples if necessary as in Westwood,
      * And use a very simple EWMA (exponential weighted moving average)
      * time-varying filter, as in kernel tcp_westwood.c
-     * 
+     *
      * @param time the time of the measurement
      * @param packets number of bytes acked
      * @param rtt current rtt
@@ -314,7 +314,7 @@ public class SyntheticREDQueue implements BandwidthEstimator {
      * Here we insert virtual null samples if necessary as in Westwood,
      * And use a very simple EWMA (exponential weighted moving average)
      * time-varying filter, as in kernel tcp_westwood.c
-     * 
+     *
      * @param time the time of the measurement
      * @param deltaT at least WESTWOOD_RTT_MIN
      */
@@ -361,14 +361,14 @@ public class SyntheticREDQueue implements BandwidthEstimator {
     @Override
     public synchronized String toString() {
         return "SREDQ[" +
-                //" _bKFiltered " + _bKFiltered +
-                //" _tAck " + _tAck + "; " +
-                //" _tQSize " + _tQSize +
-                ' ' + DataHelper.formatSize2Decimal((long) (_bKFiltered * 1000), false) +
-                "Bps, avg_qsize " +
-                DataHelper.formatSize2((long) _avgQSize, false) +
-                "B, limit " +
-                DataHelper.formatSize2Decimal((long) _bwBps, false) +
-                "Bps]";
+               //" _bKFiltered " + _bKFiltered +
+               //" _tAck " + _tAck + "; " +
+               //" _tQSize " + _tQSize +
+               ' ' + DataHelper.formatSize2Decimal((long) (_bKFiltered * 1000), false) +
+               "Bps, avg_qsize " +
+               DataHelper.formatSize2((long) _avgQSize, false) +
+               "B, limit " +
+               DataHelper.formatSize2Decimal((long) _bwBps, false) +
+               "Bps]";
     }
 }

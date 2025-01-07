@@ -55,7 +55,7 @@ public class StatsGenerator {
     public StatsGenerator(RouterContext context) {
         _context = context;
     }
-    
+
     public void generateStatsPage(Writer out, boolean showAll) throws IOException {
         StringBuilder buf = new StringBuilder(16*1024);
 
@@ -128,7 +128,7 @@ public class StatsGenerator {
         out.write("</div>");
         out.flush();
     }
-    
+
     private void renderFrequency(String name, StringBuilder buf) {
         FrequencyStat freq = _context.statManager().getFrequency(name);
         buf.append("<i>");
@@ -176,7 +176,7 @@ public class StatsGenerator {
         buf.append(ngettext("{0} event", "{0} events", (int) freq.getEventCount()));
         buf.append(")</li></ul><br>\n");
     }
-    
+
     private void renderRate(String name, StringBuilder buf, boolean showAll) {
         RateStat rate = _context.statManager().getRate(name);
         String d = rate.getDescription();
@@ -250,10 +250,10 @@ public class StatsGenerator {
             }
             if (curRate.getSummaryListener() != null) {
                 buf.append("<br><span class=\"statsViewGraphs\"><a href=\"graph?stat=").append(name)
-                   .append('.').append(periods[i]);
+                .append('.').append(periods[i]);
                 buf.append("&amp;w=600&amp;h=200\">").append(_t("Graph Data")).append("</a> - ");
                 buf.append(" <a href=\"graph?stat=").append(name)
-                   .append('.').append(periods[i]);
+                .append('.').append(periods[i]);
                 buf.append("&amp;w=600&amp;h=200&amp;showEvents=true\">").append(_t("Graph Event Count")).append("</a></span>");
                 // This can really blow up your browser if you click on it
                 //buf.append(" - <a href=\"viewstat.jsp?stat=").append(name);
@@ -271,7 +271,7 @@ public class StatsGenerator {
                    "</ul>" +
                    "<br>\n");
     }
-    
+
     private static void renderPeriod(StringBuilder buf, long period, String name) {
         buf.append("<b>");
         buf.append(DataHelper.formatDuration2(period));
@@ -279,21 +279,29 @@ public class StatsGenerator {
         buf.append(name);
         buf.append(":</b> ");
     }
-    
+
     private final static DecimalFormat _fmt = new DecimalFormat("###,##0.0##");
-    private final static String num(double num) { synchronized (_fmt) { return _fmt.format(num); } }
-    
+    private final static String num(double num) {
+        synchronized (_fmt) {
+            return _fmt.format(num);
+        }
+    }
+
     private final static DecimalFormat _pct = new DecimalFormat("#0.00%");
-    private final static String pct(double num) { synchronized (_pct) { return _pct.format(num); } }
+    private final static String pct(double num) {
+        synchronized (_pct) {
+            return _pct.format(num);
+        }
+    }
 
     /**
      *  @since 0.9.45
      */
     private String translateGroup(String group) {
-         String disp = groupNames.get(group);
-         if (disp != null)
-             group = disp;
-         return _t(group);
+        String disp = groupNames.get(group);
+        if (disp != null)
+            group = disp;
+        return _t(group);
     }
 
     /**

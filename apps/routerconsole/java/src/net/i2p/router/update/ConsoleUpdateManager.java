@@ -335,8 +335,8 @@ public class ConsoleUpdateManager implements UpdateManager, RouterApp {
                 synchronized(_activeCheckers) {
                     t = r.checker.check(type, r.method, id, current, maxWait);
                     if (t != null) {
-                         if (_log.shouldLog(Log.INFO))
-                             _log.info("Starting " + r, new Exception());
+                        if (_log.shouldLog(Log.INFO))
+                            _log.info("Starting " + r, new Exception());
                         _activeCheckers.add(t);
                         t.start();
                     }
@@ -378,8 +378,8 @@ public class ConsoleUpdateManager implements UpdateManager, RouterApp {
                 synchronized(_activeCheckers) {
                     UpdateTask t = r.checker.check(type, r.method, id, current, DEFAULT_CHECK_TIME);
                     if (t != null) {
-                         if (_log.shouldLog(Log.INFO))
-                             _log.info("Starting " + r, new Exception());
+                        if (_log.shouldLog(Log.INFO))
+                            _log.info("Starting " + r, new Exception());
                         _activeCheckers.add(t);
                         t.start();
                         break;
@@ -718,8 +718,8 @@ public class ConsoleUpdateManager implements UpdateManager, RouterApp {
      */
     public void register(Updater updater, UpdateType type, UpdateMethod method, int priority) {
         if ((type == ROUTER_SIGNED || type == ROUTER_UNSIGNED ||
-             type == ROUTER_SIGNED_SU3 || type == ROUTER_DEV_SU3) &&
-            NewsHelper.dontInstall(_context)) {
+                type == ROUTER_SIGNED_SU3 || type == ROUTER_DEV_SU3) &&
+                NewsHelper.dontInstall(_context)) {
             if (_log.shouldLog(Log.WARN))
                 _log.warn("Ignoring registration for " + type + ", router updates disabled");
             return;
@@ -902,7 +902,7 @@ public class ConsoleUpdateManager implements UpdateManager, RouterApp {
         if (type == ROUTER_SIGNED_SU3 && _cmgr != null) {
             NotificationService ns = (NotificationService) _cmgr.getRegisteredApp("desktopgui");
             if (ns != null) {
-                ns.notify("Router", null, Log.INFO, _t("Router"), 
+                ns.notify("Router", null, Log.INFO, _t("Router"),
                           _t("Update available") + ": " + _t("Version {0}", newVersion),
                           null);
             }
@@ -910,35 +910,35 @@ public class ConsoleUpdateManager implements UpdateManager, RouterApp {
 
         String msg = null;
         switch (type) {
-            case NEWS:
-            case NEWS_SU3:
-                break;
+        case NEWS:
+        case NEWS_SU3:
+            break;
 
-            case ROUTER_UNSIGNED:
-            case ROUTER_DEV_SU3:
-            case ROUTER_SIGNED:
-            case ROUTER_SIGNED_SU3:
-                if (shouldInstall() &&
+        case ROUTER_UNSIGNED:
+        case ROUTER_DEV_SU3:
+        case ROUTER_SIGNED:
+        case ROUTER_SIGNED_SU3:
+            if (shouldInstall() &&
                     !(isUpdateInProgress(ROUTER_SIGNED) ||
                       isUpdateInProgress(ROUTER_SIGNED_SU3) ||
                       isUpdateInProgress(ROUTER_DEV_SU3) ||
                       isUpdateInProgress(ROUTER_UNSIGNED))) {
-                    if (_log.shouldLog(Log.INFO))
-                        _log.info("Updating " + ui + " after notify");
-                    update_fromCheck(type, id, DEFAULT_MAX_TIME);
-                } else {
-                    if (_log.shouldLog(Log.INFO))
-                        _log.info("Not updating " + ui + ", update disabled or in progress");
-                }
-                // ConfigUpdateHandler, SummaryHelper, SummaryBarRenderer handle status display
-                break;
+                if (_log.shouldLog(Log.INFO))
+                    _log.info("Updating " + ui + " after notify");
+                update_fromCheck(type, id, DEFAULT_MAX_TIME);
+            } else {
+                if (_log.shouldLog(Log.INFO))
+                    _log.info("Not updating " + ui + ", update disabled or in progress");
+            }
+            // ConfigUpdateHandler, SummaryHelper, SummaryBarRenderer handle status display
+            break;
 
-            case PLUGIN:
-                msg = "<b>" + _t("New plugin version {0} is available", newVersion) + "</b>";
-                break;
+        case PLUGIN:
+            msg = "<b>" + _t("New plugin version {0} is available", newVersion) + "</b>";
+            break;
 
-            default:
-                break;
+        default:
+            break;
         }
         if (msg != null)
             finishStatus(msg);
@@ -1003,29 +1003,29 @@ public class ConsoleUpdateManager implements UpdateManager, RouterApp {
         }
         String msg = null;
         switch (task.getType()) {
-            case NEWS:
-            case NEWS_SU3:
-            case ROUTER_SIGNED:
-            case ROUTER_SIGNED_SU3:
-            case ROUTER_UNSIGNED:
-            case ROUTER_DEV_SU3:
-                // ConfigUpdateHandler, SummaryHelper, SummaryBarRenderer handle status display
-                break;
+        case NEWS:
+        case NEWS_SU3:
+        case ROUTER_SIGNED:
+        case ROUTER_SIGNED_SU3:
+        case ROUTER_UNSIGNED:
+        case ROUTER_DEV_SU3:
+            // ConfigUpdateHandler, SummaryHelper, SummaryBarRenderer handle status display
+            break;
 
-            case PLUGIN:
-                if (!success) {
-                    msg = _t("Update check failed for plugin {0}", task.getID());
-                    _log.logAlways(Log.WARN, msg);
-                    msg = "<b>" + msg + "</b>";
-                } else if (!newer) {
-                    msg = "<b>" + _t("No new version is available for plugin {0}", task.getID()) + "</b>";
-                }
-                /// else success.... message for that?
+        case PLUGIN:
+            if (!success) {
+                msg = _t("Update check failed for plugin {0}", task.getID());
+                _log.logAlways(Log.WARN, msg);
+                msg = "<b>" + msg + "</b>";
+            } else if (!newer) {
+                msg = "<b>" + _t("No new version is available for plugin {0}", task.getID()) + "</b>";
+            }
+            /// else success.... message for that?
 
-                break;
+            break;
 
-            default:
-                break;
+        default:
+            break;
         }
         if (msg != null) {
             finishStatus(msg);
@@ -1096,8 +1096,8 @@ public class ConsoleUpdateManager implements UpdateManager, RouterApp {
             if (va != null) {
                 UpdateTask next = retry(ui, va.sourceMap, toTry, DEFAULT_MAX_TIME);  // fixme old maxtime lost
                 if (next != null) {
-                   if (_log.shouldLog(Log.WARN))
-                       _log.warn("Retrying with " + next);
+                    if (_log.shouldLog(Log.WARN))
+                        _log.warn("Retrying with " + next);
                 }
             }
         }
@@ -1146,45 +1146,45 @@ public class ConsoleUpdateManager implements UpdateManager, RouterApp {
         boolean rv = false;
         UpdateType utype = task.getType();
         switch (utype) {
-            case TYPE_DUMMY:
-            case NEWS:
-            case NEWS_SU3:
-                rv = true;
-                break;
+        case TYPE_DUMMY:
+        case NEWS:
+        case NEWS_SU3:
+            rv = true;
+            break;
 
-            case ROUTER_SIGNED:
-                rv = handleRouterFile(task.getURI(), actualVersion, file, utype);
-                if (rv)
-                    notifyDownloaded(task.getType(), task.getID(), actualVersion);
-                break;
+        case ROUTER_SIGNED:
+            rv = handleRouterFile(task.getURI(), actualVersion, file, utype);
+            if (rv)
+                notifyDownloaded(task.getType(), task.getID(), actualVersion);
+            break;
 
-            case ROUTER_SIGNED_SU3:
-                rv = handleRouterFile(task.getURI(), actualVersion, file, utype);
-                if (rv)
-                    notifyDownloaded(task.getType(), task.getID(), actualVersion);
-                break;
+        case ROUTER_SIGNED_SU3:
+            rv = handleRouterFile(task.getURI(), actualVersion, file, utype);
+            if (rv)
+                notifyDownloaded(task.getType(), task.getID(), actualVersion);
+            break;
 
-            case ROUTER_UNSIGNED:
-                rv = handleUnsignedFile(task.getURI(), actualVersion, file);
-                if (rv) {
-                    _context.router().saveConfig(PROP_UNSIGNED_AVAILABLE, null);
-                    notifyDownloaded(task.getType(), task.getID(), actualVersion);
-                }
-                break;
+        case ROUTER_UNSIGNED:
+            rv = handleUnsignedFile(task.getURI(), actualVersion, file);
+            if (rv) {
+                _context.router().saveConfig(PROP_UNSIGNED_AVAILABLE, null);
+                notifyDownloaded(task.getType(), task.getID(), actualVersion);
+            }
+            break;
 
-            case ROUTER_DEV_SU3:
-                rv = handleRouterFile(task.getURI(), actualVersion, file, utype);
-                if (rv) {
-                    _context.router().saveConfig(PROP_DEV_SU3_AVAILABLE, null);
-                    notifyDownloaded(task.getType(), task.getID(), actualVersion);
-                }
-                break;
+        case ROUTER_DEV_SU3:
+            rv = handleRouterFile(task.getURI(), actualVersion, file, utype);
+            if (rv) {
+                _context.router().saveConfig(PROP_DEV_SU3_AVAILABLE, null);
+                notifyDownloaded(task.getType(), task.getID(), actualVersion);
+            }
+            break;
 
-            case PLUGIN:     // file handled in PluginUpdateRunner
-            default:         // assume Updater installed it
-                rv = true;
-                notifyInstalled(task.getType(), task.getID(), actualVersion);
-                break;
+        case PLUGIN:     // file handled in PluginUpdateRunner
+        default:         // assume Updater installed it
+            rv = true;
+            notifyInstalled(task.getType(), task.getID(), actualVersion);
+            break;
         }
         if (rv)
             _downloaders.remove(task);
@@ -1288,59 +1288,59 @@ public class ConsoleUpdateManager implements UpdateManager, RouterApp {
         }
 
         switch (type) {
-            case NEWS:
-            case NEWS_SU3:
-                // handled in NewsHandler
-                break;
+        case NEWS:
+        case NEWS_SU3:
+            // handled in NewsHandler
+            break;
 
-            case ROUTER_SIGNED:
-              { // avoid dup variables in next case
-                String URLs = _context.getProperty(ConfigUpdateHandler.PROP_UPDATE_URL, ConfigUpdateHandler.DEFAULT_UPDATE_URL);
-                StringTokenizer tok = new StringTokenizer(URLs, " ,\r\n");
-                List<URI> rv = new ArrayList<URI>();
-                while (tok.hasMoreTokens()) {
-                    try {
-                        rv.add(new URI(tok.nextToken().trim()));
-                    } catch (URISyntaxException use) {}
-                }
-                Collections.shuffle(rv, _context.random());
-                return rv;
-              }
+        case ROUTER_SIGNED:
+        {   // avoid dup variables in next case
+            String URLs = _context.getProperty(ConfigUpdateHandler.PROP_UPDATE_URL, ConfigUpdateHandler.DEFAULT_UPDATE_URL);
+            StringTokenizer tok = new StringTokenizer(URLs, " ,\r\n");
+            List<URI> rv = new ArrayList<URI>();
+            while (tok.hasMoreTokens()) {
+                try {
+                    rv.add(new URI(tok.nextToken().trim()));
+                } catch (URISyntaxException use) {}
+            }
+            Collections.shuffle(rv, _context.random());
+            return rv;
+        }
 
-            case ROUTER_SIGNED_SU3:
-                // handled in NewsFetcher
-                break;
+        case ROUTER_SIGNED_SU3:
+            // handled in NewsFetcher
+            break;
 
-            case ROUTER_UNSIGNED:
-                String url = _context.getProperty(ConfigUpdateHandler.PROP_ZIP_URL);
-                if (url != null) {
-                    try {
-                        return Collections.singletonList(new URI(url));
-                    } catch (URISyntaxException use) {}
-                }
-                break;
+        case ROUTER_UNSIGNED:
+            String url = _context.getProperty(ConfigUpdateHandler.PROP_ZIP_URL);
+            if (url != null) {
+                try {
+                    return Collections.singletonList(new URI(url));
+                } catch (URISyntaxException use) {}
+            }
+            break;
 
-            case ROUTER_DEV_SU3:
-                String url3 = _context.getProperty(ConfigUpdateHandler.PROP_DEV_SU3_URL);
-                if (url3 != null) {
-                    try {
-                        return Collections.singletonList(new URI(url3));
-                    } catch (URISyntaxException use) {}
-                }
-                break;
+        case ROUTER_DEV_SU3:
+            String url3 = _context.getProperty(ConfigUpdateHandler.PROP_DEV_SU3_URL);
+            if (url3 != null) {
+                try {
+                    return Collections.singletonList(new URI(url3));
+                } catch (URISyntaxException use) {}
+            }
+            break;
 
-            case PLUGIN:
-                Properties props = PluginStarter.pluginProperties(_context, id);
-                String xpi2pURL = props.getProperty("updateURL");
-                if (xpi2pURL != null) {
-                    try {
-                        return Collections.singletonList(new URI(xpi2pURL));
-                    } catch (URISyntaxException use) {}
-                }
-                break;
+        case PLUGIN:
+            Properties props = PluginStarter.pluginProperties(_context, id);
+            String xpi2pURL = props.getProperty("updateURL");
+            if (xpi2pURL != null) {
+                try {
+                    return Collections.singletonList(new URI(xpi2pURL));
+                } catch (URISyntaxException use) {}
+            }
+            break;
 
-             default:
-                break;
+        default:
+            break;
         }
         return Collections.emptyList();
     }
@@ -1491,7 +1491,7 @@ public class ConsoleUpdateManager implements UpdateManager, RouterApp {
      *  @return success
      */
     private boolean handlePluginFile(URI uri, String actualVersion, File sudFile) {
-       //////////////// handled elsewhere?
+        //////////////// handled elsewhere?
         return false;
     }
 
@@ -1592,7 +1592,10 @@ public class ConsoleUpdateManager implements UpdateManager, RouterApp {
         public final int priority;
 
         public RegisteredUpdater(Updater u, UpdateType t, UpdateMethod m, int priority) {
-            updater = u; type = t; method = m; this.priority = priority;
+            updater = u;
+            type = t;
+            method = m;
+            this.priority = priority;
         }
 
         /** reverse, highest priority first, ensure different ones are different */
@@ -1633,7 +1636,10 @@ public class ConsoleUpdateManager implements UpdateManager, RouterApp {
         public final int priority;
 
         public RegisteredChecker(Checker u, UpdateType t, UpdateMethod m, int priority) {
-            checker = u; type = t; method = m; this.priority = priority;
+            checker = u;
+            type = t;
+            method = m;
+            this.priority = priority;
         }
 
         /** reverse, highest priority first, ensure different ones are different */
@@ -1709,10 +1715,14 @@ public class ConsoleUpdateManager implements UpdateManager, RouterApp {
         }
 
         @Override
-        public int hashCode() { return version.hashCode(); }
+        public int hashCode() {
+            return version.hashCode();
+        }
 
         @Override
-        public boolean equals(Object o) { return (o instanceof Version) && version.equals(((Version)o).version); }
+        public boolean equals(Object o) {
+            return (o instanceof Version) && version.equals(((Version)o).version);
+        }
 
         @Override
         public String toString() {

@@ -30,10 +30,14 @@ class SingleSearchJob extends FloodOnlySearchJob {
     }
 
     @Override
-    public String getName() { return "NetDb search key from DSRM"; }
+    public String getName() {
+        return "NetDb search key from DSRM";
+    }
 
     @Override
-    public boolean shouldProcessDSRM() { return false; } // don't loop
+    public boolean shouldProcessDSRM() {
+        return false;    // don't loop
+    }
 
     @Override
     public void runJob() {
@@ -50,7 +54,7 @@ class SingleSearchJob extends FloodOnlySearchJob {
         dlm.setReplyTunnel(replyTunnel.getReceiveTunnelId(0));
         dlm.setSearchKey(_key);
         dlm.setSearchType(DatabaseLookupMessage.Type.RI);
-        
+
         if (_log.shouldLog(Log.INFO))
             _log.info(getJobId() + ": Single search for " + _key + " to " + _to);
         getContext().tunnelDispatcher().dispatchOutbound(dlm, outTunnel.getSendTunnelId(0), _to);

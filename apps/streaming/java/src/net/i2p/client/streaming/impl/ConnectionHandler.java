@@ -32,7 +32,7 @@ class ConnectionHandler {
     private volatile boolean _active;
     private int _acceptTimeout;
     private boolean _restartPending;
-    
+
     /** max time after receiveNewSyn() and before the matched accept() */
     private static final int DEFAULT_ACCEPT_TIMEOUT = 3*1000;
 
@@ -42,7 +42,7 @@ class ConnectionHandler {
      *  Don't make this too big because the removal by all the TimeoutSyns is O(n**2) - sortof.
      */
     private static final int MAX_QUEUE_SIZE = 64;
-    
+
     /** Creates a new instance of ConnectionHandler */
     public ConnectionHandler(I2PAppContext context, ConnectionManager mgr, SimpleTimer2 timer) {
         _context = context;
@@ -52,19 +52,19 @@ class ConnectionHandler {
         _synQueue = new LinkedBlockingQueue<Packet>(MAX_QUEUE_SIZE);
         _acceptTimeout = DEFAULT_ACCEPT_TIMEOUT;
     }
-    
+
     /**
      * The router told us it's going to restart.
      * Call instead of setActive(false).
      *
      * @since 0.9.34
      */
-    public synchronized void setRestartPending() { 
+    public synchronized void setRestartPending() {
         _restartPending = true;
         setActive(false);
     }
 
-    public synchronized void setActive(boolean active) { 
+    public synchronized void setActive(boolean active) {
         // FIXME active=false this only kills for one thread in accept()
         // if there are more, they won't get a poison packet.
         if (_log.shouldInfo())
@@ -75,7 +75,7 @@ class ConnectionHandler {
             _synQueue.clear();
         }
         boolean wasActive = _active;
-        _active = active; 
+        _active = active;
         if (wasActive && !active) {
             // stopping, clear any pending sockets
             _synQueue.clear();
@@ -83,10 +83,12 @@ class ConnectionHandler {
         }
     }
 
-    public boolean getActive() { return _active; }
-    
+    public boolean getActive() {
+        return _active;
+    }
+
     /**
-     * Non-SYN packets with a zero SendStreamID may also be queued here so 
+     * Non-SYN packets with a zero SendStreamID may also be queued here so
      * that they don't get thrown away while the SYN packet before it is queued.
      *
      * Additional overload protection may be required here...
@@ -124,15 +126,15 @@ class ConnectionHandler {
                 sendReset(packet);
         }
     }
-    
+
     /**
      * Receive an incoming connection (built from a received SYN)
-     * Non-SYN packets with a zero SendStreamID may also be queued here so 
+     * Non-SYN packets with a zero SendStreamID may also be queued here so
      * that they don't get thrown away while the SYN packet before it is queued.
      *
-     * @param timeoutMs max amount of time to wait for a connection (if less 
+     * @param timeoutMs max amount of time to wait for a connection (if less
      *                  than 1ms, wait indefinitely)
-     * @return connection received. Prior to 0.9.17, or null if there was a timeout or the 
+     * @return connection received. Prior to 0.9.17, or null if there was a timeout or the
      *                  handler was shut down. As of 0.9.17, never null.
      * @throws RouterRestartException (extends I2PException) if the router is apparently restarting, since 0.9.34
      * @throws ConnectException since 0.9.17, returned null before;
@@ -160,35 +162,35 @@ class ConnectionHandler {
                     throw new RouterRestartException();
                 throw new ConnectException("ServerSocket closed");
             }
-            
+
             Packet syn = null;
             while ( _active && syn == null) {
                 if (_log.shouldLog(Log.DEBUG))
-                    _log.debug("Accept("+ timeoutMs+"): active=" + _active + " queue: " 
+                    _log.debug("Accept("+ timeoutMs+"): active=" + _active + " queue: "
                                + _synQueue.size());
                 if (timeoutMs <= 0) {
                     try {
-                       syn = _synQueue.take(); // waits forever
+                        syn = _synQueue.take(); // waits forever
                     } catch (InterruptedException ie) {
-                       ConnectException ce = new ConnectException("Interrupted accept()");
-                       ce.initCause(ie);
-                       throw ce;
+                        ConnectException ce = new ConnectException("Interrupted accept()");
+                        ce.initCause(ie);
+                        throw ce;
                     }
                 } else {
                     long remaining = expiration - _context.clock().now();
                     // (dont think this applies anymore for LinkedBlockingQueue)
                     // BUGFIX
-                    // The specified amount of real time has elapsed, more or less. 
-                    // If timeout is zero, however, then real time is not taken into consideration 
+                    // The specified amount of real time has elapsed, more or less.
+                    // If timeout is zero, however, then real time is not taken into consideration
                     // and the thread simply waits until notified.
                     if (remaining < 1)
                         break;
                     try {
                         syn = _synQueue.poll(remaining, TimeUnit.MILLISECONDS); // waits the specified time max
                     } catch (InterruptedException ie) {
-                       ConnectException ce = new ConnectException("Interrupted accept()");
-                       ce.initCause(ie);
-                       throw ce;
+                        ConnectException ce = new ConnectException("Interrupted accept()");
+                        ce.initCause(ie);
+                        throw ce;
                     }
                     break;
                 }
@@ -252,7 +254,7 @@ class ConnectionHandler {
         } else {
             // log it here, just before we kill it - dest will be unknown
             if (I2PSocketManagerFull.pcapWriter != null &&
-                _context.getBooleanProperty(I2PSocketManagerFull.PROP_PCAP))
+                    _context.getBooleanProperty(I2PSocketManagerFull.PROP_PCAP))
                 packet.logTCPDump(null);
 
             // goodbye
@@ -290,17 +292,17 @@ class ConnectionHandler {
         // this just sends the packet - no retries or whatnot
         _manager.getPacketQueue().enqueue(reply);
     }
-    
+
     private class TimeoutSyn implements SimpleTimer.TimedEvent {
         private final Packet _synPacket;
 
         public TimeoutSyn(Packet packet) {
             _synPacket = packet;
         }
-        
+
         public void timeReached() {
             boolean removed = _synQueue.remove(_synPacket);
-            
+
             if (removed) {
                 if (_synPacket.isFlagSet(Packet.FLAG_SYNCHRONIZE)) {
                     if (_log.shouldLog(Log.WARN))
@@ -330,7 +332,9 @@ class ConnectionHandler {
         }
 
         @Override
-        public int getOptionalDelay() { return POISON_MAX_DELAY_REQUEST; }
+        public int getOptionalDelay() {
+            return POISON_MAX_DELAY_REQUEST;
+        }
 
         @Override
         public String toString() {

@@ -17,10 +17,10 @@ import net.i2p.util.SimpleByteCache;
  * @since 0.9.35 pulled out of EstablishState
  */
 abstract class EstablishBase implements EstablishState {
-    
+
     public static final VerifiedEstablishState VERIFIED = new VerifiedEstablishState();
     public static final FailedEstablishState FAILED = new FailedEstablishState();
-    
+
     protected final RouterContext _context;
     protected final Log _log;
 
@@ -55,7 +55,7 @@ abstract class EstablishBase implements EstablishState {
 
     protected final NTCPTransport _transport;
     protected final NTCPConnection _con;
-    
+
     protected static final int MIN_RI_SIZE = 387;
     protected static final int MAX_RI_SIZE = 3072;
 
@@ -139,7 +139,7 @@ abstract class EstablishBase implements EstablishState {
             _Y = null;
         } else {
             // OutboundNTCP2State does not extend this,
-                throw new IllegalStateException();
+            throw new IllegalStateException();
         }
 
         _e_hXY_tsB = new byte[HXY_TSB_PAD_SIZE];
@@ -165,7 +165,7 @@ abstract class EstablishBase implements EstablishState {
      * the EstablishState is responsible for passing it to NTCPConnection.
      */
     public synchronized void receive(ByteBuffer src) {
-        synchronized(_stateLock) {    
+        synchronized(_stateLock) {
             if (STATES_DONE.contains(_state))
                 throw new IllegalStateException(prefix() + "received unexpected data on " + _con);
         }
@@ -213,14 +213,18 @@ abstract class EstablishBase implements EstablishState {
     }
 
     /** Caller must synch. */
-    protected void fail(String reason) { fail(reason, null); }
+    protected void fail(String reason) {
+        fail(reason, null);
+    }
 
     /** Caller must synch. */
-    protected void fail(String reason, Exception e) { fail(reason, e, false); }
+    protected void fail(String reason, Exception e) {
+        fail(reason, e, false);
+    }
 
     /** Caller must synch. */
     protected void fail(String reason, Exception e, boolean bySkew) {
-        synchronized(_stateLock) {    
+        synchronized(_stateLock) {
             if (STATES_DONE.contains(_state))
                 return;
             changeState(State.CORRUPT);
@@ -257,7 +261,9 @@ abstract class EstablishBase implements EstablishState {
         }
     }
 
-    protected String prefix() { return toString(); }
+    protected String prefix() {
+        return toString();
+    }
 
     @Override
     public String toString() {
@@ -283,7 +289,9 @@ abstract class EstablishBase implements EstablishState {
             changeState(State.VERIFIED);
         }
 
-        public int getVersion() { return 1; }
+        public int getVersion() {
+            return 1;
+        }
 
         /*
          * @throws IllegalStateException always
@@ -302,7 +310,9 @@ abstract class EstablishBase implements EstablishState {
         }
 
         @Override
-        public String toString() { return "VerifiedEstablishState: ";}
+        public String toString() {
+            return "VerifiedEstablishState: ";
+        }
     }
 
     /**
@@ -315,7 +325,9 @@ abstract class EstablishBase implements EstablishState {
             changeState(State.CORRUPT);
         }
 
-        public int getVersion() { return 1; }
+        public int getVersion() {
+            return 1;
+        }
 
         /*
          * @throws IllegalStateException always
@@ -334,7 +346,9 @@ abstract class EstablishBase implements EstablishState {
         }
 
         @Override
-        public String toString() { return "FailedEstablishState: ";}
+        public String toString() {
+            return "FailedEstablishState: ";
+        }
     }
 
     /**

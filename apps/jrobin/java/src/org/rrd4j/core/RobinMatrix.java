@@ -24,7 +24,7 @@ class RobinMatrix implements Robin {
 
     RobinMatrix(Archive parentArc, RrdDoubleMatrix<Archive> values, RrdInt<Archive> pointer, int column) {
         this.parentArc = parentArc;
-        this.pointer = pointer; 
+        this.pointer = pointer;
         this.values = values;
         this.rows = values.getRows();
         this.column = column;
@@ -90,7 +90,7 @@ class RobinMatrix implements Robin {
     public void setValues(double... newValues) throws IOException {
         if (rows != newValues.length) {
             throw new IllegalArgumentException("Invalid number of robin values supplied (" + newValues.length +
-                    "), exactly " + rows + " needed");
+                                               "), exactly " + rows + " needed");
         }
         update(newValues);
     }

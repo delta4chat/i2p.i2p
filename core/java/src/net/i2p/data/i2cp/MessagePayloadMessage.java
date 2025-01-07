@@ -2,9 +2,9 @@ package net.i2p.data.i2cp;
 
 /*
  * free (adj.): unencumbered; not under the control of others
- * Written by jrandom in 2003 and released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
- * It probably won't make your computer catch on fire, or eat 
+ * Written by jrandom in 2003 and released into the public domain
+ * with no warranty of any kind, either expressed or implied.
+ * It probably won't make your computer catch on fire, or eat
  * your children, but it might.  Use at your own risk.
  *
  */
@@ -116,12 +116,12 @@ public class MessagePayloadMessage extends I2CPMessageImpl {
     protected byte[] doWriteMessage() throws I2CPMessageException, IOException {
         throw new UnsupportedOperationException();
     }
-    
+
     /**
-     * Write out the full message to the stream, including the 4 byte size and 1 
+     * Write out the full message to the stream, including the 4 byte size and 1
      * byte type header.
      *
-     * @throws IOException 
+     * @throws IOException
      */
     @Override
     public synchronized void writeMessage(OutputStream out) throws I2CPMessageException, IOException {

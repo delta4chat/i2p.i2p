@@ -92,7 +92,9 @@ public class ObjectCounterUnsafe<K> {
      */
     private static class Int {
         int c;
-        public Int(int i) { c = i; }
+        public Int(int i) {
+            c = i;
+        }
     }
 
     /**

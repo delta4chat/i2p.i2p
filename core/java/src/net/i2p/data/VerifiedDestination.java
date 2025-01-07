@@ -2,9 +2,9 @@ package net.i2p.data;
 
 /*
  * free (adj.): unencumbered; not under the control of others
- * Written by jrandom in 2003 and released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
- * It probably won't make your computer catch on fire, or eat 
+ * Written by jrandom in 2003 and released into the public domain
+ * with no warranty of any kind, either expressed or implied.
+ * It probably won't make your computer catch on fire, or eat
  * your children, but it might.  Use at your own risk.
  *
  */
@@ -54,13 +54,13 @@ public class VerifiedDestination extends Destination {
         if (_publicKey == null || _signingKey == null || _certificate == null)
             return false;
         switch (_certificate.getCertificateType()) {
-            case Certificate.CERTIFICATE_TYPE_NULL:
-            case Certificate.CERTIFICATE_TYPE_HIDDEN:
-                return allowNone;
-            case Certificate.CERTIFICATE_TYPE_HASHCASH:
-                return verifyHashCashCert();
-            case Certificate.CERTIFICATE_TYPE_SIGNED:
-                return verifySignedCert();
+        case Certificate.CERTIFICATE_TYPE_NULL:
+        case Certificate.CERTIFICATE_TYPE_HIDDEN:
+            return allowNone;
+        case Certificate.CERTIFICATE_TYPE_HASHCASH:
+            return verifyHashCashCert();
+        case Certificate.CERTIFICATE_TYPE_SIGNED:
+            return verifySignedCert();
         }
         return verifyUnknownCert();
     }

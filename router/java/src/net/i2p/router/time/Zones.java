@@ -114,18 +114,24 @@ class Zones {
         } catch (IOException ioe) {
             System.out.println("Error reading the continent file");
         } finally {
-            try { is.close(); } catch (IOException ioe) {}
-            if (br != null) try { br.close(); } catch (IOException ioe) {}
+            try {
+                is.close();
+            }
+            catch (IOException ioe) {}
+            if (br != null) try {
+                    br.close();
+                }
+                catch (IOException ioe) {}
         }
     }
 
-/****
-    public static void main(String args[]) {
-        Zones z = new Zones(I2PAppContext.getGlobalContext());
-        String tests[] = {"us", "US", "nz", "fr", "vU", "br", "cn", "ao", "A1", "foo" };
-        for (int i = 0; i < tests.length; i++) {
-            System.out.println(tests[i] + " : " + z.getZone(tests[i]));
+    /****
+        public static void main(String args[]) {
+            Zones z = new Zones(I2PAppContext.getGlobalContext());
+            String tests[] = {"us", "US", "nz", "fr", "vU", "br", "cn", "ao", "A1", "foo" };
+            for (int i = 0; i < tests.length; i++) {
+                System.out.println(tests[i] + " : " + z.getZone(tests[i]));
+            }
         }
-    }
-****/
+    ****/
 }

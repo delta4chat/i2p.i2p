@@ -427,7 +427,7 @@ public abstract class XmlTemplate {
     protected boolean isEmptyNode(Node node) {
         // comment node or empty text node
         return node.getNodeName().equals("#comment") ||
-                (node.getNodeName().equals("#text") && node.getNodeValue().trim().length() == 0);
+               (node.getNodeName().equals("#text") && node.getNodeValue().trim().length() == 0);
     }
 
     /**
@@ -443,23 +443,23 @@ public abstract class XmlTemplate {
         }
         Node[] childs = getChildNodes(parentNode);
         main:
-            for (Node child : childs) {
-                String childName = child.getNodeName();
-                for (int j = 0; j < allowedChildNames.length; j++) {
-                    if (allowedChildNames[j].equals(childName)) {
-                        // only one such tag is allowed
-                        allowedChildNames[j] = "<--removed-->";
-                        continue main;
-                    }
-                    else if (allowedChildNames[j].equals(childName + "*")) {
-                        // several tags allowed
-                        continue main;
-                    }
+        for (Node child : childs) {
+            String childName = child.getNodeName();
+            for (int j = 0; j < allowedChildNames.length; j++) {
+                if (allowedChildNames[j].equals(childName)) {
+                    // only one such tag is allowed
+                    allowedChildNames[j] = "<--removed-->";
+                    continue main;
                 }
-                if (!isEmptyNode(child)) {
-                    throw new IllegalArgumentException("Unexpected tag encountered: <" + childName + ">");
+                else if (allowedChildNames[j].equals(childName + "*")) {
+                    // several tags allowed
+                    continue main;
                 }
             }
+            if (!isEmptyNode(child)) {
+                throw new IllegalArgumentException("Unexpected tag encountered: <" + childName + ">");
+            }
+        }
         // everything is OK
         validatedNodes.add(parentNode);
     }

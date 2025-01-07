@@ -20,7 +20,7 @@ import net.i2p.router.web.HelperBase;
 
 public class ConfigKeyringHelper extends HelperBase {
     public ConfigKeyringHelper() {}
-    
+
     public String getSummary() {
         StringWriter sw = new StringWriter(4*1024);
         try {
@@ -43,8 +43,8 @@ public class ConfigKeyringHelper extends HelperBase {
         if (rv1 || rv2) {
             buf.append("\n<table id=\"addkeyring\"><tr><td align=\"right\">" +
                        "<input type=\"reset\" class=\"cancel\" value=\"").append(_t("Cancel")).append("\">" +
-                       "<input type=\"submit\" name=\"action\" class=\"delete\" value=\"").append(_t("Delete key")).append("\">" +
-                       "</td></tr></table>");
+                               "<input type=\"submit\" name=\"action\" class=\"delete\" value=\"").append(_t("Delete key")).append("\">" +
+                                       "</td></tr></table>");
         }
         out.write(buf.toString());
         out.flush();
@@ -61,7 +61,7 @@ public class ConfigKeyringHelper extends HelperBase {
         if (!local)
             buf.append("<th align=\"left\">").append(_t("Delete"));
         buf.append("<th align=\"left\">").append(_t("Destination"))
-           .append("<th align=\"left\">").append(_t("Name"));
+        .append("<th align=\"left\">").append(_t("Name"));
         if (!local)
             buf.append("<th align=\"left\">").append(_t("Type"));
         buf.append("<th align=\"left\">").append(_t("Encryption Key"));
@@ -167,7 +167,7 @@ public class ConfigKeyringHelper extends HelperBase {
         }
         if (!rv) {
             buf.append("<tr><td align=\"center\" colspan=\"").append(local ? '3' : '8').append("\"><i>")
-               .append(_t("none")).append("</i></td></tr>");
+            .append(_t("none")).append("</i></td></tr>");
         }
         buf.append("</table>\n");
         return rv;
@@ -175,8 +175,8 @@ public class ConfigKeyringHelper extends HelperBase {
 
     /** @since 0.9.41 */
     private static class BDComparator implements Comparator<BlindData>, Serializable {
-         public int compare(BlindData l, BlindData r) {
-             return l.toBase32().compareTo(r.toBase32());
+        public int compare(BlindData l, BlindData r) {
+            return l.toBase32().compareTo(r.toBase32());
         }
     }
 }

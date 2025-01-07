@@ -18,7 +18,9 @@ public class TunnelBuildMessage extends TunnelBuildMessageBase {
         super(context, records);
     }
 
-    public int getType() { return MESSAGE_TYPE; }
+    public int getType() {
+        return MESSAGE_TYPE;
+    }
 
     @Override
     public String toString() {

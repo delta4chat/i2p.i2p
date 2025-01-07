@@ -34,7 +34,7 @@ import net.i2p.util.Log;
  *  @since 0.9.35
  */
 class OutboundNTCP2State implements EstablishState {
-    
+
     private final RouterContext _context;
     private final Log _log;
     private final NTCPTransport _transport;
@@ -93,7 +93,7 @@ class OutboundNTCP2State implements EstablishState {
         VERIFIED,
         CORRUPT
     }
-    
+
     /**
      * @throws IllegalArgumentException on bad address in the con
      */
@@ -123,7 +123,7 @@ class OutboundNTCP2State implements EstablishState {
             throw new IllegalArgumentException("no NTCP2 IV");
         _bobIV = Base64.decode(s);
         if (_bobIV == null || _bobIV.length != IV_SIZE ||
-            DataHelper.eq(_bobIV, 0, ZEROKEY, 0, IV_SIZE))
+                DataHelper.eq(_bobIV, 0, ZEROKEY, 0, IV_SIZE))
             throw new IllegalArgumentException("bad NTCP2 IV");
     }
 
@@ -172,7 +172,9 @@ class OutboundNTCP2State implements EstablishState {
      *  Get the NTCP version
      *  @return 2
      */
-    public int getVersion() { return 2; }
+    public int getVersion() {
+        return 2;
+    }
 
     /**
      *  We are Alice.
@@ -214,14 +216,14 @@ class OutboundNTCP2State implements EstablishState {
         }
         byte[] bk = Base64.decode(s);
         if (bk == null || bk.length != KEY_SIZE ||
-            (bk[KEY_SIZE - 1] & 0x80) != 0 ||
-            DataHelper.eq(bk, 0, ZEROKEY, 0, KEY_SIZE)) {
+                (bk[KEY_SIZE - 1] & 0x80) != 0 ||
+                DataHelper.eq(bk, 0, ZEROKEY, 0, KEY_SIZE)) {
             fail("bad NTCP2 S: " + s);
             return;
         }
         _handshakeState.getRemotePublicKey().setPublicKey(bk, 0);
         _handshakeState.getLocalKeyPair().setKeys(_transport.getNTCP2StaticPrivkey(), 0,
-                                                  _transport.getNTCP2StaticPubkey(), 0);
+                _transport.getNTCP2StaticPubkey(), 0);
         // output to _tmp
         try {
             _handshakeState.start();
@@ -302,7 +304,7 @@ class OutboundNTCP2State implements EstablishState {
             long now = _context.clock().now();
             // rtt from sending #1 to receiving #2
             long rtt = now - _con.getCreated();
-            _peerSkew = (now - (tsB * 1000) - (rtt / 2) + 500) / 1000; 
+            _peerSkew = (now - (tsB * 1000) - (rtt / 2) + 500) / 1000;
             if (_peerSkew > MAX_SKEW || _peerSkew < 0 - MAX_SKEW) {
                 long diff = 1000 * Math.abs(_peerSkew);
                 if (_context.clock().getUpdatedSuccessfully()) {
@@ -321,7 +323,7 @@ class OutboundNTCP2State implements EstablishState {
                 _context.clock().setOffset(1000 * (0 - _peerSkew), true);
                 _peerSkew = 0;
                 _log.logAlways(Log.WARN, "NTP failure, NTCP adjusted clock by " + DataHelper.formatDuration(diff) +
-                                         " source router: " + _con.getRemotePeer().calculateHash().toBase64());
+                               " source router: " + _con.getRemotePeer().calculateHash().toBase64());
             }
             changeState(State.OB_GOT_HXY);
             _received = 0;
@@ -438,8 +440,8 @@ class OutboundNTCP2State implements EstablishState {
 
         if (_log.shouldDebug()) {
             _log.debug("Finished establishment for " + this +
-                      "\nGenerated SipHash key for A->B: " + Base64.encode(sip_ab) +
-                      "\nGenerated SipHash key for B->A: " + Base64.encode(sip_ba));
+                       "\nGenerated SipHash key for A->B: " + Base64.encode(sip_ab) +
+                       "\nGenerated SipHash key for B->A: " + Base64.encode(sip_ba));
         }
         // skew in seconds
         _con.finishOutboundEstablishment(sender, rcvr, sip_ab, sip_ba, _peerSkew);
@@ -465,7 +467,7 @@ class OutboundNTCP2State implements EstablishState {
         byte[] tmp = new byte[32 + SIPHASH.length];
         byte[] hash = state.getHandshakeHash();
         System.arraycopy(hash, 0, tmp, 0, 32);
-        System.arraycopy(SIPHASH, 0, tmp, 32, SIPHASH.length); 
+        System.arraycopy(SIPHASH, 0, tmp, 32, SIPHASH.length);
         byte[] sip_master = new byte[32];
         hkdf.calculate(ask_master, tmp, sip_master);
         Arrays.fill(ask_master, (byte) 0);
@@ -486,9 +488,13 @@ class OutboundNTCP2State implements EstablishState {
         fail(reason, e);
     }
 
-    protected void fail(String reason) { fail(reason, null); }
+    protected void fail(String reason) {
+        fail(reason, null);
+    }
 
-    protected void fail(String reason, Exception e) { fail(reason, e, false); }
+    protected void fail(String reason, Exception e) {
+        fail(reason, e, false);
+    }
 
     protected synchronized void fail(String reason, Exception e, boolean bySkew) {
         if (_state == State.CORRUPT || _state == State.VERIFIED)

@@ -25,13 +25,13 @@ class UpdateHandler implements Updater {
     private final I2PAppContext _context;
     private final UpdateManager _umgr;
     private final SnarkManager _smgr;
-    
+
     public UpdateHandler(I2PAppContext ctx, UpdateManager umgr, SnarkManager smgr) {
         _context = ctx;
         _umgr = umgr;
         _smgr = smgr;
     }
-    
+
     /**
      *  Start a download and return a handle to the download task.
      *  Should not block.
@@ -43,7 +43,7 @@ class UpdateHandler implements Updater {
     public UpdateTask update(UpdateType type, UpdateMethod method, List<URI> updateSources,
                              String id, String newVersion, long maxTime) {
         if ((type != UpdateType.ROUTER_SIGNED && type != UpdateType.ROUTER_SIGNED_SU3) ||
-            method != UpdateMethod.TORRENT || updateSources.isEmpty())
+                method != UpdateMethod.TORRENT || updateSources.isEmpty())
             return null;
         UpdateRunner update = new UpdateRunner(_context, _umgr, _smgr, type, updateSources, newVersion);
         _umgr.notifyProgress(update, "<b>" + _smgr.util().getString("Updating") + "</b>");

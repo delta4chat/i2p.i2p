@@ -19,7 +19,7 @@ class HSpan extends Span {
 
     void setLegendVisibility(double min, double max, boolean forceLegend) {
         legend.enabled = legend.enabled && (forceLegend
-                || checkRange(start, min, max)
-                || checkRange(end, min, max));
+                                            || checkRange(start, min, max)
+                                            || checkRange(end, min, max));
     }
 }

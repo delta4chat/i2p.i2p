@@ -12,7 +12,7 @@ import net.i2p.util.EepGet;
 import net.i2p.util.Log;
 import net.i2p.util.PortMapper;
 
-    
+
 /**
  *  Eepget the .su3 file to the temp dir, then notify.
  *  ConsoleUpdateManager will do the rest.
@@ -21,7 +21,7 @@ import net.i2p.util.PortMapper;
  */
 class DevSU3UpdateRunner extends UpdateRunner {
 
-    public DevSU3UpdateRunner(RouterContext ctx, ConsoleUpdateManager mgr, List<URI> uris) { 
+    public DevSU3UpdateRunner(RouterContext ctx, ConsoleUpdateManager mgr, List<URI> uris) {
         super(ctx, mgr, ROUTER_DEV_SU3, uris);
         if (!uris.isEmpty())
             _currentURI = uris.get(0);
@@ -35,8 +35,8 @@ class DevSU3UpdateRunner extends UpdateRunner {
         String proxyHost = _context.getProperty(ConfigUpdateHandler.PROP_PROXY_HOST, ConfigUpdateHandler.DEFAULT_PROXY_HOST);
         int proxyPort = ConfigUpdateHandler.proxyPort(_context);
         if (proxyPort == ConfigUpdateHandler.DEFAULT_PROXY_PORT_INT &&
-            proxyHost.equals(ConfigUpdateHandler.DEFAULT_PROXY_HOST) &&
-            _context.portMapper().getPort(PortMapper.SVC_HTTP_PROXY) < 0) {
+                proxyHost.equals(ConfigUpdateHandler.DEFAULT_PROXY_HOST) &&
+                _context.portMapper().getPort(PortMapper.SVC_HTTP_PROXY) < 0) {
             String msg = _t("HTTP client proxy tunnel must be running");
             if (_log.shouldWarn())
                 _log.warn(msg);
@@ -58,7 +58,7 @@ class DevSU3UpdateRunner extends UpdateRunner {
         if (!this.done)
             _mgr.notifyTaskFailed(this, "", null);
     }
-        
+
     /** eepget listener callback Overrides */
     @Override
     public void transferComplete(long alreadyTransferred, long bytesTransferred, long bytesRemaining,

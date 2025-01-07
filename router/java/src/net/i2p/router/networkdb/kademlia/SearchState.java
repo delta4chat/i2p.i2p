@@ -29,7 +29,7 @@ class SearchState {
     private volatile long _completed;
     private volatile long _started;
     private volatile boolean _aborted;
-    
+
     public SearchState(RouterContext context, Hash key) {
         _context = context;
         _searchKey = key;
@@ -42,8 +42,10 @@ class SearchState {
         _completed = -1;
         _started = _context.clock().now();
     }
-    
-    public Hash getTarget() { return _searchKey; }
+
+    public Hash getTarget() {
+        return _searchKey;
+    }
     public Set<Hash> getPending() {
         synchronized (_pendingPeers) {
             return new HashSet<Hash>(_pendingPeers);
@@ -59,7 +61,7 @@ class SearchState {
             return locked_getClosest(_attemptedPeers, max, _searchKey);
         }
     }
-    
+
     private Set<Hash> locked_getClosest(Set<Hash> peers, int max, Hash target) {
         if (_attemptedPeers.size() <= max)
             return new HashSet<Hash>(_attemptedPeers);
@@ -72,7 +74,7 @@ class SearchState {
         }
         return rv;
     }
-    
+
     public boolean wasAttempted(Hash peer) {
         synchronized (_attemptedPeers) {
             return _attemptedPeers.contains(peer);
@@ -89,23 +91,31 @@ class SearchState {
         }
     }
 
-    public boolean completed() { return _completed != -1; }
+    public boolean completed() {
+        return _completed != -1;
+    }
 
     public void complete() {
         _completed = _context.clock().now();
     }
 
     /** @since 0.9.16 */
-    public boolean isAborted() { return _aborted; }
+    public boolean isAborted() {
+        return _aborted;
+    }
 
     /** @since 0.9.16 */
     public void abort() {
         _aborted = true;
     }
-    
-    public long getWhenStarted() { return _started; }
-    public long getWhenCompleted() { return _completed; }
-    
+
+    public long getWhenStarted() {
+        return _started;
+    }
+    public long getWhenCompleted() {
+        return _completed;
+    }
+
     public void addPending(Collection<Hash> pending) {
         synchronized (_pendingPeers) {
             _pendingPeers.addAll(pending);
@@ -135,7 +145,7 @@ class SearchState {
             _attemptedPeers.remove(peer);
         }
     }
-    
+
     /** how long did it take to get the reply, or -1 if we don't know */
     public long dataFound(Hash peer) {
         long rv = -1;
@@ -150,7 +160,7 @@ class SearchState {
         }
         return rv;
     }
-    
+
     /** how long did it take to get the reply, or -1 if we dont know */
     public long replyFound(Hash peer) {
         synchronized (_repliedPeers) {
@@ -165,9 +175,13 @@ class SearchState {
                 return -1;
         }
     }
-    
-    public Set<Hash> getRepliedPeers() { synchronized (_repliedPeers) { return new HashSet<Hash>(_repliedPeers); } }
-    
+
+    public Set<Hash> getRepliedPeers() {
+        synchronized (_repliedPeers) {
+            return new HashSet<Hash>(_repliedPeers);
+        }
+    }
+
     public void replyTimeout(Hash peer) {
         synchronized (_pendingPeers) {
             _pendingPeers.remove(peer);
@@ -177,7 +191,7 @@ class SearchState {
             _failedPeers.add(peer);
         }
     }
-    
+
     @Override
     public String toString() {
         StringBuilder buf = new StringBuilder(256);

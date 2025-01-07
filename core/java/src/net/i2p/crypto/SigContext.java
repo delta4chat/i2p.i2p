@@ -38,7 +38,9 @@ public enum SigContext {
      * Pass this as an argument in setParameter()
      * to the Blake sign/verify engines.
      */
-    public SigContextSpec getSpec() { return spec; }
+    public SigContextSpec getSpec() {
+        return spec;
+    }
 
     /**
      * The AlgorithmParameterSpec.
@@ -64,6 +66,8 @@ public enum SigContext {
         /**
          * The 16 bytes for this type, or null for none
          */
-        public byte[] getData() { return b; }
+        public byte[] getData() {
+            return b;
+        }
     }
 }

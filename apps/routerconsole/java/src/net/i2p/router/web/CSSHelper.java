@@ -42,14 +42,14 @@ public class CSSHelper extends HelperBase {
      *  formerly stored in System.getProperty("router.consoleNonce")
      *  @since 0.9.4
      */
-    public static String getNonce() { 
+    public static String getNonce() {
         return _consoleNonce;
     }
 
     public String getTheme(String userAgent) {
         String url = BASE_THEME_PATH;
         if (userAgent != null && userAgent.contains("MSIE") && !userAgent.contains("Trident/6") &&
-            !_context.getProperty(PROP_DISABLE_OLD, DEFAULT_DISABLE_OLD)) {
+                !_context.getProperty(PROP_DISABLE_OLD, DEFAULT_DISABLE_OLD)) {
             url += FORCE + "/";
         } else {
             // This is the first thing to use _context on most pages
@@ -75,7 +75,7 @@ public class CSSHelper extends HelperBase {
      */
     public void setTheme(String theme) {
         if (theme != null && theme.length() > 0 &&
-            theme.replaceAll("[a-zA-Z0-9_-]", "").length() == 0)
+                theme.replaceAll("[a-zA-Z0-9_-]", "").length() == 0)
             _context.router().saveConfig(PROP_THEME_NAME, theme);
     }
 
@@ -94,7 +94,7 @@ public class CSSHelper extends HelperBase {
     public void setLang(String lang) {
         // Protected with nonce in css.jsi
         if (lang != null && lang.length() >= 2 && lang.length() <= 6 &&
-            lang.replaceAll("[a-zA-Z_]", "").length() == 0) {
+                lang.replaceAll("[a-zA-Z_]", "").length() == 0) {
             Map<String, String> m = new HashMap<String, String>(2);
             int under = lang.indexOf('_');
             if (under < 0) {
@@ -180,13 +180,13 @@ public class CSSHelper extends HelperBase {
 
     /** translate the title and display consistently */
     public String title(String s) {
-         StringBuilder buf = new StringBuilder(128);
-         buf.append("<title>")
-            .append(_t("I2P Router Console"))
-            .append(" - ")
-            .append(_t(s))
-            .append("</title>");
-         return buf.toString();
+        StringBuilder buf = new StringBuilder(128);
+        buf.append("<title>")
+        .append(_t("I2P Router Console"))
+        .append(" - ")
+        .append(_t(s))
+        .append("</title>");
+        return buf.toString();
     }
 
     /**

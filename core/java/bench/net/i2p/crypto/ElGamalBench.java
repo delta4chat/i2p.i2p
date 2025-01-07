@@ -62,8 +62,8 @@ public class ElGamalBench {
 
     public static void main(String args[]) throws RunnerException {
         Options opt = new OptionsBuilder()
-                .include(ElGamalBench.class.getSimpleName())
-                .build();
+        .include(ElGamalBench.class.getSimpleName())
+        .build();
 
         new Runner(opt).run();
     }

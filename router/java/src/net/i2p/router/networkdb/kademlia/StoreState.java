@@ -56,17 +56,21 @@ class StoreState {
         _started = _context.clock().now();
     }
 
-    public Hash getTarget() { return _key; }
-    public DatabaseEntry getData() { return _data; }
+    public Hash getTarget() {
+        return _key;
+    }
+    public DatabaseEntry getData() {
+        return _data;
+    }
 
     /**
      *  The number of peers pending.
      *
      *  @since 0.9.53 replaces getPending()
      */
-    public int getPendingCount() { 
+    public int getPendingCount() {
         synchronized (_pendingPeers) {
-            return _pendingPeers.size(); 
+            return _pendingPeers.size();
         }
     }
 
@@ -75,9 +79,9 @@ class StoreState {
      *  DOES include skipped peers.
      *  Use getAttemptedCount for the number of attempts.
      */
-    public Set<Hash> getAttempted() { 
+    public Set<Hash> getAttempted() {
         synchronized (_attemptedPeers) {
-            return new HashSet<Hash>(_attemptedPeers); 
+            return new HashSet<Hash>(_attemptedPeers);
         }
     }
 
@@ -88,9 +92,9 @@ class StoreState {
      *
      *  @since 0.9.53
      */
-    public int getAttemptedCount() { 
+    public int getAttemptedCount() {
         synchronized (_attemptedPeers) {
-            return _attempted; 
+            return _attempted;
         }
     }
 
@@ -100,7 +104,7 @@ class StoreState {
      *
      *  @since 0.9.53 formerly returned a copy of the Set
      */
-    public Hash getSuccessful() { 
+    public Hash getSuccessful() {
         synchronized (_successfulPeers) {
             if (_successfulPeers.isEmpty())
                 return null;
@@ -112,15 +116,23 @@ class StoreState {
         }
     }
 
-    public boolean completed() { return _completed != -1; }
-    public void complete(boolean completed) { 
+    public boolean completed() {
+        return _completed != -1;
+    }
+    public void complete(boolean completed) {
         if (completed && _completed <= 0)
             _completed = _context.clock().now();
     }
-    public int getCompleteCount() { return _completeCount; }
+    public int getCompleteCount() {
+        return _completeCount;
+    }
 
-    public long getWhenStarted() { return _started; }
-    public long getWhenCompleted() { return _completed; }
+    public long getWhenStarted() {
+        return _started;
+    }
+    public long getWhenCompleted() {
+        return _completed;
+    }
 
     /*
      * @since 0.7.10
@@ -183,7 +195,7 @@ class StoreState {
     }
 
     @Override
-    public String toString() { 
+    public String toString() {
         StringBuilder buf = new StringBuilder(256);
         buf.append("Storing ").append(_key);
         buf.append(' ');
@@ -192,8 +204,8 @@ class StoreState {
         else
             buf.append(" completed on ").append(new Date(_completed));
         buf.append(" Attempted: ")
-           .append(_attempted)
-           .append(" Attempted+Skipped: ");
+        .append(_attempted)
+        .append(" Attempted+Skipped: ");
         synchronized (_attemptedPeers) {
             buf.append(_attemptedPeers.size()).append(' ');
             for (Hash peer : _attemptedPeers) {

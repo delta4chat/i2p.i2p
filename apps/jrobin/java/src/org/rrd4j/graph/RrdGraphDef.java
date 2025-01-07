@@ -35,24 +35,24 @@ import org.rrd4j.data.Variable;
  * <p>Class which should be used to define new Rrd4j graph. Once constructed and populated with data
  * object of this class should be passed to the constructor of the {@link org.rrd4j.graph.RrdGraph} class which
  * will actually create the graph.</p>
- * 
+ *
  * <p>The text printed below the actual graph can be formated by appending
  * special escaped characters at the end of a text. When ever such a
  * character occurs, all pending text is pushed onto the graph according to
  * the character specified.</p>
- * 
+ *
  * <p>Valid markers are: \j for justified, \l for left aligned, \r for right
  * aligned and \c for centered.</p>
- * 
+ *
  * <p>Normally there are two space characters inserted between every two
  * items printed into the graph. The space following a string can be
  * suppressed by putting a \g at the end of the string. The \g also squashes
  * any space inside the string if it is at the very end of the string.
  * This can be used in connection with %s to suppress empty unit strings.</p>
- * 
+ *
  * <p>A special case is COMMENT:\s this inserts some additional vertical
  * space before placing the next row of legends.</p>
- * 
+ *
  * <p>When text has to be formated without special instructions from your
  * side, RRDTool will automatically justify the text as soon as one string
  * goes over the right edge. If you want to prevent the justification
@@ -137,19 +137,19 @@ public class RrdGraphDef implements RrdGraphConstants, DataHolder {
     boolean rigid = false; // ok
     double base = DEFAULT_BASE;  // ok
     boolean logarithmic = false; // ok
-    private final Paint[] colors = new Paint[]{
-            // ok
-            DEFAULT_CANVAS_COLOR,
-            DEFAULT_BACK_COLOR,
-            DEFAULT_SHADEA_COLOR,
-            DEFAULT_SHADEB_COLOR,
-            DEFAULT_GRID_COLOR,
-            DEFAULT_MGRID_COLOR,
-            DEFAULT_FONT_COLOR,
-            DEFAULT_FRAME_COLOR,
-            DEFAULT_ARROW_COLOR,
-            DEFAULT_XAXIS_COLOR,
-            DEFAULT_YAXIS_COLOR
+    private final Paint[] colors = new Paint[] {
+        // ok
+        DEFAULT_CANVAS_COLOR,
+        DEFAULT_BACK_COLOR,
+        DEFAULT_SHADEA_COLOR,
+        DEFAULT_SHADEB_COLOR,
+        DEFAULT_GRID_COLOR,
+        DEFAULT_MGRID_COLOR,
+        DEFAULT_FONT_COLOR,
+        DEFAULT_FRAME_COLOR,
+        DEFAULT_ARROW_COLOR,
+        DEFAULT_XAXIS_COLOR,
+        DEFAULT_YAXIS_COLOR
     };
     boolean noLegend = false; // ok
     boolean onlyGraph = false; // ok
@@ -157,12 +157,12 @@ public class RrdGraphDef implements RrdGraphConstants, DataHolder {
     String title = null; // ok
     long step = 0; // ok
     Font[] fonts = new Font[] {
-            DEFAULT_SMALL_FONT,    // FONTTAG_DEFAULT
-            DEFAULT_LARGE_FONT,    // FONTTAG_TITLE
-            DEFAULT_SMALL_FONT,    // FONTTAG_AXIS
-            DEFAULT_SMALL_FONT,    // FONTTAG_UNIT
-            DEFAULT_SMALL_FONT,    // FONTTAG_LEGEND
-            GATOR_FONT             // FONTTAG_WATERMARK
+        DEFAULT_SMALL_FONT,    // FONTTAG_DEFAULT
+        DEFAULT_LARGE_FONT,    // FONTTAG_TITLE
+        DEFAULT_SMALL_FONT,    // FONTTAG_AXIS
+        DEFAULT_SMALL_FONT,    // FONTTAG_UNIT
+        DEFAULT_SMALL_FONT,    // FONTTAG_LEGEND
+        GATOR_FONT             // FONTTAG_WATERMARK
     };
     boolean drawXGrid = true; // ok
     boolean drawYGrid = true; // ok
@@ -322,7 +322,7 @@ public class RrdGraphDef implements RrdGraphConstants, DataHolder {
      * <p>Configures x-axis grid and labels. The x-axis label is quite complex to configure.
      * So if you don't have very special needs, you can rely on the autoconfiguration to
      * get this right.</p>
-     * 
+     *
      * <p>Otherwise, you have to configure three elements making up the x-axis labels
      * and grid. The base grid, the major grid and the labels.
      * The configuration is based on the idea that you first specify a well
@@ -331,18 +331,18 @@ public class RrdGraphDef implements RrdGraphConstants, DataHolder {
      * you have to define two additional items: The precision of the label
      * in seconds and the format used to generate the text
      * of the label.</p>
-     * 
+     *
      * <p>For example, if you wanted a graph with a base grid every 10 minutes and a major
      * one every hour, with labels every hour you would use the following
      * x-axis definition.</p>
-     * 
+     *
      * <pre>
      * setTimeAxis(RrdGraphConstants.MINUTE, 10,
      *             RrdGraphConstants.HOUR, 1,
      *             RrdGraphConstants.HOUR, 1,
      *             0, "%H:%M")
      * </pre>
-     * 
+     *
      * <p>The precision in this example is 0 because the %X format is exact.
      * If the label was the name of the day, we would have had a precision
      * of 24 hours, because when you say something like 'Monday' you mean
@@ -365,15 +365,15 @@ public class RrdGraphDef implements RrdGraphConstants, DataHolder {
      * @param simpleDateFormat Date format (SimpleDateFormat pattern of strftime-like pattern)
      */
     public void setTimeAxis(int minorUnit, int minorUnitCount, int majorUnit, int majorUnitCount,
-            int labelUnit, int labelUnitCount, int labelSpan, String simpleDateFormat) {
+                            int labelUnit, int labelUnitCount, int labelSpan, String simpleDateFormat) {
         timeAxisSetting = new TimeAxisSetting(minorUnit, minorUnitCount, majorUnit, majorUnitCount,
-                labelUnit, labelUnitCount, labelSpan, new SimpleTimeLabelFormat(simpleDateFormat));
+                                              labelUnit, labelUnitCount, labelSpan, new SimpleTimeLabelFormat(simpleDateFormat));
     }
 
     /**
      * It configure the x-axis grid in the same way than {@link #setTimeAxis(int, int, int, int, int, int, int, String)}, but it allows
      * to use a {@link org.rrd4j.graph.TimeLabelFormat} to format the date label.
-     * 
+     *
      * @param minorUnit
      * @param minorUnitCount
      * @param majorUnit
@@ -384,15 +384,15 @@ public class RrdGraphDef implements RrdGraphConstants, DataHolder {
      * @param format
      */
     public void setTimeAxis(int minorUnit, int minorUnitCount, int majorUnit, int majorUnitCount,
-            int labelUnit, int labelUnitCount, int labelSpan, TimeLabelFormat format) {
+                            int labelUnit, int labelUnitCount, int labelSpan, TimeLabelFormat format) {
         timeAxisSetting = new TimeAxisSetting(minorUnit, minorUnitCount, majorUnit, majorUnitCount,
-                labelUnit, labelUnitCount, labelSpan, format);
+                                              labelUnit, labelUnitCount, labelSpan, format);
     }
 
     /**
      * This allows to keep the default major and minor grid unit, but with changing only the label formatting,
      * using a {@link org.rrd4j.graph.TimeLabelFormat}
-     * 
+     *
      * @param format a custom dynamic time label format
      */
     public void setTimeLabelFormat(TimeLabelFormat format) {
@@ -614,7 +614,7 @@ public class RrdGraphDef implements RrdGraphConstants, DataHolder {
      * the {@link #print(String, ConsolFun, String)} function.
      * The format string is supplied with the following parameters:
      * filename, xsize and ysize (in that particular order).</p>
-     * 
+     *
      * <p>For example, in order to generate an IMG tag
      * suitable for including the graph into a web page, the command
      * would look like this:</p>
@@ -760,7 +760,7 @@ public class RrdGraphDef implements RrdGraphConstants, DataHolder {
      * <p>Defines the value normally located at the upper border of the
      * graph. If the graph contains higher values, the upper border will
      * move upwards to accommodate these values as well.</p>
-     * 
+     *
      * <p>If you want to define an upper-limit which will not move in any
      * event you have to use {@link #setRigid(boolean)} method as well.</p>
      *
@@ -905,7 +905,7 @@ public class RrdGraphDef implements RrdGraphConstants, DataHolder {
      * This method reset the font set to it's default values. With the flag rrdtool set to true, it's not the old
      * default set that is used, but the one taken from rrdtool. So use false to keep compatibility with previous version
      * and true for a graph matching rrdtool's
-     * 
+     *
      * @param rrdtool true to use rrdtool font set
      */
     public void setFontSet(boolean rrdtool) {
@@ -913,22 +913,22 @@ public class RrdGraphDef implements RrdGraphConstants, DataHolder {
             // We add a factor to the font size, rrdtool and java don't agree about font size
             float rrdtoolfactor = 12f/9;
             fonts = new Font[] {
-                    DEFAULT_SMALL_FONT.deriveFont(8.0f * rrdtoolfactor),    // FONTTAG_DEFAULT
-                    DEFAULT_SMALL_FONT.deriveFont(9.0f * rrdtoolfactor),    // FONTTAG_TITLE
-                    DEFAULT_SMALL_FONT.deriveFont(7.0f * rrdtoolfactor),    // FONTTAG_AXIS
-                    DEFAULT_SMALL_FONT.deriveFont(8.0f * rrdtoolfactor),    // FONTTAG_UNIT
-                    DEFAULT_SMALL_FONT.deriveFont(8.0f * rrdtoolfactor),    // FONTTAG_LEGEND
-                    DEFAULT_SMALL_FONT.deriveFont(5.5f * rrdtoolfactor)     // FONTTAG_WATERMARK
+                DEFAULT_SMALL_FONT.deriveFont(8.0f * rrdtoolfactor),    // FONTTAG_DEFAULT
+                DEFAULT_SMALL_FONT.deriveFont(9.0f * rrdtoolfactor),    // FONTTAG_TITLE
+                DEFAULT_SMALL_FONT.deriveFont(7.0f * rrdtoolfactor),    // FONTTAG_AXIS
+                DEFAULT_SMALL_FONT.deriveFont(8.0f * rrdtoolfactor),    // FONTTAG_UNIT
+                DEFAULT_SMALL_FONT.deriveFont(8.0f * rrdtoolfactor),    // FONTTAG_LEGEND
+                DEFAULT_SMALL_FONT.deriveFont(5.5f * rrdtoolfactor)     // FONTTAG_WATERMARK
             };
         } else {
             fonts = new Font[] {
-                    DEFAULT_SMALL_FONT,    // FONTTAG_DEFAULT
-                    DEFAULT_LARGE_FONT,    // FONTTAG_TITLE
-                    DEFAULT_SMALL_FONT,    // FONTTAG_AXIS
-                    DEFAULT_SMALL_FONT,    // FONTTAG_UNIT
-                    DEFAULT_SMALL_FONT,    // FONTTAG_LEGEND
-                    GATOR_FONT             // FONTTAG_WATERMARK
-            };            
+                DEFAULT_SMALL_FONT,    // FONTTAG_DEFAULT
+                DEFAULT_LARGE_FONT,    // FONTTAG_TITLE
+                DEFAULT_SMALL_FONT,    // FONTTAG_AXIS
+                DEFAULT_SMALL_FONT,    // FONTTAG_UNIT
+                DEFAULT_SMALL_FONT,    // FONTTAG_LEGEND
+                GATOR_FONT             // FONTTAG_WATERMARK
+            };
         }
     }
 
@@ -1083,7 +1083,7 @@ public class RrdGraphDef implements RrdGraphConstants, DataHolder {
      */
     @Override
     public void datasource(String name, URI rrdUri, String dsName,
-            ConsolFun consolFun) {
+                           ConsolFun consolFun) {
         sources.add(new Def(name, rrdUri, dsName, consolFun, RrdBackendFactory.findFactory(rrdUri)));
     }
 
@@ -1097,7 +1097,7 @@ public class RrdGraphDef implements RrdGraphConstants, DataHolder {
      * @param dsName    Datasource name in the specified RRD file
      * @param consolFun Consolidation function (AVERAGE, MIN, MAX, LAST)
      * @param backend   Backend to be used while fetching data from a RRD file.
-     * 
+     *
      * @deprecated Uses {@link #datasource(String, String, String, ConsolFun, RrdBackendFactory)} instead
      */
     @Deprecated
@@ -1136,7 +1136,7 @@ public class RrdGraphDef implements RrdGraphConstants, DataHolder {
      */
     @Override
     public void datasource(String name, URI rrdUri, String dsName,
-            ConsolFun consolFun, RrdBackendFactory backend) {
+                           ConsolFun consolFun, RrdBackendFactory backend) {
         sources.add(new Def(name, rrdUri, dsName, consolFun, backend));
     }
 
@@ -1210,7 +1210,7 @@ public class RrdGraphDef implements RrdGraphConstants, DataHolder {
 
     /**
      * Creates a new 'fetched' datasource. Datasource values are obtained from the
-     * given {@link org.rrd4j.core.FetchData} object. 
+     * given {@link org.rrd4j.core.FetchData} object.
      * Values will be extracted from the datasource dsName in the fetchData
      *
      * @param name      Source name.
@@ -1252,11 +1252,11 @@ public class RrdGraphDef implements RrdGraphConstants, DataHolder {
      * and creates the result by using the given format string.  In
      * the format string there should be a '%[l]f', '%[l]g' or '%[l]e' marker in
      * the place where the number should be printed.</p>
-     * 
+     *
      * <p>If an additional '%s' is found AFTER the marker, the value will be
      * scaled and an appropriate SI magnitude unit will be printed in
      * place of the '%s' marker. The scaling will take the '--base' argument into consideration!</p>
-     * 
+     *
      * <p>If a '%S' is used instead of a '%s', then instead of calculating
      * the appropriate SI magnitude unit for this value, the previously
      * calculated SI magnitude unit will be used.  This is useful if you
@@ -1266,7 +1266,7 @@ public class RrdGraphDef implements RrdGraphConstants, DataHolder {
      * it does not remember a SI magnitude unit and a SI magnitude unit
      * will only be calculated when the next '%s' is seen or the next '%S'
      * for a non-zero value.</p>
-     * 
+     *
      * <p>Print results are collected in the {@link org.rrd4j.graph.RrdGraphInfo} object which is retrieved
      * from the {@link RrdGraph object} once the graph is created.</p>
      *
@@ -1287,11 +1287,11 @@ public class RrdGraphDef implements RrdGraphConstants, DataHolder {
      * <p>Read the value of a variable (VDEF) and prints the value by using the given format string.  In
      * the format string there should be a '%[l]f', '%[l]g' or '%[l]e' marker in
      * the place where the number should be printed.</p>
-     * 
+     *
      * <p>If an additional '%s' is found AFTER the marker, the value will be
      * scaled and an appropriate SI magnitude unit will be printed in
      * place of the '%s' marker. The scaling will take the '--base' argument into consideration!</p>
-     * 
+     *
      * <p>If a '%S' is used instead of a '%s', then instead of calculating
      * the appropriate SI magnitude unit for this value, the previously
      * calculated SI magnitude unit will be used.  This is useful if you
@@ -1301,7 +1301,7 @@ public class RrdGraphDef implements RrdGraphConstants, DataHolder {
      * it does not remember a SI magnitude unit and a SI magnitude unit
      * will only be calculated when the next '%s' is seen or the next '%S'
      * for a non-zero value.</p>
-     * 
+     *
      * <p>Print results are collected in the {@link org.rrd4j.graph.RrdGraphInfo} object which is retrieved
      * from the {@link RrdGraph object} once the graph is created.</p>
      *
@@ -1318,11 +1318,11 @@ public class RrdGraphDef implements RrdGraphConstants, DataHolder {
      * and creates the result by using the given format string.  In
      * the format string there should be a '%[l]f', '%[l]g' or '%[l]e' marker in
      * the place where the number should be printed.</p>
-     * 
+     *
      * <p>If an additional '%s' is found AFTER the marker, the value will be
      * scaled and an appropriate SI magnitude unit will be printed in
      * place of the '%s' marker. The scaling will take the '--base' argument into consideration!</p>
-     * 
+     *
      * <p>If a '%S' is used instead of a '%s', then instead of calculating
      * the appropriate SI magnitude unit for this value, the previously
      * calculated SI magnitude unit will be used.  This is useful if you
@@ -1332,7 +1332,7 @@ public class RrdGraphDef implements RrdGraphConstants, DataHolder {
      * it does not remember a SI magnitude unit and a SI magnitude unit
      * will only be calculated when the next '%s' is seen or the next '%S'
      * for a non-zero value.</p>
-     * 
+     *
      * <p>Print results are collected in the {@link org.rrd4j.graph.RrdGraphInfo} object which is retrieved
      * from the {@link RrdGraph object} once the graph is created.</p>
      *
@@ -1365,11 +1365,11 @@ public class RrdGraphDef implements RrdGraphConstants, DataHolder {
      * <p>Read the value of a variable (VDEF) and prints the value by using the given format string.  In
      * the format string there should be a '%[l]f', '%[l]g' or '%[l]e' marker in
      * the place where the number should be printed.</p>
-     * 
+     *
      * <p>If an additional '%s' is found AFTER the marker, the value will be
      * scaled and an appropriate SI magnitude unit will be printed in
      * place of the '%s' marker. The scaling will take the '--base' argument into consideration!</p>
-     * 
+     *
      * <p>If a '%S' is used instead of a '%s', then instead of calculating
      * the appropriate SI magnitude unit for this value, the previously
      * calculated SI magnitude unit will be used.  This is useful if you
@@ -1379,7 +1379,7 @@ public class RrdGraphDef implements RrdGraphConstants, DataHolder {
      * it does not remember a SI magnitude unit and a SI magnitude unit
      * will only be calculated when the next '%s' is seen or the next '%S'
      * for a non-zero value.</p>
-     * 
+     *
      * print results are added to the graph as a legend
      *
      * @param srcName   Virtual source name
@@ -1395,11 +1395,11 @@ public class RrdGraphDef implements RrdGraphConstants, DataHolder {
      * and creates the result by using the given format string.  In
      * the format string there should be a '%[l]f', '%[l]g' or '%[l]e' marker in
      * the place where the number should be printed.</p>
-     * 
+     *
      * <p>If an additional '%s' is found AFTER the marker, the value will be
      * scaled and an appropriate SI magnitude unit will be printed in
      * place of the '%s' marker. The scaling will take the '--base' argument into consideration!</p>
-     * 
+     *
      * <p>If a '%S' is used instead of a '%s', then instead of calculating
      * the appropriate SI magnitude unit for this value, the previously
      * calculated SI magnitude unit will be used.  This is useful if you
@@ -1409,7 +1409,7 @@ public class RrdGraphDef implements RrdGraphConstants, DataHolder {
      * it does not remember a SI magnitude unit and a SI magnitude unit
      * will only be calculated when the next '%s' is seen or the next '%S'
      * for a non-zero value.</p>
-     * 
+     *
      * <p>print results are added to the graph as a legend.</p>
      *
      * @param srcName   Virtual source name
@@ -1736,7 +1736,7 @@ public class RrdGraphDef implements RrdGraphConstants, DataHolder {
      * previous graph, the STACK will be either a LINE or an AREA.  This
      * obviously implies that the first STACK must be preceded by an AREA
      * or LINE.</p>
-     * 
+     *
      * <p>Note, that when you STACK onto *UNKNOWN* data, Rrd4j will not
      * draw any graphics ... *UNKNOWN* is not zero.</p>
      *
@@ -1756,7 +1756,7 @@ public class RrdGraphDef implements RrdGraphConstants, DataHolder {
      * previous graph, the STACK will be either a LINE or an AREA.  This
      * obviously implies that the first STACK must be preceded by an AREA
      * or LINE.</p>
-     * 
+     *
      * Note, that when you STACK onto *UNKNOWN* data, Rrd4j will not
      * draw any graphics ... *UNKNOWN* is not zero.
      *
@@ -1784,7 +1784,7 @@ public class RrdGraphDef implements RrdGraphConstants, DataHolder {
                 break;
             }
         }
-        if (parent == null) 
+        if (parent == null)
             throw new IllegalArgumentException("You have to stack graph onto something (line or area)");
         return parent;
     }
@@ -1931,7 +1931,7 @@ public class RrdGraphDef implements RrdGraphConstants, DataHolder {
      * Allows to set a downsampler, used to improved the visual representation of graph.
      * <p>
      * More details can be found on <a href="http://skemman.is/en/item/view/1946/15343">Sveinn Steinarsson's thesis</a>
-     * 
+     *
      * @param downsampler The downsampler that will be used
      */
     public void setDownsampler(DownSampler downsampler) {

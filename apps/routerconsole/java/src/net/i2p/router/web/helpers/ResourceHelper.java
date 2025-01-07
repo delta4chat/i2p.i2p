@@ -15,11 +15,13 @@ import net.i2p.router.web.Messages;
 public class ResourceHelper extends HelperBase {
     protected String _page;
     private int _maxLines;
-    
+
     /**
      * Use relative path for getResource().
      */
-    public void setPage(String page) { _page = page; }
+    public void setPage(String page) {
+        _page = page;
+    }
 
     public void setMaxLines(String lines) {
         if (lines != null) {
@@ -31,7 +33,7 @@ public class ResourceHelper extends HelperBase {
         } else {
             _maxLines = -1;
         }
-    } 
+    }
 
     /**
      * Convert file.ext to file_lang.ext if it exists.
@@ -83,8 +85,14 @@ public class ResourceHelper extends HelperBase {
             }
         } catch (IOException ioe) {
         } finally {
-            if (in != null) try { in.close(); } catch (IOException ioe) {}
-            try { is.close(); } catch (IOException ioe) {}
+            if (in != null) try {
+                    in.close();
+                }
+                catch (IOException ioe) {}
+            try {
+                is.close();
+            }
+            catch (IOException ioe) {}
         }
         return buf.toString();
     }

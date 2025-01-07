@@ -2,9 +2,9 @@ package net.i2p.util;
 
 /*
  * free (adj.): unencumbered; not under the control of others
- * Written by jrandom in 2003 and released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
- * It probably won't make your computer catch on fire, or eat 
+ * Written by jrandom in 2003 and released into the public domain
+ * with no warranty of any kind, either expressed or implied.
+ * It probably won't make your computer catch on fire, or eat
  * your children, but it might.  Use at your own risk.
  *
  */
@@ -76,7 +76,7 @@ class LogRecord {
                ((_message == null && r._message == null) ||
                 (_message != null && r._message != null &&
                  ((_message.length() <= MATCH_LEN) ? _message.equals(r._message)
-                                                   : _message.regionMatches(0, r._message, 0, MATCH_LEN)))) &&
+                  : _message.regionMatches(0, r._message, 0, MATCH_LEN)))) &&
                ((_throwable == null && r._throwable == null) ||
                 (_throwable != null && r._throwable != null && _throwable.getClass() == r._throwable.getClass()));
     }

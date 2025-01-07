@@ -37,7 +37,7 @@ public class ConfigStatsHelper extends HelperBase {
     private boolean _currentIsLogged;
     private boolean _currentIsGraphed;
     private boolean _currentCanBeGraphed;
-    
+
     public ConfigStatsHelper() {
         _stats = new ArrayList<String>();
         _filters = new HashSet<String>();
@@ -54,17 +54,17 @@ public class ConfigStatsHelper extends HelperBase {
     public void setContextId(String contextId) {
         super.setContextId(contextId);
         _log = _context.logManager().getLog(ConfigStatsHelper.class);
-        
+
         Map<String, SortedSet<String>> unsorted = _context.statManager().getStatsByGroup();
         Map<String, Set<String>> groups = new TreeMap<String, Set<String>>(new AlphaComparator());
         groups.putAll(unsorted);
         for (Set<String> stats : groups.values()) {
-             _stats.addAll(stats);
+            _stats.addAll(stats);
         }
-        _filter = _context.statManager().getStatFilter(); 
+        _filter = _context.statManager().getStatFilter();
         if (_filter == null)
             _filter = "";
-        
+
         StringTokenizer tok = new StringTokenizer(_filter, ",");
         while (tok.hasMoreTokens())
             _filters.add(tok.nextToken().trim());
@@ -88,9 +88,11 @@ public class ConfigStatsHelper extends HelperBase {
         return !_filters.isEmpty();
     }
 
-    public String getFilename() { return _context.statManager().getStatFile(); }
-    
-    /** 
+    public String getFilename() {
+        return _context.statManager().getStatFile();
+    }
+
+    /**
      * move the cursor to the next known stat, returning true if a valid
      * stat is available.
      *
@@ -142,14 +144,14 @@ public class ConfigStatsHelper extends HelperBase {
                 return false;
             }
         }
-        
+
         if (_filters.contains("*") || _filters.contains(_currentStatName))
             _currentIsLogged = true;
         else
             _currentIsLogged = false;
         return true;
     }
-    
+
     /** Is the current stat the first in the group? */
     public boolean groupRequired() {
         if (_currentIsFirstInGroup) {
@@ -163,19 +165,37 @@ public class ConfigStatsHelper extends HelperBase {
      *  What group is the current stat in, untranslated, not for display
      *  @return single word, no spaces
      */
-    public String getCurrentGroupName() { return _currentGroup; }
+    public String getCurrentGroupName() {
+        return _currentGroup;
+    }
     /**
      *  What group is the current stat in, display name, translated
      *  @since 0.9.45
      */
-    public String getTranslatedGroupName() { return translateGroup(_currentGroup); }
-    public String getCurrentStatName() { return _currentStatName; }
-    public String getCurrentGraphName() { return _currentGraphName; }
-    public String getCurrentStatDescription() { return _currentStatDescription; }
-    public boolean getCurrentIsLogged() { return _currentIsLogged; }
-    public boolean getCurrentIsGraphed() { return _currentIsGraphed; }
-    public boolean getCurrentCanBeGraphed() { return _currentCanBeGraphed; }
-    public String getExplicitFilter() { return _filter; }
+    public String getTranslatedGroupName() {
+        return translateGroup(_currentGroup);
+    }
+    public String getCurrentStatName() {
+        return _currentStatName;
+    }
+    public String getCurrentGraphName() {
+        return _currentGraphName;
+    }
+    public String getCurrentStatDescription() {
+        return _currentStatDescription;
+    }
+    public boolean getCurrentIsLogged() {
+        return _currentIsLogged;
+    }
+    public boolean getCurrentIsGraphed() {
+        return _currentIsGraphed;
+    }
+    public boolean getCurrentCanBeGraphed() {
+        return _currentCanBeGraphed;
+    }
+    public String getExplicitFilter() {
+        return _filter;
+    }
     public boolean getIsFull() {
         return _context.getBooleanProperty(StatManager.PROP_STAT_FULL);
     }
@@ -197,9 +217,9 @@ public class ConfigStatsHelper extends HelperBase {
      *  @since 0.9.45
      */
     private String translateGroup(String group) {
-         String disp = StatsGenerator.groupNames.get(group);
-         if (disp != null)
-             group = disp;
-         return _t(group);
+        String disp = StatsGenerator.groupNames.get(group);
+        if (disp != null)
+            group = disp;
+        return _t(group);
     }
 }

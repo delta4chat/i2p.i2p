@@ -86,113 +86,116 @@ public class I2Ping extends I2PTunnelClientBase {
     }
 
     public void runCommand(String cmd) throws InterruptedException, IOException {
-      long timeout = PING_TIMEOUT;
-      int count = PING_COUNT;
-      boolean countPing = false;
-      boolean reportTimes = true;
-      String hostListFile = null;
-      int localPort = 0;
-      int remotePort = 0;
-      boolean error = false;
-      String[] argv = DataHelper.split(cmd, " ");
-      Getopt g = new Getopt("i2ping", argv, "t:m:n:chl:f:p:");
-      int c;
-      while ((c = g.getopt()) != -1) {
-        switch (c) {
-          case 't':  // timeout
-            timeout = Long.parseLong(g.getOptarg());
+        long timeout = PING_TIMEOUT;
+        int count = PING_COUNT;
+        boolean countPing = false;
+        boolean reportTimes = true;
+        String hostListFile = null;
+        int localPort = 0;
+        int remotePort = 0;
+        boolean error = false;
+        String[] argv = DataHelper.split(cmd, " ");
+        Getopt g = new Getopt("i2ping", argv, "t:m:n:chl:f:p:");
+        int c;
+        while ((c = g.getopt()) != -1) {
+            switch (c) {
+            case 't':  // timeout
+                timeout = Long.parseLong(g.getOptarg());
                 // convenience, convert msec to sec
                 if (timeout < 100)
                     timeout *= 1000;
-            break;
+                break;
 
-          case 'm': // max simultaneous pings
-            MAX_SIMUL_PINGS = Integer.parseInt(g.getOptarg());
-            break;
+            case 'm': // max simultaneous pings
+                MAX_SIMUL_PINGS = Integer.parseInt(g.getOptarg());
+                break;
 
-          case 'n': // number of pings
-            count = Integer.parseInt(g.getOptarg());
-            break;
+            case 'n': // number of pings
+                count = Integer.parseInt(g.getOptarg());
+                break;
 
-          case 'c': // "count" ping
-            countPing = true;
-            count = CPING_COUNT;
-            break;
+            case 'c': // "count" ping
+                countPing = true;
+                count = CPING_COUNT;
+                break;
 
-          case 'h': // ping all hosts
-            if (hostListFile != null)
+            case 'h': // ping all hosts
+                if (hostListFile != null)
+                    error = true;
+                else
+                    hostListFile = "hosts.txt";
+                break;
+
+            case 'l':  // ping a list of hosts
+                if (hostListFile != null)
+                    error = true;
+                else
+                    hostListFile = g.getOptarg();
+                break;
+
+            case 'f': // local port
+                localPort = Integer.parseInt(g.getOptarg());
+                break;
+
+            case 'p': // remote port
+                remotePort = Integer.parseInt(g.getOptarg());
+                break;
+
+            case '?':
+            case ':':
+            default:
                 error = true;
-            else
-                hostListFile = "hosts.txt";
-            break;
-
-          case 'l':  // ping a list of hosts
-            if (hostListFile != null)
-                error = true;
-            else
-                hostListFile = g.getOptarg();
-            break;
-
-          case 'f': // local port
-            localPort = Integer.parseInt(g.getOptarg());
-            break;
-
-          case 'p': // remote port
-            remotePort = Integer.parseInt(g.getOptarg());
-            break;
-
-          case '?':
-          case ':':
-          default:
-            error = true;
-        }
-      }
-
-      int remaining = argv.length - g.getOptind();
-
-      if (error ||
-          remaining > 1 ||
-          (remaining <= 0 && hostListFile == null) ||
-          (remaining > 0 && hostListFile != null)) {
-          System.out.println(usage());
-          return;
-      }
-
-      if (hostListFile != null) {
-        BufferedReader br = null;
-        try {
-            br = new BufferedReader(new InputStreamReader(new FileInputStream(hostListFile), "UTF-8"));
-            String line;
-            List<PingHandler> pingHandlers = new ArrayList<PingHandler>();
-            int i = 0;
-            while ((line = br.readLine()) != null) {
-                if (line.startsWith("#")) continue; // comments
-                if (line.startsWith(";")) continue;
-                if (line.startsWith("!")) continue;
-                if (line.indexOf('=') != -1) { // maybe file is hosts.txt?
-                    line = line.substring(0, line.indexOf('='));
-                }
-                PingHandler ph = new PingHandler(line, count, localPort, remotePort,
-                                                 timeout, countPing, reportTimes);
-                ph.start();
-                pingHandlers.add(ph);
-                if (++i > 1)
-                    reportTimes = false;
             }
-            br.close();
-            for (Thread t : pingHandlers)
-                t.join();
-            return;
-        } finally {
-            if (br != null) try { br.close(); } catch (IOException ioe) {}
         }
-      }
 
-      String host = argv[g.getOptind()];
-      Thread t = new PingHandler(host, count, localPort, remotePort,
-                                 timeout, countPing, reportTimes);
-      t.start();
-      t.join();
+        int remaining = argv.length - g.getOptind();
+
+        if (error ||
+                remaining > 1 ||
+                (remaining <= 0 && hostListFile == null) ||
+                (remaining > 0 && hostListFile != null)) {
+            System.out.println(usage());
+            return;
+        }
+
+        if (hostListFile != null) {
+            BufferedReader br = null;
+            try {
+                br = new BufferedReader(new InputStreamReader(new FileInputStream(hostListFile), "UTF-8"));
+                String line;
+                List<PingHandler> pingHandlers = new ArrayList<PingHandler>();
+                int i = 0;
+                while ((line = br.readLine()) != null) {
+                    if (line.startsWith("#")) continue; // comments
+                    if (line.startsWith(";")) continue;
+                    if (line.startsWith("!")) continue;
+                    if (line.indexOf('=') != -1) { // maybe file is hosts.txt?
+                        line = line.substring(0, line.indexOf('='));
+                    }
+                    PingHandler ph = new PingHandler(line, count, localPort, remotePort,
+                                                     timeout, countPing, reportTimes);
+                    ph.start();
+                    pingHandlers.add(ph);
+                    if (++i > 1)
+                        reportTimes = false;
+                }
+                br.close();
+                for (Thread t : pingHandlers)
+                    t.join();
+                return;
+            } finally {
+                if (br != null) try {
+                        br.close();
+                    }
+                    catch (IOException ioe) {}
+            }
+        }
+
+        String host = argv[g.getOptind()];
+        Thread t = new PingHandler(host, count, localPort, remotePort,
+                                   timeout, countPing, reportTimes);
+        t.start();
+        t.join();
     }
 
     /**

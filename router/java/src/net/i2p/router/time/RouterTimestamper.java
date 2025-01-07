@@ -14,7 +14,7 @@ import net.i2p.util.Log;
 
 /**
  * Periodically query a series of NTP servers and update any associated
- * listeners.  It tries the NTP servers in order, contacting them using 
+ * listeners.  It tries the NTP servers in order, contacting them using
  * SNTP (UDP port 123).
  *
  * @since 0.9.1 moved from net.i2p.time
@@ -36,7 +36,7 @@ public class RouterTimestamper extends Timestamper {
     private volatile boolean _isRunning;
     private Thread _timestamperThread;
     private final Zones _zones;
-    
+
     private static final int MIN_QUERY_FREQUENCY = 5*60*1000;
     private static final int DEFAULT_QUERY_FREQUENCY = 11*60*1000;
     private static final String DEFAULT_SERVER_LIST = "0.pool.ntp.org,1.pool.ntp.org,2.pool.ntp.org";
@@ -47,23 +47,23 @@ public class RouterTimestamper extends Timestamper {
     private static final int DEFAULT_TIMEOUT = 10*1000;
     private static final int SHORT_TIMEOUT = 5*1000;
     private static final long MAX_WAIT_INITIALIZATION = 45*1000;
-    
+
     public static final String PROP_QUERY_FREQUENCY = "time.queryFrequencyMs";
     public static final String PROP_SERVER_LIST = "time.sntpServerList";
     public static final String PROP_DISABLED = "time.disabled";
     public static final String PROP_CONCURRING_SERVERS = "time.concurringServers";
     public static final String PROP_IP_COUNTRY = "i2np.lastCountry";
-    
+
     /** if different SNTP servers differ by more than 10s, someone is b0rked */
     private static final int MAX_VARIANCE = 10*1000;
-        
+
     /**
      *  Does not start. Caller MUST call startTimestamper()
      */
     public RouterTimestamper(I2PAppContext ctx) {
         this(ctx, null, true);
     }
-    
+
     /**
      *  Does not start. Caller MUST call startTimestamper()
      */
@@ -100,35 +100,39 @@ public class RouterTimestamper extends Timestamper {
         _zones = new Zones(ctx);
         updateConfig();
     }
-    
-    public int getServerCount() { 
+
+    public int getServerCount() {
         synchronized (_servers) {
-            return _servers.size(); 
+            return _servers.size();
         }
     }
-    public String getServer(int index) { 
+    public String getServer(int index) {
         synchronized (_servers) {
-            return _servers.get(index); 
+            return _servers.get(index);
         }
     }
-    
-    public int getQueryFrequencyMs() { return _queryFrequency; }
-    
-    public boolean getIsDisabled() { return _disabled; }
-    
+
+    public int getQueryFrequencyMs() {
+        return _queryFrequency;
+    }
+
+    public boolean getIsDisabled() {
+        return _disabled;
+    }
+
     public void addListener(UpdateListener lsnr) {
-            _listeners.add(lsnr);
+        _listeners.add(lsnr);
     }
     public void removeListener(UpdateListener lsnr) {
-            _listeners.remove(lsnr);
+        _listeners.remove(lsnr);
     }
     public int getListenerCount() {
-            return _listeners.size();
+        return _listeners.size();
     }
     public UpdateListener getListener(int index) {
-            return _listeners.get(index);
+        return _listeners.get(index);
     }
-    
+
     public void startTimestamper() {
         if (_disabled || _initialized)
             return;
@@ -138,36 +142,36 @@ public class RouterTimestamper extends Timestamper {
         _timestamperThread.start();
         _context.addShutdownTask(new Shutdown());
     }
-    
+
     @Override
     public void waitForInitialization() {
-        try { 
+        try {
             synchronized (this) {
                 if (!_initialized)
                     wait(MAX_WAIT_INITIALIZATION);
             }
         } catch (InterruptedException ie) {}
     }
-    
+
     /**
      *  Update the time immediately.
      *  @since 0.8.8
      */
     @Override
     public void timestampNow() {
-         if (_initialized && _isRunning && (!_disabled) && _timestamperThread != null)
-             _timestamperThread.interrupt();
+        if (_initialized && _isRunning && (!_disabled) && _timestamperThread != null)
+            _timestamperThread.interrupt();
     }
-    
+
     /** @since 0.8.8 */
     private class Shutdown implements Runnable {
         public void run() {
-             _isRunning = false;
-             if (_timestamperThread != null)
-                 _timestamperThread.interrupt();
+            _isRunning = false;
+            if (_timestamperThread != null)
+                _timestamperThread.interrupt();
         }
     }
-    
+
     @Override
     public void run() {
         boolean lastFailed = false;
@@ -207,7 +211,7 @@ public class RouterTimestamper extends Timestamper {
                         }
                     }
                 }
-                
+
                 boolean wasInitialized;
                 synchronized (this) {
                     wasInitialized = _initialized;
@@ -217,7 +221,10 @@ public class RouterTimestamper extends Timestamper {
                 }
                 if (!wasInitialized) {
                     // let the log manager get initialized
-                    try { Thread.sleep(10*1000); } catch (InterruptedException ie) {}
+                    try {
+                        Thread.sleep(10*1000);
+                    }
+                    catch (InterruptedException ie) {}
                     // NOW we set up logging
                     _log = _context.logManager().getLog(RouterTimestamper.class);
                     if (lastFailed) {
@@ -255,16 +262,21 @@ public class RouterTimestamper extends Timestamper {
                     if (_wellSynced)
                         sleepTime *= 3;
                 }
-                try { Thread.sleep(sleepTime); } catch (InterruptedException ie) {}
+                try {
+                    Thread.sleep(sleepTime);
+                }
+                catch (InterruptedException ie) {}
             }
         } catch (Throwable t) {
-            synchronized (this) { notifyAll(); }
+            synchronized (this) {
+                notifyAll();
+            }
             if (_log != null)
                 _log.log(Log.CRIT, "Timestamper died!", t);
             t.printStackTrace();
         }
     }
-    
+
     /**
      * True if the time was queried successfully, false if it couldn't be
      */
@@ -323,7 +335,7 @@ public class RouterTimestamper extends Timestamper {
         }
         return true;
     }
-    
+
     /**
      * Notify the listeners
      *
@@ -332,12 +344,12 @@ public class RouterTimestamper extends Timestamper {
     private void stampTime(long now, int stratum) {
         long before = _context.clock().now();
         for (UpdateListener lsnr : _listeners) {
-             lsnr.setNow(now, stratum);
+            lsnr.setNow(now, stratum);
         }
         if (_log != null && _log.shouldDebug())
             _log.debug("Stamped the time as " + now + " (delta=" + (now-before) + ")");
     }
- 
+
     /**
      * Reload all the config elements from the appContext.
      * No logging allowed here
@@ -353,11 +365,11 @@ public class RouterTimestamper extends Timestamper {
                     country = country.toLowerCase(Locale.US);
             }
             if (country != null &&  country.length() > 0 &&
-                !country.equals("a1") && !country.equals("a2")) {
+                    !country.equals("a1") && !country.equals("a2")) {
                 _priorityServers = new ArrayList<List<String>>(2);
                 List<String> p1 = new ArrayList<String>(3);
                 for (int i = 0; i < 3; i++) {
-                     p1.add(i + "." + country + ".pool.ntp.org");
+                    p1.add(i + "." + country + ".pool.ntp.org");
                 }
                 _priorityServers.add(p1);
                 String zone = _zones.getZone(country);
@@ -382,24 +394,24 @@ public class RouterTimestamper extends Timestamper {
             if (val.length() > 0)
                 _servers.add(val);
         }
-        
+
         _queryFrequency = Math.max(MIN_QUERY_FREQUENCY,
                                    _context.getProperty(PROP_QUERY_FREQUENCY, DEFAULT_QUERY_FREQUENCY));
-        
+
         _disabled = _context.getProperty(PROP_DISABLED, DEFAULT_DISABLED);
-        
+
         _concurringServers = Math.min(4, Math.max(1,
-                              _context.getProperty(PROP_CONCURRING_SERVERS, DEFAULT_CONCURRING_SERVERS)));
+                                      _context.getProperty(PROP_CONCURRING_SERVERS, DEFAULT_CONCURRING_SERVERS)));
     }
-    
-/****
-    public static void main(String args[]) {
-        System.setProperty(PROP_DISABLED, "false");
-        System.setProperty(PROP_QUERY_FREQUENCY, "30000");
-        I2PAppContext.getGlobalContext();
-        for (int i = 0; i < 5*60*1000; i += 61*1000) {
-            try { Thread.sleep(61*1000); } catch (InterruptedException ie) {}
+
+    /****
+        public static void main(String args[]) {
+            System.setProperty(PROP_DISABLED, "false");
+            System.setProperty(PROP_QUERY_FREQUENCY, "30000");
+            I2PAppContext.getGlobalContext();
+            for (int i = 0; i < 5*60*1000; i += 61*1000) {
+                try { Thread.sleep(61*1000); } catch (InterruptedException ie) {}
+            }
         }
-    }
-****/
+    ****/
 }

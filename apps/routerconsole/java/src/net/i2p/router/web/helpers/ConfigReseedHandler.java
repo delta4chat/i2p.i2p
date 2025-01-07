@@ -20,7 +20,7 @@ import net.i2p.router.web.Messages;
 public class ConfigReseedHandler extends FormHandler {
     private final Map<String, String> changes = new HashMap<String, String>();
     private final List<String> removes = new ArrayList<String>();
-    
+
     @Override
     protected void processForm() {
 
@@ -98,7 +98,10 @@ public class ConfigReseedHandler extends FormHandler {
             } finally {
                 // it's really a ByteArrayInputStream but we'll play along...
                 if (in != null)
-                    try { in.close(); } catch (IOException ioe) {}
+                    try {
+                        in.close();
+                    }
+                    catch (IOException ioe) {}
             }
         } else if (_action.equals(_t("Save changes"))) {
             saveChanges();
@@ -128,7 +131,7 @@ public class ConfigReseedHandler extends FormHandler {
 
     private void resetUrlList() {
         if (_context.router().saveConfig(Reseeder.PROP_RESEED_URL, null))
-	    addFormNotice(_t("URL list reset successfully"));
+            addFormNotice(_t("URL list reset successfully"));
         else
             addFormError(_t("Error saving the configuration (applied but not saved) - please see the error logs"));
     }
@@ -173,9 +176,9 @@ public class ConfigReseedHandler extends FormHandler {
         boolean req = "1".equals(mode);
         boolean disabled = "2".equals(mode);
         changes.put(Reseeder.PROP_SSL_REQUIRED,
-                                           Boolean.toString(req));
+                    Boolean.toString(req));
         changes.put(Reseeder.PROP_SSL_DISABLE,
-                                           Boolean.toString(disabled));
+                    Boolean.toString(disabled));
         saveBoolean(Reseeder.PROP_PROXY_ENABLE, "enable");
         String pmode = getJettyString("pmode");
         boolean senable = pmode != null && pmode.length() > 0;

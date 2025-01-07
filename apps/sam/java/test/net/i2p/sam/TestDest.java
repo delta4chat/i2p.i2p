@@ -10,11 +10,11 @@ import net.i2p.util.Log;
 
 public class TestDest {
     private static Log _log = new Log(TestDest.class);
-    
+
     private static void runTest(String samHost, int samPort, String conOptions) {
         test(samHost, samPort, conOptions);
     }
-    
+
     private static void test(String host, int port, String conOptions) {
         _log.info("\n\nTesting a DEST generate (should come back with 'DEST REPLY PUB=val PRIV=val')\n\n\n");
         try {
@@ -34,16 +34,19 @@ public class TestDest {
             line = reader.readLine();
             _log.info("Response from the dest generate: " + line);
             _log.debug("The abouve should be a DEST REPLY");
-            try { Thread.sleep(5*1000); } catch (InterruptedException ie) {}
+            try {
+                Thread.sleep(5*1000);
+            }
+            catch (InterruptedException ie) {}
             s.close();
         } catch (Exception e) {
             _log.error("Error testing for valid version", e);
         }
     }
-    
+
     public static void main(String args[]) {
         // "i2cp.tcp.host=www.i2p.net i2cp.tcp.port=7765 tunnels.inboundDepth=0";
-        // "i2cp.tcp.host=localhost i2cp.tcp.port=7654 tunnels.inboundDepth=0"; 
+        // "i2cp.tcp.host=localhost i2cp.tcp.port=7654 tunnels.inboundDepth=0";
         String conOptions = "i2cp.tcp.host=www.i2p.net i2cp.tcp.port=7765 tunnels.inboundDepth=0"; // "i2cp.tcp.host=localhost i2cp.tcp.port=7654 tunnels.inboundDepth=0";
         if (args.length > 0) {
             conOptions = "";
@@ -56,7 +59,10 @@ public class TestDest {
         } catch (Throwable t) {
             _log.error("Error running test", t);
         }
-        try { Thread.sleep(5*1000); } catch (InterruptedException ie) {}
+        try {
+            Thread.sleep(5*1000);
+        }
+        catch (InterruptedException ie) {}
         System.exit(0);
     }
 }

@@ -38,7 +38,7 @@ public class GarlicMessageParser {
      */
     private static final int MAX_CLOVES = 32;
 
-    public GarlicMessageParser(RouterContext context) { 
+    public GarlicMessageParser(RouterContext context) {
         _context = context;
         _log = _context.logManager().getLog(GarlicMessageParser.class);
     }
@@ -97,10 +97,10 @@ public class GarlicMessageParser {
             return null;
         } else {
             try {
-                CloveSet rv = readCloveSet(decrData, 0); 
+                CloveSet rv = readCloveSet(decrData, 0);
                 if (_log.shouldDebug())
                     _log.debug("Got cloves: " + rv.getCloveCount());
-                return rv; 
+                return rv;
             } catch (DataFormatException dfe) {
                 if (_log.shouldLog(Log.WARN))
                     _log.warn("Unable to read cloveSet", dfe);
@@ -133,9 +133,9 @@ public class GarlicMessageParser {
                 // unlikely, if we have two keys we should have a MuxedSKM
                 byte[] decrData = _context.elGamalAESEngine().decrypt(encData, elgKey, skm);
                 if (decrData != null) {
-                    rv = readCloveSet(decrData, 0); 
+                    rv = readCloveSet(decrData, 0);
                 } else {
-                    rv = null; 
+                    rv = null;
                 }
             }
         } catch (DataFormatException dfe) {
@@ -166,9 +166,9 @@ public class GarlicMessageParser {
         for (int i = 0; i < numCloves; i++) {
             //if (_log.shouldLog(Log.DEBUG))
             //    _log.debug("Reading clove " + i);
-                GarlicClove clove = new GarlicClove(_context);
-                offset += clove.readBytes(data, offset);
-                cloves[i] = clove;
+            GarlicClove clove = new GarlicClove(_context);
+            offset += clove.readBytes(data, offset);
+            cloves[i] = clove;
             //if (_log.shouldLog(Log.DEBUG))
             //    _log.debug("After reading clove " + i);
         }

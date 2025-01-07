@@ -50,7 +50,7 @@ public class RrdToolkit {
      * @throws java.io.IOException Thrown in case of I/O error
      */
     public static void addDatasource(String sourcePath, String destPath, DsDef newDatasource)
-            throws IOException {
+    throws IOException {
         addDatasources(sourcePath, destPath, Collections.singleton(newDatasource));
     }
 
@@ -65,7 +65,7 @@ public class RrdToolkit {
      * @throws java.io.IOException Thrown in case of I/O error
      */
     public static void addDatasources(String sourcePath, String destPath, Iterable<DsDef> newDatasources)
-            throws IOException {
+    throws IOException {
         if (Util.sameFilePath(sourcePath, destPath)) {
             throw new IllegalArgumentException(SOURCE_AND_DESTINATION_PATHS_ARE_THE_SAME);
         }
@@ -134,7 +134,7 @@ public class RrdToolkit {
      * @throws java.io.IOException Thrown in case of I/O error
      */
     public static void removeDatasource(String sourcePath, String destPath, String dsName)
-            throws IOException {
+    throws IOException {
         if (Util.sameFilePath(sourcePath, destPath)) {
             throw new IllegalArgumentException(SOURCE_AND_DESTINATION_PATHS_ARE_THE_SAME);
         }
@@ -208,7 +208,7 @@ public class RrdToolkit {
                 datasources = rrd.getDatasources();
             } else {
                 if (rrd.containsDs(dsName)) {
-                    datasources = new Datasource[]{rrd.getDatasource(dsName)};
+                    datasources = new Datasource[] {rrd.getDatasource(dsName)};
                 } else {
                     throw new IllegalArgumentException("Could not find datasource [" + dsName + "] in file " + sourcePath);
                 }
@@ -321,8 +321,8 @@ public class RrdToolkit {
     }
 
     private static void copyFile(String sourcePath, String destPath, boolean saveBackup)
-            throws IOException {
-        
+    throws IOException {
+
         Path source = Paths.get(sourcePath);
         Path destination = Paths.get(destPath);
         if (saveBackup) {
@@ -382,7 +382,7 @@ public class RrdToolkit {
      * @throws java.io.IOException Thrown in case of I/O error
      */
     public static void setDsMinValue(String sourcePath, String datasourceName,
-            double newMinValue, boolean filterArchivedValues) throws IOException {
+                                     double newMinValue, boolean filterArchivedValues) throws IOException {
         try (RrdDb rrd = RrdDb.getBuilder().setPath(sourcePath).build()) {
             Datasource ds = rrd.getDatasource(datasourceName);
             ds.setMinValue(newMinValue, filterArchivedValues);
@@ -400,7 +400,7 @@ public class RrdToolkit {
      * @throws java.io.IOException Thrown in case of I/O error
      */
     public static void setDsMaxValue(String sourcePath, String datasourceName,
-            double newMaxValue, boolean filterArchivedValues) throws IOException {
+                                     double newMaxValue, boolean filterArchivedValues) throws IOException {
         try (RrdDb rrd = RrdDb.getBuilder().setPath(sourcePath).build()) {
             Datasource ds = rrd.getDatasource(datasourceName);
             ds.setMaxValue(newMaxValue, filterArchivedValues);
@@ -419,8 +419,8 @@ public class RrdToolkit {
      * @throws java.io.IOException Thrown in case of I/O error
      */
     public static void setDsMinMaxValue(String sourcePath, String datasourceName,
-            double newMinValue, double newMaxValue, boolean filterArchivedValues)
-                    throws IOException {
+                                        double newMinValue, double newMaxValue, boolean filterArchivedValues)
+    throws IOException {
         try (RrdDb rrd = RrdDb.getBuilder().setPath(sourcePath).build()) {
             Datasource ds = rrd.getDatasource(datasourceName);
             ds.setMinMaxValue(newMinValue, newMaxValue, filterArchivedValues);
@@ -437,7 +437,7 @@ public class RrdToolkit {
      * @throws java.io.IOException Thrown in case of I/O error
      */
     public static void setArcXff(String sourcePath, ConsolFun consolFun, int steps,
-            double newXff) throws IOException {
+                                 double newXff) throws IOException {
         try (RrdDb rrd = RrdDb.getBuilder().setPath(sourcePath).build()) {
             Archive arc = rrd.getArchive(consolFun, steps);
             arc.setXff(newXff);
@@ -457,7 +457,7 @@ public class RrdToolkit {
      * @throws java.io.IOException Thrown in case of I/O error
      */
     public static void resizeArchive(String sourcePath, String destPath, ConsolFun consolFun,
-            int numSteps, int newRows) throws IOException {
+                                     int numSteps, int newRows) throws IOException {
         if (Util.sameFilePath(sourcePath, destPath)) {
             throw new IllegalArgumentException(SOURCE_AND_DESTINATION_PATHS_ARE_THE_SAME);
         }
@@ -471,7 +471,7 @@ public class RrdToolkit {
             if (arcDef.getRows() != newRows) {
                 arcDef.setRows(newRows);
                 rrdDef.setPath(destPath);
-                try (RrdDb rrdDest = RrdDb.of(rrdDef)){
+                try (RrdDb rrdDest = RrdDb.of(rrdDef)) {
                     rrdSource.copyStateTo(rrdDest);
                 }
             }
@@ -491,7 +491,7 @@ public class RrdToolkit {
      * @throws java.io.IOException Thrown in case of I/O error
      */
     public static void resizeArchive(String sourcePath, ConsolFun consolFun,
-            int numSteps, int newRows, boolean saveBackup) throws IOException {
+                                     int numSteps, int newRows, boolean saveBackup) throws IOException {
         String destPath = Util.getTmpFilename();
         resizeArchive(sourcePath, destPath, consolFun, numSteps, newRows);
         copyFile(destPath, sourcePath, saveBackup);
@@ -533,7 +533,7 @@ public class RrdToolkit {
      * @throws java.io.IOException Thrown in case of I/O error
      */
     public static String[] getCanonicalPaths(String directory, final String extension, boolean resursive)
-            throws IOException {
+    throws IOException {
         File baseDir = new File(directory);
         if (!baseDir.isDirectory()) {
             throw new RrdException("Not a directory: " + directory);
@@ -546,7 +546,7 @@ public class RrdToolkit {
     }
 
     private static void traverseDirectory(File directory, String extension, boolean recursive, List<String> list)
-            throws IOException {
+    throws IOException {
         File[] files = directory.listFiles();
         for (File file : files) {
             if (file.isDirectory() && recursive) {

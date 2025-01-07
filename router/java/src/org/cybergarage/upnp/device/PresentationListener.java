@@ -10,7 +10,7 @@
 *
 *	11/18/02
 *		- first revision.
-*	
+*
 ******************************************************************/
 
 package org.cybergarage.upnp.device;
@@ -19,5 +19,5 @@ import org.cybergarage.http.HTTPRequest;
 
 public interface PresentationListener
 {
-	public void httpRequestRecieved(HTTPRequest httpReq);
+    public void httpRequestRecieved(HTTPRequest httpReq);
 }

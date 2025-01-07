@@ -55,8 +55,8 @@ public class ConfigReseedHelper extends HelperBase {
         boolean required =  _context.getBooleanPropertyDefaultTrue(Reseeder.PROP_SSL_REQUIRED);
         boolean disabled =  _context.getBooleanProperty(Reseeder.PROP_SSL_DISABLE);
         if ((mode == 0 && (!disabled) && (!required)) ||
-            (mode == 1 && (!disabled) && required) ||
-            (mode == 2 && disabled))
+                (mode == 1 && (!disabled) && required) ||
+                (mode == 2 && disabled))
             return CHECKED;
         return "";
     }
@@ -66,10 +66,10 @@ public class ConfigReseedHelper extends HelperBase {
         String c =  _context.getProperty(Reseeder.PROP_SPROXY_TYPE, "HTTP");
         boolean disabled =  !_context.getBooleanProperty(Reseeder.PROP_SPROXY_ENABLE);
         if ((mode == 0 && disabled) ||
-            (mode == 1 && !disabled && c.equals("HTTP")) ||
-            (mode == 2 && !disabled && c.equals("SOCKS4")) ||
-            (mode == 3 && !disabled && c.equals("SOCKS5")) ||
-            (mode == 4 && !disabled && c.equals("INTERNAL")))
+                (mode == 1 && !disabled && c.equals("HTTP")) ||
+                (mode == 2 && !disabled && c.equals("SOCKS4")) ||
+                (mode == 3 && !disabled && c.equals("SOCKS5")) ||
+                (mode == 4 && !disabled && c.equals("INTERNAL")))
             return CHECKED;
         return "";
     }
@@ -83,11 +83,11 @@ public class ConfigReseedHelper extends HelperBase {
         return getChecked(Reseeder.PROP_PROXY_AUTH_ENABLE);
     }
 
-/****
-    public String getSenable() {
-        return getChecked(Reseeder.PROP_SPROXY_ENABLE);
-    }
-****/
+    /****
+        public String getSenable() {
+            return getChecked(Reseeder.PROP_SPROXY_ENABLE);
+        }
+    ****/
 
     /** @since 0.8.9 */
     public String getSauth() {
@@ -111,9 +111,9 @@ public class ConfigReseedHelper extends HelperBase {
         Collections.sort(URLList);
         StringBuilder buf = new StringBuilder();
         for (String s : URLList) {
-             if (buf.length() > 0)
-                 buf.append('\n');
-             buf.append(s);
+            if (buf.length() > 0)
+                buf.append('\n');
+            buf.append(s);
         }
         return buf.toString();
     }

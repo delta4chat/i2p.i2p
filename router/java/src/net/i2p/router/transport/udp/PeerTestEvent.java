@@ -61,7 +61,7 @@ class PeerTestEvent extends SimpleTimer2.TimedEvent {
             } else {
                 if (_log.shouldDebug())
                     _log.debug("Test timer, no test run, last v4 test: " + new java.util.Date(_lastTested.get()) +
-                              " last v6 test: " + new java.util.Date(_lastTestedV6.get()));
+                               " last v6 test: " + new java.util.Date(_lastTestedV6.get()));
             }
         }
         if (_alive) {

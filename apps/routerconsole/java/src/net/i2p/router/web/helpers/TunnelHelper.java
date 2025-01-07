@@ -8,7 +8,7 @@ import net.i2p.router.web.HelperBase;
 
 public class TunnelHelper extends HelperBase {
     public TunnelHelper() {}
-    
+
     public String getTunnelSummary() {
         TunnelRenderer renderer = new TunnelRenderer(_context);
         try {

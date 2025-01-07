@@ -28,26 +28,26 @@ abstract class IRCFilter {
     static {
         final String[] allowedCommands =
         {
-                // "NOTICE", // can contain CTCP
-                "PING",
-                //"PONG",
-                "MODE",
-                "JOIN",
-                "NICK",
-                "QUIT",
-                "PART",
-                "WALLOPS",
-                "ERROR",
-                "KICK",
-                "H", // "hide operator status" (after kicking an op)
-                "TOPIC",
-                "AUTHENTICATE", // SASL, also requires CAP below
-                // http://tools.ietf.org/html/draft-mitchell-irc-capabilities-01
-                "CAP",
-                "PROTOCTL",
-                "AWAY",
-                "ACCOUNT",  // https://ircv3.net/specs/extensions/account-notify
-                "CHGHOST"   // https://ircv3.net/specs/extensions/chghost
+            // "NOTICE", // can contain CTCP
+            "PING",
+            //"PONG",
+            "MODE",
+            "JOIN",
+            "NICK",
+            "QUIT",
+            "PART",
+            "WALLOPS",
+            "ERROR",
+            "KICK",
+            "H", // "hide operator status" (after kicking an op)
+            "TOPIC",
+            "AUTHENTICATE", // SASL, also requires CAP below
+            // http://tools.ietf.org/html/draft-mitchell-irc-capabilities-01
+            "CAP",
+            "PROTOCTL",
+            "AWAY",
+            "ACCOUNT",  // https://ircv3.net/specs/extensions/account-notify
+            "CHGHOST"   // https://ircv3.net/specs/extensions/chghost
         };
         _allowedInbound = new HashSet<String>(Arrays.asList(allowedCommands));
     }
@@ -60,11 +60,11 @@ abstract class IRCFilter {
      *  @return the original or modified line, or null if it should be dropped.
      */
     public static String inboundFilter(String s, StringBuffer expectedPong, DCCHelper helper) {
-        
+
         String field[] = DataHelper.split(s, " ", 5);
         String command;
         int idx=0;
-        
+
 
         try {
             // https://www.unrealircd.org/docs/Message_tags
@@ -76,8 +76,8 @@ abstract class IRCFilter {
             command = field[idx++].toUpperCase(Locale.US);
         } catch (IndexOutOfBoundsException ioobe) {
             // server sent borked command?
-           //_log.warn("Dropping defective message: index out of bounds while extracting command.");
-           return null;
+            //_log.warn("Dropping defective message: index out of bounds while extracting command.");
+            return null;
         }
 
         idx++; //skip victim
@@ -86,15 +86,15 @@ abstract class IRCFilter {
         try {
             Integer.parseInt(command);
             return s;
-        } catch(NumberFormatException nfe){}
+        } catch(NumberFormatException nfe) {}
 
-        
+
         if ("PONG".equals(command)) {
             // Turn the received ":irc.freshcoffee.i2p PONG irc.freshcoffee.i2p :127.0.0.1"
             // into ":127.0.0.1 PONG 127.0.0.1 " so that the caller can append the client's extra parameter
             // though, does 127.0.0.1 work for irc clients connecting remotely?  and for all of them?  sure would
             // be great if irc clients actually followed the RFCs here, but i guess thats too much to ask.
-            // If we haven't PINGed them, or the PING we sent isn't something we know how to filter, this 
+            // If we haven't PINGed them, or the PING we sent isn't something we know how to filter, this
             // is blank.
             //
             // String pong = expectedPong.length() > 0 ? expectedPong.toString() : null;
@@ -103,12 +103,12 @@ abstract class IRCFilter {
             expectedPong.setLength(0);
             return pong;
         }
-        
+
         // Allow all allowedCommands
         if (_allowedInbound.contains(command)) {
-                return s;
+            return s;
         }
-        
+
         // Allow PRIVMSG, but block CTCP.
         if("PRIVMSG".equals(command) || "NOTICE".equals(command))
         {
@@ -162,118 +162,118 @@ abstract class IRCFilter {
     static {
         final String[] allowedCommands =
         {
-                // Commands that regular users might use
-                "ACCEPT", // Inspircd's m_callerid.so module
-                "ADMIN",
-                "AUTHENTICATE", // SASL, also requires CAP below
-                "AWAY",    // should be harmless
-                "CAP",     // http://tools.ietf.org/html/draft-mitchell-irc-capabilities-01
-                "COMMANDS",
-                "CYCLE",
-                "DCCALLOW",
-                "DEVOICE",
-                "FPART",
-                "HELPME", "HELPOP",  // helpop is what unrealircd uses by default
-                "INVITE",
-                "ISON",    // jIRCii uses this for a ping (response is 303)
-                "JOIN",
-                "KICK",
-                "KNOCK",
-                "LINKS",
-                "LIST",
-                "LUSERS",
-                "MAP", // seems safe enough, the ircd should protect themselves though
-                "MODE",
-                "MOTD",
-                "NAMES",
-                "NICK",
-                // "NOTICE", // can contain CTCP
-                "OPER",
-                // "PART", // replace with filtered PART to hide client part messages
-                "PASS",
-                // "PING",
-                "PONG",
-                "PROTOCTL",
-                // "QUIT", // replace with a filtered QUIT to hide client quit messages
-                "RULES",
-                "SETNAME",
-                "SILENCE",
-                "SSLINFO",
-                "STATS",
-                "TBAN",
-                "TITLE",
-                "TOPIC",
-                "UNINVITE",
-                "USERHOST",
-                "USERS", // Ticket 1249
-                "VHOST",
-                "VHOST",
-                "WATCH",
-                "WHO",
-                "WHOIS",
-                "WHOWAS",
-                // the next few are default aliases on unreal (+ anope)
-                "BOTSERV", "BS",
-                "CHANSERV", "CS",
-                "HELPSERV",
-                "HOSTSERV", "HS",
-                "MEMOSERV", "MS",
-                "NICKSERV", "NS",
-                "OPERSERV", "OS",
-                "STATSERV",
-                // IRCop commands
-                "ADCHAT",
-                "ADDMOTD",
-                "ADDOMOTD",
-                "CBAN",
-                "CHATOPS",
-                "CHECK",
-                "CHGHOST",
-                "CHGIDENT",
-                "CHGNAME",
-                "CLOSE",
-                "DCCDENY",
-                "DIE",
-                "ELINE",
-                "FILTER",
-                "GLINE",
-                "GLOBOPS",
-                "GZLINE",
-                "HTM", // "High Traffic Mode"
-                "JUMPSERVER",
-                "KILL",
-                "KLINE",
-                "LOADMODULE",
-                "LOCKSERV",
-                "LOCOPS",
-                "MKPASSWD",
-                "NACHAT",
-                "NICKLOCK",
-                "NICKUNLOCK",
-                "OLINE",
-                "OPERMOTD",
-                "REHASH",
-                "RELOADMODULE",
-                "RESTART",
-                "RLINE",
-                "SAJOIN",
-                "SAKICK",
-                "SAMODE",
-                "SANICK",
-                "SAPART",
-                "SATOPIC",
-                "SDESC",
-                "SETHOST",
-                "SETIDENT",
-                "SHUN",
-                "SPAMFILTER",
-                "SQUIT",
-                "TEMPSHUN",
-                "TLINE",
-                "UNDCCDENY",
-                "UNLOCKSERV",
-                "WALLOPS",
-                "ZLINE"
+            // Commands that regular users might use
+            "ACCEPT", // Inspircd's m_callerid.so module
+            "ADMIN",
+            "AUTHENTICATE", // SASL, also requires CAP below
+            "AWAY",    // should be harmless
+            "CAP",     // http://tools.ietf.org/html/draft-mitchell-irc-capabilities-01
+            "COMMANDS",
+            "CYCLE",
+            "DCCALLOW",
+            "DEVOICE",
+            "FPART",
+            "HELPME", "HELPOP",  // helpop is what unrealircd uses by default
+            "INVITE",
+            "ISON",    // jIRCii uses this for a ping (response is 303)
+            "JOIN",
+            "KICK",
+            "KNOCK",
+            "LINKS",
+            "LIST",
+            "LUSERS",
+            "MAP", // seems safe enough, the ircd should protect themselves though
+            "MODE",
+            "MOTD",
+            "NAMES",
+            "NICK",
+            // "NOTICE", // can contain CTCP
+            "OPER",
+            // "PART", // replace with filtered PART to hide client part messages
+            "PASS",
+            // "PING",
+            "PONG",
+            "PROTOCTL",
+            // "QUIT", // replace with a filtered QUIT to hide client quit messages
+            "RULES",
+            "SETNAME",
+            "SILENCE",
+            "SSLINFO",
+            "STATS",
+            "TBAN",
+            "TITLE",
+            "TOPIC",
+            "UNINVITE",
+            "USERHOST",
+            "USERS", // Ticket 1249
+            "VHOST",
+            "VHOST",
+            "WATCH",
+            "WHO",
+            "WHOIS",
+            "WHOWAS",
+            // the next few are default aliases on unreal (+ anope)
+            "BOTSERV", "BS",
+            "CHANSERV", "CS",
+            "HELPSERV",
+            "HOSTSERV", "HS",
+            "MEMOSERV", "MS",
+            "NICKSERV", "NS",
+            "OPERSERV", "OS",
+            "STATSERV",
+            // IRCop commands
+            "ADCHAT",
+            "ADDMOTD",
+            "ADDOMOTD",
+            "CBAN",
+            "CHATOPS",
+            "CHECK",
+            "CHGHOST",
+            "CHGIDENT",
+            "CHGNAME",
+            "CLOSE",
+            "DCCDENY",
+            "DIE",
+            "ELINE",
+            "FILTER",
+            "GLINE",
+            "GLOBOPS",
+            "GZLINE",
+            "HTM", // "High Traffic Mode"
+            "JUMPSERVER",
+            "KILL",
+            "KLINE",
+            "LOADMODULE",
+            "LOCKSERV",
+            "LOCOPS",
+            "MKPASSWD",
+            "NACHAT",
+            "NICKLOCK",
+            "NICKUNLOCK",
+            "OLINE",
+            "OPERMOTD",
+            "REHASH",
+            "RELOADMODULE",
+            "RESTART",
+            "RLINE",
+            "SAJOIN",
+            "SAKICK",
+            "SAMODE",
+            "SANICK",
+            "SAPART",
+            "SATOPIC",
+            "SDESC",
+            "SETHOST",
+            "SETIDENT",
+            "SHUN",
+            "SPAMFILTER",
+            "SQUIT",
+            "TEMPSHUN",
+            "TLINE",
+            "UNDCCDENY",
+            "UNLOCKSERV",
+            "WALLOPS",
+            "ZLINE"
         };
         _allowedOutbound = new HashSet<String>(Arrays.asList(allowedCommands));
     }
@@ -291,11 +291,11 @@ abstract class IRCFilter {
 
         if(field[0].length()==0)
             return null; // W T F?
-        
-        
+
+
         if(field[0].charAt(0)==':')
             return null; // ???
-        
+
         int idx = 0;
         // https://www.unrealircd.org/docs/Message_tags
         // https://ircv3.net/specs/extensions/message-tags.html
@@ -333,17 +333,17 @@ abstract class IRCFilter {
                 //    _log.error("IRC client sent a PING we don't understand, filtering it (\"" + s + "\")");
                 rv = null;
             }
-            
+
             //if (_log.shouldLog(Log.WARN))
             //    _log.warn("sending ping [" + rv + "], waiting for [" + expectedPong + "] orig was [" + s  + "]");
-            
+
             return rv;
         }
 
         // Allow all allowedCommands
         if (_allowedOutbound.contains(command))
             return s;
-        
+
         // mIRC sends "NOTICE user :DCC Send file (IP)"
         // in addition to the CTCP version
         if("NOTICE".equals(command))
@@ -355,7 +355,7 @@ abstract class IRCFilter {
                 return filterDCCOut(field[idx - 1] + ' ' + field[idx] + " :DCC ", msg.substring(5), helper);
             // fall through
         }
-        
+
         // Allow PRIVMSG, but block CTCP (except ACTION).
         if("PRIVMSG".equals(command) || "NOTICE".equals(command))
         {
@@ -364,10 +364,10 @@ abstract class IRCFilter {
             String msg = field[idx + 1];
             if (idx + 2 < field.length)
                 msg += ' ' + field[idx + 2];
-        
+
             if(msg.indexOf(0x01) >= 0) // CTCP marker ^A can be anywhere, not just immediately after the ':'
             {
-                    // CTCP
+                // CTCP
 
                 // don't even try to parse multiple CTCP in the same message
                 int count = 0;
@@ -431,11 +431,11 @@ abstract class IRCFilter {
             // hide client message
             return "PART " + field[idx] + " :leaving";
         }
-        
+
         if ("QUIT".equals(command)) {
             return "QUIT :leaving";
         }
-        
+
         // Block the rest
         return null;
     }
@@ -513,7 +513,7 @@ abstract class IRCFilter {
             return null;
         StringBuilder buf = new StringBuilder(256);
         buf.append(pfx)
-           .append(type).append(' ').append(arg).append(' ');
+        .append(type).append(' ').append(arg).append(' ');
         if (haveIP) {
             if (port > 0) {
                 byte[] myIP = helper.getLocalAddress();
@@ -625,7 +625,7 @@ abstract class IRCFilter {
             return null;
         StringBuilder buf = new StringBuilder(256);
         buf.append(pfx)
-           .append(type).append(' ').append(arg).append(' ');
+        .append(type).append(' ').append(arg).append(' ');
         if (haveIP) {
             if (port > 0)
                 buf.append(helper.getB32Hostname()).append(' ');

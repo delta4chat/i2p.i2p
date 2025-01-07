@@ -15,7 +15,7 @@ import net.i2p.data.DataHelper;
  * @since 0.9.34
  */
 public class EscapeHTMLOutputStream extends FilterOutputStream {
-    
+
     private static final byte[] AMP = DataHelper.getASCII("&amp;");
     private static final byte[] QUOT = DataHelper.getASCII("&quot;");
     private static final byte[] LT = DataHelper.getASCII("&lt;");
@@ -28,35 +28,35 @@ public class EscapeHTMLOutputStream extends FilterOutputStream {
     public EscapeHTMLOutputStream(OutputStream out) {
         super(out);
     }
-    
+
     @Override
     public void write(int val) throws IOException {
         switch (val) {
-            case '&':
-                out.write(AMP);
-                break;
-            case '"':
-                out.write(QUOT);
-                break;
-            case '<':
-                out.write(LT);
-                break;
-            case '>':
-                out.write(GT);
-                break;
-            case '\'':
-                out.write(APOS);
-                break;
-            case '-':
-                out.write(MDASH);
-                break;
-            case '\r':
-                break;
-            case '\n':
-                out.write(BR);
-                break;
-            default:
-                out.write(val);
+        case '&':
+            out.write(AMP);
+            break;
+        case '"':
+            out.write(QUOT);
+            break;
+        case '<':
+            out.write(LT);
+            break;
+        case '>':
+            out.write(GT);
+            break;
+        case '\'':
+            out.write(APOS);
+            break;
+        case '-':
+            out.write(MDASH);
+            break;
+        case '\r':
+            break;
+        case '\n':
+            out.write(BR);
+            break;
+        default:
+            out.write(val);
         }
     }
 

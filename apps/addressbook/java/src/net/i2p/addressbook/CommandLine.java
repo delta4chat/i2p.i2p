@@ -16,10 +16,10 @@ import net.i2p.CoreVersion;
 public class CommandLine extends net.i2p.util.CommandLine {
 
     protected static final List<String> ACLASSES = Arrays.asList(new String[] {
-        "net.i2p.addressbook.HostTxtParser",
-        "net.i2p.router.naming.BlockfileNamingService",
-        "net.metanotion.io.block.BlockFile",
-    });
+                "net.i2p.addressbook.HostTxtParser",
+                "net.i2p.router.naming.BlockfileNamingService",
+                "net.metanotion.io.block.BlockFile",
+            });
 
     protected CommandLine() {}
 

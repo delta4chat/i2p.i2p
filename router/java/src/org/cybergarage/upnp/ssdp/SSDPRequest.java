@@ -13,7 +13,7 @@
 *	03/16/04
 *		- Thanks for Darrell Young
 *		- Fixed to set v1.1 to the HTTP version.;
-*	
+*
 ******************************************************************/
 
 package org.cybergarage.upnp.ssdp;
@@ -24,102 +24,102 @@ import org.cybergarage.http.*;
 
 public class SSDPRequest extends HTTPRequest
 {
-	////////////////////////////////////////////////
-	//	Constructor
-	////////////////////////////////////////////////
-	
-	public SSDPRequest()
-	{
-		setVersion(HTTP.VERSION_11);
-	}
+    ////////////////////////////////////////////////
+    //	Constructor
+    ////////////////////////////////////////////////
 
-	public SSDPRequest(InputStream in)
-	{
-		super(in);
-	}
-	
-	////////////////////////////////////////////////
-	//	NT
-	////////////////////////////////////////////////
+    public SSDPRequest()
+    {
+        setVersion(HTTP.VERSION_11);
+    }
 
-	public void setNT(String value)
-	{
-		setHeader(HTTP.NT, value);
-	}
+    public SSDPRequest(InputStream in)
+    {
+        super(in);
+    }
 
-	public String getNT()
-	{
-		return getHeaderValue(HTTP.NT);
-	}
+    ////////////////////////////////////////////////
+    //	NT
+    ////////////////////////////////////////////////
 
-	////////////////////////////////////////////////
-	//	NTS
-	////////////////////////////////////////////////
+    public void setNT(String value)
+    {
+        setHeader(HTTP.NT, value);
+    }
 
-	public void setNTS(String value)
-	{
-		setHeader(HTTP.NTS, value);
-	}
+    public String getNT()
+    {
+        return getHeaderValue(HTTP.NT);
+    }
 
-	public String getNTS()
-	{
-		return getHeaderValue(HTTP.NTS);
-	}
+    ////////////////////////////////////////////////
+    //	NTS
+    ////////////////////////////////////////////////
 
-	////////////////////////////////////////////////
-	//	Location
-	////////////////////////////////////////////////
+    public void setNTS(String value)
+    {
+        setHeader(HTTP.NTS, value);
+    }
 
-	public void setLocation(String value)
-	{
-		setHeader(HTTP.LOCATION, value);
-	}
+    public String getNTS()
+    {
+        return getHeaderValue(HTTP.NTS);
+    }
 
-	public String getLocation()
-	{
-		return getHeaderValue(HTTP.LOCATION);
-	}
+    ////////////////////////////////////////////////
+    //	Location
+    ////////////////////////////////////////////////
 
-	////////////////////////////////////////////////
-	//	USN
-	////////////////////////////////////////////////
+    public void setLocation(String value)
+    {
+        setHeader(HTTP.LOCATION, value);
+    }
 
-	public void setUSN(String value)
-	{
-		setHeader(HTTP.USN, value);
-	}
+    public String getLocation()
+    {
+        return getHeaderValue(HTTP.LOCATION);
+    }
 
-	public String getUSN()
-	{
-		return getHeaderValue(HTTP.USN);
-	}
+    ////////////////////////////////////////////////
+    //	USN
+    ////////////////////////////////////////////////
 
-	////////////////////////////////////////////////
-	//	CacheControl
-	////////////////////////////////////////////////
+    public void setUSN(String value)
+    {
+        setHeader(HTTP.USN, value);
+    }
 
-	public void setLeaseTime(int len)
-	{
-		setHeader(HTTP.CACHE_CONTROL, "max-age=" + Integer.toString(len));
-	}
+    public String getUSN()
+    {
+        return getHeaderValue(HTTP.USN);
+    }
 
-	public int getLeaseTime()
-	{
-		String cacheCtrl = getHeaderValue(HTTP.CACHE_CONTROL);
-		return SSDP.getLeaseTime(cacheCtrl);
-	}
+    ////////////////////////////////////////////////
+    //	CacheControl
+    ////////////////////////////////////////////////
 
-	////////////////////////////////////////////////
-	//	BootId
-	////////////////////////////////////////////////
+    public void setLeaseTime(int len)
+    {
+        setHeader(HTTP.CACHE_CONTROL, "max-age=" + Integer.toString(len));
+    }
 
-	public void setBootId(int bootId)
-	{
-		setHeader(HTTP.BOOTID_UPNP_ORG, bootId);
-	}
+    public int getLeaseTime()
+    {
+        String cacheCtrl = getHeaderValue(HTTP.CACHE_CONTROL);
+        return SSDP.getLeaseTime(cacheCtrl);
+    }
 
-	public int getBootId()
-	{
-		return getIntegerHeaderValue(HTTP.BOOTID_UPNP_ORG);
-	}
+    ////////////////////////////////////////////////
+    //	BootId
+    ////////////////////////////////////////////////
+
+    public void setBootId(int bootId)
+    {
+        setHeader(HTTP.BOOTID_UPNP_ORG, bootId);
+    }
+
+    public int getBootId()
+    {
+        return getIntegerHeaderValue(HTTP.BOOTID_UPNP_ORG);
+    }
 }

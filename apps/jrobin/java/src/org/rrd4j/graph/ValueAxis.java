@@ -75,19 +75,19 @@ class ValueAxis extends Axis {
             if (gdef.altYGrid) {
                 /* find the value with max number of digits. Get number of digits */
                 int decimals = (int) Math.ceil(Math.log10(Math.max(Math.abs(im.maxval),
-                        Math.abs(im.minval))));
-                if (decimals <= 0) /* everything is small. make place for zero */ {
+                                               Math.abs(im.minval))));
+                if (decimals <= 0) { /* everything is small. make place for zero */
                     decimals = 1;
                 }
                 int fractionals = (int) Math.floor(Math.log10(range));
-                if (fractionals < 0) /* small amplitude. */ {
+                if (fractionals < 0) { /* small amplitude. */
                     labfmt = Util.sprintf(gdef.locale, "%%%d.%df", decimals - fractionals + 1, -fractionals + 1);
                 }
                 else {
                     labfmt = Util.sprintf(gdef.locale, "%%%d.1f", decimals + 1);
                 }
                 gridstep = Math.pow(10, fractionals);
-                if (gridstep == 0) /* range is one -> 0.1 is reasonable scale */ {
+                if (gridstep == 0) { /* range is one -> 0.1 is reasonable scale */
                     gridstep = 0.1;
                 }
                 /* should have at least 5 lines but no more then 15 */
@@ -205,14 +205,14 @@ class ValueAxis extends Axis {
                 if(im.minval < 0.0 && im.maxval > 0.0) {
                     //The graph covers positive and negative values, so we need the
                     // desiredMinimumLabelCount number of labels, which is going to
-                    // usually be 3, then maybe 2, then only as a last resort, 1. 
+                    // usually be 3, then maybe 2, then only as a last resort, 1.
                     // So, we need to find out what the label factor would be
                     // if we chose this ylab definition
                     labelFactor = findLabelFactor(thisYLabel);
                     if(labelFactor == -1) {
-                        //Default to too many to satisfy the label count test, unless we're looking for just 1	
+                        //Default to too many to satisfy the label count test, unless we're looking for just 1
                         // in which case be sure to satisfy the label count test
-                        labelFactor = desiredMinimumLabelCount==1?1:desiredMinimumLabelCount+1; 
+                        labelFactor = desiredMinimumLabelCount==1?1:desiredMinimumLabelCount+1;
                     }
                     //Adding one?  Think fenceposts (need one more than just dividing length by space between)
                     int labelCount = ((int)(scaledrange/thisYLabel.grid)/labelFactor)+1;
@@ -271,7 +271,7 @@ class ValueAxis extends Axis {
             return false;
         }
         BigDecimal bd = BigDecimal.valueOf(scaledstep)
-                .multiply(BigDecimal.valueOf(labfact), MathContext.DECIMAL32);
+                        .multiply(BigDecimal.valueOf(labfact), MathContext.DECIMAL32);
         return !(bd.signum() == 0 || bd.scale() <= 0 || bd.stripTrailingZeros().scale() <= 0);
     }
 
@@ -281,7 +281,7 @@ class ValueAxis extends Axis {
 
         YLabel(double grid, int lfac1, int lfac2, int lfac3, int lfac4) {
             this.grid = grid;
-            labelFacts = new int[]{lfac1, lfac2, lfac3, lfac4};
+            labelFacts = new int[] {lfac1, lfac2, lfac3, lfac4};
         }
     }
 }

@@ -25,7 +25,7 @@ import net.i2p.util.SimpleTimer2;
 public class LoadClientAppsJob extends JobImpl {
     private final Log _log;
     private static boolean _loaded = false;
-    
+
     public LoadClientAppsJob(RouterContext ctx) {
         super(ctx);
         _log = ctx.logManager().getLog(LoadClientAppsJob.class);
@@ -63,11 +63,11 @@ public class LoadClientAppsJob extends JobImpl {
             } else if (app.delay > 0) {
                 // wait before firing it up
                 DelayedRunClient drc = new DelayedRunClient(ctx.simpleTimer2(), ctx, app.className,
-                                                            app.clientName, argVal);
+                        app.clientName, argVal);
                 drc.schedule(app.delay);
             } else {
                 WaitForRunningClient wfrc = new WaitForRunningClient(ctx.simpleTimer2(), ctx,
-                                                                app.className, app.clientName, argVal);
+                        app.className, app.clientName, argVal);
                 wfrc.schedule(1000);
             }
         }
@@ -90,7 +90,7 @@ public class LoadClientAppsJob extends JobImpl {
                                 String clientName, String args[]) {
             this(pool, enclosingContext, className, clientName, args, null, null);
         }
-        
+
         /** caller MUST call schedule() */
         public DelayedRunClient(SimpleTimer2 pool, RouterContext enclosingContext, String className, String clientName,
                                 String args[], ThreadGroup threadGroup, ClassLoader cl) {
@@ -117,13 +117,13 @@ public class LoadClientAppsJob extends JobImpl {
 
         public void timeReached() {
             if (!_ctx.router().isRunning()) {
-                 reschedule(1000);
-                 return;
+                reschedule(1000);
+                return;
             }
             super.timeReached();
         }
     }
-    
+
     /**
      *  Parse arg string into an array of args.
      *  Spaces or tabs separate args.
@@ -142,32 +142,32 @@ public class LoadClientAppsJob extends JobImpl {
             for (int i = 0; i < args.length(); i++) {
                 char c = args.charAt(i);
                 switch (c) {
-                    case '\'':
-                    case '"':
-                        if (isQuoted) {
-                            String str = buf.toString().trim();
-                            if (str.length() > 0)
-                                argList.add(str);
-                            buf.setLength(0);
-                        }
-                        isQuoted = !isQuoted;
-                        break;
-                    case ' ':
-                    case '\t':
-                        // whitespace - if we're in a quoted section, keep this as part of the quote,
-                        // otherwise use it as a delim
-                        if (isQuoted) {
-                            buf.append(c);
-                        } else {
-                            String str = buf.toString().trim();
-                            if (str.length() > 0)
-                                argList.add(str);
-                            buf.setLength(0);
-                        }
-                        break;
-                    default:
+                case '\'':
+                case '"':
+                    if (isQuoted) {
+                        String str = buf.toString().trim();
+                        if (str.length() > 0)
+                            argList.add(str);
+                        buf.setLength(0);
+                    }
+                    isQuoted = !isQuoted;
+                    break;
+                case ' ':
+                case '\t':
+                    // whitespace - if we're in a quoted section, keep this as part of the quote,
+                    // otherwise use it as a delim
+                    if (isQuoted) {
                         buf.append(c);
-                        break;
+                    } else {
+                        String str = buf.toString().trim();
+                        if (str.length() > 0)
+                            argList.add(str);
+                        buf.setLength(0);
+                    }
+                    break;
+                default:
+                    buf.append(c);
+                    break;
                 }
             }
             if (buf.length() > 0) {
@@ -240,7 +240,7 @@ public class LoadClientAppsJob extends JobImpl {
     public static void runClient(String className, String clientName, String args[], RouterContext ctx, Log log) {
         runClient(className, clientName, args, ctx, log, null, null);
     }
-    
+
     /**
      *  Run client in a new thread.
      *
@@ -259,7 +259,7 @@ public class LoadClientAppsJob extends JobImpl {
             t = new I2PThread(threadGroup, new RunApp(className, clientName, args, ctx, log, cl));
         else
             t = new I2PThread(new RunApp(className, clientName, args, ctx, log, cl));
-        if (clientName == null) 
+        if (clientName == null)
             clientName = className + " client";
         t.setName(clientName);
         t.setDaemon(true);
@@ -276,8 +276,8 @@ public class LoadClientAppsJob extends JobImpl {
         private final Log _log;
         private final ClassLoader _cl;
 
-        public RunApp(String className, String appName, String args[], RouterContext ctx, Log log, ClassLoader cl) { 
-            _className = className; 
+        public RunApp(String className, String appName, String args[], RouterContext ctx, Log log, ClassLoader cl) {
+            _className = className;
             _appName = appName;
             if (args == null)
                 _args = new String[0];
@@ -343,24 +343,26 @@ public class LoadClientAppsJob extends JobImpl {
         }
     }
 
-    public String getName() { return "Load up any client applications"; }
-    
-/****
-    public static void main(String args[]) {
-        test(null);
-        test("hi how are you?");
-        test("hi how are you? ");
-        test(" hi how are you? ");
-        test(" hi how are \"y\"ou? ");
-        test("-nogui -e \"config localhost 17654\" -e \"httpclient 4544\"");
-        test("-nogui -e 'config localhost 17654' -e 'httpclient 4544'");
+    public String getName() {
+        return "Load up any client applications";
     }
-    private static void test(String args) {
-        String parsed[] = parseArgs(args);
-        System.out.print("Parsed [" + args + "] into " + parsed.length + " elements: ");
-        for (int i = 0; i < parsed.length; i++)
-            System.out.print("[" + parsed[i] + "] ");
-        System.out.println();
-    }
-****/
+
+    /****
+        public static void main(String args[]) {
+            test(null);
+            test("hi how are you?");
+            test("hi how are you? ");
+            test(" hi how are you? ");
+            test(" hi how are \"y\"ou? ");
+            test("-nogui -e \"config localhost 17654\" -e \"httpclient 4544\"");
+            test("-nogui -e 'config localhost 17654' -e 'httpclient 4544'");
+        }
+        private static void test(String args) {
+            String parsed[] = parseArgs(args);
+            System.out.print("Parsed [" + args + "] into " + parsed.length + " elements: ");
+            for (int i = 0; i < parsed.length; i++)
+                System.out.print("[" + parsed[i] + "] ");
+            System.out.println();
+        }
+    ****/
 }

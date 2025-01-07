@@ -10,7 +10,7 @@
 *
 *	01/05/04
 *		- first revision.
-*	
+*
 ******************************************************************/
 
 package org.cybergarage.upnp.device;
@@ -20,47 +20,47 @@ import org.cybergarage.util.*;
 
 public class Disposer extends ThreadCore
 {
-	////////////////////////////////////////////////
-	//	Constructor
-	////////////////////////////////////////////////
+    ////////////////////////////////////////////////
+    //	Constructor
+    ////////////////////////////////////////////////
 
-	public Disposer(ControlPoint ctrlp)
-	{
-		setControlPoint(ctrlp);
-	}
-	
-	////////////////////////////////////////////////
-	//	Member
-	////////////////////////////////////////////////
+    public Disposer(ControlPoint ctrlp)
+    {
+        setControlPoint(ctrlp);
+    }
 
-	private ControlPoint ctrlPoint;
+    ////////////////////////////////////////////////
+    //	Member
+    ////////////////////////////////////////////////
 
-	public void setControlPoint(ControlPoint ctrlp)
-	{
-		ctrlPoint = ctrlp;
-	}
-	
-	public ControlPoint getControlPoint()
-	{
-		return ctrlPoint;
-	}
+    private ControlPoint ctrlPoint;
 
-	////////////////////////////////////////////////
-	//	Thread
-	////////////////////////////////////////////////
-	
-	public void run() 
-	{
-		Thread.currentThread().setName("UPnP-Disposer");
-		ControlPoint ctrlp = getControlPoint();
-		long monitorInterval = ctrlp.getExpiredDeviceMonitoringInterval() * 1000;
-		
-		while (isRunnable() == true) {
-			try {
-				Thread.sleep(monitorInterval);
-			} catch (InterruptedException e) {}
-			ctrlp.removeExpiredDevices();
-			//ctrlp.print();
-		}
-	}
+    public void setControlPoint(ControlPoint ctrlp)
+    {
+        ctrlPoint = ctrlp;
+    }
+
+    public ControlPoint getControlPoint()
+    {
+        return ctrlPoint;
+    }
+
+    ////////////////////////////////////////////////
+    //	Thread
+    ////////////////////////////////////////////////
+
+    public void run()
+    {
+        Thread.currentThread().setName("UPnP-Disposer");
+        ControlPoint ctrlp = getControlPoint();
+        long monitorInterval = ctrlp.getExpiredDeviceMonitoringInterval() * 1000;
+
+        while (isRunnable() == true) {
+            try {
+                Thread.sleep(monitorInterval);
+            } catch (InterruptedException e) {}
+            ctrlp.removeExpiredDevices();
+            //ctrlp.print();
+        }
+    }
 }

@@ -18,7 +18,7 @@ import net.i2p.router.web.FormHandler;
 public class WizardHandler extends FormHandler {
 
     private WizardHelper _helper;
-    
+
     /**
      *  Bind the helper (scope session) to this handler (scope request)
      */
@@ -31,7 +31,10 @@ public class WizardHandler extends FormHandler {
         if (getJettyString("cancelbw") != null) {
             cancelNDT();
             for (int i = 0; i < 20 && !_helper.isNDTComplete(); i++) {
-                try { Thread.sleep(100); } catch (InterruptedException ie) {}
+                try {
+                    Thread.sleep(100);
+                }
+                catch (InterruptedException ie) {}
             }
             return;
         }
@@ -104,8 +107,8 @@ public class WizardHandler extends FormHandler {
             }
         }
         if ((inboundRate != null) && (inboundRate.length() > 0) &&
-            !inboundRate.equals(_context.getProperty(FIFOBandwidthRefiller.PROP_INBOUND_BURST_BANDWIDTH,
-                                                     Integer.toString(FIFOBandwidthRefiller.DEFAULT_INBOUND_BURST_BANDWIDTH)))) {
+                !inboundRate.equals(_context.getProperty(FIFOBandwidthRefiller.PROP_INBOUND_BURST_BANDWIDTH,
+                                    Integer.toString(FIFOBandwidthRefiller.DEFAULT_INBOUND_BURST_BANDWIDTH)))) {
             try {
                 float rate = Integer.parseInt(inboundRate) / 1.024f;
                 float kb = ConfigNetHandler.DEF_BURST_TIME * rate;
@@ -113,14 +116,14 @@ public class WizardHandler extends FormHandler {
                 changes.put(FIFOBandwidthRefiller.PROP_INBOUND_BANDWIDTH_PEAK, Integer.toString(Math.round(kb)));
                 rate -= Math.min(rate * ConfigNetHandler.DEF_BURST_PCT / 100, 50);
                 changes.put(FIFOBandwidthRefiller.PROP_INBOUND_BANDWIDTH, Integer.toString(Math.round(rate)));
-	        bwUpdated = true;
+                bwUpdated = true;
             } catch (NumberFormatException nfe) {
                 addFormError(_t("Invalid bandwidth"));
             }
         }
         if ((outboundRate != null) && (outboundRate.length() > 0) &&
-            !outboundRate.equals(_context.getProperty(FIFOBandwidthRefiller.PROP_OUTBOUND_BURST_BANDWIDTH,
-                                                      Integer.toString(FIFOBandwidthRefiller.DEFAULT_OUTBOUND_BURST_BANDWIDTH)))) {
+                !outboundRate.equals(_context.getProperty(FIFOBandwidthRefiller.PROP_OUTBOUND_BURST_BANDWIDTH,
+                                     Integer.toString(FIFOBandwidthRefiller.DEFAULT_OUTBOUND_BURST_BANDWIDTH)))) {
             try {
                 float rate = Integer.parseInt(outboundRate) / 1.024f;
                 float kb = ConfigNetHandler.DEF_BURST_TIME * rate;
@@ -128,7 +131,7 @@ public class WizardHandler extends FormHandler {
                 changes.put(FIFOBandwidthRefiller.PROP_OUTBOUND_BANDWIDTH_PEAK, Integer.toString(Math.round(kb)));
                 rate -= Math.min(rate * ConfigNetHandler.DEF_BURST_PCT / 100, 50);
                 changes.put(FIFOBandwidthRefiller.PROP_OUTBOUND_BANDWIDTH, Integer.toString(Math.round(rate)));
-	        bwUpdated = true;
+                bwUpdated = true;
             } catch (NumberFormatException nfe) {
                 addFormError(_t("Invalid bandwidth"));
             }
@@ -137,7 +140,7 @@ public class WizardHandler extends FormHandler {
             addFormNotice(_t("Updated bandwidth limits"));
             updated = true;
         }
-        return updated; 
+        return updated;
     }
 
     /** start the test */

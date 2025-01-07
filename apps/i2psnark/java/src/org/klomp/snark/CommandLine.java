@@ -14,13 +14,13 @@ import java.util.List;
 public class CommandLine extends net.i2p.util.CommandLine {
 
     protected static final List<String> SCLASSES = Arrays.asList(new String[] {
-        "org.klomp.snark.MetaInfo",
-        //"org.klomp.snark.Snark",
-        //"org.klomp.snark.StaticSnark",
-        "org.klomp.snark.Storage",
-        "org.klomp.snark.bencode.BDecoder",
-        //"org.klomp.snark.web.RunStandalone",
-    });
+                "org.klomp.snark.MetaInfo",
+                //"org.klomp.snark.Snark",
+                //"org.klomp.snark.StaticSnark",
+                "org.klomp.snark.Storage",
+                "org.klomp.snark.bencode.BDecoder",
+                //"org.klomp.snark.web.RunStandalone",
+            });
 
     protected CommandLine() {}
 

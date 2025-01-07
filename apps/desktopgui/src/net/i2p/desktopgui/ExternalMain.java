@@ -47,7 +47,7 @@ public class ExternalMain implements ClientApp, NotificationService, MenuService
         _mgr = _appContext.clientAppManager();
         log = _appContext.logManager().getLog(ExternalMain.class);
     }
-    
+
     public static void main(String[] args) {
         // early check so we can bail out when started via CLI
         if (!SystemTray.isSupported()) {
@@ -57,10 +57,10 @@ public class ExternalMain implements ClientApp, NotificationService, MenuService
         ExternalMain main = new ExternalMain();
         main.beginStartup(args);
     }
-    
+
     /**
      * Start the tray icon code (loads tray icon in the tray area).
-     * @throws AWTException on startup error, including systray not supported 
+     * @throws AWTException on startup error, including systray not supported
      */
     private synchronized void startUp() throws Exception {
         boolean useSwingDefault = !(SystemVersion.isWindows() || SystemVersion.isMac());
@@ -80,7 +80,7 @@ public class ExternalMain implements ClientApp, NotificationService, MenuService
         String headless = System.getProperty("java.awt.headless");
         boolean isHeadless = Boolean.parseBoolean(headless);
         if (isHeadless) {
-        	log.warn("Headless environment: not starting desktopgui!");
+            log.warn("Headless environment: not starting desktopgui!");
             return;
         }
         if (SystemVersion.isMac())
@@ -96,12 +96,12 @@ public class ExternalMain implements ClientApp, NotificationService, MenuService
                 } catch(Exception e) {
                     log.error("Failed while running desktopgui!", e);
                 }
-                
+
             }
-            
+
         });
     }
-    
+
     /**
      *  Unless we do this, when we start DesktopGUI we get a Java coffee cup
      *  in the tray.
@@ -140,13 +140,13 @@ public class ExternalMain implements ClientApp, NotificationService, MenuService
                 log.warn("Can't set OSX Dock icon", e);
         }
     }
-    
+
     /**
      * Avoids the app terminating because no Window is opened anymore.
      * More info: http://java.sun.com/javase/6/docs/api/java/awt/doc-files/AWTThreadIssues.html#Autoshutdown
      */
     private static void launchForeverLoop() {
-       Runnable r = new Runnable() {
+        Runnable r = new Runnable() {
             public void run() {
                 try {
                     Object o = new Object();

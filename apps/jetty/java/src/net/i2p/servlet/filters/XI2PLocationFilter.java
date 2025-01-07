@@ -56,7 +56,7 @@ public class XI2PLocationFilter extends HandlerWrapper {
             _log.info("Caching X-I2P-Location header prefix" + X_I2P_Location);
     }
 
-    private synchronized boolean shouldRecheck(){
+    private synchronized boolean shouldRecheck() {
         boolean settable = (X_I2P_Location == null);
         if (!settable) return settable;
         if (lastFailure == -1) {
@@ -65,7 +65,7 @@ public class XI2PLocationFilter extends HandlerWrapper {
                 _log.debug("New instance, attempting to set X-I2P-Location header for the first time");
             return settable;
         }
-        if ((System.currentTimeMillis() - lastFailure) > failTimeout){
+        if ((System.currentTimeMillis() - lastFailure) > failTimeout) {
             lastFailure = System.currentTimeMillis();
             if (_log.shouldDebug())
                 _log.debug("More than ten minutes since failing attempt to re-check X-I2P-Location header");
@@ -139,7 +139,7 @@ public class XI2PLocationFilter extends HandlerWrapper {
         if (X_I2P_Location != null) {
             String scheme = httpRequest.getScheme();
             if (scheme == null)
-                 scheme = "";
+                scheme = "";
             String path = httpRequest.getPathInfo();
             if (path == null)
                 path = "";
@@ -156,7 +156,7 @@ public class XI2PLocationFilter extends HandlerWrapper {
                     String encodedURL = uri.toASCIIString();
                     return encodedURL;
                 }
-            }catch(URISyntaxException use){
+            } catch(URISyntaxException use) {
                 return null;
             }
         }
@@ -172,7 +172,7 @@ public class XI2PLocationFilter extends HandlerWrapper {
             if (shouldRecheck()) {
                 String xi2plocation = getXI2PLocation(request.getLocalAddr(), String.valueOf(request.getLocalPort()));
                 if (_log.shouldInfo())
-                   _log.info("Checking X-I2P-Location header IP " + request.getLocalAddr() + " port " + request.getLocalPort() + " prefix " + xi2plocation);
+                    _log.info("Checking X-I2P-Location header IP " + request.getLocalAddr() + " port " + request.getLocalPort() + " prefix " + xi2plocation);
                 setLocation(xi2plocation);
             }
             String headerURL = headerContents(httpRequest);

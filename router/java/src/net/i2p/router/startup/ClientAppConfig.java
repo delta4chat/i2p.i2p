@@ -75,7 +75,7 @@ public class ClientAppConfig {
     private final static long DEFAULT_STARTUP_DELAY = 2*60*1000;
     /** speed up i2ptunnel without rewriting clients.config */
     private final static long I2PTUNNEL_STARTUP_DELAY = -1000;
-    
+
     private static final String PROP_CLIENT_CONFIG_FILENAME = "router.clientConfigFile";
     private static final String DEFAULT_CLIENT_CONFIG_FILENAME = "clients.config";
     private static final String CLIENT_CONFIG_DIR = "clients.config.d";
@@ -277,36 +277,39 @@ public class ClientAppConfig {
      * @since 0.9.42 split out from above
      */
     private static ClientAppConfig getClientApp(Properties clientApps, String prefix) {
-            String className = clientApps.getProperty(prefix + ".main");
-            if (className == null) 
-                return null;
-            String clientName = clientApps.getProperty(prefix + ".name");
-            String args = clientApps.getProperty(prefix + ".args");
-            String delayStr = clientApps.getProperty(prefix + ".delay");
-            String onBoot = clientApps.getProperty(prefix + ".onBoot");
-            String disabled = clientApps.getProperty(prefix + ".startOnLoad");
-            String classpath = clientApps.getProperty(prefix + ".classpath");
-            String stopargs = clientApps.getProperty(prefix + ".stopargs");
-            String uninstallargs = clientApps.getProperty(prefix + ".uninstallargs");
-            boolean dis = disabled != null && "false".equals(disabled);
+        String className = clientApps.getProperty(prefix + ".main");
+        if (className == null)
+            return null;
+        String clientName = clientApps.getProperty(prefix + ".name");
+        String args = clientApps.getProperty(prefix + ".args");
+        String delayStr = clientApps.getProperty(prefix + ".delay");
+        String onBoot = clientApps.getProperty(prefix + ".onBoot");
+        String disabled = clientApps.getProperty(prefix + ".startOnLoad");
+        String classpath = clientApps.getProperty(prefix + ".classpath");
+        String stopargs = clientApps.getProperty(prefix + ".stopargs");
+        String uninstallargs = clientApps.getProperty(prefix + ".uninstallargs");
+        boolean dis = disabled != null && "false".equals(disabled);
 
-            boolean onStartup = false;
-            if (onBoot != null)
-                onStartup = "true".equals(onBoot) || "yes".equals(onBoot);
+        boolean onStartup = false;
+        if (onBoot != null)
+            onStartup = "true".equals(onBoot) || "yes".equals(onBoot);
 
-            long delay;
-            if (onStartup) {
-                delay = 0;
-            } else if (className.equals("net.i2p.i2ptunnel.TunnelControllerGroup")) {
-                // speed up the start of i2ptunnel for everybody without rewriting clients.config
-                delay = I2PTUNNEL_STARTUP_DELAY;
-            } else {
-                delay = DEFAULT_STARTUP_DELAY;
-                if (delayStr != null)
-                    try { delay = 1000*Integer.parseInt(delayStr); } catch (NumberFormatException nfe) {}
-            }
-            return new ClientAppConfig(className, clientName, args, delay, dis,
-                                       classpath, stopargs, uninstallargs);
+        long delay;
+        if (onStartup) {
+            delay = 0;
+        } else if (className.equals("net.i2p.i2ptunnel.TunnelControllerGroup")) {
+            // speed up the start of i2ptunnel for everybody without rewriting clients.config
+            delay = I2PTUNNEL_STARTUP_DELAY;
+        } else {
+            delay = DEFAULT_STARTUP_DELAY;
+            if (delayStr != null)
+                try {
+                    delay = 1000*Integer.parseInt(delayStr);
+                }
+                catch (NumberFormatException nfe) {}
+        }
+        return new ClientAppConfig(className, clientName, args, delay, dis,
+                                   classpath, stopargs, uninstallargs);
     }
 
     /**

@@ -1,6 +1,6 @@
 /*
- * Released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
+ * Released into the public domain
+ * with no warranty of any kind, either expressed or implied.
  */
 package org.klomp.snark;
 
@@ -109,7 +109,7 @@ class IdleChecker extends SimpleTimer2.TimedEvent {
             _log.info("Reducing tunnels on idle");
         setTunnels("1", "1", "0", "0");
     }
-    
+
     /**
      *  Restore or adjust tunnel count based on current peer count
      *  @param peerCount greater than zero
@@ -156,7 +156,7 @@ class IdleChecker extends SimpleTimer2.TimedEvent {
         if (!(_lastIn.equals(i) && _lastOut.equals(o)))
             setTunnels(i, o, ib, ob);
     }
-    
+
     /**
      *  Set in / out / in backup / out backup tunnel counts
      */

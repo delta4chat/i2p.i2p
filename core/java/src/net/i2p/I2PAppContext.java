@@ -44,7 +44,7 @@ import net.i2p.util.I2PProperties.I2PPropertyCallback;
  * using the traditional singleton, where any component can access the component
  * in question directly, all of those I2P related singletons are exposed through
  * a particular I2PAppContext.  This helps not only with understanding their use
- * and the components I2P exposes, but it also allows multiple isolated 
+ * and the components I2P exposes, but it also allows multiple isolated
  * environments to operate concurrently within the same JVM - particularly useful
  * for stubbing out implementations of the rooted components and simulating the
  * software's interaction between multiple instances.</p>
@@ -53,13 +53,13 @@ import net.i2p.util.I2PProperties.I2PPropertyCallback;
  * access to one of the singletons but doesn't have its own context from which
  * to root itself, it binds to the I2PAppContext's globalAppContext(), which is
  * the first context that was created within the JVM, or a new one if no context
- * existed already.  This functionality is often used within the I2P core for 
+ * existed already.  This functionality is often used within the I2P core for
  * logging - e.g. <pre>
  *     private static final Log _log = new Log(someClass.class);
  * </pre>
  * It is for this reason that applications that care about working with multiple
  * contexts should build their own context as soon as possible (within the main(..))
- * so that any referenced components will latch on to that context instead of 
+ * so that any referenced components will latch on to that context instead of
  * instantiating a new one.  However, there are situations in which both can be
  * relevant.
  *
@@ -67,9 +67,9 @@ import net.i2p.util.I2PProperties.I2PPropertyCallback;
 public class I2PAppContext {
     /** the context that components without explicit root are bound */
     protected static volatile I2PAppContext _globalAppContext;
-    
+
     protected final I2PProperties _overrideProps;
-    
+
     private StatManager _statManager;
     protected SessionKeyManager _sessionKeyManager;
     private NamingService _namingService;
@@ -117,13 +117,13 @@ public class I2PAppContext {
     private final ClientAppManager _appManager;
     // split up big lock on this to avoid deadlocks
     private final Object _lock1 = new Object(), _lock2 = new Object(), _lock3 = new Object(), _lock4 = new Object(),
-                         _lock5 = new Object(), _lock7 = new Object(), _lock8 = new Object(),
-                         _lock10 = new Object(), _lock11 = new Object(), _lock12 = new Object(),
-                         _lock13 = new Object(), _lock14 = new Object(), _lock16 = new Object(),
-                         _lock17 = new Object(), _lock18 = new Object(), _lock19 = new Object(), _lock20 = new Object();
+    _lock5 = new Object(), _lock7 = new Object(), _lock8 = new Object(),
+    _lock10 = new Object(), _lock11 = new Object(), _lock12 = new Object(),
+    _lock13 = new Object(), _lock14 = new Object(), _lock16 = new Object(),
+    _lock17 = new Object(), _lock18 = new Object(), _lock19 = new Object(), _lock20 = new Object();
 
     /**
-     * Pull the default context, creating a new one if necessary, else using 
+     * Pull the default context, creating a new one if necessary, else using
      * the first one created.
      *
      * Warning - do not save the returned value, or the value of any methods below,
@@ -131,7 +131,7 @@ public class I2PAppContext {
      * started in the same JVM after the first is shut down,
      * e.g. on Android.
      */
-    public static I2PAppContext getGlobalContext() { 
+    public static I2PAppContext getGlobalContext() {
         // skip the global lock - _gAC must be volatile
         // http://www.cs.umd.edu/~pugh/java/memoryModel/DoubleCheckedLocking.html
         I2PAppContext rv = _globalAppContext;
@@ -143,9 +143,9 @@ public class I2PAppContext {
                 _globalAppContext = new I2PAppContext(false, null);
             }
         }
-        return _globalAppContext; 
+        return _globalAppContext;
     }
-    
+
     /**
      * Sets the default context, unless there is one already.
      * NOT a public API, for use by RouterContext only, NOT for external use.
@@ -174,10 +174,10 @@ public class I2PAppContext {
      * @return context or null
      * @since 0.8.2
      */
-    public static I2PAppContext getCurrentContext() { 
-        return _globalAppContext; 
+    public static I2PAppContext getCurrentContext() {
+        return _globalAppContext;
     }
-    
+
     /**
      * Create a brand new context.
      * WARNING: In almost all cases, you should use getGlobalContext() instead,
@@ -188,7 +188,7 @@ public class I2PAppContext {
     public I2PAppContext() {
         this(true, null);
     }
-    
+
     /**
      * Create a brand new context.
      * WARNING: In almost all cases, you should use getGlobalContext() instead,
@@ -199,7 +199,7 @@ public class I2PAppContext {
     public I2PAppContext(Properties envProps) {
         this(true, envProps);
     }
-    
+
     /**
      * Create a brand new context.
      * WARNING: In almost all cases, you should use getGlobalContext() instead,
@@ -214,140 +214,140 @@ public class I2PAppContext {
      * @since protected since 0.9.33, NOT for external use
      */
     protected I2PAppContext(boolean doInit, Properties envProps) {
-      synchronized (I2PAppContext.class) { 
-        _overrideProps = new I2PProperties();
-        if (envProps != null)
-            _overrideProps.putAll(envProps);
-        _shutdownTasks = new ConcurrentHashSet<Runnable>(32);
-        _portMapper = new PortMapper(this);
-        _appManager = isRouterContext() ? null : new ClientAppManagerImpl(this);
-    
-   /*
-    *  Directories. These are all set at instantiation and will not be changed by
-    *  subsequent property changes.
-    *  All properties, if set, should be absolute paths.
-    *
-    *  Name	Property 	Method		Files
-    *  -----	-------- 	-----		-----
-    *  Base	i2p.dir.base	getBaseDir()	webapps/, docs/, geoip/, licenses/, ...
-    *  Lib 	i2p.dir.lib 	getLibDir()	*.jar, libwrapper*.so
-    *  Temp	i2p.dir.temp	getTempDir()	Temporary files
-    *  Config	i2p.dir.config	getConfigDir()	*.config, hosts.txt, addressbook/, ...
-    *
-    *  (the following all default to the same as Config)
-    *
-    *  PID	i2p.dir.pid	getPIDDir()	router.ping
-    *  Router	i2p.dir.router	getRouterDir()	netDb/, peerProfiles/, router.*, keyBackup/, ...
-    *  Log	i2p.dir.log	getLogDir()	logs/
-    *  App	i2p.dir.app	getAppDir()	eepsite/, ...
-    *
-    *  Note that we can't control where the wrapper puts its files.
-    *
-    *  The app dir is where all data files should be. Apps should always read and write files here,
-    *  using a constructor such as:
-    *
-    *       String path = mypath;
-    *       File f = new File(path);
-    *       if (!f.isAbsolute())
-    *           f = new File(_context.geAppDir(), path);
-    *
-    *  and never attempt to access files in the CWD using
-    *
-    *       File f = new File("foo");
-    *
-    *  An app should assume the CWD is not writable.
-    *
-    *  Here in I2PAppContext, all the dirs default to CWD.
-    *  However these will be different in RouterContext, as Router.java will set
-    *  the properties in the RouterContext constructor.
-    *
-    *  Apps should never need to access the base dir, which is the location of the base I2P install.
-    *  However this is provided for the router's use, and for backward compatibility should an app
-    *  need to look there as well.
-    *
-    *  All dirs except the base and lib are created if they don't exist, but the creation will fail silently.
-    *  @since 0.7.6
-    */
+        synchronized (I2PAppContext.class) {
+            _overrideProps = new I2PProperties();
+            if (envProps != null)
+                _overrideProps.putAll(envProps);
+            _shutdownTasks = new ConcurrentHashSet<Runnable>(32);
+            _portMapper = new PortMapper(this);
+            _appManager = isRouterContext() ? null : new ClientAppManagerImpl(this);
 
-        String s = getProperty("i2p.dir.base", System.getProperty("user.dir"));
-        _baseDir = new File(s);
+            /*
+             *  Directories. These are all set at instantiation and will not be changed by
+             *  subsequent property changes.
+             *  All properties, if set, should be absolute paths.
+             *
+             *  Name	Property 	Method		Files
+             *  -----	-------- 	-----		-----
+             *  Base	i2p.dir.base	getBaseDir()	webapps/, docs/, geoip/, licenses/, ...
+             *  Lib 	i2p.dir.lib 	getLibDir()	*.jar, libwrapper*.so
+             *  Temp	i2p.dir.temp	getTempDir()	Temporary files
+             *  Config	i2p.dir.config	getConfigDir()	*.config, hosts.txt, addressbook/, ...
+             *
+             *  (the following all default to the same as Config)
+             *
+             *  PID	i2p.dir.pid	getPIDDir()	router.ping
+             *  Router	i2p.dir.router	getRouterDir()	netDb/, peerProfiles/, router.*, keyBackup/, ...
+             *  Log	i2p.dir.log	getLogDir()	logs/
+             *  App	i2p.dir.app	getAppDir()	eepsite/, ...
+             *
+             *  Note that we can't control where the wrapper puts its files.
+             *
+             *  The app dir is where all data files should be. Apps should always read and write files here,
+             *  using a constructor such as:
+             *
+             *       String path = mypath;
+             *       File f = new File(path);
+             *       if (!f.isAbsolute())
+             *           f = new File(_context.geAppDir(), path);
+             *
+             *  and never attempt to access files in the CWD using
+             *
+             *       File f = new File("foo");
+             *
+             *  An app should assume the CWD is not writable.
+             *
+             *  Here in I2PAppContext, all the dirs default to CWD.
+             *  However these will be different in RouterContext, as Router.java will set
+             *  the properties in the RouterContext constructor.
+             *
+             *  Apps should never need to access the base dir, which is the location of the base I2P install.
+             *  However this is provided for the router's use, and for backward compatibility should an app
+             *  need to look there as well.
+             *
+             *  All dirs except the base and lib are created if they don't exist, but the creation will fail silently.
+             *  @since 0.7.6
+             */
 
-        // config defaults to base
-        s = getProperty("i2p.dir.config");
-        if (s != null) {
-            _configDir = new SecureDirectory(s);
-            if (!_configDir.exists())
-                _configDir.mkdir();
-        } else {
-            _configDir = _baseDir;
-        }
+            String s = getProperty("i2p.dir.base", System.getProperty("user.dir"));
+            _baseDir = new File(s);
 
-        // router defaults to config
-        s = getProperty("i2p.dir.router");
-        if (s != null) {
-            _routerDir = new SecureDirectory(s);
-            if (!_routerDir.exists())
-                _routerDir.mkdir();
-        } else {
-            _routerDir = _configDir;
-        }
+            // config defaults to base
+            s = getProperty("i2p.dir.config");
+            if (s != null) {
+                _configDir = new SecureDirectory(s);
+                if (!_configDir.exists())
+                    _configDir.mkdir();
+            } else {
+                _configDir = _baseDir;
+            }
 
-        // pid defaults to router directory (as of 0.8.12, was system temp dir previously)
-        s = getProperty("i2p.dir.pid");
-        if (s != null) {
-            _pidDir = new SecureDirectory(s);
-            if (!_pidDir.exists())
-                _pidDir.mkdir();
-        } else {
-            _pidDir = _routerDir;
-        }
+            // router defaults to config
+            s = getProperty("i2p.dir.router");
+            if (s != null) {
+                _routerDir = new SecureDirectory(s);
+                if (!_routerDir.exists())
+                    _routerDir.mkdir();
+            } else {
+                _routerDir = _configDir;
+            }
 
-        // these all default to router
-        s = getProperty("i2p.dir.log");
-        if (s != null) {
-            _logDir = new SecureDirectory(s);
-            if (!_logDir.exists())
-                _logDir.mkdir();
-        } else {
-            _logDir = _routerDir;
-        }
+            // pid defaults to router directory (as of 0.8.12, was system temp dir previously)
+            s = getProperty("i2p.dir.pid");
+            if (s != null) {
+                _pidDir = new SecureDirectory(s);
+                if (!_pidDir.exists())
+                    _pidDir.mkdir();
+            } else {
+                _pidDir = _routerDir;
+            }
 
-        s = getProperty("i2p.dir.app");
-        if (s != null) {
-            _appDir = new SecureDirectory(s);
-            if (!_appDir.exists())
-                _appDir.mkdir();
-        } else {
-            _appDir = _routerDir;
-        }
+            // these all default to router
+            s = getProperty("i2p.dir.log");
+            if (s != null) {
+                _logDir = new SecureDirectory(s);
+                if (!_logDir.exists())
+                    _logDir.mkdir();
+            } else {
+                _logDir = _routerDir;
+            }
 
-        s = getProperty("i2p.dir.lib");
-        if (s != null) {
-            _libDir = new File(s);
-        } else {
-            _libDir = new File(_baseDir, "lib");
-        }
-        String isPortableStr = System.getProperty("i2p.dir.portableMode");
-        boolean isPortable = Boolean.parseBoolean(isPortableStr);
-        if (isPortable) {
-            // In portable we like debug information :)
-            //(new Exception("Initialized by")).printStackTrace();
-            System.err.println("Base directory:   " + _baseDir.getAbsolutePath());
-            System.err.println("Lib directory:    " + _libDir.getAbsolutePath());
-            System.err.println("Config directory: " + _configDir.getAbsolutePath());
-            System.err.println("Router directory: " + _routerDir.getAbsolutePath());
-            System.err.println("App directory:    " + _appDir.getAbsolutePath());
-            System.err.println("Log directory:    " + _logDir.getAbsolutePath());
-            System.err.println("PID directory:    " + _pidDir.getAbsolutePath());
-            System.err.println("Temp directory:   " + getTempDir().getAbsolutePath());
-        }
+            s = getProperty("i2p.dir.app");
+            if (s != null) {
+                _appDir = new SecureDirectory(s);
+                if (!_appDir.exists())
+                    _appDir.mkdir();
+            } else {
+                _appDir = _routerDir;
+            }
 
-        if (doInit) {
-            // Bad practice, sets a static field to this in constructor.
-            // doInit will be false when instantiated via Router.
-            setGlobalContext(this);
-        }
-      } // synch
+            s = getProperty("i2p.dir.lib");
+            if (s != null) {
+                _libDir = new File(s);
+            } else {
+                _libDir = new File(_baseDir, "lib");
+            }
+            String isPortableStr = System.getProperty("i2p.dir.portableMode");
+            boolean isPortable = Boolean.parseBoolean(isPortableStr);
+            if (isPortable) {
+                // In portable we like debug information :)
+                //(new Exception("Initialized by")).printStackTrace();
+                System.err.println("Base directory:   " + _baseDir.getAbsolutePath());
+                System.err.println("Lib directory:    " + _libDir.getAbsolutePath());
+                System.err.println("Config directory: " + _configDir.getAbsolutePath());
+                System.err.println("Router directory: " + _routerDir.getAbsolutePath());
+                System.err.println("App directory:    " + _appDir.getAbsolutePath());
+                System.err.println("Log directory:    " + _logDir.getAbsolutePath());
+                System.err.println("PID directory:    " + _pidDir.getAbsolutePath());
+                System.err.println("Temp directory:   " + getTempDir().getAbsolutePath());
+            }
+
+            if (doInit) {
+                // Bad practice, sets a static field to this in constructor.
+                // doInit will be false when instantiated via Router.
+                setGlobalContext(this);
+            }
+        } // synch
     }
 
     /**
@@ -362,7 +362,9 @@ public class I2PAppContext {
      *  @since 0.7.6
      *  @return dir constant for the life of the context
      */
-    public File getBaseDir() { return _baseDir; }
+    public File getBaseDir() {
+        return _baseDir;
+    }
 
     /**
      *  The base dir for config files.
@@ -373,7 +375,9 @@ public class I2PAppContext {
      *  @since 0.7.6
      *  @return dir constant for the life of the context
      */
-    public File getConfigDir() { return _configDir; }
+    public File getConfigDir() {
+        return _configDir;
+    }
 
     /**
      *  Where the router keeps its files.
@@ -382,7 +386,9 @@ public class I2PAppContext {
      *  @since 0.7.6
      *  @return dir constant for the life of the context
      */
-    public File getRouterDir() { return _routerDir; }
+    public File getRouterDir() {
+        return _routerDir;
+    }
 
     /**
      *  Where router.ping goes.
@@ -393,7 +399,9 @@ public class I2PAppContext {
      *  @since 0.7.6
      *  @return dir constant for the life of the context
      */
-    public File getPIDDir() { return _pidDir; }
+    public File getPIDDir() {
+        return _pidDir;
+    }
 
     /**
      *  Where the router keeps its log directory.
@@ -403,7 +411,9 @@ public class I2PAppContext {
      *  @since 0.7.6
      *  @return dir constant for the life of the context
      */
-    public File getLogDir() { return _logDir; }
+    public File getLogDir() {
+        return _logDir;
+    }
 
     /**
      *  Where applications may store data.
@@ -412,7 +422,9 @@ public class I2PAppContext {
      *  @since 0.7.6
      *  @return dir constant for the life of the context
      */
-    public File getAppDir() { return _appDir; }
+    public File getAppDir() {
+        return _appDir;
+    }
 
     /**
      *  Where anybody may store temporary data.
@@ -459,7 +471,9 @@ public class I2PAppContext {
      *  @return dir constant for the life of the context
      *  @since 0.9.52
      */
-    public File getLibDir() { return _libDir; }
+    public File getLibDir() {
+        return _libDir;
+    }
 
     /** don't rely on deleteOnExit() */
     public void deleteTempDir() {
@@ -472,8 +486,8 @@ public class I2PAppContext {
     }
 
     /**
-     * Access the configuration attributes of this context, using properties 
-     * provided during the context construction, or falling back on 
+     * Access the configuration attributes of this context, using properties
+     * provided during the context construction, or falling back on
      * System.getProperty if no properties were provided during construction
      * (or the specified prop wasn't included).
      *
@@ -488,8 +502,8 @@ public class I2PAppContext {
     }
 
     /**
-     * Access the configuration attributes of this context, using properties 
-     * provided during the context construction, or falling back on 
+     * Access the configuration attributes of this context, using properties
+     * provided during the context construction, or falling back on
      * System.getProperty if no properties were provided during construction
      * (or the specified prop wasn't included).
      *
@@ -568,7 +582,7 @@ public class I2PAppContext {
     }
 
     /**
-     * Access the configuration attributes of this context, listing the properties 
+     * Access the configuration attributes of this context, listing the properties
      * provided during the context construction, as well as the ones included in
      * System.getProperties.
      *
@@ -578,29 +592,29 @@ public class I2PAppContext {
      * @return set of Strings containing the names of defined system properties
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public Set<String> getPropertyNames() { 
+    public Set<String> getPropertyNames() {
         // clone to avoid ConcurrentModificationException
         Set<String> names = new HashSet<String>((Set<String>) (Set) ((Properties) System.getProperties().clone()).keySet()); // TODO-Java6: s/keySet()/stringPropertyNames()/
         if (_overrideProps != null)
             names.addAll((Set<String>) (Set) _overrideProps.keySet()); // TODO-Java6: s/keySet()/stringPropertyNames()/
         return names;
     }
-    
+
     /**
-     * Access the configuration attributes of this context, listing the properties 
+     * Access the configuration attributes of this context, listing the properties
      * provided during the context construction, as well as the ones included in
      * System.getProperties.
      *
      * @return new Properties with system and context properties
      * @since 0.8.4
      */
-    public Properties getProperties() { 
+    public Properties getProperties() {
         // clone to avoid ConcurrentModificationException
         Properties rv = (Properties) System.getProperties().clone();
         rv.putAll(_overrideProps);
         return rv;
     }
-    
+
     /**
      * Add a callback, which will fire upon changes in the property
      * given in the specific callback.
@@ -608,12 +622,12 @@ public class I2PAppContext {
      * @param callback The implementation of the callback.
      */
     public void addPropertyCallback(I2PPropertyCallback callback) {}
-    
+
     /**
      * The statistics component with which we can track various events
      * over time.
      */
-    public StatManager statManager() { 
+    public StatManager statManager() {
         if (!_statManagerInitialized)
             initializeStatManager();
         return _statManager;
@@ -626,10 +640,10 @@ public class I2PAppContext {
             _statManagerInitialized = true;
         }
     }
-    
+
     /**
      * The session key manager which coordinates the sessionKey / sessionTag
-     * data.  This component allows transparent operation of the 
+     * data.  This component allows transparent operation of the
      * ElGamal/AES+SessionTag algorithm, and contains all of the session tags
      * for one particular application.
      *
@@ -643,7 +657,7 @@ public class I2PAppContext {
      * The dummy SKM does NOT handle session tags.
      * Overridden in RouterContext to return the full TransientSessionKeyManager.
      */
-    public SessionKeyManager sessionKeyManager() { 
+    public SessionKeyManager sessionKeyManager() {
         if (!_sessionKeyManagerInitialized)
             initializeSessionKeyManager();
         return _sessionKeyManager;
@@ -651,19 +665,19 @@ public class I2PAppContext {
 
     protected void initializeSessionKeyManager() {
         synchronized (_lock3) {
-            if (_sessionKeyManager == null) 
+            if (_sessionKeyManager == null)
                 //_sessionKeyManager = new PersistentSessionKeyManager(this);
                 _sessionKeyManager = new SessionKeyManager(this);
             _sessionKeyManagerInitialized = true;
         }
     }
-    
+
     /**
      * Pull up the naming service used in this context.  The naming service itself
-     * works by querying the context's properties, so those props should be 
+     * works by querying the context's properties, so those props should be
      * specified to customize the naming service exposed.
      */
-    public NamingService namingService() { 
+    public NamingService namingService() {
         if (!_namingServiceInitialized)
             initializeNamingService();
         return _namingService;
@@ -677,7 +691,7 @@ public class I2PAppContext {
             _namingServiceInitialized = true;
         }
     }
-    
+
     /**
      * This is the ElGamal engine used within this context.  While it doesn't
      * really have anything substantial that is context specific (the algorithm
@@ -703,7 +717,7 @@ public class I2PAppContext {
     /**
      * Ok, I'll admit it.  there is no good reason for having a context specific
      * AES engine.  We dont really keep stats on it, since its just too fast to
-     * matter.  Though for the crazy people out there, we do expose a way to 
+     * matter.  Though for the crazy people out there, we do expose a way to
      * disable it.
      */
     public AESEngine aes() {
@@ -720,14 +734,14 @@ public class I2PAppContext {
             _AESEngineInitialized = true;
         }
     }
-    
+
     /**
      * Query the log manager for this context, which may in turn have its own
-     * set of configuration settings (loaded from the context's properties).  
+     * set of configuration settings (loaded from the context's properties).
      * Each context's logManager keeps its own isolated set of Log instances with
      * their own log levels, output locations, and rotation configuration.
      */
-    public LogManager logManager() { 
+    public LogManager logManager() {
         if (!_logManagerInitialized)
             initializeLogManager();
         return _logManager;
@@ -774,12 +788,12 @@ public class I2PAppContext {
             _hmac256Initialized = true;
         }
     }
-    
+
     /**
      * Our SHA256 instance (see the hmac discussion for why its context specific)
      *
      */
-    public SHA256Generator sha() { 
+    public SHA256Generator sha() {
         if (!_shaInitialized)
             initializeSHA();
         return _sha;
@@ -792,12 +806,12 @@ public class I2PAppContext {
             _shaInitialized = true;
         }
     }
-    
+
     /**
      * Our DSA engine (see HMAC and SHA above)
      *
      */
-    public DSAEngine dsa() { 
+    public DSAEngine dsa() {
         if (!_dsaInitialized)
             initializeDSA();
         return _dsa;
@@ -810,7 +824,7 @@ public class I2PAppContext {
             _dsaInitialized = true;
         }
     }
-    
+
     /**
      * Component to generate ElGamal, DSA, and Session keys.  For why it is in
      * the appContext, see the DSA, HMAC, and SHA comments above.
@@ -828,7 +842,7 @@ public class I2PAppContext {
             _keyGeneratorInitialized = true;
         }
     }
-    
+
     /**
      * The context's synchronized clock, which is kept context specific only to
      * enable simulators to play with clock skew among different instances.
@@ -847,11 +861,11 @@ public class I2PAppContext {
             _clockInitialized = true;
         }
     }
-    
+
     /**
-     * Determine how much do we want to mess with the keys to turn them 
-     * into something we can route.  This is context specific because we 
-     * may want to test out how things react when peers don't agree on 
+     * Determine how much do we want to mess with the keys to turn them
+     * into something we can route.  This is context specific because we
+     * may want to test out how things react when peers don't agree on
      * how to skew.
      *
      * As of 0.9.16, returns null in I2PAppContext.
@@ -862,7 +876,7 @@ public class I2PAppContext {
     public RoutingKeyGenerator routingKeyGenerator() {
         return null;
     }
-    
+
     /**
      * Basic hash map
      */
@@ -879,7 +893,7 @@ public class I2PAppContext {
             _keyRingInitialized = true;
         }
     }
-    
+
     /**
      * [insert snarky comment here]
      *
@@ -916,7 +930,7 @@ public class I2PAppContext {
     public void removeShutdownTask(Runnable task) {
         _shutdownTasks.remove(task);
     }
-    
+
     /**
      *  @return an unmodifiable Set
      *  @since 0.7.1
@@ -924,7 +938,7 @@ public class I2PAppContext {
     public Set<Runnable> getShutdownTasks() {
         return Collections.unmodifiableSet(_shutdownTasks);
     }
-    
+
     /**
      *  Use this instead of context instanceof RouterContext
      *  @since 0.7.9
@@ -1037,7 +1051,7 @@ public class I2PAppContext {
         return _appManager;
     }
 
-    /** 
+    /**
      *  How long this router was down before it started, or 0 if unknown.
      *
      *  This may be used for a determination of whether to regenerate keys, for example.

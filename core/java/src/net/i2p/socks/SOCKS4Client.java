@@ -45,9 +45,18 @@ public class SOCKS4Client {
             out = sock.getOutputStream();
             connect(in, out, connHostName, connPort);
         } catch (IOException e) {
-            try { sock.close(); } catch (IOException ioe) {}
-            if (in != null) try { in.close(); } catch (IOException ioe) {}
-            if (out != null) try { out.close(); } catch (IOException ioe) {}
+            try {
+                sock.close();
+            }
+            catch (IOException ioe) {}
+            if (in != null) try {
+                    in.close();
+                }
+                catch (IOException ioe) {}
+            if (out != null) try {
+                    out.close();
+                }
+                catch (IOException ioe) {}
             throw e;
         }
     }
@@ -100,8 +109,14 @@ public class SOCKS4Client {
             in.readShort(); // port
             in.readInt();   // IP
         } catch (IOException e) {
-            if (in != null) try { in.close(); } catch (IOException ioe) {}
-            if (out != null) try { out.close(); } catch (IOException ioe) {}
+            if (in != null) try {
+                    in.close();
+                }
+                catch (IOException ioe) {}
+            if (out != null) try {
+                    out.close();
+                }
+                catch (IOException ioe) {}
             throw e;
         }
     }

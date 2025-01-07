@@ -34,7 +34,7 @@ class BanlistRenderer {
     public void renderStatusHTML(Writer out) throws IOException {
         StringBuilder buf = new StringBuilder(1024);
         Map<Hash, Banlist.Entry> entries = new TreeMap<Hash, Banlist.Entry>(HashComparator.getInstance());
-        
+
         entries.putAll(_context.banlist().getEntries());
         buf.append("<h3 id=\"bannedpeers\">").append(_t("Banned Peers"));
         if (entries.isEmpty()) {
@@ -46,7 +46,7 @@ class BanlistRenderer {
         }
 
         buf.append("<ul id=\"banlist\">");
-        
+
         String unban = _t("unban now");
         for (Map.Entry<Hash, Banlist.Entry> e : entries.entrySet()) {
             Hash key = e.getKey();
@@ -76,7 +76,7 @@ class BanlistRenderer {
             if (!key.equals(Hash.FAKE_HASH)) {
                 // note: CSS hides anchor text
                 buf.append(" <a href=\"configpeer?peer=").append(key.toBase64())
-                   .append("#unsh\" title=\"").append(unban).append("\">[").append(unban).append("]</a>");
+                .append("#unsh\" title=\"").append(unban).append("\">[").append(unban).append("]</a>");
             }
             buf.append("</li>\n");
         }

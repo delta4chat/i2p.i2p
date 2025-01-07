@@ -2,9 +2,9 @@ package net.i2p.util;
 
 /*
  * free (adj.): unencumbered; not under the control of others
- * Written by jrandom in 2003 and released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
- * It probably won't make your computer catch on fire, or eat 
+ * Written by jrandom in 2003 and released into the public domain
+ * with no warranty of any kind, either expressed or implied.
+ * It probably won't make your computer catch on fire, or eat
  * your children, but it might.  Use at your own risk.
  *
  */
@@ -35,18 +35,18 @@ import net.i2p.data.DataHelper;
 /**
  * Manages the logging system, loading (and reloading) the configuration file,
  * coordinating the log limits, and storing the set of log records pending.
- * This also fires off a LogWriter thread that pulls pending records off and 
+ * This also fires off a LogWriter thread that pulls pending records off and
  * writes them where appropriate.
- * 
+ *
  * As of 0.9.41, this class may be overridden via I2PAppContext.setLogManager()
- * 
+ *
  */
 public class LogManager implements Flushable {
     public final static String CONFIG_LOCATION_PROP = "loggerConfigLocation";
     public final static String FILENAME_OVERRIDE_PROP = "loggerFilenameOverride";
     public final static String CONFIG_LOCATION_DEFAULT = "logger.config";
     /**
-     * These define the characters in the format line of the config file 
+     * These define the characters in the format line of the config file
      */
     public static final char DATE = 'd', CLASS = 'c', THREAD = 't', PRIORITY = 'p', MESSAGE = 'm';
 
@@ -91,7 +91,7 @@ public class LogManager implements Flushable {
 
     private final I2PAppContext _context;
     private final Log _log;
-    
+
     /** when was the config file last read (or -1 if never) */
     private long _configLastRead;
 
@@ -110,8 +110,8 @@ public class LogManager implements Flushable {
     private LogWriter _writer;
     private volatile boolean _shutdown;
 
-    /** 
-     * default log level for logs that aren't explicitly controlled 
+    /**
+     * default log level for logs that aren't explicitly controlled
      * through a LogLimit in _limits
      */
     private int _defaultLimit;
@@ -144,7 +144,7 @@ public class LogManager implements Flushable {
     private int _flushInterval = (int) (LogWriter.FLUSH_INTERVAL / 1000);
     private boolean _gzip;
     private long _minGzipSize;
-    
+
     private boolean _alreadyNoticedMissingConfig;
 
     public LogManager(I2PAppContext context) {
@@ -186,8 +186,8 @@ public class LogManager implements Flushable {
         if (SystemVersion.isAndroid()) {
             try {
                 Class<? extends LogWriter> clazz = Class.forName(
-                        "net.i2p.util.AndroidLogWriter"
-                    ).asSubclass(LogWriter.class);
+                                                       "net.i2p.util.AndroidLogWriter"
+                                                   ).asSubclass(LogWriter.class);
                 Constructor<? extends LogWriter> ctor = clazz.getDeclaredConstructor(LogManager.class);
                 _writer = ctor.newInstance(this);
             } catch (ClassNotFoundException e) {
@@ -207,8 +207,12 @@ public class LogManager implements Flushable {
         t.start();
     }
 
-    public Log getLog(Class<?> cls) { return getLog(cls, null); }
-    public Log getLog(String name) { return getLog(null, name); }
+    public Log getLog(Class<?> cls) {
+        return getLog(cls, null);
+    }
+    public Log getLog(String name) {
+        return getLog(null, name);
+    }
     public Log getLog(Class<?> cls, String name) {
         String scope = Log.getScope(name, cls);
         boolean isNew = false;
@@ -242,9 +246,11 @@ public class LogManager implements Flushable {
                 _log.info("Duplicate log for " + log.getName());
         }
     }
-    
-    public LogConsoleBuffer getBuffer() { return _consoleBuffer; }
-        
+
+    public LogConsoleBuffer getBuffer() {
+        return _consoleBuffer;
+    }
+
     /** @deprecated unused */
     @Deprecated
     public void setDisplayOnScreen(boolean yes) {
@@ -302,7 +308,7 @@ public class LogManager implements Flushable {
             // Log to wrapper log, for those very-hard-to-debug problems
             // that happen after LogManager shutdown
             if (_context.isRouterContext() ||
-                (_displayOnScreen && _onScreenLimit <= record.getPriority())) {
+                    (_displayOnScreen && _onScreenLimit <= record.getPriority())) {
                 // wrapper logs already do time stamps
                 boolean showDate = !SystemVersion.hasWrapper();
                 System.out.print("(shutdown) " + LogRecordFormatter.formatRecord(this, record, showDate));
@@ -335,7 +341,7 @@ public class LogManager implements Flushable {
             }
         }
     }
-    
+
     /**
      * Called periodically by the log writer's thread
      * Do not log here, deadlock of LogWriter
@@ -370,10 +376,10 @@ public class LogManager implements Flushable {
             return;
         }
         _alreadyNoticedMissingConfig = false;
-        
+
         if ((_configLastRead > 0) && (_configLastRead >= cfgFile.lastModified())) {
             //if (_log.shouldLog(Log.INFO))
-            //    _log.info("Short circuiting config read (last read: " 
+            //    _log.info("Short circuiting config read (last read: "
             //               + (_context.clock().now() - _configLastRead) + "ms ago, config file modified "
             //               + (_context.clock().now() - cfgFile.lastModified()) + "ms ago");
             return;
@@ -396,7 +402,7 @@ public class LogManager implements Flushable {
     private void parseConfig(Properties config) {
         String fmt = config.getProperty(PROP_FORMAT, DEFAULT_FORMAT);
         _format = fmt.toCharArray();
-        
+
         String df = config.getProperty(PROP_DATEFORMAT, DEFAULT_DATEFORMAT);
         setDateFormat(df);
 
@@ -431,7 +437,7 @@ public class LogManager implements Flushable {
             System.err.println("Invalid rotation limit");
             nfe.printStackTrace();
         }
-        
+
         _defaultLimit = Log.getLevel(config.getProperty(PROP_DEFAULTLEVEL, DEFAULT_DEFAULTLEVEL));
 
         _onScreenLimit = Log.getLevel(config.getProperty(PROP_DISPLAYONSCREENLEVEL, DEFAULT_ONSCREENLEVEL));
@@ -476,7 +482,7 @@ public class LogManager implements Flushable {
 
         //if (_log.shouldLog(Log.DEBUG))
         //    _log.debug("Log set to use the base log file as " + _baseLogfilename);
-        
+
         parseLimits(config);
     }
 
@@ -515,16 +521,16 @@ public class LogManager implements Flushable {
         }
         updateLimits();
     }
-    
+
     /**
      * Update the existing limit overrides
      *
-     * @param limits mapping of prefix to log level string (not the log #) 
+     * @param limits mapping of prefix to log level string (not the log #)
      */
     public void setLimits(Properties limits) {
         parseLimits(limits, null);
     }
-    
+
     /**
      * Update the date format
      * Do not log here, deadlock of LogWriter via rereadConfig().
@@ -538,7 +544,7 @@ public class LogManager implements Flushable {
             format = "";
         if (format.equals(_dateFormatPattern) && _dateFormat != null)
             return true;
-        
+
         try {
             SimpleDateFormat fmt = (SimpleDateFormat) DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM);
             if (!format.equals(""))
@@ -553,7 +559,7 @@ public class LogManager implements Flushable {
             return false;
         }
     }
-    
+
     /**
      * Update the log file size limit
      */
@@ -561,15 +567,17 @@ public class LogManager implements Flushable {
         if (numBytes > 0)
             _fileSize = Math.max(MIN_FILESIZE_LIMIT, numBytes);
     }
-    
-    public String getDefaultLimit() { return Log.toLevelString(_defaultLimit); }
-    public void setDefaultLimit(String lim) { 
+
+    public String getDefaultLimit() {
+        return Log.toLevelString(_defaultLimit);
+    }
+    public void setDefaultLimit(String lim) {
         _defaultLimit = Log.getLevel(lim);
         updateLimits();
     }
-    
+
     /**
-     * Return a mapping of the explicit overrides - path prefix to (text 
+     * Return a mapping of the explicit overrides - path prefix to (text
      * formatted) limit.
      *
      */
@@ -581,7 +589,7 @@ public class LogManager implements Flushable {
         return rv;
     }
 
-    /** 
+    /**
      * Determine how many bytes are in the given formatted string (5m, 60g, 100k, etc)
      * Size may be k, m, or g; a trailing b is ignored. Upper-case is allowed.
      * Spaces between the number and letter is are allowed.
@@ -602,18 +610,18 @@ public class LogManager implements Flushable {
             // output to form was in current locale, so have to parse it back that way
             double val = (new DecimalFormat()).parse(v.trim()).doubleValue();
             switch (mod) {
-                case 'K':
-                    val *= 1024;
-                    break;
-                case 'M':
-                    val *= 1024 * 1024;
-                    break;
-                case 'G':
-                    val *= 1024 * 1024 * 1024;
-                    break;
-                default:
-                    // blah, noop
-                    break;
+            case 'K':
+                val *= 1024;
+                break;
+            case 'M':
+                val *= 1024 * 1024;
+                break;
+            case 'G':
+                val *= 1024 * 1024 * 1024;
+                break;
+            default:
+                // blah, noop
+                break;
             }
             if (val < MIN_FILESIZE_LIMIT || val > Integer.MAX_VALUE)
                 return -1;
@@ -666,7 +674,7 @@ public class LogManager implements Flushable {
     private List<LogLimit> getLimits(Log log) {
         ArrayList<LogLimit> limits = null; // new ArrayList(4);
         for (LogLimit limit : _limits) {
-            if (limit.matches(log)) { 
+            if (limit.matches(log)) {
                 if (limits == null)
                     limits = new ArrayList<LogLimit>(4);
                 limits.add(limit);
@@ -681,7 +689,7 @@ public class LogManager implements Flushable {
     public String getBaseLogfilename() {
         return _baseLogfilename;
     }
-    
+
     public void setBaseLogfilename(String filenamePattern) {
         // '#' is a comment character in loadProps/storeProps
         _baseLogfilename = filenamePattern.replace('#', '@');
@@ -727,7 +735,7 @@ public class LogManager implements Flushable {
             return false;
         }
     }
-    
+
     private Properties createConfig() {
         Properties rv = new OrderedProperties();
         rv.setProperty(PROP_FORMAT, new String(_format));
@@ -741,7 +749,7 @@ public class LogManager implements Flushable {
         // as of 0.9.5, override prop trumps config file only if config file is set to default,
         // so it may be set in the UI.
         rv.setProperty(PROP_FILENAME, _baseLogfilename);
-        
+
         if (_fileSize >= 1024*1024)
             rv.setProperty(PROP_FILESIZE,  (_fileSize / (1024*1024)) + "m");
         else if (_fileSize >= 1024)
@@ -749,7 +757,7 @@ public class LogManager implements Flushable {
         else if (_fileSize > 0)
             rv.setProperty(PROP_FILESIZE, Integer.toString(_fileSize));
         // if <= 0, dont specify
-        
+
         rv.setProperty(PROP_ROTATIONLIMIT, Integer.toString(_rotationLimit));
         rv.setProperty(PROP_DEFAULTLEVEL, Log.toLevelString(_defaultLimit));
         rv.setProperty(PROP_DISPLAYONSCREENLEVEL, Log.toLevelString(_onScreenLimit));
@@ -761,7 +769,7 @@ public class LogManager implements Flushable {
         for (LogLimit lim : _limits) {
             rv.setProperty(PROP_RECORD_PREFIX + lim.getRootName(), Log.toLevelString(lim.getLimit()));
         }
-        
+
         return rv;
     }
 
@@ -777,7 +785,7 @@ public class LogManager implements Flushable {
     public char[] getFormat() {
         return _format;
     }
-    
+
     public void setFormat(char fmt[]) {
         _format = fmt;
     }
@@ -793,28 +801,28 @@ public class LogManager implements Flushable {
         return _dateFormatPattern;
     }
 
-/*****
-    public static void main(String args[]) {
-        I2PAppContext ctx = new I2PAppContext();
-        Log l1 = ctx.logManager().getLog("test.1");
-        Log l2 = ctx.logManager().getLog("test.2");
-        Log l21 = ctx.logManager().getLog("test.2.1");
-        Log l = ctx.logManager().getLog("test");
-        l.debug("this should fail");
-        l.info("this should pass");
-        l1.warn("this should pass");
-        l1.info("this should fail");
-        l2.error("this should fail");
-        l21.debug("this should pass");
-        l1.error("test exception", new Exception("test"));
-        l1.error("test exception", new Exception("test"));
-        try {
-            Thread.sleep(2 * 1000);
-        } catch (Throwable t) { // nop
+    /*****
+        public static void main(String args[]) {
+            I2PAppContext ctx = new I2PAppContext();
+            Log l1 = ctx.logManager().getLog("test.1");
+            Log l2 = ctx.logManager().getLog("test.2");
+            Log l21 = ctx.logManager().getLog("test.2.1");
+            Log l = ctx.logManager().getLog("test");
+            l.debug("this should fail");
+            l.info("this should pass");
+            l1.warn("this should pass");
+            l1.info("this should fail");
+            l2.error("this should fail");
+            l21.debug("this should pass");
+            l1.error("test exception", new Exception("test"));
+            l1.error("test exception", new Exception("test"));
+            try {
+                Thread.sleep(2 * 1000);
+            } catch (Throwable t) { // nop
+            }
+            System.exit(0);
         }
-        System.exit(0);
-    }
-*****/
+    *****/
 
     /**
      *  Flush any pending records to disk.

@@ -10,7 +10,7 @@
 *
 *	11/18/02
 *		- first revision.
-*	
+*
 ******************************************************************/
 
 package org.cybergarage.upnp.device;
@@ -19,5 +19,5 @@ import org.cybergarage.upnp.ssdp.*;
 
 public interface SearchResponseListener
 {
-	public void deviceSearchResponseReceived(SSDPPacket ssdpPacket);
+    public void deviceSearchResponseReceived(SSDPPacket ssdpPacket);
 }

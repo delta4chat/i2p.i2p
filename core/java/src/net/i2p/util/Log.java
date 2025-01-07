@@ -2,9 +2,9 @@ package net.i2p.util;
 
 /*
  * free (adj.): unencumbered; not under the control of others
- * Written by jrandom in 2003 and released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
- * It probably won't make your computer catch on fire, or eat 
+ * Written by jrandom in 2003 and released into the public domain
+ * with no warranty of any kind, either expressed or implied.
+ * It probably won't make your computer catch on fire, or eat
  * your children, but it might.  Use at your own risk.
  *
  */
@@ -14,7 +14,7 @@ import java.util.Locale;
 import net.i2p.I2PAppContext;
 
 /**
- * Wrapper class for whatever logging system I2P uses.  This class should be 
+ * Wrapper class for whatever logging system I2P uses.  This class should be
  * instantiated and kept as a variable for each class it is used by, e.g.
  *  <code>private final Log _log = context.logManager().getLog(MyClassName.class);</code>
  *
@@ -104,7 +104,7 @@ public class Log {
 
     public void log(int priority, String msg) {
         if (priority >= _minPriority) {
-            _manager.addRecord(new LogRecord(_class, _name, 
+            _manager.addRecord(new LogRecord(_class, _name,
                                              Thread.currentThread().getName(), priority,
                                              msg, null));
         }
@@ -112,7 +112,7 @@ public class Log {
 
     public void log(int priority, String msg, Throwable t) {
         if (priority >= _minPriority) {
-            _manager.addRecord(new LogRecord(_class, _name, 
+            _manager.addRecord(new LogRecord(_class, _name,
                                              Thread.currentThread().getName(), priority,
                                              msg, t));
         }
@@ -124,9 +124,9 @@ public class Log {
      *  @since 0.8.2
      */
     public void logAlways(int priority, String msg) {
-            _manager.addRecord(new LogRecord(_class, _name, 
-                                             Thread.currentThread().getName(), priority,
-                                             msg, null));
+        _manager.addRecord(new LogRecord(_class, _name,
+                                         Thread.currentThread().getName(), priority,
+                                         msg, null));
     }
 
     public void debug(String msg) {
@@ -192,10 +192,10 @@ public class Log {
     public boolean shouldError() {
         return ERROR >= _minPriority;
     }
-    
+
     /**
      * logs a loop when closing a resource with level DEBUG
-     * This method is for debugging purposes only and 
+     * This method is for debugging purposes only and
      * is subject to change or removal w/o notice.
      * NOT a supported API.
      * @param desc vararg description
@@ -204,10 +204,10 @@ public class Log {
     public void logCloseLoop(Object... desc) {
         logCloseLoop(Log.DEBUG, desc);
     }
-    
+
     /**
      * Logs a close loop when closing a resource
-     * This method is for debugging purposes only and 
+     * This method is for debugging purposes only and
      * is subject to change or removal w/o notice.
      * NOT a supported API.
      * @param desc vararg description of the resource
@@ -215,9 +215,9 @@ public class Log {
      * @since 0.9.8
      */
     public void logCloseLoop(int level, Object... desc) {
-        if (!shouldLog(level)) 
+        if (!shouldLog(level))
             return;
-        
+
         // catenate all toString()s
         StringBuilder builder = new StringBuilder();
         builder.append("close() loop in");
@@ -225,21 +225,23 @@ public class Log {
             builder.append(" ");
             builder.append(String.valueOf(o));
         }
-        
+
         Exception e = new Exception("check stack trace");
         log(level,builder.toString(),e);
     }
 
     public String getName() {
         if (_className != null) return _className;
-    
+
         return _name;
     }
-    
-    /** @return the LogScope (private class) */
-    public Object getScope() { return _scope; }
 
-    static String getScope(String name, Class<?> cls) { 
+    /** @return the LogScope (private class) */
+    public Object getScope() {
+        return _scope;
+    }
+
+    static String getScope(String name, Class<?> cls) {
         if ( (name == null) && (cls == null) ) return "f00";
         if (cls == null) return name;
         if (name == null) return cls.getName();
@@ -268,7 +270,7 @@ public class Log {
             } else if (obj instanceof String) {
                 return obj.equals(_scopeCache);
             }
-            
+
             return false;
         }
     }

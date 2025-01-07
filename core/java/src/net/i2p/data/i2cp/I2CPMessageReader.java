@@ -2,9 +2,9 @@ package net.i2p.data.i2cp;
 
 /*
  * free (adj.): unencumbered; not under the control of others
- * Written by jrandom in 2003 and released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
- * It probably won't make your computer catch on fire, or eat 
+ * Written by jrandom in 2003 and released into the public domain
+ * with no warranty of any kind, either expressed or implied.
+ * It probably won't make your computer catch on fire, or eat
  * your children, but it might.  Use at your own risk.
  *
  */
@@ -18,7 +18,7 @@ import net.i2p.util.I2PThread;
 import net.i2p.util.Log;
 
 /**
- * The I2CPMessageReader reads an InputStream (using 
+ * The I2CPMessageReader reads an InputStream (using
  * {@link I2CPMessageHandler I2CPMessageHandler}) and passes out events to a registered
  * listener, where events are either messages being received, exceptions being
  * thrown, or the connection being closed.  Applications should use this rather
@@ -31,7 +31,7 @@ public class I2CPMessageReader {
     protected I2CPMessageEventListener _listener;
     protected I2CPMessageReaderRunner _reader;
     protected Thread _readerThread;
-    
+
     protected static final AtomicLong __readerId = new AtomicLong();
 
     public I2CPMessageReader(InputStream stream, I2CPMessageEventListener lsnr) {
@@ -86,7 +86,7 @@ public class I2CPMessageReader {
     }
 
     /**
-     * Cancel reading.  
+     * Cancel reading.
      *
      */
     public void stopReading() {
@@ -102,26 +102,26 @@ public class I2CPMessageReader {
          * Notify the listener that a message has been received from the given
          * reader
          *
-	 * @param reader I2CPMessageReader to notify
-	 * @param message the I2CPMessage
-	 */
+        * @param reader I2CPMessageReader to notify
+         * @param message the I2CPMessage
+         */
         public void messageReceived(I2CPMessageReader reader, I2CPMessage message);
 
         /**
          * Notify the listener that an exception was thrown while reading from the given
          * reader. For most errors, disconnected() will also be called, as of 0.9.41.
          *
-	 * @param reader I2CPMessageReader to notify
-	 * @param error Exception that was thrown, non-null
-	 */
+        * @param reader I2CPMessageReader to notify
+         * @param error Exception that was thrown, non-null
+         */
         public void readError(I2CPMessageReader reader, Exception error);
 
         /**
          * Notify the listener that the stream this reader was reading was
          * closed. For most errors, readError() will be called first, as of 0.9.41
          *
-	 * @param reader I2CPMessageReader to notify
-	 */
+        * @param reader I2CPMessageReader to notify
+         */
         public void disconnected(I2CPMessageReader reader);
     }
 

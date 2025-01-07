@@ -135,31 +135,33 @@ public class BuildRequestRecord {
     private SessionKey _derivedLayerKey;
     private SessionKey _derivedIVKey;
     private OneTimeSession _derivedGarlicKeys;
-    
-    /** 
+
+    /**
      * If set in the flag byte, any peer may send a message into this tunnel, but if
      * not set, only the current predecessor may send messages in.  This is only set on
      * an inbound tunnel gateway.
      */
-    private static final int FLAG_UNRESTRICTED_PREV = (1 << 7); 
+    private static final int FLAG_UNRESTRICTED_PREV = (1 << 7);
     /**
      * If set in the flag byte, this is an outbound tunnel endpoint, which means that
      * there is no 'next hop' and that the next hop fields contain the tunnel to which the
      * reply message should be sent.
      */
     private static final int FLAG_OUTBOUND_ENDPOINT = (1 << 6);
-    
+
     public static final int IV_SIZE = 16;
     /** we show 16 bytes of the peer hash outside the elGamal block */
     public static final int PEER_SIZE = 16;
     private static final int DEFAULT_EXPIRATION_SECONDS = 10*60;
     private static final int EC_LEN = EncType.ECIES_X25519.getPubkeyLen();
     private static final byte[] NULL_KEY = new byte[EC_LEN];
-    
+
     /**
      *  @return 222 (ElG) or 464 (ECIES) bytes, non-null
      */
-    public byte[] getData() { return _data; }
+    public byte[] getData() {
+        return _data;
+    }
 
     // Original ElGamal format
     private static final int OFF_RECV_TUNNEL = 0;
@@ -208,12 +210,12 @@ public class BuildRequestRecord {
     private static final String INFO_2 = "SMTunnelLayerKey";
     private static final String INFO_3 = "TunnelLayerIVKey";
     private static final String INFO_4 = "RGarlicKeyAndTag";
-    
+
     private static final boolean TEST = false;
     private static KeyFactory TESTKF;
-    
+
     /** what tunnel ID should this receive messages on */
-    public long readReceiveTunnelId() { 
+    public long readReceiveTunnelId() {
         return DataHelper.fromLong(_data, OFF_RECV_TUNNEL, 4);
     }
 
@@ -286,14 +288,14 @@ public class BuildRequestRecord {
         return iv;
     }
 
-    /** 
+    /**
      * The current hop is the inbound gateway.  If this is true, it means anyone can send messages to
      * this tunnel, but if it is false, only the current predecessor can.
      *
      */
     public boolean readIsInboundGateway() {
         int off = _isEC ? (_data.length == LENGTH_EC_SHORT ? OFF_FLAG_EC_SHORT : OFF_FLAG_EC)
-                        : OFF_FLAG;
+                  : OFF_FLAG;
         return (_data[off] & FLAG_UNRESTRICTED_PREV) != 0;
     }
 
@@ -301,9 +303,9 @@ public class BuildRequestRecord {
      * The current hop is the outbound endpoint.  If this is true, the next identity and next tunnel
      * fields refer to where the reply should be sent.
      */
-    public boolean readIsOutboundEndpoint() { 
+    public boolean readIsOutboundEndpoint() {
         int off = _isEC ? (_data.length == LENGTH_EC_SHORT ? OFF_FLAG_EC_SHORT : OFF_FLAG_EC)
-                        : OFF_FLAG;
+                  : OFF_FLAG;
         return (_data[off] & FLAG_OUTBOUND_ENDPOINT) != 0;
     }
 
@@ -326,7 +328,7 @@ public class BuildRequestRecord {
      */
     public long readReplyMessageId() {
         int off = _isEC ? (_data.length == LENGTH_EC_SHORT ? OFF_SEND_MSG_ID_EC_SHORT : OFF_SEND_MSG_ID_EC)
-                        : OFF_SEND_MSG_ID;
+                  : OFF_SEND_MSG_ID;
         return DataHelper.fromLong(_data, off, 4);
     }
 
@@ -406,7 +408,7 @@ public class BuildRequestRecord {
         System.arraycopy(encrypted, 258, out, 256 + PEER_SIZE, 256);
         return new EncryptedBuildRecord(out);
     }
-    
+
     /**
      * Encrypt the record to the specified peer. ECIES only.
      * The ChaCha reply key and IV will be available via the getters
@@ -482,7 +484,9 @@ public class BuildRequestRecord {
      * @return null if no ECIES encrypt/decrypt operation was performed
      * @since 0.9.48
      */
-    public SessionKey getChaChaReplyKey() { return _chachaReplyKey; }
+    public SessionKey getChaChaReplyKey() {
+        return _chachaReplyKey;
+    }
 
     /**
      * Valid after calling encryptECIESRecord() or after the decrypting constructor
@@ -492,9 +496,11 @@ public class BuildRequestRecord {
      * @return null if no ECIES encrypt/decrypt operation was performed
      * @since 0.9.48
      */
-    public byte[] getChaChaReplyAD() { return _chachaReplyAD; }
+    public byte[] getChaChaReplyAD() {
+        return _chachaReplyAD;
+    }
 
-    
+
     /**
      * Decrypt the data from the specified record, writing the decrypted record into this instance's
      * data buffer
@@ -601,7 +607,7 @@ public class BuildRequestRecord {
     }
 
     /**
-     * Populate this instance with data.  A new buffer is created to contain the data, with the 
+     * Populate this instance with data.  A new buffer is created to contain the data, with the
      * necessary randomized padding.
      *
      * ElGamal only. ECIES constructor below.
@@ -620,25 +626,25 @@ public class BuildRequestRecord {
      * @since 0.9.18, was createRecord()
      */
     public BuildRequestRecord(I2PAppContext ctx, long receiveTunnelId, Hash peer, long nextTunnelId, Hash nextHop, long nextMsgId,
-                             SessionKey layerKey, SessionKey ivKey, SessionKey replyKey, byte iv[], boolean isInGateway,
-                             boolean isOutEndpoint) {
+                              SessionKey layerKey, SessionKey ivKey, SessionKey replyKey, byte iv[], boolean isInGateway,
+                              boolean isOutEndpoint) {
         byte buf[] = new byte[LENGTH];
         _data = buf;
         _isEC = false;
-        
-       /*   bytes     0-3: tunnel ID to receive messages as
-        *   bytes    4-35: local router identity hash
-        *   bytes   36-39: next tunnel ID
-        *   bytes   40-71: next router identity hash
-        *   bytes  72-103: AES-256 tunnel layer key
-        *   bytes 104-135: AES-256 tunnel IV key
-        *   bytes 136-167: AES-256 reply key
-        *   bytes 168-183: reply IV
-        *   byte      184: flags
-        *   bytes 185-188: request time (in hours since the epoch)
-        *   bytes 189-192: next message ID
-        *   bytes 193-221: uninterpreted / random padding
-        */
+
+        /*   bytes     0-3: tunnel ID to receive messages as
+         *   bytes    4-35: local router identity hash
+         *   bytes   36-39: next tunnel ID
+         *   bytes   40-71: next router identity hash
+         *   bytes  72-103: AES-256 tunnel layer key
+         *   bytes 104-135: AES-256 tunnel IV key
+         *   bytes 136-167: AES-256 reply key
+         *   bytes 168-183: reply IV
+         *   byte      184: flags
+         *   bytes 185-188: request time (in hours since the epoch)
+         *   bytes 189-192: next message ID
+         *   bytes 193-221: uninterpreted / random padding
+         */
         DataHelper.toLong(buf, OFF_RECV_TUNNEL, 4, receiveTunnelId);
         System.arraycopy(peer.getData(), 0, buf, OFF_OUR_IDENT, Hash.HASH_LENGTH);
         DataHelper.toLong(buf, OFF_SEND_TUNNEL, 4, nextTunnelId);
@@ -662,7 +668,7 @@ public class BuildRequestRecord {
     }
 
     /**
-     * Populate this instance with data.  A new buffer is created to contain the data, with the 
+     * Populate this instance with data.  A new buffer is created to contain the data, with the
      * necessary randomized padding.
      *
      * ECIES long record only. ElGamal constructor above.
@@ -682,12 +688,12 @@ public class BuildRequestRecord {
      * @throws IllegalArgumentException if options too long
      */
     public BuildRequestRecord(I2PAppContext ctx, long receiveTunnelId, long nextTunnelId, Hash nextHop, long nextMsgId,
-                             SessionKey layerKey, SessionKey ivKey, SessionKey replyKey, byte iv[], boolean isInGateway,
-                             boolean isOutEndpoint, Properties options) {
+                              SessionKey layerKey, SessionKey ivKey, SessionKey replyKey, byte iv[], boolean isInGateway,
+                              boolean isOutEndpoint, Properties options) {
         byte buf[] = new byte[LENGTH_EC];
         _data = buf;
         _isEC = true;
-        
+
         DataHelper.toLong(buf, OFF_RECV_TUNNEL, 4, receiveTunnelId);
         DataHelper.toLong(buf, OFF_SEND_TUNNEL_EC, 4, nextTunnelId);
         System.arraycopy(nextHop.getData(), 0, buf, OFF_SEND_IDENT_EC, Hash.HASH_LENGTH);
@@ -718,7 +724,7 @@ public class BuildRequestRecord {
     }
 
     /**
-     * Populate this instance with data.  A new buffer is created to contain the data, with the 
+     * Populate this instance with data.  A new buffer is created to contain the data, with the
      * necessary randomized padding.
      *
      * ECIES short record only. ElGamal constructor above.
@@ -738,7 +744,7 @@ public class BuildRequestRecord {
         byte buf[] = new byte[LENGTH_EC_SHORT];
         _data = buf;
         _isEC = true;
-        
+
         DataHelper.toLong(buf, OFF_RECV_TUNNEL, 4, receiveTunnelId);
         DataHelper.toLong(buf, OFF_SEND_TUNNEL_EC, 4, nextTunnelId);
         System.arraycopy(nextHop.getData(), 0, buf, OFF_SEND_IDENT_EC, Hash.HASH_LENGTH);
@@ -780,32 +786,32 @@ public class BuildRequestRecord {
         boolean isOBEP = readIsOutboundEndpoint();
         if (isIBGW) {
             buf.append("IBGW in: ").append(readReceiveTunnelId())
-               .append(" out ").append(readNextTunnelId());
+            .append(" out ").append(readNextTunnelId());
         } else if (isOBEP) {
             buf.append("OBEP in: ").append(readReceiveTunnelId());
         } else {
             buf.append("part. in: ").append(readReceiveTunnelId())
-               .append(" out: ").append(readNextTunnelId());
+            .append(" out: ").append(readNextTunnelId());
         }
         buf.append(" to: ").append(readNextIdentity());
         buf.append(" layer key: ").append(readLayerKey())
-           .append(" IV key: ").append(readIVKey());
+        .append(" IV key: ").append(readIVKey());
         if (_data.length != LENGTH_EC_SHORT) {
             buf.append(" reply key: ").append(readReplyKey())
-               .append(" reply IV: ").append(Base64.encode(readReplyIV()));
+            .append(" reply IV: ").append(Base64.encode(readReplyIV()));
         }
         buf.append(" time: ").append(DataHelper.formatTime(readRequestTime()))
-           .append(" reply msg id: ").append(readReplyMessageId())
-           .append(" expires in: ").append(DataHelper.formatDuration(readExpiration()));
+        .append(" reply msg id: ").append(readReplyMessageId())
+        .append(" expires in: ").append(DataHelper.formatDuration(readExpiration()));
         if (_isEC) {
             buf.append(" options: ").append(readOptions());
             if (_chachaReplyKey != null) {
                 buf.append(" chacha reply key: ").append(_chachaReplyKey)
-                   .append(" chacha reply IV: ").append(Base64.encode(_chachaReplyAD));
+                .append(" chacha reply IV: ").append(Base64.encode(_chachaReplyAD));
             }
             if (_derivedGarlicKeys != null) {
                 buf.append(" garlic reply key: ").append(_derivedGarlicKeys.key)
-                   .append(" garlic reply tag: ").append(_derivedGarlicKeys.rtag);
+                .append(" garlic reply tag: ").append(_derivedGarlicKeys.rtag);
             }
         }
         // to chase i2pd bug
@@ -813,44 +819,44 @@ public class BuildRequestRecord {
         return buf.toString();
     }
 
-/****
-    public static void main(String[] args) throws Exception {
-        System.out.println("OFF_OPTIONS is " + OFF_OPTIONS);
-        RouterContext ctx = new RouterContext(null);
-        TESTKF = new net.i2p.router.transport.crypto.X25519KeyFactory(ctx);
-        byte[] h = new byte[32];
-        ctx.random().nextBytes(h);
-        Hash bh = new Hash(h);
-        SessionKey k1 = ctx.keyGenerator().generateSessionKey();
-        SessionKey k2 = ctx.keyGenerator().generateSessionKey();
-        SessionKey k3 = ctx.keyGenerator().generateSessionKey();
-        byte[] iv = new byte[16];
-        ctx.random().nextBytes(iv);
-        Properties props = new Properties();
-        props.setProperty("foo", "bar");
-        BuildRequestRecord brr = new BuildRequestRecord(ctx, 1, 2, bh, 3, k1, k2, k3, iv, false, false, props);
-        System.out.println(brr.toString());
-        System.out.println("\nplaintext request:\n" + net.i2p.util.HexDump.dump(brr.getData()));
-        net.i2p.crypto.KeyPair kp = ctx.keyGenerator().generatePKIKeys(net.i2p.crypto.EncType.ECIES_X25519);
-        PublicKey bpub = kp.getPublic();
-        PrivateKey bpriv = kp.getPrivate();
-        EncryptedBuildRecord record = brr.encryptECIESRecord(ctx, bpub, bh);
-        System.out.println("\nencrypted request:\n" + net.i2p.util.HexDump.dump(record.getData()));
-        System.out.println("reply key: " + brr.getChaChaReplyKey());
-        System.out.println("reply IV: " + net.i2p.data.Base64.encode(brr.getChaChaReplyAD()));
-        BuildRequestRecord brr2 = new BuildRequestRecord(ctx, bpriv, record);
-        System.out.println(brr2.toString());
-        System.out.println("\nreply key: " + brr2.getChaChaReplyKey());
-        System.out.println("reply IV: " + net.i2p.data.Base64.encode(brr2.getChaChaReplyAD()));
-        props.setProperty("yes", "no");
-        EncryptedBuildRecord ebr = BuildResponseRecord.create(ctx, 1, brr.getChaChaReplyKey(), brr.getChaChaReplyAD(), props);
-        System.out.println("\nencrypted reply:\n" + net.i2p.util.HexDump.dump(ebr.getData()));
-        BuildResponseRecord.decrypt(ebr, brr2.getChaChaReplyKey(), brr2.getChaChaReplyAD());
-        System.out.println("\nplaintext reply:\n" + net.i2p.util.HexDump.dump(ebr.getData()));
-        Properties p2 = new net.i2p.util.OrderedProperties();
-        DataHelper.fromProperties(ebr.getData(), 0, p2);
-        System.out.println("reply props: " + p2);
-        System.out.println("reply status: " + (ebr.getData()[511] & 0xff));
-    }
-****/
-}   
+    /****
+        public static void main(String[] args) throws Exception {
+            System.out.println("OFF_OPTIONS is " + OFF_OPTIONS);
+            RouterContext ctx = new RouterContext(null);
+            TESTKF = new net.i2p.router.transport.crypto.X25519KeyFactory(ctx);
+            byte[] h = new byte[32];
+            ctx.random().nextBytes(h);
+            Hash bh = new Hash(h);
+            SessionKey k1 = ctx.keyGenerator().generateSessionKey();
+            SessionKey k2 = ctx.keyGenerator().generateSessionKey();
+            SessionKey k3 = ctx.keyGenerator().generateSessionKey();
+            byte[] iv = new byte[16];
+            ctx.random().nextBytes(iv);
+            Properties props = new Properties();
+            props.setProperty("foo", "bar");
+            BuildRequestRecord brr = new BuildRequestRecord(ctx, 1, 2, bh, 3, k1, k2, k3, iv, false, false, props);
+            System.out.println(brr.toString());
+            System.out.println("\nplaintext request:\n" + net.i2p.util.HexDump.dump(brr.getData()));
+            net.i2p.crypto.KeyPair kp = ctx.keyGenerator().generatePKIKeys(net.i2p.crypto.EncType.ECIES_X25519);
+            PublicKey bpub = kp.getPublic();
+            PrivateKey bpriv = kp.getPrivate();
+            EncryptedBuildRecord record = brr.encryptECIESRecord(ctx, bpub, bh);
+            System.out.println("\nencrypted request:\n" + net.i2p.util.HexDump.dump(record.getData()));
+            System.out.println("reply key: " + brr.getChaChaReplyKey());
+            System.out.println("reply IV: " + net.i2p.data.Base64.encode(brr.getChaChaReplyAD()));
+            BuildRequestRecord brr2 = new BuildRequestRecord(ctx, bpriv, record);
+            System.out.println(brr2.toString());
+            System.out.println("\nreply key: " + brr2.getChaChaReplyKey());
+            System.out.println("reply IV: " + net.i2p.data.Base64.encode(brr2.getChaChaReplyAD()));
+            props.setProperty("yes", "no");
+            EncryptedBuildRecord ebr = BuildResponseRecord.create(ctx, 1, brr.getChaChaReplyKey(), brr.getChaChaReplyAD(), props);
+            System.out.println("\nencrypted reply:\n" + net.i2p.util.HexDump.dump(ebr.getData()));
+            BuildResponseRecord.decrypt(ebr, brr2.getChaChaReplyKey(), brr2.getChaChaReplyAD());
+            System.out.println("\nplaintext reply:\n" + net.i2p.util.HexDump.dump(ebr.getData()));
+            Properties p2 = new net.i2p.util.OrderedProperties();
+            DataHelper.fromProperties(ebr.getData(), 0, p2);
+            System.out.println("reply props: " + p2);
+            System.out.println("reply status: " + (ebr.getData()[511] & 0xff));
+        }
+    ****/
+}

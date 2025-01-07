@@ -26,7 +26,7 @@ import static net.i2p.update.UpdateMethod.*;
  * @since 0.9.4 moved from NewsFetcher, public since 0.9.57 for CLI only
  */
 public class NewsHandler extends UpdateHandler implements Checker {
-    
+
     /**
      *  NOTE: If you change, also change in Android:
      *  app/src/main/java/net/i2p/android/apps/NewsFetcher.java
@@ -56,7 +56,7 @@ public class NewsHandler extends UpdateHandler implements Checker {
     public UpdateTask check(UpdateType type, UpdateMethod method,
                             String id, String currentVersion, long maxTime) {
         if ((type != ROUTER_SIGNED && type != NEWS && type != NEWS_SU3) ||
-            method != HTTP)
+                method != HTTP)
             return null;
         List<URI> updateSources = new ArrayList<URI>(2);
         try {
@@ -88,7 +88,7 @@ public class NewsHandler extends UpdateHandler implements Checker {
         Getopt g = new Getopt("newshandler", args, "p:l:u:");
         int c;
         while ((c = g.getopt()) != -1) {
-          switch (c) {
+            switch (c) {
             case 'p':
                 String s = g.getOptarg();
                 int colon = s.indexOf(':');
@@ -114,7 +114,7 @@ public class NewsHandler extends UpdateHandler implements Checker {
             default:
                 error = true;
                 break;
-          }
+            }
         }
         if (error || args.length - g.getOptind() != 0) {
             System.err.println("Usage: newshandler [-p 127.0.0.1[:4444]] [-l en] [-u url]");

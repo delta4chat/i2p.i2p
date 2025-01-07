@@ -2,9 +2,9 @@ package net.i2p.util;
 
 /*
  * free (adj.): unencumbered; not under the control of others
- * Written by jrandom in 2003 and released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
- * It probably won't make your computer catch on fire, or eat 
+ * Written by jrandom in 2003 and released into the public domain
+ * with no warranty of any kind, either expressed or implied.
+ * It probably won't make your computer catch on fire, or eat
  * your children, but it might.  Use at your own risk.
  *
  */
@@ -93,7 +93,9 @@ abstract class LogWriter implements Runnable {
         closeWriter();
     }
 
-    public void flushRecords() { flushRecords(true); }
+    public void flushRecords() {
+        flushRecords(true);
+    }
 
     public void flushRecords(boolean shouldWait) {
         try {
@@ -127,9 +129,9 @@ abstract class LogWriter implements Runnable {
             t.printStackTrace();
         } finally {
             if (shouldWait) {
-                try { 
+                try {
                     synchronized (this) {
-                        this.wait(_flushInterval); 
+                        this.wait(_flushInterval);
                     }
                 } catch (InterruptedException ie) { // nop
                 }
@@ -159,12 +161,12 @@ abstract class LogWriter implements Runnable {
     private String dupMessage(int dupCount, LogRecord lastRecord, boolean reverse, boolean html) {
         boolean nohtml = !html || SystemVersion.isAndroid();
         String arrows = reverse ? (nohtml ? "vvv" : "&darr;&darr;&darr;")
-                                : (nohtml ? "^^^" : "&uarr;&uarr;&uarr;");
+                        : (nohtml ? "^^^" : "&uarr;&uarr;&uarr;");
         return LogRecordFormatter.getWhen(_manager, lastRecord) + ' ' + arrows + ' ' +
                ngettext("{0} similar message omitted", "{0} similar messages omitted", dupCount) + ' ' + arrows +
                LogRecordFormatter.NL;
     }
-    
+
     private static final String BUNDLE_NAME = "net.i2p.util.messages";
     private static final String ROUTER_BUNDLE_NAME = "net.i2p.router.web.messages";
 

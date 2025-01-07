@@ -2,7 +2,7 @@ package net.i2p.crypto;
 
 /*
  * free (adj.): unencumbered; not under the control of others
- * No warranty of any kind, either expressed or implied.  
+ * No warranty of any kind, either expressed or implied.
  */
 
 import java.io.File;
@@ -42,7 +42,7 @@ public class DirKeyRing implements KeyRing {
      *  @return null if file doesn't exist, throws on all other errors
      */
     public PublicKey getKey(String keyName, String scope, SigType type)
-                            throws GeneralSecurityException, IOException {
+    throws GeneralSecurityException, IOException {
         String fileName = keyName.replace("@", "_at_").replace("<", "_").replace(">", "_");
         File test = new File(fileName);
         if (test.getParent() != null)

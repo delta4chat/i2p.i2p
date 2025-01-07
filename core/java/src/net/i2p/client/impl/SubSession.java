@@ -62,14 +62,14 @@ class SubSession extends I2PSessionMuxedImpl {
     public I2PSession addSubsession(InputStream destKeyStream, Properties opts) throws I2PSessionException {
         throw new UnsupportedOperationException();
     }
-    
+
     /**
      *  Unsupported in a subsession.
      *  Does nothing.
      */
     @Override
     public void removeSubsession(I2PSession session) {}
-    
+
     /**
      *  Unsupported in a subsession.
      *  @return empty list always
@@ -93,7 +93,7 @@ class SubSession extends I2PSessionMuxedImpl {
     }
 
     /**
-     * Connect to the router and establish a session.  This call blocks until 
+     * Connect to the router and establish a session.  This call blocks until
      * a session is granted.
      *
      * Should be threadsafe, other threads will block until complete.
@@ -168,8 +168,8 @@ class SubSession extends I2PSessionMuxedImpl {
         // from his connect, while we are still closed.
         // If we did it in connect() we wouldn't need this
         if (isClosed() &&
-            message.getType() != CreateSessionMessage.MESSAGE_TYPE &&
-            message.getType() != CreateLeaseSetMessage.MESSAGE_TYPE)
+                message.getType() != CreateSessionMessage.MESSAGE_TYPE &&
+                message.getType() != CreateLeaseSetMessage.MESSAGE_TYPE)
             throw new I2PSessionException("Already closed");
         _primary.sendMessage_unchecked(message);
     }

@@ -73,8 +73,8 @@ public class Archive implements RrdUpdater<Archive> {
     // read from XML
     Archive(RrdDb parentDb, DataImporter reader, int arcIndex) throws IOException {
         this(parentDb, new ArcDef(
-                reader.getConsolFun(arcIndex), reader.getXff(arcIndex),
-                reader.getSteps(arcIndex), reader.getRows(arcIndex)));
+                 reader.getConsolFun(arcIndex), reader.getXff(arcIndex),
+                 reader.getSteps(arcIndex), reader.getRows(arcIndex)));
         int n = parentDb.getHeader().getDsCount();
         for (int i = 0; i < n; i++) {
             // restore state

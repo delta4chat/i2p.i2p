@@ -36,7 +36,7 @@ import net.i2p.util.SystemVersion;
 class ProfilePersistenceHelper {
     private final Log _log;
     private final RouterContext _context;
-    
+
     public final static String PROP_PEER_PROFILE_DIR = "router.profileDir";
     public final static String DEFAULT_PEER_PROFILE_DIR = "peerProfiles";
     private final static String NL = System.getProperty("line.separator");
@@ -49,10 +49,10 @@ class ProfilePersistenceHelper {
     private static final String B64 = Base64.ALPHABET_I2P;
     // Max to read in at startup
     private static final int LIMIT_PROFILES = SystemVersion.isSlow() ? 1000 : 4000;
-    
+
     private final File _profileDir;
     private Hash _us;
-    
+
     public ProfilePersistenceHelper(RouterContext ctx) {
         _context = ctx;
         _log = ctx.logManager().getLog(ProfilePersistenceHelper.class);
@@ -66,9 +66,11 @@ class ProfilePersistenceHelper {
                 subdir.mkdir();
         }
     }
-    
-    public void setUs(Hash routerIdentHash) { _us = routerIdentHash; }
-    
+
+    public void setUs(Hash routerIdentHash) {
+        _us = routerIdentHash;
+    }
+
     /**
      * write out the data from the profile to the file
      * @return success
@@ -83,7 +85,10 @@ class ProfilePersistenceHelper {
             _log.error("Error writing profile to " + f);
             return false;
         } finally {
-            if (fos != null) try { fos.close(); } catch (IOException ioe) {}
+            if (fos != null) try {
+                    fos.close();
+                }
+                catch (IOException ioe) {}
         }
         return true;
     }
@@ -113,11 +118,11 @@ class ProfilePersistenceHelper {
                 groups = "Fast, High Capacity";
             else
                 groups = "High Capacity";
-            
+
             if (_context.profileOrganizer().isWellIntegrated(profile.getPeer()))
                 groups = groups + ", Integrated";
         }
-        
+
         StringBuilder buf = new StringBuilder(512);
         if (addComments) {
             buf.append("########################################################################").append(NL);
@@ -148,9 +153,9 @@ class ProfilePersistenceHelper {
         add(buf, addComments, "tunnelPeakTunnel1mThroughput", profile.getPeakTunnel1mThroughputKBps(), "KBytes/sec");
         if (addComments)
             buf.append(NL);
-        
+
         out.write(buf.toString().getBytes("UTF-8"));
-        
+
         if (profile.getIsExpanded()) {
             // only write out expanded data if, uh, we've got it
             profile.getTunnelHistory().store(out, addComments);
@@ -167,7 +172,7 @@ class ProfilePersistenceHelper {
             profile.getDbResponseTime().store(out, "dbResponseTime", addComments);
         }
     }
-    
+
     /** @since 0.8.5 */
     private static void addDate(StringBuilder buf, boolean addComments, String name, long val, String description) {
         if (addComments) {
@@ -177,7 +182,7 @@ class ProfilePersistenceHelper {
             add(buf, false, name, val, description);
         }
     }
-    
+
     /** @since 0.8.5 */
     private static void add(StringBuilder buf, boolean addComments, String name, long val, String description) {
         if (addComments)
@@ -186,7 +191,7 @@ class ProfilePersistenceHelper {
         if (addComments)
             buf.append(NL);
     }
-    
+
     /** @since 0.8.5 */
     private static void add(StringBuilder buf, boolean addComments, String name, float val, String description) {
         if (addComments)
@@ -195,7 +200,7 @@ class ProfilePersistenceHelper {
         if (addComments)
             buf.append(NL);
     }
-    
+
     public List<PeerProfile> readProfiles() {
         long start = System.currentTimeMillis();
         long down = _context.router().getEstimatedDowntime();
@@ -221,7 +226,7 @@ class ProfilePersistenceHelper {
             _log.debug("Loading " + count + " profiles took " + duration + "ms");
         return profiles;
     }
-    
+
     private static class ProfileFilter implements FilenameFilter {
         public boolean accept(File dir, String filename) {
             return (filename.startsWith(PREFIX) &&
@@ -261,7 +266,7 @@ class ProfilePersistenceHelper {
             FileUtil.rename(from, to);
         }
     }
-    
+
     /**
      *  Delete profile files with timestamps older than 'age' ago
      *  @return number deleted
@@ -301,13 +306,13 @@ class ProfilePersistenceHelper {
             }
             PeerProfile profile = new PeerProfile(_context, peer);
             Properties props = new Properties();
-            
+
             loadProps(props, file);
-            
+
             long lastSentToSuccessfully = getLong(props, "lastSentToSuccessfully");
             if (lastSentToSuccessfully <= cutoff) {
                 if (_log.shouldLog(Log.INFO))
-                    _log.info("Dropping old profile " + file.getName() + 
+                    _log.info("Dropping old profile " + file.getName() +
                               ", since we haven't heard from them in a long time");
                 file.delete();
                 return null;
@@ -320,11 +325,11 @@ class ProfilePersistenceHelper {
                     // new file exists and on Windows?
                     file.delete();
             }
-            
+
             profile.setCapacityBonus((int) getLong(props, "capacityBonus"));
             profile.setIntegrationBonus((int) getLong(props, "integrationBonus"));
             profile.setSpeedBonus((int) getLong(props, "speedBonus"));
-            
+
             long fh = getLong(props, "firstHeardAbout");
             if (fh <= 0)
                 fh = file.lastModified();
@@ -343,16 +348,16 @@ class ProfilePersistenceHelper {
             profile.setPeakThroughputKBps(getFloat(props, "tunnelPeakThroughput"));
             profile.setPeakTunnelThroughputKBps(getFloat(props, "tunnelPeakTunnelThroughput"));
             profile.setPeakTunnel1mThroughputKBps(getFloat(props, "tunnelPeakTunnel1mThroughput"));
-            
+
             profile.getTunnelHistory().load(props);
 
             // In the interest of keeping the in-memory profiles small,
             // don't load the DB info at all unless there is something interesting there
             // (i.e. floodfills)
             if (getLong(props, "dbHistory.lastLookupSuccessful") > 0 ||
-                getLong(props, "dbHistory.lastLookupFailed") > 0 ||
-                getLong(props, "dbHistory.lastStoreSuccessful") > 0 ||
-                getLong(props, "dbHistory.lastStoreFailed") > 0) {
+                    getLong(props, "dbHistory.lastLookupFailed") > 0 ||
+                    getLong(props, "dbHistory.lastStoreSuccessful") > 0 ||
+                    getLong(props, "dbHistory.lastStoreFailed") > 0) {
                 profile.expandDBProfile();
                 profile.getDBHistory().load(props);
                 profile.getDbIntroduction().load(props, "dbIntroduction", true);
@@ -365,10 +370,10 @@ class ProfilePersistenceHelper {
 
             if (PeerProfile.ENABLE_TUNNEL_TEST_RESPONSE_TIME)
                 profile.getTunnelTestResponseTime().load(props, "tunnelTestResponseTime", true);
-            
+
             if (_log.shouldLog(Log.DEBUG))
                 _log.debug("Loaded the profile for " + peer.toBase64() + " from " + file.getName());
-            
+
             fixupFirstHeardAbout(profile);
             return profile;
         } catch (Exception e) {
@@ -431,7 +436,7 @@ class ProfilePersistenceHelper {
                 _log.debug("Fixed up the FHA time for " + p.getPeer().toBase64() + " to " + (new Date(min)));
         }
     }
-    
+
     static long getLong(Properties props, String key) {
         String val = props.getProperty(key);
         if (val != null) {
@@ -451,13 +456,13 @@ class ProfilePersistenceHelper {
         }
         return 0.0f;
     }
-    
+
     private void loadProps(Properties props, File file) throws IOException {
         InputStream fin = null;
         try {
             fin = new BufferedInputStream(new FileInputStream(file), 1);
             fin.mark(1);
-            int c = fin.read(); 
+            int c = fin.read();
             fin.reset();
             if (c == '#') {
                 // uncompressed
@@ -495,32 +500,32 @@ class ProfilePersistenceHelper {
             return null;
         }
     }
-    
+
     private File pickFile(PeerProfile profile) {
         String hash = profile.getPeer().toBase64();
         File dir = new File(_profileDir, DIR_PREFIX + hash.charAt(0));
         return new File(dir, PREFIX + hash + SUFFIX);
     }
-    
-    
+
+
     /** generate 1000 profiles */
-/****
-    public static void main(String args[]) {
-        System.out.println("Generating 1000 profiles");
-        File dir = new File("profiles");
-        dir.mkdirs();
-        byte data[] = new byte[32];
-        java.util.Random rnd = new java.util.Random();
-        for (int i = 0; i < 1000; i++) {
-            rnd.nextBytes(data);
-            Hash peer = new Hash(data);
-            try {
-                File f = new File(dir, PREFIX + peer.toBase64() + SUFFIX);
-                f.createNewFile();
-                System.out.println("Created " + peer.toBase64());
-            } catch (IOException ioe) {}
+    /****
+        public static void main(String args[]) {
+            System.out.println("Generating 1000 profiles");
+            File dir = new File("profiles");
+            dir.mkdirs();
+            byte data[] = new byte[32];
+            java.util.Random rnd = new java.util.Random();
+            for (int i = 0; i < 1000; i++) {
+                rnd.nextBytes(data);
+                Hash peer = new Hash(data);
+                try {
+                    File f = new File(dir, PREFIX + peer.toBase64() + SUFFIX);
+                    f.createNewFile();
+                    System.out.println("Created " + peer.toBase64());
+                } catch (IOException ioe) {}
+            }
+            System.out.println("1000 peers created in " + dir.getAbsolutePath());
         }
-        System.out.println("1000 peers created in " + dir.getAbsolutePath());
-    }
-****/
+    ****/
 }

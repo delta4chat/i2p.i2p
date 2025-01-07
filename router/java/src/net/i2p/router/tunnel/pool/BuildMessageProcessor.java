@@ -37,7 +37,7 @@ class BuildMessageProcessor {
     private final RouterContext ctx;
     private final Log log;
     private final DecayingBloomFilter _filter;
-    
+
     public BuildMessageProcessor(RouterContext ctx) {
         this.ctx = ctx;
         log = ctx.logManager().getLog(getClass());
@@ -102,7 +102,7 @@ class BuildMessageProcessor {
     }
 
     /**
-     * Decrypt the record targetting us, encrypting all of the other records with the included 
+     * Decrypt the record targetting us, encrypting all of the other records with the included
      * reply key and IV.  The original, encrypted record targetting us is removed from the request
      * message (so that the reply can be placed in that position after going through the decrypted
      * request record).
@@ -179,7 +179,7 @@ class BuildMessageProcessor {
                 log.warn(msg.getUniqueId() + ": No record decrypted");
             return null;
         }
-        
+
         if (isShort) {
             byte[] replyKey = rv.getChaChaReplyKey().getData();
             byte iv[] = new byte[12];

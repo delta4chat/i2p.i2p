@@ -94,7 +94,7 @@ public class BlindData {
         if (authType < 0)
             authType = AUTH_NONE;
         if ((authType != AUTH_NONE && authKey == null) ||
-            (authType == AUTH_NONE && authKey != null))
+                (authType == AUTH_NONE && authKey != null))
             throw new IllegalArgumentException();
         _authType = authType;
         _authKey = authKey;

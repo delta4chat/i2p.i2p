@@ -71,8 +71,8 @@ public class EventLogHelper extends FormHandler {
             _xevents.put(_events[i], _t(_events[i + 1]));
         }
     }
-    
-    public void setFrom(String s) { 
+
+    public void setFrom(String s) {
         try {
             _age = Long.parseLong(s) * 1000;
             if (_age > 0)
@@ -82,18 +82,18 @@ public class EventLogHelper extends FormHandler {
         } catch (NumberFormatException nfe) {
             _age = 0;
             _from = 0;
-        }	
+        }
     }
 
-    //public void setTo(String s) { 
+    //public void setTo(String s) {
     //   _to = s;
     //}
 
-    public void setType(String s) { 
+    public void setType(String s) {
         _event = s;
     }
 
-    public String getForm() { 
+    public String getForm() {
         // too hard to use the standard formhandler.jsi / FormHandler.java session nonces
         // since graphs.jsp needs the refresh value in its <head>.
         // So just use the "shared/console nonce".
@@ -123,35 +123,35 @@ public class EventLogHelper extends FormHandler {
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
-        return ""; 
+        return "";
     }
 
     private void writeOption(String key, String val) throws IOException {
-         _out.write("<option value=\"");
-         _out.write(val);
-         _out.write("\"");
-         if (val.equals(_event))
-             _out.write(HelperBase.SELECTED);
-         _out.write(">");
-         _out.write(key);
-         _out.write("</option>\n");
+        _out.write("<option value=\"");
+        _out.write(val);
+        _out.write("\"");
+        if (val.equals(_event))
+            _out.write(HelperBase.SELECTED);
+        _out.write(">");
+        _out.write(key);
+        _out.write("</option>\n");
     }
 
     /**
      * @param age seconds
      */
     private void writeOption(long age) throws IOException {
-         _out.write("<option value=\"");
-         _out.write(Long.toString(age));
-         _out.write("\"");
-         if (age == _age / 1000)
-             _out.write(HelperBase.SELECTED);
-         _out.write(">");
-         if (age == 0)
-             _out.write(_t("All events"));
-         else
-             _out.write(DataHelper.formatDuration2(age * 1000));
-         _out.write("</option>\n");
+        _out.write("<option value=\"");
+        _out.write(Long.toString(age));
+        _out.write("\"");
+        if (age == _age / 1000)
+            _out.write(HelperBase.SELECTED);
+        _out.write(">");
+        if (age == 0)
+            _out.write(_t("All events"));
+        else
+            _out.write(DataHelper.formatDuration2(age * 1000));
+        _out.write("</option>\n");
     }
 
     public String getEvents() {
@@ -199,16 +199,16 @@ public class EventLogHelper extends FormHandler {
             buf.append(DataHelper.formatTime(time));
             buf.append("</td><td>");
             if (isAll) {
-                 String[] s = DataHelper.split(event, " ", 2);
-                 String xs = _xevents.get(s[0]);
-                 if (xs == null)
-                     xs = s[0];
-                 buf.append(xs);
-                 buf.append("</td><td>");
-                 if (s.length > 1)
-                     buf.append(s[1]);
+                String[] s = DataHelper.split(event, " ", 2);
+                String xs = _xevents.get(s[0]);
+                if (xs == null)
+                    xs = s[0];
+                buf.append(xs);
+                buf.append("</td><td>");
+                if (s.length > 1)
+                    buf.append(s[1]);
             } else {
-                 buf.append(event);
+                buf.append(event);
             }
             buf.append("</td></tr>");
         }

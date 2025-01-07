@@ -60,7 +60,7 @@ class EventPumper implements Runnable {
     private long _expireIdleWriteTime;
     private static final boolean _useDirect = false;
     private final boolean _nodelay;
-    
+
     /**
      *  This probably doesn't need to be bigger than the largest typical
      *  message, which is a 5-slot VTBM (~2700 bytes).
@@ -71,15 +71,15 @@ class EventPumper implements Runnable {
 
     private static class BufferFactory implements TryCache.ObjectFactory<ByteBuffer> {
         public ByteBuffer newInstance() {
-            if (_useDirect) 
+            if (_useDirect)
                 return ByteBuffer.allocateDirect(BUF_SIZE);
             else
                 return ByteBuffer.allocate(BUF_SIZE);
         }
     }
-    
 
-    /** 
+
+    /**
      * every few seconds, iterate across all ntcp connections just to make sure
      * we have their interestOps set properly (and to expire any looong idle cons).
      * as the number of connections grows, we should try to make this happen
@@ -115,7 +115,7 @@ class EventPumper implements Runnable {
         long maxMemory = SystemVersion.getMaxMemory();
         MIN_BUFS = (int) Math.max(MIN_MINB, Math.min(MAX_MINB, 1 + (maxMemory / (16*1024*1024))));
     }
-    
+
     private static final TryCache<ByteBuffer> _bufferCache = new TryCache<>(new BufferFactory(), MIN_BUFS);
 
     private static final Set<Status> STATUS_OK =
@@ -136,7 +136,7 @@ class EventPumper implements Runnable {
         _context.statManager().createRequiredRateStat("ntcp.inboundConn", "Inbound NTCP Connection", "ntcp", new long[] { 60*1000L } );
         _nodelay = ctx.getBooleanPropertyDefaultTrue(PROP_NODELAY);
     }
-    
+
     public synchronized void startPumping() {
         if (_log.shouldLog(Log.INFO))
             _log.info("Starting pumper");
@@ -151,13 +151,13 @@ class EventPumper implements Runnable {
             _log.log(Log.CRIT, "Error opening the NTCP selector", jlie);
         }
     }
-    
+
     public synchronized void stopPumping() {
         _alive = false;
         if (_selector != null && _selector.isOpen())
             _selector.wakeup();
     }
-    
+
     /**
      *  Selector can take quite a while to close after calling stopPumping()
      */
@@ -168,7 +168,7 @@ class EventPumper implements Runnable {
     /**
      *  Register the acceptor.
      *  This is only called from NTCPTransport.bindAddress(), so it isn't clear
-     *  why this needs a queue. 
+     *  why this needs a queue.
      */
     public void register(ServerSocketChannel chan) {
         if (_log.shouldLog(Log.DEBUG)) _log.debug("Registering server socket channel");
@@ -186,7 +186,7 @@ class EventPumper implements Runnable {
         _wantsConRegister.offer(con);
         _selector.wakeup();
     }
-    
+
     /**
      *  The selector loop.
      *  On high-bandwidth routers, this is the thread with the highest CPU usage, so
@@ -219,9 +219,9 @@ class EventPumper implements Runnable {
                 } catch (CancelledKeyException cke) {
                     if (_log.shouldLog(Log.WARN))
                         _log.warn("Error selecting", cke);
-		    continue;
-		}
-                
+                    continue;
+                }
+
                 long now = System.currentTimeMillis();
                 if (lastFailsafeIteration + FAILSAFE_ITERATION_FREQ < now) {
                     // in the *cough* unthinkable possibility that there are bugs in
@@ -238,7 +238,7 @@ class EventPumper implements Runnable {
                         // and recalculate the max loops before failsafe sleep, based on number of keys
                         loopCount = 0;
                         failsafeLoopCount = Math.max(FAILSAFE_LOOP_COUNT, 2 * lastKeySetSize);
-                        
+
                         int failsafeWrites = 0;
                         int failsafeCloses = 0;
                         int failsafeInvalid = 0;
@@ -255,12 +255,12 @@ class EventPumper implements Runnable {
                                 if (!(att instanceof NTCPConnection))
                                     continue; // to the next con
                                 NTCPConnection con = (NTCPConnection)att;
-                                
+
                                 /**
                                  * 100% CPU bug
                                  * http://forums.java.net/jive/thread.jspa?messageID=255525
                                  * http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6595055
-                                 * 
+                                 *
                                  * The problem is around a channel that was originally registered with Selector for i/o gets
                                  * closed on the server side (due to early client side exit).  But the server side can know
                                  * about such channel only when it does i/o (read/write) and thereby getting into an IO exception.
@@ -268,13 +268,13 @@ class EventPumper implements Runnable {
                                  * know the channel is already closed (peer-reset), but continue to do the selection cycle on
                                  * a key set whose associated channel is alreay closed or invalid. Hence, selector's slect(..)
                                  * keep spinging with zero return without blocking for the timeout period.
-                                 * 
+                                 *
                                  * One fix is to have a provision in the application, to check if any of the Selector's keyset
                                  * is having a closed channel/or invalid registration due to channel closure.
                                  */
                                 if ((!key.isValid()) &&
-                                    (!((SocketChannel)key.channel()).isConnectionPending()) &&
-                                    con.getTimeSinceCreated(now) > 2 * NTCPTransport.ESTABLISH_TIMEOUT) {
+                                        (!((SocketChannel)key.channel()).isConnectionPending()) &&
+                                        con.getTimeSinceCreated(now) > 2 * NTCPTransport.ESTABLISH_TIMEOUT) {
                                     if (_log.shouldLog(Log.INFO))
                                         _log.info("Removing invalid key for " + con);
                                     // this will cancel the key, and it will then be removed from the keyset
@@ -286,7 +286,7 @@ class EventPumper implements Runnable {
 
                                 synchronized(con.getWriteLock()) {
                                     if ( (!con.isWriteBufEmpty()) &&
-                                         ((key.interestOps() & SelectionKey.OP_WRITE) == 0) ) {
+                                            ((key.interestOps() & SelectionKey.OP_WRITE) == 0) ) {
                                         // the data queued to be sent has already passed through
                                         // the bw limiter and really just wants to get shoved
                                         // out the door asap.
@@ -296,11 +296,11 @@ class EventPumper implements Runnable {
                                         failsafeWrites++;
                                     }
                                 }
-                                
+
                                 final long expire;
                                 if ((!haveCap || !con.isInbound()) &&
-                                    con.getMayDisconnect() &&
-                                    con.getMessagesReceived() <= 2 && con.getMessagesSent() <= 1) {
+                                        con.getMayDisconnect() &&
+                                        con.getMessagesReceived() <= 2 && con.getMessagesSent() <= 1) {
                                     expire = MAY_DISCON_TIMEOUT;
                                     if (_log.shouldInfo())
                                         _log.info("Possible early disconnect for " + con);
@@ -309,7 +309,7 @@ class EventPumper implements Runnable {
                                 }
 
                                 if ( con.getTimeSinceSend(now) > expire &&
-                                     con.getTimeSinceReceive(now) > expire) {
+                                        con.getTimeSinceReceive(now) > expire) {
                                     // we haven't sent or received anything in a really long time, so lets just close 'er up
                                     // con will cancel the key
                                     con.sendTerminationAndClose();
@@ -343,7 +343,7 @@ class EventPumper implements Runnable {
                         continue;
                     }
                 } else {
-                    // another 100% CPU workaround 
+                    // another 100% CPU workaround
                     // TODO remove or only if we appear to be looping with no interest ops
                     if ((loopCount % failsafeLoopCount) == failsafeLoopCount - 1) {
                         if (_log.shouldLog(Log.INFO))
@@ -397,7 +397,7 @@ class EventPumper implements Runnable {
         _wantsRegister.clear();
         _wantsWrite.clear();
     }
-    
+
     /**
      *  Process all keys from the last select.
      *  High-frequency path in thread.
@@ -413,9 +413,9 @@ class EventPumper implements Runnable {
                 //if (_log.shouldLog(Log.DEBUG))
                 //    _log.debug("ready ops for : " + key
                 //               + " accept? " + accept + " connect? " + connect
-                //               + " read? " + read 
+                //               + " read? " + read
                 //               + "/" + ((key.interestOps()&SelectionKey.OP_READ)!= 0)
-                //               + " write? " + write 
+                //               + " write? " + write
                 //               + "/" + ((key.interestOps()&SelectionKey.OP_WRITE)!= 0)
                 //               + " on " + key.attachment()
                 //               );
@@ -470,7 +470,7 @@ class EventPumper implements Runnable {
     private ByteBuffer acquireBuf() {
         return _bufferCache.acquire();
     }
-    
+
     /**
      *  Return a read buffer to the pool.
      *  These buffers must be from acquireBuf(), i.e. capacity() == BUF_SIZE.
@@ -485,7 +485,7 @@ class EventPumper implements Runnable {
         buf.clear();
         _bufferCache.release(buf);
     }
-    
+
     private void processAccept(SelectionKey key) {
         ServerSocketChannel servChan = (ServerSocketChannel)key.attachment();
         try {
@@ -500,14 +500,20 @@ class EventPumper implements Runnable {
             if (_context.blocklist().isBlocklisted(ip)) {
                 if (_log.shouldLog(Log.WARN))
                     _log.warn("Receive session request from blocklisted IP: " + ba);
-                try { chan.close(); } catch (IOException ioe) { }
+                try {
+                    chan.close();
+                }
+                catch (IOException ioe) { }
                 return;
             }
             if (!_context.commSystem().isExemptIncoming(Addresses.toCanonicalString(ba))) {
                 if (!_transport.allowConnection()) {
                     if (_log.shouldLog(Log.WARN))
                         _log.warn("Receive session request but at connection limit: " + ba);
-                    try { chan.close(); } catch (IOException ioe) { }
+                    try {
+                        chan.close();
+                    }
+                    catch (IOException ioe) { }
                     return;
                 }
 
@@ -515,14 +521,20 @@ class EventPumper implements Runnable {
                 if (count > 0) {
                     count = _blockedIPs.increment(ba);
                     if (_log.shouldLog(Log.WARN))
-                       _log.warn("Blocking accept of IP with count " + count + ": " + ba);
+                        _log.warn("Blocking accept of IP with count " + count + ": " + ba);
                     _context.statManager().addRateData("ntcp.dropInboundNoMessage", count);
-                    try { chan.close(); } catch (IOException ioe) { }
+                    try {
+                        chan.close();
+                    }
+                    catch (IOException ioe) { }
                     return;
                 }
 
                 if (!shouldAllowInboundEstablishment()) {
-                    try { chan.close(); } catch (IOException ioe) { }
+                    try {
+                        chan.close();
+                    }
+                    catch (IOException ioe) { }
                     return;
                 }
             }
@@ -594,9 +606,9 @@ class EventPumper implements Runnable {
                 return false;
             }
         }
-        return true; 
+        return true;
     }
-    
+
     private void processConnect(SelectionKey key) {
         final NTCPConnection con = (NTCPConnection)key.attachment();
         final SocketChannel chan = con.getChannel();
@@ -784,7 +796,7 @@ class EventPumper implements Runnable {
                 _log.warn("error reading on " + con, nyce);
         }
     }
-    
+
     /**
      *  OP_WRITE will always be set before this is called.
      *  This method will disable the interest if no more writes remain.
@@ -848,7 +860,7 @@ class EventPumper implements Runnable {
                 else
                     setInterest(key, SelectionKey.OP_WRITE);
             }
-        // catch and close outside the write lock to avoid deadlocks in NTCPCon.locked_close()
+            // catch and close outside the write lock to avoid deadlocks in NTCPCon.locked_close()
         } catch (CancelledKeyException cke) {
             if (_log.shouldLog(Log.WARN)) _log.warn("error writing on " + con, cke);
             _context.statManager().addRateData("ntcp.writeError", 1);
@@ -862,7 +874,7 @@ class EventPumper implements Runnable {
         }
         return rv;
     }
-    
+
     /**
      *  Pull off the 4 _wants* queues and update the interest ops,
      *  which may, according to the javadocs, be a "naive" implementation and block.
@@ -881,17 +893,17 @@ class EventPumper implements Runnable {
             } catch (IllegalArgumentException iae) {
                 // JamVM (Gentoo: jamvm-1.5.4, gnu-classpath-0.98+gmp)
                 // throws
-		//java.lang.IllegalArgumentException: java.io.IOException: Bad file descriptor
-		//   at gnu.java.nio.EpollSelectionKeyImpl.interestOps(EpollSelectionKeyImpl.java:102)
-		//   at net.i2p.router.transport.ntcp.EventPumper.runDelayedEvents(EventPumper.java:580)
-		//   at net.i2p.router.transport.ntcp.EventPumper.run(EventPumper.java:109)
-		//   at java.lang.Thread.run(Thread.java:745)
-		//   at net.i2p.util.I2PThread.run(I2PThread.java:85)
-		//Caused by: java.io.IOException: Bad file descriptor
-		//   at gnu.java.nio.EpollSelectorImpl.epoll_modify(Native Method)
-		//   at gnu.java.nio.EpollSelectorImpl.epoll_modify(EpollSelectorImpl.java:313)
-		//   at gnu.java.nio.EpollSelectionKeyImpl.interestOps(EpollSelectionKeyImpl.java:97)
-		//   ...4 more
+                //java.lang.IllegalArgumentException: java.io.IOException: Bad file descriptor
+                //   at gnu.java.nio.EpollSelectionKeyImpl.interestOps(EpollSelectionKeyImpl.java:102)
+                //   at net.i2p.router.transport.ntcp.EventPumper.runDelayedEvents(EventPumper.java:580)
+                //   at net.i2p.router.transport.ntcp.EventPumper.run(EventPumper.java:109)
+                //   at java.lang.Thread.run(Thread.java:745)
+                //   at net.i2p.util.I2PThread.run(I2PThread.java:85)
+                //Caused by: java.io.IOException: Bad file descriptor
+                //   at gnu.java.nio.EpollSelectorImpl.epoll_modify(Native Method)
+                //   at gnu.java.nio.EpollSelectorImpl.epoll_modify(EpollSelectorImpl.java:313)
+                //   at gnu.java.nio.EpollSelectionKeyImpl.interestOps(EpollSelectionKeyImpl.java:97)
+                //   ...4 more
                 if (_log.shouldLog(Log.WARN))
                     _log.warn("gnu?", iae);
             }
@@ -910,8 +922,8 @@ class EventPumper implements Runnable {
                 try {
                     setInterest(key, SelectionKey.OP_WRITE);
                 } catch (CancelledKeyException cke) {
-                   if (_log.shouldLog(Log.WARN))
-                       _log.warn("RDE CKE 2", cke);
+                    if (_log.shouldLog(Log.WARN))
+                        _log.warn("RDE CKE 2", cke);
                     // ignore
                 } catch (IllegalArgumentException iae) {
                     // see above
@@ -920,7 +932,7 @@ class EventPumper implements Runnable {
                 }
             }
         }
-        
+
         // only when address changes
         ServerSocketChannel chan;
         while ((chan = _wantsRegister.poll()) != null) {
@@ -931,7 +943,7 @@ class EventPumper implements Runnable {
                 if (_log.shouldLog(Log.WARN)) _log.warn("Error registering", cce);
             }
         }
-        
+
         while ((con = _wantsConRegister.poll()) != null) {
             final SocketChannel schan = con.getChannel();
             try {
@@ -958,7 +970,7 @@ class EventPumper implements Runnable {
                     _context.statManager().addRateData("ntcp.connectFailedIOE", 1);
                     _transport.markUnreachable(con.getRemotePeer().calculateHash());
                     con.close(true);
-                } catch (UnresolvedAddressException uae) {                    
+                } catch (UnresolvedAddressException uae) {
                     if (_log.shouldLog(Log.WARN)) _log.warn("unresolved address connecting", uae);
                     _context.statManager().addRateData("ntcp.connectFailedUnresolved", 1);
                     _transport.markUnreachable(con.getRemotePeer().calculateHash());
@@ -970,7 +982,7 @@ class EventPumper implements Runnable {
                 if (_log.shouldLog(Log.WARN)) _log.warn("Error registering", cce);
             }
         }
-        
+
         long now = System.currentTimeMillis();
         if (_lastExpired + 1000 <= now) {
             expireTimedOut();
@@ -996,7 +1008,9 @@ class EventPumper implements Runnable {
         _transport.expireTimedOut();
     }
 
-    public long getIdleTimeout() { return _expireIdleWriteTime; }
+    public long getIdleTimeout() {
+        return _expireIdleWriteTime;
+    }
 
     /**
      *  Warning - caller should catch unchecked CancelledKeyException

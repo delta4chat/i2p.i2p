@@ -352,7 +352,7 @@ public class CPUID {
         int family = getCPUFamily();
         int model = getCPUModel();
         if (family == 15 ||
-            (family == 6 && "GenuineIntel".equals(vendor))) {
+                (family == 6 && "GenuineIntel".equals(vendor))) {
             model += getCPUExtendedModel() << 4;
         }
         if (family == 15) {
@@ -389,7 +389,7 @@ public class CPUID {
         System.out.println("CPU has FMA3:   " + c.hasFMA3());
         System.out.println("CPU has MOVBE:  " + c.hasMOVBE());
         System.out.println("CPU has ABM:    " + c.hasABM());
-        if(c instanceof IntelCPUInfo){
+        if(c instanceof IntelCPUInfo) {
             IntelCPUInfo cc = (IntelCPUInfo) c;
             System.out.println("\n**Intel-info**");
             System.out.println("Is PII-compatible:       " + cc.IsPentium2Compatible());
@@ -433,33 +433,33 @@ public class CPUID {
      *
      */
     private static final void loadNative() {
-        try{
-        String wantedProp = System.getProperty("jcpuid.enable", "true");
-        boolean wantNative = Boolean.parseBoolean(wantedProp);
-        if (wantNative) {
-            boolean loaded = loadGeneric();
-            if (loaded) {
-                _nativeOk = true;
-                if (_doLog)
-                    System.err.println("INFO: Native CPUID library " + getLibraryMiddlePart() + " loaded from file");
-            } else {
-                loaded = loadFromResource();
+        try {
+            String wantedProp = System.getProperty("jcpuid.enable", "true");
+            boolean wantNative = Boolean.parseBoolean(wantedProp);
+            if (wantNative) {
+                boolean loaded = loadGeneric();
                 if (loaded) {
                     _nativeOk = true;
                     if (_doLog)
-                        System.err.println("INFO: Native CPUID library " + getResourceName() + " loaded from resource");
+                        System.err.println("INFO: Native CPUID library " + getLibraryMiddlePart() + " loaded from file");
                 } else {
-                    _nativeOk = false;
-                    if (_doLog)
-                        System.err.println("WARNING: Native CPUID library jcpuid not loaded - will not be able to read CPU information using CPUID");
+                    loaded = loadFromResource();
+                    if (loaded) {
+                        _nativeOk = true;
+                        if (_doLog)
+                            System.err.println("INFO: Native CPUID library " + getResourceName() + " loaded from resource");
+                    } else {
+                        _nativeOk = false;
+                        if (_doLog)
+                            System.err.println("WARNING: Native CPUID library jcpuid not loaded - will not be able to read CPU information using CPUID");
+                    }
                 }
+                _jcpuidVersion = fetchJcpuidVersion();
+            } else {
+                if (_doLog)
+                    System.err.println("INFO: Native CPUID library jcpuid not loaded - will not be able to read CPU information using CPUID");
             }
-            _jcpuidVersion = fetchJcpuidVersion();
-        } else {
-            if (_doLog)
-                System.err.println("INFO: Native CPUID library jcpuid not loaded - will not be able to read CPU information using CPUID");
-        }
-        }catch(Exception e){
+        } catch(Exception e) {
             if (_doLog)
                 System.err.println("INFO: Native CPUID library jcpuid not loaded, reason: '"+e.getMessage()+"' - will not be able to read CPU information using CPUID");
         }
@@ -493,7 +493,7 @@ public class CPUID {
         //    System.loadLibrary(getLibraryMiddlePart());
         //    return true;
         //} catch (UnsatisfiedLinkError ule) {
-            return false;
+        return false;
         //}
     }
 
@@ -570,7 +570,7 @@ public class CPUID {
             System.load(outFile.getAbsolutePath());//System.load requires an absolute path to the lib
         } catch (UnsatisfiedLinkError ule) {
             if (_doLog) {
-                System.err.println("WARNING: The resource " + resourceName 
+                System.err.println("WARNING: The resource " + resourceName
                                    + " was not a valid library for this platform " + ule);
                 //ule.printStackTrace();
             }
@@ -586,9 +586,15 @@ public class CPUID {
                 outFile.delete();
             return false;
         } finally {
-            if (libStream != null) try { libStream.close(); } catch (IOException ioe) {}
+            if (libStream != null) try {
+                    libStream.close();
+                }
+                catch (IOException ioe) {}
             if (fos != null) {
-                try { fos.close(); } catch (IOException ioe) {}
+                try {
+                    fos.close();
+                }
+                catch (IOException ioe) {}
             }
         }
         // copy to install dir, ignore failure
@@ -624,20 +630,20 @@ public class CPUID {
             return "lib";
     }
 
-    private static final String getLibraryMiddlePart(){
+    private static final String getLibraryMiddlePart() {
         if(isWindows)
-             return "jcpuid-x86-windows"; // The convention on Windows
-	if(isMac) {
-	    if(isX86) {
+            return "jcpuid-x86-windows"; // The convention on Windows
+        if(isMac) {
+            if(isX86) {
                 // As of GMP6,
                 // our libjcpuid-x86_64.osx.jnilib is a fat binary,
                 // with the 32-bit lib in it also.
                 // Not sure if that was on purpose...
-	        return "jcpuid-x86_64-osx";  // The convention on Intel Macs
-	    }
+                return "jcpuid-x86_64-osx";  // The convention on Intel Macs
+            }
             // this will fail, we don't have any ppc libs, but we can't return null here.
-	    return "jcpuid-ppc-osx";
-	}
+            return "jcpuid-ppc-osx";
+        }
         if(isKFreebsd)
             return "jcpuid-x86-kfreebsd"; // The convention on kfreebsd...
         if(isFreebsd)
@@ -656,7 +662,7 @@ public class CPUID {
     /** @since 0.8.7 */
     private static final String get64LibraryMiddlePart() {
         if(isWindows)
-             return "jcpuid-x86_64-windows";
+            return "jcpuid-x86_64-windows";
         if(isKFreebsd)
             return "jcpuid-x86_64-kfreebsd";
         if(isFreebsd)
@@ -665,13 +671,13 @@ public class CPUID {
             return "jcpuid-x86_64-netbsd";
         if(isOpenbsd)
             return "jcpuid-x86_64-openbsd";
-	if(isMac){
-	    if(isX86){
-	        return "jcpuid-x86_64-osx";
-	    }
+        if(isMac) {
+            if(isX86) {
+                return "jcpuid-x86_64-osx";
+            }
             // this will fail, we don't have any ppc libs, but we can't return null here.
-	    return "jcpuid-ppc_64-osx";
-	}
+            return "jcpuid-ppc_64-osx";
+        }
         if(isSunos)
             return "jcpuid-x86_64-solaris";
         // use linux as the default, don't throw exception
@@ -682,9 +688,9 @@ public class CPUID {
     {
         if(isWindows)
             return ".dll";
-	if(isMac)
-	    return ".jnilib";
-	else
+        if(isMac)
+            return ".jnilib";
+        else
             return ".so";
     }
 }

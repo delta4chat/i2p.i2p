@@ -221,7 +221,7 @@ public class I2PControlController implements RouterApp {
      */
     private Connector buildDefaultListener(Server server) {
         Connector ssl = buildSslListener(server, _conf.getConf("i2pcontrol.listen.address", "127.0.0.1"),
-                                 _conf.getConf("i2pcontrol.listen.port", DEFAULT_PORT));
+                                         _conf.getConf("i2pcontrol.listen.port", DEFAULT_PORT));
         return ssl;
     }
 
@@ -246,8 +246,8 @@ public class I2PControlController implements RouterApp {
         // empty set says all are valid
         String address = _conf.getConf("i2pcontrol.listen.address", "127.0.0.1");
         if (!(address.equals("0.0.0.0") ||
-              address.equals("::") ||
-              address.equals("0:0:0:0:0:0:0:0"))) {
+                address.equals("::") ||
+                address.equals("0:0:0:0:0:0:0:0"))) {
             listenHosts.add("localhost");
             listenHosts.add("127.0.0.1");
             listenHosts.add("::1");
@@ -287,9 +287,9 @@ public class I2PControlController implements RouterApp {
         // the X.509 cert password (if not present, verifyKeyStore() returned false)
         sslFactory.setKeyManagerPassword(KeyStoreProvider.DEFAULT_CERTIFICATE_PASSWORD);
         sslFactory.addExcludeProtocols(I2PSSLSocketFactory.EXCLUDE_PROTOCOLS.toArray(
-                                       new String[I2PSSLSocketFactory.EXCLUDE_PROTOCOLS.size()]));
+                                           new String[I2PSSLSocketFactory.EXCLUDE_PROTOCOLS.size()]));
         sslFactory.addExcludeCipherSuites(I2PSSLSocketFactory.EXCLUDE_CIPHERS.toArray(
-                                          new String[I2PSSLSocketFactory.EXCLUDE_CIPHERS.size()]));
+                                              new String[I2PSSLSocketFactory.EXCLUDE_CIPHERS.size()]));
 
         HttpConfiguration httpConfig = new HttpConfiguration();
         httpConfig.setSecureScheme("https");
@@ -297,8 +297,8 @@ public class I2PControlController implements RouterApp {
         httpConfig.addCustomizer(new SecureRequestCustomizer());
         // number of acceptors, (default) number of selectors
         ServerConnector ssl = new ServerConnector(server, 1, 0,
-                                                  new SslConnectionFactory(sslFactory, "http/1.1"),
-                                                  new HttpConnectionFactory(httpConfig));
+                new SslConnectionFactory(sslFactory, "http/1.1"),
+                new HttpConnectionFactory(httpConfig));
         ssl.setHost(address);
         ssl.setPort(port);
         ssl.setIdleTimeout(90*1000);  // default 10 sec
@@ -319,40 +319,40 @@ public class I2PControlController implements RouterApp {
      * @param listener
      * @throws Exception
      */
-/****
-    public synchronized void replaceListener(Connector listener) throws Exception {
-        if (_server != null) {
-            stopServer();
+    /****
+        public synchronized void replaceListener(Connector listener) throws Exception {
+            if (_server != null) {
+                stopServer();
+            }
+            _server = buildServer(listener);
         }
-        _server = buildServer(listener);
-    }
-****/
+    ****/
 
     /**
      * Get all listeners of the server.
      * @return
      */
-/****
-    public synchronized Connector[] getListeners() {
-        if (_server != null) {
-            return _server.getConnectors();
+    /****
+        public synchronized Connector[] getListeners() {
+            if (_server != null) {
+                return _server.getConnectors();
+            }
+            return new Connector[0];
         }
-        return new Connector[0];
-    }
-****/
+    ****/
 
     /**
      * Removes all listeners
      */
-/****
-    public synchronized void clearListeners() {
-        if (_server != null) {
-            for (Connector listen : getListeners()) {
-                _server.removeConnector(listen);
+    /****
+        public synchronized void clearListeners() {
+            if (_server != null) {
+                for (Connector listen : getListeners()) {
+                    _server.removeConnector(listen);
+                }
             }
         }
-    }
-****/
+    ****/
 
     /**
      * Stop it
@@ -378,26 +378,26 @@ public class I2PControlController implements RouterApp {
         _secMan.stopTimedEvents();
         stopServer();
 
-/****
-        // Get and stop all running threads
-        ThreadGroup threadgroup = Thread.currentThread().getThreadGroup();
-        Thread[] threads = new Thread[threadgroup.activeCount() + 3];
-        threadgroup.enumerate(threads, true);
-        for (Thread thread : threads) {
-            if (thread != null) {//&& thread.isAlive()){
-                thread.interrupt();
-            }
-        }
+        /****
+                // Get and stop all running threads
+                ThreadGroup threadgroup = Thread.currentThread().getThreadGroup();
+                Thread[] threads = new Thread[threadgroup.activeCount() + 3];
+                threadgroup.enumerate(threads, true);
+                for (Thread thread : threads) {
+                    if (thread != null) {//&& thread.isAlive()){
+                        thread.interrupt();
+                    }
+                }
 
-        for (Thread thread : threads) {
-            if (thread != null) {
-                System.out.println("Active thread: " + thread.getName());
-            }
-        }
-        threadgroup.interrupt();
+                for (Thread thread : threads) {
+                    if (thread != null) {
+                        System.out.println("Active thread: " + thread.getName());
+                    }
+                }
+                threadgroup.interrupt();
 
-        //Thread.currentThread().getThreadGroup().destroy();
-****/
+                //Thread.currentThread().getThreadGroup().destroy();
+        ****/
     }
 
     public String getPluginDir() {

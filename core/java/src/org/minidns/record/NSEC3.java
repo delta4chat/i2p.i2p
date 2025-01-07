@@ -69,7 +69,7 @@ public class NSEC3 extends Data {
      * The cryptographic hash algorithm used. If MiniDNS
      * isn't aware of the hash algorithm, then this field will be
      * <code>null</code>.
-     * 
+     *
      * @see #hashAlgorithmByte
      */
     public final HashAlgorithm hashAlgorithm;
@@ -163,11 +163,11 @@ public class NSEC3 extends Data {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder()
-                .append(hashAlgorithm).append(' ')
-                .append(flags).append(' ')
-                .append(iterations).append(' ')
-                .append(salt.length == 0 ? "-" : new BigInteger(1, salt).toString(16).toUpperCase()).append(' ')
-                .append(Base32.encodeToString(nextHashed));
+        .append(hashAlgorithm).append(' ')
+        .append(flags).append(' ')
+        .append(iterations).append(' ')
+        .append(salt.length == 0 ? "-" : new BigInteger(1, salt).toString(16).toUpperCase()).append(' ')
+        .append(Base32.encodeToString(nextHashed));
         for (TYPE type : types) {
             sb.append(' ').append(type);
         }

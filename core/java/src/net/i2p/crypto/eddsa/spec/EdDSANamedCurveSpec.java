@@ -26,7 +26,7 @@ public class EdDSANamedCurveSpec extends EdDSAParameterSpec {
     private final String name;
 
     public EdDSANamedCurveSpec(String name, Curve curve,
-            String hashAlgo, ScalarOps sc, GroupElement B) {
+                               String hashAlgo, ScalarOps sc, GroupElement B) {
         super(curve, hashAlgo, sc, B);
         this.name = name;
     }

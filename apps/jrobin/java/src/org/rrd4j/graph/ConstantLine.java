@@ -21,7 +21,7 @@ public class ConstantLine extends Line {
         if(parent != null) {
             double[] parentValues = parent.getValues();
             for (int i = 0; i < values.length; i++) {
-                if (! Double.isNaN(parentValues[i])){
+                if (! Double.isNaN(parentValues[i])) {
                     values[i] += parentValues[i];
                 }
             }

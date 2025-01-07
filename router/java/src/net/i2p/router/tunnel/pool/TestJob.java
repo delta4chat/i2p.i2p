@@ -41,10 +41,10 @@ class TestJob extends JobImpl {
     private RatchetSessionTag _ratchetEncryptTag;
     private static final AtomicInteger __id = new AtomicInteger();
     private int _id;
-    
+
     /** base to randomize the test delay on */
     private static final int TEST_DELAY = 40*1000;
-    
+
     public TestJob(RouterContext ctx, PooledTunnelCreatorConfig cfg, TunnelPool pool) {
         super(ctx);
         _log = ctx.logManager().getLog(TestJob.class);
@@ -59,7 +59,9 @@ class TestJob extends JobImpl {
         // stats are created in TunnelPoolManager
     }
 
-    public String getName() { return "Test tunnel"; }
+    public String getName() {
+        return "Test tunnel";
+    }
 
     public void runJob() {
         if (_pool == null || !_pool.isAlive())
@@ -92,7 +94,7 @@ class TestJob extends JobImpl {
             _outTunnel = _cfg;
             _otherTunnel = (PooledTunnelCreatorConfig) _replyTunnel;
         }
-        
+
         if ( (_replyTunnel == null) || (_outTunnel == null) ) {
             if (_log.shouldLog(Log.WARN))
                 _log.warn("Insufficient tunnels to test " + _cfg + " with: " + _replyTunnel + " / " + _outTunnel);
@@ -114,7 +116,7 @@ class TestJob extends JobImpl {
             sendTest(m, testPeriod);
         }
     }
-    
+
     private void sendTest(I2NPMessage m, int testPeriod) {
         // garlic route that DeliveryStatusMessage to ourselves so the endpoints and gateways
         // can't tell its a test.  to simplify this, we encrypt it with a random key and tag,
@@ -157,23 +159,23 @@ class TestJob extends JobImpl {
         if (_log.shouldLog(Log.DEBUG))
             _log.debug("Sending garlic test #" + _id + " of " + _outTunnel + " / " + _replyTunnel);
         ctx.tunnelDispatcher().dispatchOutbound(m, _outTunnel.getSendTunnelId(0),
-                                                         _replyTunnel.getReceiveTunnelId(0),
-                                                         _replyTunnel.getPeer(0));
+                                                _replyTunnel.getReceiveTunnelId(0),
+                                                _replyTunnel.getPeer(0));
     }
-    
+
     public void testSuccessful(int ms) {
         if (_pool == null || !_pool.isAlive())
             return;
         getContext().statManager().addRateData("tunnel.testSuccessLength", _cfg.getLength());
         getContext().statManager().addRateData("tunnel.testSuccessTime", ms);
-    
+
         _outTunnel.incrementVerifiedBytesTransferred(1024);
         // reply tunnel is marked in the inboundEndpointProcessor
         //_replyTunnel.incrementVerifiedBytesTransferred(1024);
-        
+
         noteSuccess(ms, _outTunnel);
         noteSuccess(ms, _replyTunnel);
-        
+
         _cfg.testJobSuccessful(ms);
         // credit the expl. tunnel too
         if (_otherTunnel.getLength() > 1)
@@ -183,13 +185,13 @@ class TestJob extends JobImpl {
             _log.debug("Tunnel test #" + _id + " successful in " + ms + "ms: " + _cfg);
         scheduleRetest();
     }
-    
+
     private void noteSuccess(long ms, TunnelInfo tunnel) {
         if (tunnel != null)
             for (int i = 0; i < tunnel.getLength(); i++)
                 getContext().profileManager().tunnelTestSucceeded(tunnel.getPeer(i), ms);
     }
-    
+
     private void testFailed(long timeToFail) {
         if (_pool == null || !_pool.isAlive())
             return;
@@ -217,9 +219,11 @@ class TestJob extends JobImpl {
                 getContext().statManager().addRateData("tunnel.testFailedCompletelyTime", timeToFail);
         }
     }
-    
+
     /** randomized time we should wait before testing */
-    private int getDelay() { return TEST_DELAY + getContext().random().nextInt(TEST_DELAY / 3); }
+    private int getDelay() {
+        return TEST_DELAY + getContext().random().nextInt(TEST_DELAY / 3);
+    }
 
     /** how long we allow tests to run for before failing them */
     private int getTestPeriod() {
@@ -243,7 +247,9 @@ class TestJob extends JobImpl {
         return 15*1000;
     }
 
-    private void scheduleRetest() { scheduleRetest(false); }
+    private void scheduleRetest() {
+        scheduleRetest(false);
+    }
 
     private void scheduleRetest(boolean asap) {
         if (_pool == null || !_pool.isAlive())
@@ -257,7 +263,7 @@ class TestJob extends JobImpl {
                 requeue(delay);
         }
     }
-    
+
     private class ReplySelector implements MessageSelector {
         private final long _id;
         private final long _expiration;
@@ -267,10 +273,14 @@ class TestJob extends JobImpl {
             _expiration = expiration;
             _found = false;
         }
-        
-        public boolean continueMatching() { return !_found && getContext().clock().now() < _expiration; }
 
-        public long getExpiration() { return _expiration; }
+        public boolean continueMatching() {
+            return !_found && getContext().clock().now() < _expiration;
+        }
+
+        public long getExpiration() {
+            return _expiration;
+        }
 
         public boolean isMatch(I2NPMessage message) {
             if (message.getType() == DeliveryStatusMessage.MESSAGE_TYPE) {
@@ -278,7 +288,7 @@ class TestJob extends JobImpl {
             }
             return false;
         }
-        
+
         @Override
         public String toString() {
             StringBuilder rv = new StringBuilder(64);
@@ -287,7 +297,7 @@ class TestJob extends JobImpl {
             return rv.toString();
         }
     }
-    
+
     /**
      * Test successfull (w00t)
      */
@@ -295,13 +305,19 @@ class TestJob extends JobImpl {
         private long _successTime;
         private OutNetMessage _sentMessage;
 
-        public OnTestReply() { super(TestJob.this.getContext()); }
+        public OnTestReply() {
+            super(TestJob.this.getContext());
+        }
 
-        public String getName() { return "Tunnel test success"; }
+        public String getName() {
+            return "Tunnel test success";
+        }
 
-        public void setSentMessage(OutNetMessage m) { _sentMessage = m; }
+        public void setSentMessage(OutNetMessage m) {
+            _sentMessage = m;
+        }
 
-        public void runJob() { 
+        public void runJob() {
             if (_sentMessage != null)
                 getContext().messageRegistry().unregisterPending(_sentMessage);
             if (_successTime < getTestPeriod())
@@ -315,7 +331,7 @@ class TestJob extends JobImpl {
         public void setMessage(I2NPMessage message) {
             _successTime = getContext().clock().now() - ((DeliveryStatusMessage)message).getArrival();
         }
-        
+
         @Override
         public String toString() {
             StringBuilder rv = new StringBuilder(64);
@@ -324,7 +340,7 @@ class TestJob extends JobImpl {
             return rv.toString();
         }
     }
-    
+
     /**
      * Test failed (boo, hiss)
      */
@@ -332,11 +348,13 @@ class TestJob extends JobImpl {
         private final long _started;
 
         public OnTestTimeout(long now) {
-            super(TestJob.this.getContext()); 
+            super(TestJob.this.getContext());
             _started = now;
         }
 
-        public String getName() { return "Tunnel test timeout"; }
+        public String getName() {
+            return "Tunnel test timeout";
+        }
 
         public void runJob() {
             if (_log.shouldDebug())
@@ -373,7 +391,7 @@ class TestJob extends JobImpl {
                 testFailed(getContext().clock().now() - _started);
             }
         }
-        
+
         @Override
         public String toString() {
             StringBuilder rv = new StringBuilder(64);

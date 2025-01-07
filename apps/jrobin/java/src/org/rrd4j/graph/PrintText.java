@@ -60,7 +60,7 @@ class PrintText extends CommentText {
                 // unit specified
                 ValueScaler.Scaled scaled = valueScaler.scale(value, matcher.group(2).equals("s"));
                 resolvedText = resolvedText.substring(0, matcher.start()) +
-                        matcher.group(1) + scaled.unit + resolvedText.substring(matcher.end());
+                               matcher.group(1) + scaled.unit + resolvedText.substring(matcher.end());
                 value = scaled.value;
             }
             try {

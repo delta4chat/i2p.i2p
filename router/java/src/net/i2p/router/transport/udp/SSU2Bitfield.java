@@ -155,7 +155,7 @@ class SSU2Bitfield {
         // now get ranges
         if (acnt < highest - offset) {
             // cur + 1 is set, cur is unset, start at cur
-            long cur = highest - (acnt + 1); 
+            long cur = highest - (acnt + 1);
             for (int r = 0; r < maxRanges; r++) {
                 int ncnt = 0;
                 for ( ; cur >= offset && ncnt < 255; cur--) {
@@ -259,7 +259,7 @@ class SSU2Bitfield {
             long start = Math.max(offset, bf2.offset);
             long bf2Highest = bf2.getHighestSet();
             for (long bit = start; bit < bf2Highest && bit <= highest; bit++) {
-                 if (get(bit) && !bf2.set(bit))
+                if (get(bit) && !bf2.set(bit))
                     cb.bitSet(bit);
             }
             // portion that is strictly newer
@@ -306,16 +306,16 @@ class SSU2Bitfield {
                 }
             }
         }
-      /****
-        sb.append(" (RAW: ").append(thru).append(" A:").append(acnt);
-        if (ranges != null) {
-            for (int i = 0; i < rangeCount * 2; i += 2) {
-                sb.append(" N:").append(ranges[i] & 0xff);
-                sb.append(" A:").append(ranges[i + 1] & 0xff);
-            }
-        }
-        sb.append(')');
-      ****/
+        /****
+          sb.append(" (RAW: ").append(thru).append(" A:").append(acnt);
+          if (ranges != null) {
+              for (int i = 0; i < rangeCount * 2; i += 2) {
+                  sb.append(" N:").append(ranges[i] & 0xff);
+                  sb.append(" A:").append(ranges[i + 1] & 0xff);
+              }
+          }
+          sb.append(')');
+        ****/
         return sb.toString();
     }
 
@@ -328,8 +328,8 @@ class SSU2Bitfield {
         sb.append(" [");
         for (long i = offset; i <= getHighestSet(); i++) {
             if (get(i)) {
-              sb.append(' ');
-              sb.append(i);
+                sb.append(' ');
+                sb.append(i);
             }
         }
         sb.append(" ]");
@@ -337,78 +337,78 @@ class SSU2Bitfield {
     }
 
 
-/****
-    private static class CallbackImpl implements Callback {
-        public void bitSet(long bit) {
-            System.out.print(" " + bit);
+    /****
+        private static class CallbackImpl implements Callback {
+            public void bitSet(long bit) {
+                System.out.print(" " + bit);
+            }
         }
-    }
 
-    public static void main(String[] args) {
-        Callback cbi = new CallbackImpl();
-        int off = 0;
-        SSU2Bitfield bf = new SSU2Bitfield(256, off);
-        System.out.println(bf.toString());
+        public static void main(String[] args) {
+            Callback cbi = new CallbackImpl();
+            int off = 0;
+            SSU2Bitfield bf = new SSU2Bitfield(256, off);
+            System.out.println(bf.toString());
 
-        for (int i = 0; i < 20; i++) {
-            bf.set(i);
+            for (int i = 0; i < 20; i++) {
+                bf.set(i);
+            }
+            for (int i = 21; i < 31; i++) {
+                bf.set(i);
+            }
+            bf.set(35);
+            System.out.println(bf.toString());
+            System.out.println(bf.toAckBlock(10).toString());
+            SSU2Bitfield bf2 = new SSU2Bitfield(256, off);
+            bf2.set(0);
+            bf.forEachAndNot(bf2, cbi);
+            if (true) return;
+
+            bf.toAckBlock(20);
+
+            bf.set(off);
+            System.out.println(bf.toString());
+            bf.toAckBlock(20);
+
+            bf.set(off + 1);
+            System.out.println(bf.toString());
+            bf.toAckBlock(20);
+
+            bf.set(off + 2);
+            System.out.println(bf.toString());
+            bf.toAckBlock(20);
+
+            bf.set(off + 4);
+            System.out.println(bf.toString());
+            bf.toAckBlock(20);
+
+            bf.set(off + 5);
+            System.out.println(bf.toString());
+            bf.toAckBlock(20);
+
+            bf.set(off + 8);
+            System.out.println(bf.toString());
+            bf.toAckBlock(20);
+
+
+            bf.set(off + 88);
+            System.out.println(bf.toString());
+            bf.toAckBlock(20);
+
+
+            bf.set(off + 254);
+            System.out.println(bf.toString());
+            bf.toAckBlock(20);
+
+
+            bf.set(off + 255);
+            System.out.println(bf.toString());
+            bf.toAckBlock(20);
+
+
+            bf.set(off + 300);
+            System.out.println(bf.toString());
+            bf.toAckBlock(20);
         }
-        for (int i = 21; i < 31; i++) {
-            bf.set(i);
-        }
-        bf.set(35);
-        System.out.println(bf.toString());
-        System.out.println(bf.toAckBlock(10).toString());
-        SSU2Bitfield bf2 = new SSU2Bitfield(256, off);
-        bf2.set(0);
-        bf.forEachAndNot(bf2, cbi);
-        if (true) return;
-
-        bf.toAckBlock(20);
-
-        bf.set(off);
-        System.out.println(bf.toString());
-        bf.toAckBlock(20);
-
-        bf.set(off + 1);
-        System.out.println(bf.toString());
-        bf.toAckBlock(20);
-
-        bf.set(off + 2);
-        System.out.println(bf.toString());
-        bf.toAckBlock(20);
-
-        bf.set(off + 4);
-        System.out.println(bf.toString());
-        bf.toAckBlock(20);
-
-        bf.set(off + 5);
-        System.out.println(bf.toString());
-        bf.toAckBlock(20);
-
-        bf.set(off + 8);
-        System.out.println(bf.toString());
-        bf.toAckBlock(20);
-
-
-        bf.set(off + 88);
-        System.out.println(bf.toString());
-        bf.toAckBlock(20);
-
-
-        bf.set(off + 254);
-        System.out.println(bf.toString());
-        bf.toAckBlock(20);
-
-
-        bf.set(off + 255);
-        System.out.println(bf.toString());
-        bf.toAckBlock(20);
-
-
-        bf.set(off + 300);
-        System.out.println(bf.toString());
-        bf.toAckBlock(20);
-    }
-****/
+    ****/
 }

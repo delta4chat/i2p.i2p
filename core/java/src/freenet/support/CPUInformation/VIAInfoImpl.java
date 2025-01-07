@@ -5,17 +5,21 @@ package freenet.support.CPUInformation;
  *  @since 0.8.7
  */
 class VIAInfoImpl extends CPUIDCPUInfo implements VIACPUInfo {
-    
+
     private static boolean isC3Compatible;
     private static boolean isNanoCompatible;
 
     // If modelString != null, the cpu is considered correctly identified.
     private static final String smodel = identifyCPU();
-    
-    public boolean IsC3Compatible(){ return isC3Compatible; }
 
-    public boolean IsNanoCompatible(){ return isNanoCompatible; }
-    
+    public boolean IsC3Compatible() {
+        return isC3Compatible;
+    }
+
+    public boolean IsNanoCompatible() {
+        return isNanoCompatible;
+    }
+
     public String getCPUModelString()
     {
         if (smodel != null)
@@ -29,7 +33,7 @@ class VIAInfoImpl extends CPUIDCPUInfo implements VIACPUInfo {
     {
         return false;
     }
-    
+
 
     private static String identifyCPU()
     {
@@ -45,31 +49,31 @@ class VIAInfoImpl extends CPUIDCPUInfo implements VIACPUInfo {
         if (family == 6) {
             isC3Compatible = true; // Possibly not optimal
             switch (model) {
-                case 5:
-                    modelString = "Cyrix M2";
-                    break;
-                case 6:
-                    modelString = "C5 A/B";
-                    break;
-                case 7:
-                    modelString = "C5 C";
-                    break;
-                case 8:
-                    modelString = "C5 N";
-                    break;
-                case 9:
-                    modelString = "C5 XL/P";
-                    break;
-                case 10:
-                    modelString = "C5 J";
-                    break;
-                case 15:
-                    isNanoCompatible = true;
-                    modelString = "Nano";
-                    break;
-                default:
-                    modelString = "Via model " + model;
-                    break;
+            case 5:
+                modelString = "Cyrix M2";
+                break;
+            case 6:
+                modelString = "C5 A/B";
+                break;
+            case 7:
+                modelString = "C5 C";
+                break;
+            case 8:
+                modelString = "C5 N";
+                break;
+            case 9:
+                modelString = "C5 XL/P";
+                break;
+            case 10:
+                modelString = "C5 J";
+                break;
+            case 15:
+                isNanoCompatible = true;
+                modelString = "Nano";
+                break;
+            default:
+                modelString = "Via model " + model;
+                break;
             }
         }
         return modelString;

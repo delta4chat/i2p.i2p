@@ -27,10 +27,10 @@ import java.util.function.Function;
  * <li><code>org.rrd4j.font.plain.url</code></li>
  * <li><code>org.rrd4j.font.bold.url</code></li>
  * </ol>
- * 
+ *
  * If either <code>org.rrd4j.fonts.properties</code> or <code>org.rrd4j.fonts.properties.url</code> is used, the file provided contains any other property of lower priority .
  * The last four properties defines directly the plain or bold font. All properties URL related (<code>org.rrd4j.fonts.url</code>, <code>org.rrd4j.font.plain.url</code> and
- * <code>org.rrd4j.font.bold.url</code>) download data from an URL. They are useful when those data are provided by the file system, defined by the OS. 
+ * <code>org.rrd4j.font.bold.url</code>) download data from an URL. They are useful when those data are provided by the file system, defined by the OS.
  * The others search for the data in the classpath. So it's easy to provided font-pack as a jar that's put before RRD44J's jar.
  * <p>
  * The default settings uses <code>org.rrd4j.fonts.properties</code> looking for the file <code>/rrd4jfonts.properties</code> in the classpath.
@@ -324,35 +324,35 @@ public interface RrdGraphConstants {
             refreshConf();
         }
         private FontConstructor() {}
-        
+
         /**
          * Used for tests
          */
         static void refreshConf() {
             fileProps.clear();
             Optional.ofNullable(System.getProperty(PROPERTYFONTSPROPERTIES, "/rrd4jfonts.properties"))
-                    .filter(s -> ! s.isEmpty())
-                    .map(RrdGraphConstants.class::getResourceAsStream)
-                    .ifPresent(t -> {
-                        try {
-                            fileProps.load(t);
-                        } catch (IOException e) {
-                            throw new UncheckedIOException(e);
-                        }
-                    });
+            .filter(s -> ! s.isEmpty())
+            .map(RrdGraphConstants.class::getResourceAsStream)
+            .ifPresent(t -> {
+                try {
+                    fileProps.load(t);
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+            });
             Optional.ofNullable(System.getProperty(PROPERTYFONTSURL))
-                    .filter(s -> ! s.isEmpty())
-                    .ifPresent(t -> {
-                        try {
-                            fileProps.load(new URL(t).openStream());
-                        } catch (IOException e) {
-                            throw new UncheckedIOException(e);
-                        }
-                    });
+            .filter(s -> ! s.isEmpty())
+            .ifPresent(t -> {
+                try {
+                    fileProps.load(new URL(t).openStream());
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+            });
             for (String prop: new String[] {PROPERTYFONTPLAIN, PROPERTYFONTBOLD, PROPERTYFONTPLAINURL, PROPERTYFONTBOLDURL}) {
                 Optional.ofNullable(System.getProperty(prop))
-                        .filter(s -> ! s.isEmpty())
-                        .ifPresent(s -> fileProps.put(prop, s));
+                .filter(s -> ! s.isEmpty())
+                .ifPresent(s -> fileProps.put(prop, s));
             }
         }
 
@@ -363,27 +363,27 @@ public interface RrdGraphConstants {
          * @return a new {@link java.awt.Font} instance
          */
         public static Font getFont(int type, int size) {
-/*
-            Function<String, InputStream> fontStream;
-            String fontPath = fileProps.getProperty(type == Font.BOLD ? PROPERTYFONTBOLDURL : PROPERTYFONTPLAINURL);
-            if (fontPath!= null) {
-                fontStream = s -> {
-                    try {
-                        return new URL(s).openStream();
-                    } catch (IOException e) {
-                        throw new UncheckedIOException(e);
-                    }
-                };
-            } else {
-                fontPath = fileProps.getProperty(type == Font.BOLD ? PROPERTYFONTBOLD : PROPERTYFONTPLAIN);
-                fontStream = RrdGraphConstants.class::getResourceAsStream;
-            }
-            try (InputStream fontstream = fontStream.apply(fontPath)) {
-                return Font.createFont(Font.TRUETYPE_FONT, fontstream).deriveFont((float)size);
-            } catch (FontFormatException | IOException e) {
-                throw new RuntimeException(e);
-            }
-*/
+            /*
+                        Function<String, InputStream> fontStream;
+                        String fontPath = fileProps.getProperty(type == Font.BOLD ? PROPERTYFONTBOLDURL : PROPERTYFONTPLAINURL);
+                        if (fontPath!= null) {
+                            fontStream = s -> {
+                                try {
+                                    return new URL(s).openStream();
+                                } catch (IOException e) {
+                                    throw new UncheckedIOException(e);
+                                }
+                            };
+                        } else {
+                            fontPath = fileProps.getProperty(type == Font.BOLD ? PROPERTYFONTBOLD : PROPERTYFONTPLAIN);
+                            fontStream = RrdGraphConstants.class::getResourceAsStream;
+                        }
+                        try (InputStream fontstream = fontStream.apply(fontPath)) {
+                            return Font.createFont(Font.TRUETYPE_FONT, fontstream).deriveFont((float)size);
+                        } catch (FontFormatException | IOException e) {
+                            throw new RuntimeException(e);
+                        }
+            */
             return new Font("Monospaced", type, size);
         }
     }

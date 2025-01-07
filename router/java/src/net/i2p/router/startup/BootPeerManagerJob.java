@@ -13,13 +13,15 @@ import net.i2p.router.RouterContext;
 
 /** start up the peer manager */
 class BootPeerManagerJob extends JobImpl {
-    
+
     public BootPeerManagerJob(RouterContext ctx) {
         super(ctx);
     }
-    
-    public String getName() { return "Boot Peer Manager"; }
-    
+
+    public String getName() {
+        return "Boot Peer Manager";
+    }
+
     public void runJob() {
         getContext().peerManager().startup();
     }

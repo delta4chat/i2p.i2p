@@ -1,9 +1,9 @@
 package net.i2p.router;
 /*
  * free (adj.): unencumbered; not under the control of others
- * Written by jrandom in 2003 and released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
- * It probably won't make your computer catch on fire, or eat 
+ * Written by jrandom in 2003 and released into the public domain
+ * with no warranty of any kind, either expressed or implied.
+ * It probably won't make your computer catch on fire, or eat
  * your children, but it might.  Use at your own risk.
  *
  */
@@ -23,21 +23,21 @@ import net.i2p.data.i2cp.SessionConfig;
 import net.i2p.router.networkdb.kademlia.FloodfillNetworkDatabaseFacade;
 
 /**
- * Manage all interactions with clients 
+ * Manage all interactions with clients
  *
  * @author jrandom
  */
 public abstract class ClientManagerFacade implements Service {
     public static final String PROP_CLIENT_ONLY = "i2cp.dontPublishLeaseSet";
-    
+
     /**
-     * Request that a particular client authorize the Leases contained in the 
+     * Request that a particular client authorize the Leases contained in the
      * LeaseSet, after which the onCreateJob is queued up.  If that doesn't occur
      * within the timeout specified, queue up the onFailedJob.  This call does not
      * block.
      *
      * @param dest Destination from which the LeaseSet's authorization should be requested
-     * @param set LeaseSet with requested leases - this object must be updated to contain the 
+     * @param set LeaseSet with requested leases - this object must be updated to contain the
      *            signed version (as well as any changed/added/removed Leases)
      * @param timeout ms to wait before failing
      * @param onCreateJob Job to run after the LeaseSet is authorized
@@ -59,14 +59,14 @@ public abstract class ClientManagerFacade implements Service {
     /**
      * Determine if the destination specified is managed locally.  This call
      * DOES block.
-     * 
+     *
      * @param dest Destination to be checked
      */
     public abstract boolean isLocal(Destination dest);
     /**
      * Determine if the destination hash specified is managed locally.  This call
      * DOES block.
-     * 
+     *
      * @param destHash Hash of Destination to be checked
      */
     public abstract boolean isLocal(Hash destHash);
@@ -77,16 +77,22 @@ public abstract class ClientManagerFacade implements Service {
      *  @param status see I2CP MessageStatusMessage for success/failure codes
      */
     public abstract void messageDeliveryStatusUpdate(Destination fromDest, MessageId id,
-                                                     long messageNonce, int status);
-    
+            long messageNonce, int status);
+
     public abstract void messageReceived(ClientMessage msg);
-    
-    public boolean verifyClientLiveliness() { return true; }
-    public boolean isAlive() { return true; }
+
+    public boolean verifyClientLiveliness() {
+        return true;
+    }
+    public boolean isAlive() {
+        return true;
+    }
     /**
      * Does the client specified want their leaseSet published?
      */
-    public boolean shouldPublishLeaseSet(Hash destinationHash) { return true; }
+    public boolean shouldPublishLeaseSet(Hash destinationHash) {
+        return true;
+    }
 
 
     /**
@@ -94,8 +100,10 @@ public abstract class ClientManagerFacade implements Service {
      *
      * @return set of Destination objects
      */
-    public Set<Destination> listClients() { return Collections.emptySet(); }
-    
+    public Set<Destination> listClients() {
+        return Collections.emptySet();
+    }
+
     /**
      * Return the client's current config, or null if not connected
      *
@@ -126,7 +134,7 @@ public abstract class ClientManagerFacade implements Service {
     /**
      * get the FloodfillNetworkDatabaseFacade associated with a particular client destination.
      * This is inside the runner, so it won't be there if the runner isn't ready.
-     * 
+     *
      * @param destHash destination hash associated with the client who's subDb we're looking for
      * @return non-null FloodfillNetworkDatabaseFacade
      * @since 0.9.61
@@ -135,7 +143,7 @@ public abstract class ClientManagerFacade implements Service {
 
     /**
      * get a set of all primary hashes
-     * 
+     *
      * @return non-null set of Hashes
      * @since 0.9.61
      */

@@ -41,7 +41,7 @@ public class HostCheckHandler extends HandlerWrapper
         _context = ctx;
         _listenHosts = new HashSet<String>(8);
     }
-    
+
     /**
      *  Set the legal hosts.
      *  Not synched. Call this BEFORE starting.
@@ -61,7 +61,7 @@ public class HostCheckHandler extends HandlerWrapper
                        Request baseRequest,
                        HttpServletRequest httpRequest,
                        HttpServletResponse httpResponse)
-         throws IOException, ServletException
+    throws IOException, ServletException
     {
 
         String host = httpRequest.getHeader("Host");
@@ -93,7 +93,7 @@ public class HostCheckHandler extends HandlerWrapper
             return true;
         // common cases
         if (host.equals("127.0.0.1:7650") ||
-            host.equals("localhost:7650"))
+                host.equals("localhost:7650"))
             return true;
         // all allowed?
         if (_listenHosts.isEmpty())

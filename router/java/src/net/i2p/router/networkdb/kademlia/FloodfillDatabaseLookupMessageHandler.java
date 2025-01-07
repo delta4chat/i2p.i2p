@@ -1,9 +1,9 @@
 package net.i2p.router.networkdb.kademlia;
 /*
  * free (adj.): unencumbered; not under the control of others
- * Written by jrandom in 2003 and released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
- * It probably won't make your computer catch on fire, or eat 
+ * Written by jrandom in 2003 and released into the public domain
+ * with no warranty of any kind, either expressed or implied.
+ * It probably won't make your computer catch on fire, or eat
  * your children, but it might.  Use at your own risk.
  *
  */
@@ -38,24 +38,24 @@ public class FloodfillDatabaseLookupMessageHandler implements HandlerJobBuilder 
         _context.statManager().createRateStat("netDb.nonFFLookupsDropped", "How many netDb lookups did we drop due to us not being a floodfill?", "NetworkDatabase", new long[] { 60*60*1000l });
         // following are for ../HDLMJ
         _context.statManager().createRateStat("netDb.lookupsHandled", "How many netDb lookups have we handled?",
-                "NetworkDatabase", new long[] { 60 * 60 * 1000l });
+                                              "NetworkDatabase", new long[] { 60 * 60 * 1000l });
         _context.statManager().createRateStat("netDb.lookupsMatched",
-                "How many netDb lookups did we have the data for?", "NetworkDatabase", new long[] { 60 * 60 * 1000l });
+                                              "How many netDb lookups did we have the data for?", "NetworkDatabase", new long[] { 60 * 60 * 1000l });
         _context.statManager().createRateStat("netDb.lookupsMatchedLeaseSet",
-                "How many netDb leaseSet lookups did we have the data for?", "NetworkDatabase",
-                new long[] { 60 * 60 * 1000l });
+                                              "How many netDb leaseSet lookups did we have the data for?", "NetworkDatabase",
+                                              new long[] { 60 * 60 * 1000l });
         _context.statManager().createRateStat("netDb.lookupsMatchedReceivedPublished",
-                "How many netDb lookups did we have the data for that were published to us?", "NetworkDatabase",
-                new long[] { 60 * 60 * 1000l });
+                                              "How many netDb lookups did we have the data for that were published to us?", "NetworkDatabase",
+                                              new long[] { 60 * 60 * 1000l });
         _context.statManager().createRateStat("netDb.lookupsMatchedLocalClosest",
-                "How many netDb lookups for local data were received where we are the closest peers?",
-                "NetworkDatabase", new long[] { 60 * 60 * 1000l });
+                                              "How many netDb lookups for local data were received where we are the closest peers?",
+                                              "NetworkDatabase", new long[] { 60 * 60 * 1000l });
         _context.statManager().createRateStat("netDb.lookupsMatchedLocalNotClosest",
-                "How many netDb lookups for local data were received where we are NOT the closest peers?",
-                "NetworkDatabase", new long[] { 60 * 60 * 1000l });
+                                              "How many netDb lookups for local data were received where we are NOT the closest peers?",
+                                              "NetworkDatabase", new long[] { 60 * 60 * 1000l });
         _context.statManager().createRateStat("netDb.lookupsMatchedRemoteNotClosest",
-                "How many netDb lookups for remote data were received where we are NOT the closest peers?",
-                "NetworkDatabase", new long[] { 60 * 60 * 1000l });
+                                              "How many netDb lookups for remote data were received where we are NOT the closest peers?",
+                                              "NetworkDatabase", new long[] { 60 * 60 * 1000l });
     }
 
     public Job createJob(I2NPMessage receivedMessage, RouterIdentity from, Hash fromHash) {
@@ -64,8 +64,8 @@ public class FloodfillDatabaseLookupMessageHandler implements HandlerJobBuilder 
         DatabaseLookupMessage dlm = (DatabaseLookupMessage)receivedMessage;
         DatabaseLookupMessage.Type type = dlm.getSearchType();
         if ((type == DatabaseLookupMessage.Type.EXPL || type == DatabaseLookupMessage.Type.ANY) &&
-            !_context.netDb().floodfillEnabled()) {
-            if (_log.shouldLog(Log.WARN)) 
+                !_context.netDb().floodfillEnabled()) {
+            if (_log.shouldLog(Log.WARN))
                 _log.warn("[dbid: " + _facade
                           + "] Dropping " + dlm.getSearchType()
                           + " lookup request for " + dlm.getSearchKey()
@@ -80,7 +80,7 @@ public class FloodfillDatabaseLookupMessageHandler implements HandlerJobBuilder 
             Job j = new HandleFloodfillDatabaseLookupMessageJob(_context, dlm, from, fromHash, _msgIDBloomXor);
             return j;
         } else {
-            if (_log.shouldLog(Log.WARN)) 
+            if (_log.shouldLog(Log.WARN))
                 _log.warn("[dbid: " + _facade
                           + "] Dropping " + dlm.getSearchType()
                           + " lookup request for " + dlm.getSearchKey()

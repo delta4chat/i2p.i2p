@@ -1,31 +1,31 @@
 package net.i2p.crypto;
 
-/* 
+/*
  * Copyright (c) 2003, TheCrypto
  * All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without 
+ *
+ * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
- * - Redistributions of source code must retain the above copyright notice, this 
+ *
+ * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
- * - Redistributions in binary form must reproduce the above copyright notice, 
- *   this list of conditions and the following disclaimer in the documentation 
+ * - Redistributions in binary form must reproduce the above copyright notice,
+ *   this list of conditions and the following disclaimer in the documentation
  *   and/or other materials provided with the distribution.
- * -  Neither the name of the TheCrypto may be used to endorse or promote 
- *    products derived from this software without specific prior written 
+ * -  Neither the name of the TheCrypto may be used to endorse or promote
+ *    products derived from this software without specific prior written
  *    permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
@@ -254,7 +254,7 @@ public final class DSAEngine {
 
             long diff = _context.clock().now() - start;
             if (diff > 1000) {
-                if (_log.shouldLog(Log.WARN)) 
+                if (_log.shouldLog(Log.WARN))
                     _log.warn("Took too long to verify the signature (" + diff + "ms)");
             }
             return ok;
@@ -303,7 +303,7 @@ public final class DSAEngine {
         SHA1Hash h = calculateHash(data, offset, length);
         return sign(h, signingKey);
     }
-    
+
     /**
      *  Sign using DSA-SHA1 ONLY.
      *  Reads the stream until EOF. Does not close the stream.
@@ -424,7 +424,7 @@ public final class DSAEngine {
 
         // (q^random)%p is computationally random
         _context.random().harvester().feedEntropy("DSA.sign", rbytes, 0, rbytes.length);
-        
+
         if (rbytes.length == 20) {
             //System.arraycopy(rbytes, 0, out, 0, 20);
             for (int i = 0; i < 20; i++) {
@@ -471,7 +471,7 @@ public final class DSAEngine {
 
         return new Signature(out);
     }
-    
+
     /**
      *  Reads the stream until EOF. Does not close the stream.
      *
@@ -510,7 +510,7 @@ public final class DSAEngine {
      *  @since 0.9.9 added off/len 0.9.12
      */
     private boolean altVerifySig(Signature signature, byte[] data, int offset, int len, SigningPublicKey verifyingKey)
-                        throws GeneralSecurityException {
+    throws GeneralSecurityException {
         SigType type = signature.getType();
         if (type != verifyingKey.getType())
             throw new IllegalArgumentException("type mismatch sig=" + type + " key=" + verifyingKey.getType());
@@ -544,7 +544,7 @@ public final class DSAEngine {
      *  @since 0.9.9
      */
     private boolean altVerifySigRaw(Signature signature, SimpleDataStructure hash, SigningPublicKey verifyingKey)
-                        throws GeneralSecurityException {
+    throws GeneralSecurityException {
         SigType type = signature.getType();
         if (type != verifyingKey.getType())
             throw new IllegalArgumentException("type mismatch sig=" + type + " key=" + verifyingKey.getType());
@@ -565,7 +565,7 @@ public final class DSAEngine {
      *  @since 0.9.9
      */
     private boolean altVerifySigRaw(Signature signature, SimpleDataStructure hash, PublicKey pubKey)
-                        throws GeneralSecurityException {
+    throws GeneralSecurityException {
         SigType type = signature.getType();
         int hashlen = hash.length();
         if (type.getHashLen() != hashlen)
@@ -675,7 +675,7 @@ public final class DSAEngine {
      *  @since 0.9.9
      */
     private Signature altSignRaw(String algo, SimpleDataStructure hash, PrivateKey privKey, SigType type)
-                                 throws GeneralSecurityException {
+    throws GeneralSecurityException {
         int hashlen = hash.length();
         if (type.getHashLen() != hashlen)
             throw new IllegalArgumentException("type mismatch hash=" + hash.getClass() + " key=" + type);
@@ -724,16 +724,16 @@ public final class DSAEngine {
     /** @since 0.9.9 */
     private static String getRawAlgo(SigType type) {
         switch (type.getBaseAlgorithm()) {
-            case DSA:
-                return "NONEwithDSA";
-            case EC:
-                return "NONEwithECDSA";
-            case EdDSA:
-                return "NONEwithEdDSA";
-            case RSA:
-                return "NONEwithRSA";
-            default:
-                throw new UnsupportedOperationException("Raw signatures unsupported for " + type);
+        case DSA:
+            return "NONEwithDSA";
+        case EC:
+            return "NONEwithECDSA";
+        case EdDSA:
+            return "NONEwithEdDSA";
+        case RSA:
+            return "NONEwithRSA";
+        default:
+            throw new UnsupportedOperationException("Raw signatures unsupported for " + type);
         }
     }
 
@@ -757,101 +757,101 @@ public final class DSAEngine {
      *
      *  TheCrypto is about 5-15% faster than java.security.
      */
-/****
-    public static void main(String args[]) {
-        I2PAppContext ctx = I2PAppContext.getGlobalContext();
-        byte data[] = new byte[1024];
-        // warmump
-        ctx.random().nextBytes(data);
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException ie) {}
-        SimpleDataStructure keys[] = null;
-
-        System.err.println("100 runs with new data and keys each time");
-        for (int i = 0; i < 100; i++) {
+    /****
+        public static void main(String args[]) {
+            I2PAppContext ctx = I2PAppContext.getGlobalContext();
+            byte data[] = new byte[1024];
+            // warmump
             ctx.random().nextBytes(data);
-            keys = ctx.keyGenerator().generateSigningKeys();
-            Signature sig = ctx.dsa().sign(data, (SigningPrivateKey)keys[1]);
-            Signature jsig = null;
             try {
-                 jsig = ctx.dsa().altSignSHA1(data, (SigningPrivateKey)keys[1]);
-            } catch (GeneralSecurityException gse) {
-                gse.printStackTrace();
-            }
-            boolean ok = ctx.dsa().verifySignature(jsig, data, (SigningPublicKey)keys[0]);
-            boolean usok = ctx.dsa().verifySignature(sig, data, (SigningPublicKey)keys[0]);
-            boolean jok = false;
-            try {
-                jok = ctx.dsa().altVerifySigSHA1(sig, data, (SigningPublicKey)keys[0]);
-            } catch (GeneralSecurityException gse) {
-                gse.printStackTrace();
-            }
-            boolean jjok = false;;
-            try {
-                jjok = ctx.dsa().altVerifySigSHA1(jsig, data, (SigningPublicKey)keys[0]);
-            } catch (GeneralSecurityException gse) {
-                gse.printStackTrace();
-            }
-            System.err.println("TC->TC OK: " + usok + "  JL->TC OK: " + ok + "  TC->JK OK: " + jok + "  JL->JL OK: " + jjok);
-            if (!(ok && usok && jok && jjok)) {
-                System.out.println("privkey\n" + net.i2p.util.HexDump.dump(keys[1].getData()));
-                return;
-            }
-        }
+                Thread.sleep(1000);
+            } catch (InterruptedException ie) {}
+            SimpleDataStructure keys[] = null;
 
-        System.err.println("Starting speed test");
-        long start = System.currentTimeMillis();
-        for (int i = 0; i < RUNS; i++) {
-            Signature sig = ctx.dsa().sign(data, (SigningPrivateKey)keys[1]);
-            boolean ok = ctx.dsa().verifySignature(sig, data, (SigningPublicKey)keys[0]);
-            if (!ok) {
-                System.err.println("TheCrypto FAIL");
-                return;
+            System.err.println("100 runs with new data and keys each time");
+            for (int i = 0; i < 100; i++) {
+                ctx.random().nextBytes(data);
+                keys = ctx.keyGenerator().generateSigningKeys();
+                Signature sig = ctx.dsa().sign(data, (SigningPrivateKey)keys[1]);
+                Signature jsig = null;
+                try {
+                     jsig = ctx.dsa().altSignSHA1(data, (SigningPrivateKey)keys[1]);
+                } catch (GeneralSecurityException gse) {
+                    gse.printStackTrace();
+                }
+                boolean ok = ctx.dsa().verifySignature(jsig, data, (SigningPublicKey)keys[0]);
+                boolean usok = ctx.dsa().verifySignature(sig, data, (SigningPublicKey)keys[0]);
+                boolean jok = false;
+                try {
+                    jok = ctx.dsa().altVerifySigSHA1(sig, data, (SigningPublicKey)keys[0]);
+                } catch (GeneralSecurityException gse) {
+                    gse.printStackTrace();
+                }
+                boolean jjok = false;;
+                try {
+                    jjok = ctx.dsa().altVerifySigSHA1(jsig, data, (SigningPublicKey)keys[0]);
+                } catch (GeneralSecurityException gse) {
+                    gse.printStackTrace();
+                }
+                System.err.println("TC->TC OK: " + usok + "  JL->TC OK: " + ok + "  TC->JK OK: " + jok + "  JL->JL OK: " + jjok);
+                if (!(ok && usok && jok && jjok)) {
+                    System.out.println("privkey\n" + net.i2p.util.HexDump.dump(keys[1].getData()));
+                    return;
+                }
             }
-        }
-        long time = System.currentTimeMillis() - start;
-        System.err.println("Time for " + RUNS + " DSA sign/verifies:");
-        System.err.println("TheCrypto time (ms): " + time);
 
-        start = System.currentTimeMillis();
-        for (int i = 0; i < RUNS; i++) {
-            boolean ok = false;
-            try {
-                Signature jsig = ctx.dsa().altSignSHA1(data, (SigningPrivateKey)keys[1]);
-                ok = ctx.dsa().altVerifySigSHA1(jsig, data, (SigningPublicKey)keys[0]);
-            } catch (GeneralSecurityException gse) {
-                gse.printStackTrace();
+            System.err.println("Starting speed test");
+            long start = System.currentTimeMillis();
+            for (int i = 0; i < RUNS; i++) {
+                Signature sig = ctx.dsa().sign(data, (SigningPrivateKey)keys[1]);
+                boolean ok = ctx.dsa().verifySignature(sig, data, (SigningPublicKey)keys[0]);
+                if (!ok) {
+                    System.err.println("TheCrypto FAIL");
+                    return;
+                }
             }
-            if (!ok) {
-                System.err.println("JavaLib FAIL");
-                return;
-            }
-        }
-        time = System.currentTimeMillis() - start;
-        System.err.println("JavaLib time (ms): " + time);
-****/
-/****  yes, arraycopy is slower for 20 bytes
-        start = System.currentTimeMillis();
-	byte b[] = new byte[20];
-        for (int i = 0; i < 10000000; i++) {
-            data[0] = data[i % 256];
-            System.arraycopy(data, 0, b, 0, 20);
-        }
-        time = System.currentTimeMillis() - start;
-        System.err.println("arraycopy time (ms): " + time);
+            long time = System.currentTimeMillis() - start;
+            System.err.println("Time for " + RUNS + " DSA sign/verifies:");
+            System.err.println("TheCrypto time (ms): " + time);
 
-        start = System.currentTimeMillis();
-        for (int i = 0; i < 10000000; i++) {
-            data[0] = data[i % 256];
-            for (int j = 0; j < 20; j++) {
-                 b[j] = data[j];
+            start = System.currentTimeMillis();
+            for (int i = 0; i < RUNS; i++) {
+                boolean ok = false;
+                try {
+                    Signature jsig = ctx.dsa().altSignSHA1(data, (SigningPrivateKey)keys[1]);
+                    ok = ctx.dsa().altVerifySigSHA1(jsig, data, (SigningPublicKey)keys[0]);
+                } catch (GeneralSecurityException gse) {
+                    gse.printStackTrace();
+                }
+                if (!ok) {
+                    System.err.println("JavaLib FAIL");
+                    return;
+                }
             }
-        }
-        time = System.currentTimeMillis() - start;
-        System.err.println("loop time (ms): " + time);
-****/
-/****
-     }
-****/
+            time = System.currentTimeMillis() - start;
+            System.err.println("JavaLib time (ms): " + time);
+    ****/
+    /****  yes, arraycopy is slower for 20 bytes
+            start = System.currentTimeMillis();
+    	byte b[] = new byte[20];
+            for (int i = 0; i < 10000000; i++) {
+                data[0] = data[i % 256];
+                System.arraycopy(data, 0, b, 0, 20);
+            }
+            time = System.currentTimeMillis() - start;
+            System.err.println("arraycopy time (ms): " + time);
+
+            start = System.currentTimeMillis();
+            for (int i = 0; i < 10000000; i++) {
+                data[0] = data[i % 256];
+                for (int j = 0; j < 20; j++) {
+                     b[j] = data[j];
+                }
+            }
+            time = System.currentTimeMillis() - start;
+            System.err.println("loop time (ms): " + time);
+    ****/
+    /****
+         }
+    ****/
 }

@@ -2,9 +2,9 @@ package net.i2p.client.impl;
 
 /*
  * free (adj.): unencumbered; not under the control of others
- * Written by jrandom in 2003 and released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
- * It probably won't  make your computer catch on fire, or eat 
+ * Written by jrandom in 2003 and released into the public domain
+ * with no warranty of any kind, either expressed or implied.
+ * It probably won't  make your computer catch on fire, or eat
  * your children, but it might.  Use at your own risk.
  *
  */
@@ -88,7 +88,7 @@ class RequestLeaseSetMessageHandler extends HandlerImpl {
         // not clear why there would ever be more than one
         _existingLeaseSets = new ConcurrentHashMap<Destination, LeaseInfo>(4);
     }
-    
+
     /**
      *  Do we send a LeaseSet or a LeaseSet2?
      *
@@ -108,9 +108,9 @@ class RequestLeaseSetMessageHandler extends HandlerImpl {
                 if (type != DatabaseEntry.KEY_TYPE_LEASESET)
                     return true;
             } catch (NumberFormatException nfe) {
-              session.propogateError("Bad LS2 type", nfe);
-              session.destroySession();
-              return true;
+                session.propogateError("Bad LS2 type", nfe);
+                session.destroySession();
+                return true;
             }
         }
         if (session.isOffline())
@@ -138,9 +138,9 @@ class RequestLeaseSetMessageHandler extends HandlerImpl {
             } else if (_ls2Type == DatabaseEntry.KEY_TYPE_META_LS2) {
                 ls2= new MetaLeaseSet();
             } else {
-              session.propogateError("Unsupported LS2 type", new Exception());
-              session.destroySession();
-              return;
+                session.propogateError("Unsupported LS2 type", new Exception());
+                session.destroySession();
+                return;
             }
             if (Boolean.parseBoolean(session.getOptions().getProperty("i2cp.dontPublishLeaseSet")))
                 ls2.setUnpublished();
@@ -292,7 +292,7 @@ class RequestLeaseSetMessageHandler extends HandlerImpl {
             _existingLeaseSets.put(dest, li);
         } else {
             if (_log.shouldLog(Log.DEBUG))
-                _log.debug("Caching the old leaseInfo keys for " 
+                _log.debug("Caching the old leaseInfo keys for "
                            + dest.toBase32());
         }
 

@@ -65,7 +65,7 @@ class UnsignedUpdateHandler implements Checker, Updater {
             // we don't know what version you have, so stamp it with the current time,
             // and we'll look for something newer next time around.
             _context.router().saveConfig(NewsHelper.PROP_LAST_UPDATE_TIME,
-                                               Long.toString(_context.clock().now()));
+                                         Long.toString(_context.clock().now()));
             return null;
         }
 

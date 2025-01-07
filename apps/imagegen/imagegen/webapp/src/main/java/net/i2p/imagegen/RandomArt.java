@@ -79,9 +79,9 @@ public class RandomArt {
     private static final String A_augmentation_string = " .o+=*BOX@%&#/^SE";
     // https://en.wikipedia.org/wiki/Miscellaneous_Symbols
     private static final String U_augmentation_string = " \u2600\u2601\u2602\u2603" +
-                                                         "\u2604\u2605\u2606\u2607" +
-                                                         "\u2608\u2609\u260a\u260b" +
-                                                         "\u260c\u260d\u260e\u260f";
+            "\u2604\u2605\u2606\u2607" +
+            "\u2608\u2609\u260a\u260b" +
+            "\u260c\u260d\u260e\u260f";
 
     private static final char A_BOX_TOP = '-';
     private static final char A_BOX_BOTTOM = '-';
@@ -112,11 +112,11 @@ public class RandomArt {
      *  @param prefix if non-null, prepend to every line
      */
     public static String gnutls_key_fingerprint_randomart(final byte[] dgst_raw,
-					final String key_type,
-					final int key_size,
-					final String prefix,
-					final boolean unicode,
-					final boolean html)
+            final String key_type,
+            final int key_size,
+            final String prefix,
+            final boolean unicode,
+            final boolean html)
     {
         final String augmentation_string = unicode ? U_augmentation_string : A_augmentation_string;
         final char BOX_TOP = unicode ? U_BOX_TOP : A_BOX_TOP;
@@ -129,127 +129,127 @@ public class RandomArt {
         final char BOX_BR = unicode ? U_BOX_BR : A_BOX_BR;
         final String NL = System.getProperty("line.separator");
 
-	final int dgst_raw_len = dgst_raw.length;
-	final byte[][] field = new byte[FLDSIZE_X][FLDSIZE_Y];
-	final byte[][] color = new byte[FLDSIZE_X][FLDSIZE_Y];
-	final int len = augmentation_string.length() - 1;
-	int prefix_len = 0;
+        final int dgst_raw_len = dgst_raw.length;
+        final byte[][] field = new byte[FLDSIZE_X][FLDSIZE_Y];
+        final byte[][] color = new byte[FLDSIZE_X][FLDSIZE_Y];
+        final int len = augmentation_string.length() - 1;
+        int prefix_len = 0;
 
-	if (prefix != null)
-		prefix_len = prefix.length();
+        if (prefix != null)
+            prefix_len = prefix.length();
 
-	int x = FLDSIZE_X / 2;
-	int y = FLDSIZE_Y / 2;
+        int x = FLDSIZE_X / 2;
+        int y = FLDSIZE_Y / 2;
 
-	/* process raw key */
-	for (int i = 0; i < dgst_raw_len; i++) {
-		int input;
-		/* each byte conveys four 2-bit move commands */
-		input = dgst_raw[i];
-		for (int b = 0; b < 4; b++) {
-			/* evaluate 2 bit, rest is shifted later */
-			x += ((input & 0x1) != 0) ? 1 : -1;
-			y += ((input & 0x2) != 0) ? 1 : -1;
+        /* process raw key */
+        for (int i = 0; i < dgst_raw_len; i++) {
+            int input;
+            /* each byte conveys four 2-bit move commands */
+            input = dgst_raw[i];
+            for (int b = 0; b < 4; b++) {
+                /* evaluate 2 bit, rest is shifted later */
+                x += ((input & 0x1) != 0) ? 1 : -1;
+                y += ((input & 0x2) != 0) ? 1 : -1;
 
-			/* assure we are still in bounds */
-			x = Math.max(x, 0);
-			y = Math.max(y, 0);
-			x = Math.min(x, FLDSIZE_X - 1);
-			y = Math.min(y, FLDSIZE_Y - 1);
+                /* assure we are still in bounds */
+                x = Math.max(x, 0);
+                y = Math.max(y, 0);
+                x = Math.min(x, FLDSIZE_X - 1);
+                y = Math.min(y, FLDSIZE_Y - 1);
 
-			/* augment the field */
-			if ((field[x][y] & 0xff) < len - 2)
-				field[x][y]++;
-			color[x][y] = (byte) i;
-			input = input >> 2;
-		}
-	}
+                /* augment the field */
+                if ((field[x][y] & 0xff) < len - 2)
+                    field[x][y]++;
+                color[x][y] = (byte) i;
+                input = input >> 2;
+            }
+        }
 
-	/* mark starting point and end point */
-	field[FLDSIZE_X / 2][FLDSIZE_Y / 2] = (byte) (len - 1);
-	field[x][y] = (byte) len;
+        /* mark starting point and end point */
+        field[FLDSIZE_X / 2][FLDSIZE_Y / 2] = (byte) (len - 1);
+        field[x][y] = (byte) len;
 
-	final String size_txt;
-	if (key_size > 0)
-		size_txt = String.format(" %4d", key_size);
-	else
-		size_txt = "";
+        final String size_txt;
+        if (key_size > 0)
+            size_txt = String.format(" %4d", key_size);
+        else
+            size_txt = "";
 
-	/* fill in retval */
-	StringBuilder retval = new StringBuilder(1024);
+        /* fill in retval */
+        StringBuilder retval = new StringBuilder(1024);
         long base = 0;
         if (html) {
-		// Pick a color base. We use the first 3 bytes of the data,
-		// but normalize by 75% since we're designed for a white background.
-		int clen = Math.min(3, dgst_raw_len);
-		byte[] cbase = new byte[clen];
-		for (int i = 0; i < clen; i++) {
-			cbase[i] = (byte) ((dgst_raw[i] & 0xff) * 5 / 8);
-		}
-		base = DataHelper.fromLong(cbase, 0, clen);
-		retval.append("<font color=\"#")
-		      .append(getColor(base, 0))
-		      .append("\"><pre>\n");
-	}
-	if (prefix_len > 0)
-		retval.append(String.format("%s" + BOX_TL + BOX_TOP + BOX_TOP + "[%4s%s]",
-			 prefix, key_type, size_txt));
-	else
-		retval.append(String.format("" + BOX_TL + BOX_TOP + BOX_TOP + "[%4s%s]", key_type,
-			 size_txt));
+            // Pick a color base. We use the first 3 bytes of the data,
+            // but normalize by 75% since we're designed for a white background.
+            int clen = Math.min(3, dgst_raw_len);
+            byte[] cbase = new byte[clen];
+            for (int i = 0; i < clen; i++) {
+                cbase[i] = (byte) ((dgst_raw[i] & 0xff) * 5 / 8);
+            }
+            base = DataHelper.fromLong(cbase, 0, clen);
+            retval.append("<font color=\"#")
+            .append(getColor(base, 0))
+            .append("\"><pre>\n");
+        }
+        if (prefix_len > 0)
+            retval.append(String.format("%s" + BOX_TL + BOX_TOP + BOX_TOP + "[%4s%s]",
+                                        prefix, key_type, size_txt));
+        else
+            retval.append(String.format("" + BOX_TL + BOX_TOP + BOX_TOP + "[%4s%s]", key_type,
+                                        size_txt));
 
-	/* output upper border */
-	for (int i = 0; i < FLDSIZE_X - Math.max(key_type.length(), 4) - 9; i++)
-		retval.append(BOX_TOP);
-	retval.append(BOX_TR);
-	retval.append(NL);
+        /* output upper border */
+        for (int i = 0; i < FLDSIZE_X - Math.max(key_type.length(), 4) - 9; i++)
+            retval.append(BOX_TOP);
+        retval.append(BOX_TR);
+        retval.append(NL);
 
-	if (prefix_len > 0) {
-		retval.append(prefix);
-	}
+        if (prefix_len > 0) {
+            retval.append(prefix);
+        }
 
-	/* output content */
-	for (y = 0; y < FLDSIZE_Y; y++) {
-		retval.append(BOX_LEFT);
-		for (x = 0; x < FLDSIZE_X; x++) {
-			int idx = Math.min(field[x][y], len);
-			if (html && idx != 0)
-				retval.append("<span style=\"color: #")
-				      .append(getColor(base, color[x][y] & 0xff))
-				      .append("\">");
-			retval.append(augmentation_string.charAt(idx));
-			if (html && idx != 0)
-				retval.append("</span>");
-                }
-		retval.append(BOX_RIGHT);
-		retval.append(NL);
+        /* output content */
+        for (y = 0; y < FLDSIZE_Y; y++) {
+            retval.append(BOX_LEFT);
+            for (x = 0; x < FLDSIZE_X; x++) {
+                int idx = Math.min(field[x][y], len);
+                if (html && idx != 0)
+                    retval.append("<span style=\"color: #")
+                    .append(getColor(base, color[x][y] & 0xff))
+                    .append("\">");
+                retval.append(augmentation_string.charAt(idx));
+                if (html && idx != 0)
+                    retval.append("</span>");
+            }
+            retval.append(BOX_RIGHT);
+            retval.append(NL);
 
-		if (prefix_len > 0) {
-			retval.append(prefix);
-		}
-	}
+            if (prefix_len > 0) {
+                retval.append(prefix);
+            }
+        }
 
-	/* output lower border */
-	retval.append(BOX_BL);
-	for (int i = 0; i < FLDSIZE_X; i++)
-		retval.append(BOX_BOTTOM);
-	retval.append(BOX_BR);
-	retval.append(NL);
+        /* output lower border */
+        retval.append(BOX_BL);
+        for (int i = 0; i < FLDSIZE_X; i++)
+            retval.append(BOX_BOTTOM);
+        retval.append(BOX_BR);
+        retval.append(NL);
         if (html)
-		retval.append("</pre></font>\n");
+            retval.append("</pre></font>\n");
 
-	return retval.toString();
+        return retval.toString();
     }
 
     private static String getColor(long base, int mod) {
-	if (mod != 0) {
-		//base += mod * 16;
-		//base += mod * 16 * 256;
-		base += mod * (5 * 256 * 256L);
-	}
-	if (base > 0xffffff || base < 0)
-		base &= 0xffffff;
-	return String.format("%06x", base);
+        if (mod != 0) {
+            //base += mod * 16;
+            //base += mod * 16 * 256;
+            base += mod * (5 * 256 * 256L);
+        }
+        if (base > 0xffffff || base < 0)
+            base &= 0xffffff;
+        return String.format("%06x", base);
     }
 
     public static void main(String[] args) {

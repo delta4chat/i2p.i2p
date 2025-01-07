@@ -87,46 +87,46 @@ public abstract class I2PTunnelHTTPClientBase extends I2PTunnelClientBase implem
     protected static final int BROWSER_READ_TIMEOUT = 4*60*60*1000;
 
     private static final String ERR_AUTH1 =
-            "HTTP/1.1 407 Proxy Authentication Required\r\n" +
-            "Content-Type: text/html; charset=UTF-8\r\n" +
-            "Cache-Control: no-cache\r\n" +
-            "Connection: close\r\n"+
-            "Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.5\r\n"; // try to get a UTF-8-encoded response back for the password
+        "HTTP/1.1 407 Proxy Authentication Required\r\n" +
+        "Content-Type: text/html; charset=UTF-8\r\n" +
+        "Cache-Control: no-cache\r\n" +
+        "Connection: close\r\n"+
+        "Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.5\r\n"; // try to get a UTF-8-encoded response back for the password
     // put the auth type and realm in between
     private static final String ERR_AUTH2 =
-            "\r\n" +
-            "<html><body><H1>I2P ERROR: PROXY AUTHENTICATION REQUIRED</H1>" +
-            "This proxy is configured to require authentication.";
+        "\r\n" +
+        "<html><body><H1>I2P ERROR: PROXY AUTHENTICATION REQUIRED</H1>" +
+        "This proxy is configured to require authentication.";
 
     protected final List<String> _proxyList;
 
     protected final static String ERR_NO_OUTPROXY =
-         "HTTP/1.1 503 No Outproxy Configured\r\n"+
-         "Content-Type: text/html; charset=iso-8859-1\r\n"+
-         "Cache-Control: no-cache\r\n"+
-         "Connection: close\r\n"+
-         "\r\n"+
-         "<html><body><H1>I2P ERROR: No outproxy found</H1>"+
-         "Your request was for a site outside of I2P, but you have no "+
-         "outproxy configured.  Please configure an outproxy in I2PTunnel";
-    
+        "HTTP/1.1 503 No Outproxy Configured\r\n"+
+        "Content-Type: text/html; charset=iso-8859-1\r\n"+
+        "Cache-Control: no-cache\r\n"+
+        "Connection: close\r\n"+
+        "\r\n"+
+        "<html><body><H1>I2P ERROR: No outproxy found</H1>"+
+        "Your request was for a site outside of I2P, but you have no "+
+        "outproxy configured.  Please configure an outproxy in I2PTunnel";
+
     protected final static String ERR_DESTINATION_UNKNOWN =
-            "HTTP/1.1 503 Service Unavailable\r\n" +
-            "Content-Type: text/html; charset=iso-8859-1\r\n" +
-            "Cache-Control: no-cache\r\n" +
-            "Connection: close\r\n"+
-            "\r\n" +
-            "<html><body><H1>I2P ERROR: DESTINATION NOT FOUND</H1>" +
-            "That I2P Destination was not found. Perhaps you pasted in the " +
-            "wrong BASE64 I2P Destination or the link you are following is " +
-            "bad. The host (or the WWW proxy, if you're using one) could also " +
-            "be temporarily offline.  You may want to <b>retry</b>.  " +
-            "Could not find the following Destination:<BR><BR><div>";
+        "HTTP/1.1 503 Service Unavailable\r\n" +
+        "Content-Type: text/html; charset=iso-8859-1\r\n" +
+        "Cache-Control: no-cache\r\n" +
+        "Connection: close\r\n"+
+        "\r\n" +
+        "<html><body><H1>I2P ERROR: DESTINATION NOT FOUND</H1>" +
+        "That I2P Destination was not found. Perhaps you pasted in the " +
+        "wrong BASE64 I2P Destination or the link you are following is " +
+        "bad. The host (or the WWW proxy, if you're using one) could also " +
+        "be temporarily offline.  You may want to <b>retry</b>.  " +
+        "Could not find the following Destination:<BR><BR><div>";
 
     protected final static String SUCCESS_RESPONSE =
         "HTTP/1.1 200 Connection Established\r\n"+
-         "Proxy-agent: I2P\r\n"+
-         "\r\n";
+        "Proxy-agent: I2P\r\n"+
+        "\r\n";
 
     private final byte[] _proxyNonce;
     private final ConcurrentHashMap<String, NonceInfo> _nonces;
@@ -161,7 +161,7 @@ public abstract class I2PTunnelHTTPClientBase extends I2PTunnelClientBase implem
     // SSL proxy config is parsed on the fly;
     // allow both to be changed and store the SSL proxy list.
     // TODO should track more than one failed proxy
-    
+
     /**
      *  Simple random selection, with caching by hostname,
      *  and avoidance of the last one to fail.
@@ -242,7 +242,7 @@ public abstract class I2PTunnelHTTPClientBase extends I2PTunnelClientBase implem
             _log.info("Selected SSL proxy for " + host + ": " + rv);
         return rv;
     }
-    
+
     /**
      *  Update the cache and note if failed.
      *
@@ -289,12 +289,12 @@ public abstract class I2PTunnelHTTPClientBase extends I2PTunnelClientBase implem
      *  so that large POSTs won't timeout on the read side
      */
     protected static final int DEFAULT_READ_TIMEOUT = -1;
-    
+
     protected static final AtomicLong __requestId = new AtomicLong();
 
-    public I2PTunnelHTTPClientBase(int localPort, boolean ownDest, Logging l, 
-                               EventDispatcher notifyThis, String handlerName, 
-                               I2PTunnel tunnel) throws IllegalArgumentException {
+    public I2PTunnelHTTPClientBase(int localPort, boolean ownDest, Logging l,
+                                   EventDispatcher notifyThis, String handlerName,
+                                   I2PTunnel tunnel) throws IllegalArgumentException {
         super(localPort, ownDest, l, notifyThis, handlerName, tunnel);
         // force connect delay and bulk profile
         Properties opts = tunnel.getClientOptions();
@@ -313,8 +313,8 @@ public abstract class I2PTunnelHTTPClientBase extends I2PTunnelClientBase implem
      *  @param sktMgr the existing socket manager
      */
     public I2PTunnelHTTPClientBase(int localPort, Logging l, I2PSocketManager sktMgr,
-            I2PTunnel tunnel, EventDispatcher notifyThis, long clientId )
-            throws IllegalArgumentException {
+                                   I2PTunnel tunnel, EventDispatcher notifyThis, long clientId )
+    throws IllegalArgumentException {
         super(localPort, l, sktMgr, tunnel, notifyThis, clientId);
         // force connect delay and bulk profile
         Properties opts = tunnel.getClientOptions();
@@ -519,7 +519,7 @@ public abstract class I2PTunnelHTTPClientBase extends I2PTunnelClientBase implem
         String nc = args.get("nc");
         String response = args.get("response");
         if (user == null || realm == null || nonce == null || qop == null ||
-            uri == null || cnonce == null || nc == null || response == null) {
+                uri == null || cnonce == null || nc == null || response == null) {
             if (_log.shouldLog(Log.INFO))
                 _log.info("Bad digest request: " + DataHelper.toString(args));
             return AuthResult.AUTH_BAD_REQ;
@@ -546,7 +546,7 @@ public abstract class I2PTunnelHTTPClientBase extends I2PTunnelClientBase implem
         }
         // get H(A1) == stored password
         String ha1 = getTunnel().getClientOptions().getProperty(PROP_PROXY_DIGEST_PREFIX + user +
-                                                                (isSHA256 ? PROP_PROXY_DIGEST_SHA256_SUFFIX : PROP_PROXY_DIGEST_SUFFIX));
+                     (isSHA256 ? PROP_PROXY_DIGEST_SHA256_SUFFIX : PROP_PROXY_DIGEST_SUFFIX));
         if (ha1 == null) {
             _log.logAlways(Log.WARN, "HTTP proxy authentication failed, user: " + user);
             return AuthResult.AUTH_BAD;
@@ -644,9 +644,9 @@ public abstract class I2PTunnelHTTPClientBase extends I2PTunnelClientBase implem
         boolean isDigest = isDigestAuthRequired();
         StringBuilder buf = new StringBuilder(512);
         buf.append(ERR_AUTH1)
-           .append("Proxy-Authenticate: ")
-           .append(isDigest ? "Digest" : "Basic")
-           .append(" realm=\"" + getRealm() + '"');
+        .append("Proxy-Authenticate: ")
+        .append(isDigest ? "Digest" : "Basic")
+        .append(" realm=\"" + getRealm() + '"');
         if (isDigest) {
             String nonce = getNonce();
             // RFC 7616 most-preferred first, client accepts first that he supports
@@ -654,7 +654,7 @@ public abstract class I2PTunnelHTTPClientBase extends I2PTunnelClientBase implem
             // Do we have a SHA256 hash for any user?
             for (String k : getTunnel().getClientOptions().stringPropertyNames()) {
                 if (k.startsWith(PROP_PROXY_DIGEST_PREFIX) &&
-                    k.endsWith(PROP_PROXY_DIGEST_SHA256_SUFFIX)) {
+                        k.endsWith(PROP_PROXY_DIGEST_SHA256_SUFFIX)) {
                     // SHA-256, RFC 7616
                     buf.append(", nonce=\"" + nonce + "\"," +
                                " algorithm=SHA-256," +
@@ -677,7 +677,7 @@ public abstract class I2PTunnelHTTPClientBase extends I2PTunnelClientBase implem
                 buf.append(", stale=true");
         }
         buf.append("\r\n")
-           .append(ERR_AUTH2);
+        .append(ERR_AUTH2);
         return buf.toString();
     }
 
@@ -790,7 +790,10 @@ public abstract class I2PTunnelHTTPClientBase extends I2PTunnelClientBase implem
             String rv = out.toString();
             return rv;
         } finally {
-            try { in.close(); } catch (IOException ioe) {}
+            try {
+                in.close();
+            }
+            catch (IOException ioe) {}
             try {
                 if(reader != null)
                     reader.close();
@@ -871,7 +874,9 @@ public abstract class I2PTunnelHTTPClientBase extends I2PTunnelClientBase implem
 
         /** @param isSSL FALSE for ConnectClient */
         public OnProxySuccess(String proxy, String host, boolean isSSL) {
-            _proxy = proxy; _host = host; _isSSL = isSSL;
+            _proxy = proxy;
+            _host = host;
+            _isSSL = isSSL;
         }
 
         public void onSuccess() {
@@ -1004,7 +1009,7 @@ public abstract class I2PTunnelHTTPClientBase extends I2PTunnelClientBase implem
                         String proto = jURI.getScheme();
                         jumphost = jURI.getHost();
                         if (proto == null || jumphost == null ||
-                            !proto.toLowerCase(Locale.US).equals("http"))
+                                !proto.toLowerCase(Locale.US).equals("http"))
                             continue;
                         jumphost = jumphost.toLowerCase(Locale.US);
                         if (!jumphost.endsWith(".i2p"))
@@ -1055,9 +1060,9 @@ public abstract class I2PTunnelHTTPClientBase extends I2PTunnelClientBase implem
      */
     private static String decodeIDNURI(String uri) {
         if (!_haveIDN)
-             return uri;
+            return uri;
         if (!uri.contains("xn--"))
-             return uri;
+            return uri;
         try {
             URI u = new URI(uri);
             String h = u.getHost();
@@ -1068,8 +1073,8 @@ public abstract class I2PTunnelHTTPClientBase extends I2PTunnelClientBase implem
             if (idx < 0)
                 return uri;
             return uri.substring(0, idx) + hu + uri.substring(idx + h.length(), uri.length());
-         } catch(URISyntaxException use) {}
-         return uri;
+        } catch(URISyntaxException use) {}
+        return uri;
     }
 
     /**
@@ -1080,9 +1085,9 @@ public abstract class I2PTunnelHTTPClientBase extends I2PTunnelClientBase implem
      */
     public static String decodeIDNHost(String host) {
         if (!_haveIDN)
-             return host;
+            return host;
         if (!host.contains("xn--"))
-             return host;
+            return host;
         return IDN.toUnicode(host, IDN.ALLOW_UNASSIGNED);
     }
 

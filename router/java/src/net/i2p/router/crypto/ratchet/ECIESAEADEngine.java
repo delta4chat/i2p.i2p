@@ -98,22 +98,22 @@ public final class ECIESAEADEngine {
         _muxedEngine = new MuxedEngine(ctx);
         _hkdf = new HKDF(ctx);
         _edhThread = new Elg2KeyFactory(ctx);
-        
+
         _context.statManager().createFrequencyStat("crypto.eciesAEAD.encryptNewSession",
-                                                   "how frequently we encrypt to a new ECIES/AEAD+SessionTag session?",
-                                                   "Encryption", new long[] { 60*60*1000l});
+                "how frequently we encrypt to a new ECIES/AEAD+SessionTag session?",
+                "Encryption", new long[] { 60*60*1000l});
         _context.statManager().createFrequencyStat("crypto.eciesAEAD.encryptExistingSession",
-                                                   "how frequently we encrypt to an existing ECIES/AEAD+SessionTag session?",
-                                                   "Encryption", new long[] { 60*60*1000l});
+                "how frequently we encrypt to an existing ECIES/AEAD+SessionTag session?",
+                "Encryption", new long[] { 60*60*1000l});
         _context.statManager().createFrequencyStat("crypto.eciesAEAD.decryptNewSession",
-                                                   "how frequently we decrypt with a new ECIES/AEAD+SessionTag session?",
-                                                   "Encryption", new long[] { 60*60*1000l});
+                "how frequently we decrypt with a new ECIES/AEAD+SessionTag session?",
+                "Encryption", new long[] { 60*60*1000l});
         _context.statManager().createFrequencyStat("crypto.eciesAEAD.decryptExistingSession",
-                                                   "how frequently we decrypt with an existing ECIES/AEAD+SessionTag session?",
-                                                   "Encryption", new long[] { 60*60*1000l});
+                "how frequently we decrypt with an existing ECIES/AEAD+SessionTag session?",
+                "Encryption", new long[] { 60*60*1000l});
         _context.statManager().createFrequencyStat("crypto.eciesAEAD.decryptFailed",
-                                                   "how frequently we fail to decrypt with ECIES/AEAD+SessionTag?",
-                                                   "Encryption", new long[] { 60*60*1000l});
+                "how frequently we fail to decrypt with ECIES/AEAD+SessionTag?",
+                "Encryption", new long[] { 60*60*1000l});
     }
 
     /**
@@ -294,7 +294,7 @@ public final class ECIESAEADEngine {
      * @since 0.9.46
      */
     CloveSet decryptSlow(byte data[], PrivateKey targetPrivateKey,
-                            RatchetSKM keyManager) throws DataFormatException {
+                         RatchetSKM keyManager) throws DataFormatException {
         try {
             return x_decryptSlow(data, targetPrivateKey, keyManager);
         } catch (DataFormatException dfe) {
@@ -357,7 +357,7 @@ public final class ECIESAEADEngine {
      * @return null if decryption fails
      */
     private CloveSet decryptNewSession(byte data[], PrivateKey targetPrivateKey, RatchetSKM keyManager)
-                                     throws DataFormatException {
+    throws DataFormatException {
         // Elg2
         byte[] xx = new byte[KEYLEN];
         System.arraycopy(data, 0, xx, 0, KEYLEN);
@@ -493,7 +493,7 @@ public final class ECIESAEADEngine {
      * @since 0.9.49
      */
     private CloveSet decryptNewSession_N(byte data[], PrivateKey targetPrivateKey, RatchetSKM keyManager)
-                                     throws DataFormatException {
+    throws DataFormatException {
         // fast MSB check for key < 2^255
         if ((data[KEYLEN - 1] & 0x80) != 0) {
             if (_log.shouldDebug())
@@ -607,7 +607,7 @@ public final class ECIESAEADEngine {
      * @return null if decryption fails
      */
     private CloveSet decryptNewSessionReply(byte[] tag, byte[] data, HandshakeState oldState, RatchetSKM keyManager)
-                                          throws DataFormatException {
+    throws DataFormatException {
         HandshakeState state;
         try {
             state = oldState.clone();
@@ -752,7 +752,7 @@ public final class ECIESAEADEngine {
      */
     private CloveSet decryptExistingSession(byte[] tag, byte[] data, SessionKeyAndNonce key,
                                             PrivateKey targetPrivateKey, RatchetSKM keyManager)
-                                          throws DataFormatException {
+    throws DataFormatException {
         int nonce = key.getNonce();
         // this decrypts in-place
         boolean ok = decryptAEADBlock(tag, data, TAGLEN, data.length - TAGLEN, key, nonce);
@@ -814,7 +814,7 @@ public final class ECIESAEADEngine {
      * @return success
      */
     private boolean decryptAEADBlock(byte[] ad, byte encrypted[], int offset, int encryptedLen, SessionKey key,
-                                    long n) throws DataFormatException {
+                                     long n) throws DataFormatException {
         ChaChaPolyCipherState chacha = new ChaChaPolyCipherState();
         chacha.initializeKey(key.getData(), 0);
         chacha.setNonce(n);
@@ -840,7 +840,7 @@ public final class ECIESAEADEngine {
      * No new session key
      * This is the one called from GarlicMessageBuilder and is the primary entry point.
      *
-     * @param target public key to which the data should be encrypted. 
+     * @param target public key to which the data should be encrypted.
      * @param to ignored if priv is null
      * @param priv local private key to encrypt with, from the leaseset
      *             may be null for anonymous (N-in-IK)
@@ -1179,7 +1179,7 @@ public final class ECIESAEADEngine {
      * for netdb lookups.
      * Called from MessageWrapper.
      *
-     * @param target public key to which the data should be encrypted. 
+     * @param target public key to which the data should be encrypted.
      * @return encrypted data or null on failure
      * @since 0.9.48
      */
@@ -1190,11 +1190,11 @@ public final class ECIESAEADEngine {
     /**
      * No ad
      */
-/*
-    private final byte[] encryptAEADBlock(byte data[], SessionKey key, long n) {
-        return encryptAEADBlock(null, data, key, n);
-    }
-*/
+    /*
+        private final byte[] encryptAEADBlock(byte data[], SessionKey key, long n) {
+            return encryptAEADBlock(null, data, key, n);
+        }
+    */
 
     /**
      *
@@ -1245,7 +1245,7 @@ public final class ECIESAEADEngine {
         public PLCallback() {
             this(null, null);
         }
- 
+
         /**
          * ES
          * @param keyManager only for ES, otherwise null
@@ -1265,7 +1265,7 @@ public final class ECIESAEADEngine {
             datetime = time;
             long now = _context.clock().now();
             if (time < now - MAX_NS_AGE ||
-                time > now + MAX_NS_FUTURE) {
+                    time > now + MAX_NS_FUTURE) {
                 throw new DataFormatException("Excess clock skew in IB NS: " + DataHelper.formatTime(time));
             }
         }
@@ -1413,8 +1413,8 @@ public final class ECIESAEADEngine {
         int randompad;
         int totlen = len + overhead;
         if ((totlen > B1 - BHLEN && totlen <= B1) ||
-            (totlen > B2 - BHLEN && totlen <= B2) ||
-            (totlen > B3 - BHLEN && totlen <= B3)) {
+                (totlen > B2 - BHLEN && totlen <= B2) ||
+                (totlen > B3 - BHLEN && totlen <= B3)) {
             // no room for block
             fixedpad = 0;
             randompad = 0;
@@ -1442,7 +1442,7 @@ public final class ECIESAEADEngine {
             } else {
                 padlen = _context.random().nextInt(randompad);
                 if (overhead == NS_OVERHEAD &&
-                    ((totlen + BHLEN + padlen) & 0x0f) == 2) {
+                        ((totlen + BHLEN + padlen) & 0x0f) == 2) {
                     // do a favor for muxed decrypt
                     if (padlen > 0)
                         padlen--;
@@ -1534,77 +1534,77 @@ public final class ECIESAEADEngine {
     }
 
 
-/****
-    public static void main(String args[]) throws Exception {
-        java.util.Properties props = new java.util.Properties();
-        props.setProperty("i2p.dummyClientFacade", "true");
-        props.setProperty("i2p.dummyNetDb", "true");
-        props.setProperty("i2p.vmCommSystem", "true");
-        props.setProperty("i2p.dummyPeerManager", "true");
-        props.setProperty("i2p.dummyTunnelManager", "true");
-        RouterContext ctx = new RouterContext(null, props);
-        ctx.initAll();
-        ECIESAEADEngine e = new ECIESAEADEngine(ctx);
-        RatchetSKM rskm = new RatchetSKM(ctx, new Destination());
-        net.i2p.crypto.KeyPair kp = ctx.keyGenerator().generatePKIKeys(EncType.ECIES_X25519);
-        PublicKey pubKey = kp.getPublic();
-        PrivateKey privKey = kp.getPrivate();
-        kp = ctx.keyGenerator().generatePKIKeys(EncType.ECIES_X25519);
-        PublicKey pubKey2 = kp.getPublic();
-        PrivateKey privKey2 = kp.getPrivate();
+    /****
+        public static void main(String args[]) throws Exception {
+            java.util.Properties props = new java.util.Properties();
+            props.setProperty("i2p.dummyClientFacade", "true");
+            props.setProperty("i2p.dummyNetDb", "true");
+            props.setProperty("i2p.vmCommSystem", "true");
+            props.setProperty("i2p.dummyPeerManager", "true");
+            props.setProperty("i2p.dummyTunnelManager", "true");
+            RouterContext ctx = new RouterContext(null, props);
+            ctx.initAll();
+            ECIESAEADEngine e = new ECIESAEADEngine(ctx);
+            RatchetSKM rskm = new RatchetSKM(ctx, new Destination());
+            net.i2p.crypto.KeyPair kp = ctx.keyGenerator().generatePKIKeys(EncType.ECIES_X25519);
+            PublicKey pubKey = kp.getPublic();
+            PrivateKey privKey = kp.getPrivate();
+            kp = ctx.keyGenerator().generatePKIKeys(EncType.ECIES_X25519);
+            PublicKey pubKey2 = kp.getPublic();
+            PrivateKey privKey2 = kp.getPrivate();
 
-        Destination dest = new Destination();
-        GarlicClove clove = new GarlicClove(ctx);
-        net.i2p.data.i2np.DataMessage msg = new net.i2p.data.i2np.DataMessage(ctx);
-        byte[] orig = DataHelper.getUTF8("blahblahblah");
-        msg.setData(orig);
-        clove.setData(msg);
-        clove.setCertificate(Certificate.NULL_CERT);
-        clove.setCloveId(0);
-        clove.setExpiration(System.currentTimeMillis() + 10000);
-        clove.setInstructions(net.i2p.data.i2np.DeliveryInstructions.LOCAL);
-        GarlicClove[] arr = new GarlicClove[1];
-        arr[0] = clove;
-        CloveSet cs = new CloveSet(arr, Certificate.NULL_CERT, clove.getCloveId(), clove.getExpiration());
+            Destination dest = new Destination();
+            GarlicClove clove = new GarlicClove(ctx);
+            net.i2p.data.i2np.DataMessage msg = new net.i2p.data.i2np.DataMessage(ctx);
+            byte[] orig = DataHelper.getUTF8("blahblahblah");
+            msg.setData(orig);
+            clove.setData(msg);
+            clove.setCertificate(Certificate.NULL_CERT);
+            clove.setCloveId(0);
+            clove.setExpiration(System.currentTimeMillis() + 10000);
+            clove.setInstructions(net.i2p.data.i2np.DeliveryInstructions.LOCAL);
+            GarlicClove[] arr = new GarlicClove[1];
+            arr[0] = clove;
+            CloveSet cs = new CloveSet(arr, Certificate.NULL_CERT, clove.getCloveId(), clove.getExpiration());
 
-        // IK test
-        byte[] encrypted = e.encrypt(cs, pubKey, dest, privKey2, rskm, null);
-        System.out.println("IK Encrypted:\n" + net.i2p.util.HexDump.dump(encrypted));
+            // IK test
+            byte[] encrypted = e.encrypt(cs, pubKey, dest, privKey2, rskm, null);
+            System.out.println("IK Encrypted:\n" + net.i2p.util.HexDump.dump(encrypted));
 
-        CloveSet cs2 = e.decrypt(encrypted, privKey, rskm);
-        if (cs2 == null) {
-            System.out.println("IK DECRYPT FAIL");
-            return;
+            CloveSet cs2 = e.decrypt(encrypted, privKey, rskm);
+            if (cs2 == null) {
+                System.out.println("IK DECRYPT FAIL");
+                return;
+            }
+            System.out.println("IK Decrypted: " + cs);
+            GarlicClove clove2 = cs2.getClove(0);
+            net.i2p.data.i2np.DataMessage msg2 = (net.i2p.data.i2np.DataMessage) clove2.getData();
+            byte[] decrypted = msg2.getData();
+            if (Arrays.equals(orig, decrypted)) {
+                System.out.println("IK Test passed");
+            } else {
+                System.out.println("IK Test FAILED: " + new String(decrypted));
+            }
+
+            // N test
+            rskm = new RatchetSKM(ctx);
+            encrypted = e.encrypt(cs, pubKey);
+            System.out.println("N Encrypted:\n" + net.i2p.util.HexDump.dump(encrypted));
+
+            cs2 = e.decrypt(encrypted, privKey, rskm);
+            if (cs2 == null) {
+                System.out.println("N DECRYPT FAIL");
+                return;
+            }
+            System.out.println("N Decrypted: " + cs);
+            clove2 = cs2.getClove(0);
+            msg2 = (net.i2p.data.i2np.DataMessage) clove2.getData();
+            decrypted = msg2.getData();
+            if (Arrays.equals(orig, decrypted)) {
+                System.out.println("N Test passed");
+            } else {
+                System.out.println("N Test FAILED: " + new String(decrypted));
+            }
         }
-        System.out.println("IK Decrypted: " + cs);
-        GarlicClove clove2 = cs2.getClove(0);
-        net.i2p.data.i2np.DataMessage msg2 = (net.i2p.data.i2np.DataMessage) clove2.getData();
-        byte[] decrypted = msg2.getData();
-        if (Arrays.equals(orig, decrypted)) {
-            System.out.println("IK Test passed");
-        } else {
-            System.out.println("IK Test FAILED: " + new String(decrypted));
-        }
-
-        // N test
-        rskm = new RatchetSKM(ctx);
-        encrypted = e.encrypt(cs, pubKey);
-        System.out.println("N Encrypted:\n" + net.i2p.util.HexDump.dump(encrypted));
-
-        cs2 = e.decrypt(encrypted, privKey, rskm);
-        if (cs2 == null) {
-            System.out.println("N DECRYPT FAIL");
-            return;
-        }
-        System.out.println("N Decrypted: " + cs);
-        clove2 = cs2.getClove(0);
-        msg2 = (net.i2p.data.i2np.DataMessage) clove2.getData();
-        decrypted = msg2.getData();
-        if (Arrays.equals(orig, decrypted)) {
-            System.out.println("N Test passed");
-        } else {
-            System.out.println("N Test FAILED: " + new String(decrypted));
-        }
-    }
-****/
+    ****/
 }

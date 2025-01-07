@@ -53,8 +53,8 @@ public class RrdNioBackend extends ByteBufferBackend implements RrdFileBackend {
             unsafeTemp = singleoneInstanceField.get(null);
             invokeCleanerTemp = unsafeTemp.getClass().getMethod("invokeCleaner", ByteBuffer.class);
         } catch (NoSuchFieldException | SecurityException
-                | IllegalArgumentException | IllegalAccessException
-                | NoSuchMethodException | ClassNotFoundException e) {
+                     | IllegalArgumentException | IllegalAccessException
+                     | NoSuchMethodException | ClassNotFoundException e) {
             invokeCleanerTemp = null;
             unsafeTemp = null;
         }
@@ -113,7 +113,7 @@ public class RrdNioBackend extends ByteBufferBackend implements RrdFileBackend {
     private void mapFile(long length) throws IOException {
         if (length > 0) {
             FileChannel.MapMode mapMode =
-                    readOnly ? FileChannel.MapMode.READ_ONLY : FileChannel.MapMode.READ_WRITE;
+                readOnly ? FileChannel.MapMode.READ_ONLY : FileChannel.MapMode.READ_WRITE;
             byteBuffer = file.map(mapMode, 0, length);
             setByteBuffer(byteBuffer);
         }

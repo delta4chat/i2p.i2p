@@ -46,7 +46,7 @@ public class ArcDef {
         }
         if (steps < 1 || rows < 2) {
             throw new IllegalArgumentException("Invalid steps/rows settings: " + steps + "/" + rows +
-                    ". Minimal values allowed are steps=1, rows=2");
+                                               ". Minimal values allowed are steps=1, rows=2");
         }
 
         this.consolFun = consolFun;

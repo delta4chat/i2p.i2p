@@ -45,33 +45,33 @@ public class NetDbHelper extends FormHandler {
     private static final int DEFAULT_PAGE = 0;
 
     private static final String titles[] =
-                                          {_x("Summary"),                       // 0
-                                           _x("Local Router"),                  // 1
-                                           _x("Router Lookup"),                 // 2
-                                           // advanced below here
-                                           _x("All Routers"),                   // 3
-                                           _x("All Routers with Full Stats"),   // 4
-                                           _x("LeaseSets"),                     // 5
-                                           "LeaseSet Debug",                    // 6
-                                           "Sybil",                             // 7
-                                           "Advanced Lookup",                   // 8
-                                           "LeaseSet Lookup",                   // 9
-                                           "LeaseSets (Client DBs)"             // 10
-                                          };
+    {   _x("Summary"),                       // 0
+        _x("Local Router"),                  // 1
+        _x("Router Lookup"),                 // 2
+        // advanced below here
+        _x("All Routers"),                   // 3
+        _x("All Routers with Full Stats"),   // 4
+        _x("LeaseSets"),                     // 5
+        "LeaseSet Debug",                    // 6
+        "Sybil",                             // 7
+        "Advanced Lookup",                   // 8
+        "LeaseSet Lookup",                   // 9
+        "LeaseSets (Client DBs)"             // 10
+    };
 
     private static final String links[] =
-                                          {"",                                  // 0
-                                           "?r=.",                              // 1
-                                           "",                                  // 2
-                                           "?f=2",                              // 3
-                                           "?f=1",                              // 4
-                                           "?l=1",                              // 5
-                                           "?l=2",                              // 6
-                                           "?f=3",                              // 7
-                                           "?f=4",                              // 8
-                                           "",                                  // 9
-                                           "?l=7",                              // 10
-                                          };
+    {   "",                                  // 0
+        "?r=.",                              // 1
+        "",                                  // 2
+        "?f=2",                              // 3
+        "?f=1",                              // 4
+        "?l=1",                              // 5
+        "?l=2",                              // 6
+        "?f=3",                              // 7
+        "?f=4",                              // 8
+        "",                                  // 9
+        "?l=7",                              // 10
+    };
 
 
     public void setRouter(String r) {
@@ -274,40 +274,40 @@ public class NetDbHelper extends FormHandler {
         _postOK = "Run new analysis".equals(_action) ||
                   "Review analysis".equals(_action);
         if ("Save".equals(_action)) {
-                try {
-                    Map<String, String> toSave = new HashMap<String, String>(4);
-                    String newTime = getJettyString("runFrequency");
-                    if (newTime != null) {
-                        long ntime = Long.parseLong(newTime) * 60*60*1000;
-                        toSave.put(Analysis.PROP_FREQUENCY, Long.toString(ntime));
-                    }
-                    String thresh = getJettyString("threshold");
-                    if (thresh != null && thresh.length() > 0) {
-                        float val = Math.max(Float.parseFloat(thresh), Analysis.MIN_BLOCK_POINTS);
-                        toSave.put(Analysis.PROP_THRESHOLD, Float.toString(val));
-                    }
-                    String days = getJettyString("days");
-                    if (days != null && days.length() > 0) {
-                        long val = 24*60*60*1000L * Integer.parseInt(days);
-                        toSave.put(Analysis.PROP_BLOCKTIME, Long.toString(val));
-                    }
-                    String age = getJettyString("deleteAge");
-                    if (age != null && age.length() > 0) {
-                        long val = 24*60*60*1000L * Integer.parseInt(age);
-                        toSave.put(Analysis.PROP_REMOVETIME, Long.toString(val));
-                    }
-                    String enable = getJettyString("block");
-                    toSave.put(Analysis.PROP_BLOCK, Boolean.toString(enable != null));
-                    String nonff = getJettyString("nonff");
-                    toSave.put(Analysis.PROP_NONFF, Boolean.toString(nonff != null));
-                    if (_context.router().saveConfig(toSave, null))
-                        addFormNotice(_t("Configuration saved successfully."));
-                    else
-                        addFormError("Error saving the configuration (applied but not saved) - please see the error logs");
-                    Analysis.getInstance(_context).schedule();
-                } catch (NumberFormatException nfe) {
-                        addFormError("bad value");
+            try {
+                Map<String, String> toSave = new HashMap<String, String>(4);
+                String newTime = getJettyString("runFrequency");
+                if (newTime != null) {
+                    long ntime = Long.parseLong(newTime) * 60*60*1000;
+                    toSave.put(Analysis.PROP_FREQUENCY, Long.toString(ntime));
                 }
+                String thresh = getJettyString("threshold");
+                if (thresh != null && thresh.length() > 0) {
+                    float val = Math.max(Float.parseFloat(thresh), Analysis.MIN_BLOCK_POINTS);
+                    toSave.put(Analysis.PROP_THRESHOLD, Float.toString(val));
+                }
+                String days = getJettyString("days");
+                if (days != null && days.length() > 0) {
+                    long val = 24*60*60*1000L * Integer.parseInt(days);
+                    toSave.put(Analysis.PROP_BLOCKTIME, Long.toString(val));
+                }
+                String age = getJettyString("deleteAge");
+                if (age != null && age.length() > 0) {
+                    long val = 24*60*60*1000L * Integer.parseInt(age);
+                    toSave.put(Analysis.PROP_REMOVETIME, Long.toString(val));
+                }
+                String enable = getJettyString("block");
+                toSave.put(Analysis.PROP_BLOCK, Boolean.toString(enable != null));
+                String nonff = getJettyString("nonff");
+                toSave.put(Analysis.PROP_NONFF, Boolean.toString(nonff != null));
+                if (_context.router().saveConfig(toSave, null))
+                    addFormNotice(_t("Configuration saved successfully."));
+                else
+                    addFormError("Error saving the configuration (applied but not saved) - please see the error logs");
+                Analysis.getInstance(_context).schedule();
+            } catch (NumberFormatException nfe) {
+                addFormError("bad value");
+            }
         }
     }
 
@@ -319,10 +319,10 @@ public class NetDbHelper extends FormHandler {
         try {
             renderNavBar();
             if (_routerPrefix != null || _version != null || _country != null ||
-                _family != null || _caps != null || _ip != null || _sybil != null ||
-                _port != 0 || _type != null || _mtu != null || _ipv6 != null ||
-                _ssucaps != null || _transport != null || _cost != 0 || _etype != null ||
-                _icount > 0) {
+                    _family != null || _caps != null || _ip != null || _sybil != null ||
+                    _port != 0 || _type != null || _mtu != null || _ipv6 != null ||
+                    _ssucaps != null || _transport != null || _cost != 0 || _etype != null ||
+                    _icount > 0) {
                 renderer.renderRouterInfoHTML(_out, _limit, _page,
                                               _routerPrefix, _version, _country,
                                               _family, _caps, _ip, _sybil, _port, _highPort, _type, _etype,
@@ -367,9 +367,9 @@ public class NetDbHelper extends FormHandler {
         if (".".equals(_routerPrefix))
             return 1;
         if (_routerPrefix != null || _version != null || _country != null ||
-            _family != null || _caps != null || _ip != null || _sybil != null ||
-            _port != 0 || _type != null || _mtu != null || _ipv6 != null ||
-            _ssucaps != null || _transport != null || _cost != 0 || _etype != null)
+                _family != null || _caps != null || _ip != null || _sybil != null ||
+                _port != 0 || _type != null || _mtu != null || _ipv6 != null ||
+                _ssucaps != null || _transport != null || _cost != 0 || _etype != null)
             return 2;
         if (_full == 2)
             return 3;

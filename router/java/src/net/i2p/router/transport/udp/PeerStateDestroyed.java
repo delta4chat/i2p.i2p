@@ -139,8 +139,12 @@ class PeerStateDestroyed implements SSU2Payload.PayloadCallback, SSU2Sender {
 
     /// begin SSU2Sender interface ///
 
-    public RemoteHostId getRemoteHostId() { return _remoteHostId; }
-    public boolean isIPv6() { return _remoteHostId.getIP().length == 16; }
+    public RemoteHostId getRemoteHostId() {
+        return _remoteHostId;
+    }
+    public boolean isIPv6() {
+        return _remoteHostId.getIP().length == 16;
+    }
     public InetAddress getRemoteIPAddress() {
         try {
             return InetAddress.getByAddress(_remoteHostId.getIP());
@@ -148,25 +152,47 @@ class PeerStateDestroyed implements SSU2Payload.PayloadCallback, SSU2Sender {
             return null;
         }
     }
-    public int getRemotePort() { return _remoteHostId.getPort(); }
-    public int getMTU() { return _mtu; }
-    public long getNextPacketNumber() { return _packetNumber.getAndIncrement(); }
-    public long getSendConnID() { return _sendConnID; }
-    public CipherState getSendCipher() { return _sendCha; }
-    public byte[] getSendHeaderEncryptKey1() { return _sendHeaderEncryptKey1; }
-    public byte[] getSendHeaderEncryptKey2() { return _sendHeaderEncryptKey2; }
+    public int getRemotePort() {
+        return _remoteHostId.getPort();
+    }
+    public int getMTU() {
+        return _mtu;
+    }
+    public long getNextPacketNumber() {
+        return _packetNumber.getAndIncrement();
+    }
+    public long getSendConnID() {
+        return _sendConnID;
+    }
+    public CipherState getSendCipher() {
+        return _sendCha;
+    }
+    public byte[] getSendHeaderEncryptKey1() {
+        return _sendHeaderEncryptKey1;
+    }
+    public byte[] getSendHeaderEncryptKey2() {
+        return _sendHeaderEncryptKey2;
+    }
     public void setDestroyReason(int reason) {}
-    public SSU2Bitfield getReceivedMessages() { return _receivedMessages; }
+    public SSU2Bitfield getReceivedMessages() {
+        return _receivedMessages;
+    }
     /**
      *  @return null always, we don't care what was acked
      */
-    public SSU2Bitfield getAckedMessages() { return null; }
+    public SSU2Bitfield getAckedMessages() {
+        return null;
+    }
     public void fragmentsSent(long pktNum, int length, List<PacketBuilder.Fragment> fragments) {}
-    public byte getFlags() { return 0; }
+    public byte getFlags() {
+        return 0;
+    }
 
     /// end SSU2Sender interface ///
 
-    long getRcvConnID() { return _rcvConnID; }
+    long getRcvConnID() {
+        return _rcvConnID;
+    }
 
     private synchronized void messagePartiallyReceived() {
         if (_wantACKSendSince <= 0) {
@@ -302,7 +328,7 @@ class PeerStateDestroyed implements SSU2Payload.PayloadCallback, SSU2Sender {
     public void gotI2NP(I2NPMessage msg) {
         if (_log.shouldDebug())
             _log.debug("Got I2NP block: " + msg + " on " + this);
-            messagePartiallyReceived();
+        messagePartiallyReceived();
     }
 
     public void gotFragment(byte[] data, int off, int len, long messageId, int frag, boolean isLast) {

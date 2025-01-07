@@ -30,7 +30,7 @@ class SOCKSServerFactory {
         "<html><body><H1>I2P SOCKS PROXY ERROR: REQUEST DENIED</H1>" +
         "Your browser is misconfigured. This is a SOCKS proxy, not a HTTP proxy" +
         "</body></html>";
-    
+
     /**
      * Create a new SOCKS server, using the provided socket (that must
      * be connected to a client) to select the proper SOCKS protocol
@@ -51,8 +51,8 @@ class SOCKSServerFactory {
             case 0x04:
                 // SOCKS version 4/4a
                 if (Boolean.parseBoolean(props.getProperty(I2PTunnelHTTPClientBase.PROP_AUTH)) &&
-                    props.containsKey(I2PTunnelHTTPClientBase.PROP_USER) &&
-                    props.containsKey(I2PTunnelHTTPClientBase.PROP_PW)) {
+                        props.containsKey(I2PTunnelHTTPClientBase.PROP_USER) &&
+                        props.containsKey(I2PTunnelHTTPClientBase.PROP_PW)) {
                     throw new SOCKSException("SOCKS 4/4a not supported when authorization is required");
                 }
                 serv = new SOCKS4aServer(ctx, s, props);

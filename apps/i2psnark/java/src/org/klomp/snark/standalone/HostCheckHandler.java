@@ -47,7 +47,7 @@ public class HostCheckHandler extends AbstractHandler {
             }
         }
     }
-    
+
     /**
      *  Unused, we can't get here from RunStandalone
      *
@@ -67,7 +67,7 @@ public class HostCheckHandler extends AbstractHandler {
                        Request baseRequest,
                        HttpServletRequest httpRequest,
                        HttpServletResponse httpResponse)
-         throws IOException, ServletException
+    throws IOException, ServletException
     {
 
         String host = httpRequest.getHeader("Host");
@@ -98,8 +98,8 @@ public class HostCheckHandler extends AbstractHandler {
             return true;
         // common cases
         if (host.equals("127.0.0.1:8002") ||
-            host.equals("localhost:8002") ||
-            host.equals("[::1]:8002"))
+                host.equals("localhost:8002") ||
+                host.equals("[::1]:8002"))
             return true;
         // all allowed?
         if (_listenHosts.isEmpty())

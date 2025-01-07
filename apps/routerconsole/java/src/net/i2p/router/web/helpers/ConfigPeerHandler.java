@@ -12,7 +12,7 @@ public class ConfigPeerHandler extends FormHandler {
     private String _peer;
     private String _speed;
     private String _capacity;
-    
+
     @Override
     protected void processForm() {
         if ("Save Configuration".equals(_action)) {
@@ -65,7 +65,7 @@ public class ConfigPeerHandler extends FormHandler {
             //addFormError(_t("Unsupported") + ' ' + _action + '.');
         }
     }
-    
+
     private Hash getHash() {
         if (_peer != null && _peer.length() == 44) {
             byte[] b = Base64.decode(_peer);
@@ -75,7 +75,13 @@ public class ConfigPeerHandler extends FormHandler {
         return null;
     }
 
-    public void setPeer(String peer) { _peer = peer; }
-    public void setSpeed(String bonus) { _speed = bonus; }
-    public void setCapacity(String bonus) { _capacity = bonus; }
+    public void setPeer(String peer) {
+        _peer = peer;
+    }
+    public void setSpeed(String bonus) {
+        _speed = bonus;
+    }
+    public void setCapacity(String bonus) {
+        _capacity = bonus;
+    }
 }

@@ -1,6 +1,6 @@
 /*
  * Copyright 2010 Tom Gibara
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  */
 package com.tomgibara.crinch.hashing;
 
@@ -28,7 +28,7 @@ import java.util.Comparator;
  * array. A negative has value will typically be returned for a string that is
  * not in the array.
  * </p>
- * 
+ *
  * <p>
  * However, the supplied array is <em>not</em> retained. This means that the
  * implementation cannot necessarily confirm that a string is not in the
@@ -37,21 +37,21 @@ import java.util.Comparator;
  * circumstances will a hash value be returned that is greater than or equal to
  * <em>n</em>.
  * </p>
- * 
+ *
  * <p>
  * <strong>IMPORTANT NOTE:</strong> The array of strings supplied to the
  * constructor will be mutated: it is re-ordered so that
  * <code>hash(a[i]) == i</code>. Application code must generally use this
  * information to map hash values back onto the appropriate string value.
  * </p>
- * 
+ *
  * <p>
  * <strong>NOTE:</strong> Good performance of this algorithm is predicated on
  * string hash values being cached by the <code>String</code> class. Experience
  * indicates that is is a good assumption.
  * </p>
- * 
- * 
+ *
+ *
  * @author Tom Gibara
  */
 
@@ -82,7 +82,7 @@ public class PerfectStringHash implements Hash<String> {
     /**
      * Builds a (typically v. small) decision tree for distinguishing strings
      * that share the same hash value.
-     * 
+     *
      * @param values
      *            the string values to distinguish
      * @param start
@@ -103,46 +103,46 @@ public class PerfectStringHash implements Hash<String> {
         //build the array
         for (int i = 0; i < depth; i++) {
             int step = capacity >> i;
-        for (int j = (1 << (depth-i-1)) - 1; j < capacity; j += step) {
-            final int part;
-            final int comp;
-            if (j >= length - 1) {
-                part = Integer.MIN_VALUE;
-                comp = 0;
-            } else {
-                final String v1 = values[start + j];
-                final String v2 = values[start + j + 1];
-                final int l1 = v1.length();
-                final int l2 = v2.length();
-                if (l1 == l2) {
-                    int tPart = -1;
-                    int tComp = -1;
-                    for (int k = 0; k < l1; k++) {
-                        final char c1 = v1.charAt(k);
-                        final char c2 = v2.charAt(k);
-                        if (c1 == c2) continue;
-                        if (c1 < c2) { //must occur at some point because we have already checked that the two strings are unequal
-                            tPart = k;
-                            tComp = c1;
-                        } else {
-                            //shouldn't be possible - we've sorted the strings to avoid this case
-                            throw new IllegalStateException();
-                        }
-                        break;
-                    }
-                    //check if we've been passed a duplicated value
-                    if (tPart == -1) throw new IllegalArgumentException("duplicate value: " + v1);
-                    part = tPart;
-                    comp = tComp;
+            for (int j = (1 << (depth-i-1)) - 1; j < capacity; j += step) {
+                final int part;
+                final int comp;
+                if (j >= length - 1) {
+                    part = Integer.MIN_VALUE;
+                    comp = 0;
                 } else {
-                    part = -1;
-                    comp = l1;
+                    final String v1 = values[start + j];
+                    final String v2 = values[start + j + 1];
+                    final int l1 = v1.length();
+                    final int l2 = v2.length();
+                    if (l1 == l2) {
+                        int tPart = -1;
+                        int tComp = -1;
+                        for (int k = 0; k < l1; k++) {
+                            final char c1 = v1.charAt(k);
+                            final char c2 = v2.charAt(k);
+                            if (c1 == c2) continue;
+                            if (c1 < c2) { //must occur at some point because we have already checked that the two strings are unequal
+                                tPart = k;
+                                tComp = c1;
+                            } else {
+                                //shouldn't be possible - we've sorted the strings to avoid this case
+                                throw new IllegalStateException();
+                            }
+                            break;
+                        }
+                        //check if we've been passed a duplicated value
+                        if (tPart == -1) throw new IllegalArgumentException("duplicate value: " + v1);
+                        part = tPart;
+                        comp = tComp;
+                    } else {
+                        part = -1;
+                        comp = l1;
+                    }
                 }
+                pivots[ pivotIndex<<1     ] = part;
+                pivots[(pivotIndex<<1) + 1] = comp;
+                pivotIndex++;
             }
-            pivots[ pivotIndex<<1     ] = part;
-            pivots[(pivotIndex<<1) + 1] = comp;
-            pivotIndex++;
-        }
         }
     }
 
@@ -178,7 +178,7 @@ public class PerfectStringHash implements Hash<String> {
 
     /**
      * Constructs a minimal perfect string hashing over the supplied strings.
-     * 
+     *
      * @param values
      *            an array of unique non-null strings that will be reordered
      *            such that <code>hash(values[i]) == i</code>.
@@ -278,7 +278,7 @@ public class PerfectStringHash implements Hash<String> {
 
     /**
      * Generates a hashcode for the supplied string.
-     * 
+     *
      * @param value
      *            any string, not null
      * @return a minimal hashcode for the supplied string, or -1

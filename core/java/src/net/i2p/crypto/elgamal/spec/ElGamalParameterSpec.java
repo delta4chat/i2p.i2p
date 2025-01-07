@@ -17,7 +17,7 @@ public class ElGamalParameterSpec implements AlgorithmParameterSpec {
     /**
      * Constructs a parameter set for Diffie-Hellman, using a prime modulus
      * <code>p</code> and a base generator <code>g</code>.
-     * 
+     *
      * @param p the prime modulus
      * @param g the base generator
      */
@@ -64,7 +64,7 @@ public class ElGamalParameterSpec implements AlgorithmParameterSpec {
             ElGamalParameterSpec egps = (ElGamalParameterSpec) obj;
             op = egps.getP();
             og = egps.getG();
-        //} else if (obj.getClass().getName().equals("org.bouncycastle.jce.spec.ElGamalParameterSpec")) {
+            //} else if (obj.getClass().getName().equals("org.bouncycastle.jce.spec.ElGamalParameterSpec")) {
             //reflection... no...
         } else {
             return false;

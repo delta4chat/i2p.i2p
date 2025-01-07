@@ -16,7 +16,7 @@ import net.i2p.router.web.HelperBase;
  *  @since 0.9.23
  */
 public class CertHelper extends HelperBase {
-    
+
     private static final String DIR = "certificates";
     private static final String I2CP = "i2cp/i2cp.local.crt";
     private static final String CONSOLE = "console/console.local.crt";
@@ -100,7 +100,7 @@ public class CertHelper extends HelperBase {
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
-        return ""; 
+        return "";
     }
 
     /**

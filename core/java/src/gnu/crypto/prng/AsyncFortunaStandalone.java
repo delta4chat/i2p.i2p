@@ -50,7 +50,7 @@ public class AsyncFortunaStandalone extends FortunaStandalone implements Runnabl
         context.statManager().createRateStat("prng.bufferFillTime", "Time to fill random number buffer (ms)", "Encryption", new long[] { 60*1000, 10*60*1000, 60*60*1000 } );
         _log = context.logManager().getLog(AsyncFortunaStandalone.class);
     }
-    
+
     public void startup() {
         for (int i = 0; i < _bufferCount; i++)
             _emptyBuffers.offer(new AsyncBuffer(_bufferSize));
@@ -82,10 +82,10 @@ public class AsyncFortunaStandalone extends FortunaStandalone implements Runnabl
         init(props);
         //fillBlock();
     }
-  
+
     @Override
     protected void allocBuffer() {}
-    
+
     private static class AsyncBuffer {
         public final byte[] buffer;
 
@@ -119,12 +119,12 @@ public class AsyncFortunaStandalone extends FortunaStandalone implements Runnabl
             _context.statManager().addRateData("prng.bufferWaitTime", waited, 0);
             if (waited > 10*1000 && _log.shouldLog(Log.WARN))
                 _log.warn(Thread.currentThread().getName() + ": Took " + waited
-                                   + "ms for a full PRNG buffer to be found");
+                          + "ms for a full PRNG buffer to be found");
             _currentBuffer = nextBuffer;
             buffer = nextBuffer.buffer;
         }
     }
-    
+
     /**
      *  The refiller thread
      */
@@ -136,22 +136,25 @@ public class AsyncFortunaStandalone extends FortunaStandalone implements Runnabl
             } catch (InterruptedException ie) {
                 continue;
             }
-            
-                long before = System.currentTimeMillis();
-                doFill(aBuff.buffer);
-                long after = System.currentTimeMillis();
-                boolean shouldWait = _fullBuffers.size() > 1;
-                _fullBuffers.offer(aBuff);
-                _context.statManager().addRateData("prng.bufferFillTime", after - before, 0);
-                if (shouldWait) {
-                    Thread.yield();
-                    long waitTime = (after-before)*5;
-                    if (waitTime <= 0) // somehow postman saw waitTime show up as negative
-                        waitTime = 50;
-                    else if (waitTime > 5000)
-                        waitTime = 5000;
-                    try { Thread.sleep(waitTime); } catch (InterruptedException ie) {}
+
+            long before = System.currentTimeMillis();
+            doFill(aBuff.buffer);
+            long after = System.currentTimeMillis();
+            boolean shouldWait = _fullBuffers.size() > 1;
+            _fullBuffers.offer(aBuff);
+            _context.statManager().addRateData("prng.bufferFillTime", after - before, 0);
+            if (shouldWait) {
+                Thread.yield();
+                long waitTime = (after-before)*5;
+                if (waitTime <= 0) // somehow postman saw waitTime show up as negative
+                    waitTime = 50;
+                else if (waitTime > 5000)
+                    waitTime = 5000;
+                try {
+                    Thread.sleep(waitTime);
                 }
+                catch (InterruptedException ie) {}
+            }
         }
     }
 
@@ -160,22 +163,22 @@ public class AsyncFortunaStandalone extends FortunaStandalone implements Runnabl
     {
         rotateBuffer();
     }
-    
+
     private void doFill(byte buf[]) {
         //long start = System.currentTimeMillis();
         if (pool0Count >= MIN_POOL_SIZE
-            && System.currentTimeMillis() - lastReseed > 100)
-          {
+                && System.currentTimeMillis() - lastReseed > 100)
+        {
             reseedCount++;
             //byte[] seed = new byte[0];
             for (int i = 0; i < NUM_POOLS; i++)
-              {
+            {
                 if (reseedCount % (1 << i) == 0) {
-                  generator.addRandomBytes(pools[i].digest());
+                    generator.addRandomBytes(pools[i].digest());
                 }
-              }
+            }
             lastReseed = System.currentTimeMillis();
-          }
+        }
         generator.nextBytes(buf);
         //long now = System.currentTimeMillis();
         //long diff = now-lastRefill;
@@ -183,34 +186,34 @@ public class AsyncFortunaStandalone extends FortunaStandalone implements Runnabl
         //long refillTime = now-start;
         //System.out.println("Refilling " + (++refillCount) + " after " + diff + " for the PRNG took " + refillTime);
     }
-    
-/*****
-    public static void main(String args[]) {
-        try {
-            AsyncFortunaStandalone rand = new AsyncFortunaStandalone(null);  // Will cause NPEs above; fix this if you want to test! Sorry...
-            
-            byte seed[] = new byte[1024];
-            rand.seed(seed);
-            System.out.println("Before starting prng");
-            rand.startup();
-            System.out.println("Starting prng, waiting 1 minute");
-            try { Thread.sleep(60*1000); } catch (InterruptedException ie) {}
-            System.out.println("PRNG started, beginning test");
 
-            long before = System.currentTimeMillis();
-            byte buf[] = new byte[1024];
-            java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
-            java.util.zip.GZIPOutputStream gos = new java.util.zip.GZIPOutputStream(baos);
-            for (int i = 0; i < 1024; i++) {
-                rand.nextBytes(buf);
-                gos.write(buf);
-            }
-            long after = System.currentTimeMillis();
-            gos.finish();
-            byte compressed[] = baos.toByteArray();
-            System.out.println("Compressed size of 1MB: " + compressed.length + " took " + (after-before));
-        } catch (Exception e) { e.printStackTrace(); }
-        try { Thread.sleep(5*60*1000); } catch (InterruptedException ie) {}
-    }
-*****/
+    /*****
+        public static void main(String args[]) {
+            try {
+                AsyncFortunaStandalone rand = new AsyncFortunaStandalone(null);  // Will cause NPEs above; fix this if you want to test! Sorry...
+
+                byte seed[] = new byte[1024];
+                rand.seed(seed);
+                System.out.println("Before starting prng");
+                rand.startup();
+                System.out.println("Starting prng, waiting 1 minute");
+                try { Thread.sleep(60*1000); } catch (InterruptedException ie) {}
+                System.out.println("PRNG started, beginning test");
+
+                long before = System.currentTimeMillis();
+                byte buf[] = new byte[1024];
+                java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
+                java.util.zip.GZIPOutputStream gos = new java.util.zip.GZIPOutputStream(baos);
+                for (int i = 0; i < 1024; i++) {
+                    rand.nextBytes(buf);
+                    gos.write(buf);
+                }
+                long after = System.currentTimeMillis();
+                gos.finish();
+                byte compressed[] = baos.toByteArray();
+                System.out.println("Compressed size of 1MB: " + compressed.length + " took " + (after-before));
+            } catch (Exception e) { e.printStackTrace(); }
+            try { Thread.sleep(5*60*1000); } catch (InterruptedException ie) {}
+        }
+    *****/
 }

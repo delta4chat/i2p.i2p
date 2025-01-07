@@ -112,7 +112,7 @@ public class CreateLeaseSet2Message extends CreateLeaseSetMessage {
                 if (stype == null)
                     throw new I2CPMessageException("Unsupported sig type");
                 if (type == DatabaseEntry.KEY_TYPE_LS2 ||
-                    type == DatabaseEntry.KEY_TYPE_ENCRYPTED_LS2) {
+                        type == DatabaseEntry.KEY_TYPE_ENCRYPTED_LS2) {
                     LeaseSet2 ls2 = (LeaseSet2) _leaseSet;
                     // get one PrivateKey for each PublicKey
                     List<PublicKey> pks = ls2.getEncryptionKeys();
@@ -164,11 +164,11 @@ public class CreateLeaseSet2Message extends CreateLeaseSetMessage {
             throw new I2CPMessageException("Unable to write out the message as there is not enough data");
         int type = _leaseSet.getType();
         if (_sessionId == null ||
-            (type != DatabaseEntry.KEY_TYPE_META_LS2 && _privateKey == null))
+                (type != DatabaseEntry.KEY_TYPE_META_LS2 && _privateKey == null))
             throw new I2CPMessageException("Unable to write out the message as there is not enough data");
         int size = 4 // sessionId
-                 + 1 // type
-                 + _leaseSet.size();
+                   + 1 // type
+                   + _leaseSet.size();
         if (type != DatabaseEntry.KEY_TYPE_META_LS2) {
             for (PrivateKey pk : getPrivateKeys()) {
                 size += pk.length();
@@ -207,7 +207,7 @@ public class CreateLeaseSet2Message extends CreateLeaseSetMessage {
         buf.append("\n\tLeaseSet: ").append(_leaseSet);
         int type = _leaseSet.getType();
         if (type != DatabaseEntry.KEY_TYPE_META_LS2 &&
-            type != DatabaseEntry.KEY_TYPE_ENCRYPTED_LS2) {
+                type != DatabaseEntry.KEY_TYPE_ENCRYPTED_LS2) {
             for (PrivateKey pk : getPrivateKeys()) {
                 buf.append("\n\tPrivateKey: ").append(pk);
             }

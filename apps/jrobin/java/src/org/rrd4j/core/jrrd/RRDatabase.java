@@ -286,7 +286,7 @@ public class RRDatabase implements Closeable {
      * @param endDate a {@link java.util.Date} object.
      */
     public DataChunk getData(ConsolidationFunctionType type, Date startDate, Date endDate, long step)
-            throws IOException {
+    throws IOException {
         long end = endDate.getTime() / 1000;
         long start = startDate.getTime() / 1000;
         return getData(type, start, end, step);
@@ -303,13 +303,13 @@ public class RRDatabase implements Closeable {
      * @throws java.io.IOException if any.
      */
     public DataChunk getData(ConsolidationFunctionType type, long startTime, long endTime, long stepSeconds)
-            throws IOException {
+    throws IOException {
 
         ArrayList<Archive> possibleArchives = getArchiveList(type);
 
         if (possibleArchives.size() == 0) {
             throw new IllegalArgumentException("Database does not contain an Archive of consolidation function type "
-                    + type);
+                                               + type);
         }
 
         Archive archive = findBestArchive(startTime, endTime, stepSeconds, possibleArchives);
@@ -337,7 +337,7 @@ public class RRDatabase implements Closeable {
         int endOffset = (int) ((archiveEndTime - endTime) / stepSeconds);
 
         DataChunk chunk = new DataChunk(nameindex, startTime, startOffset, endOffset,
-                stepSeconds, header.dsCount, rows);
+                                        stepSeconds, header.dsCount, rows);
 
         archive.loadData(chunk);
 
@@ -349,7 +349,7 @@ public class RRDatabase implements Closeable {
      * I need to put more of a Java style on it - CT
      */
     private Archive findBestArchive(long start, long end, long step,
-            ArrayList<Archive> archives) {
+                                    ArrayList<Archive> archives) {
 
         Archive archive = null;
         Archive bestFullArchive = null;
@@ -365,11 +365,11 @@ public class RRDatabase implements Closeable {
             archive = archive1;
 
             long calEnd = lastUpdateLong
-                    - (lastUpdateLong
-                            % (archive.pdpCount * header.pdpStep));
+                          - (lastUpdateLong
+                             % (archive.pdpCount * header.pdpStep));
             long calStart = calEnd
-                    - (archive.pdpCount * archive.rowCount
-                            * header.pdpStep);
+                            - (archive.pdpCount * archive.rowCount
+                               * header.pdpStep);
             long fullMatch = end - start;
 
             if ((calEnd >= end) && (calStart < start)) {    // Best full match

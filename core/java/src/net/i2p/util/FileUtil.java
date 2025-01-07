@@ -46,11 +46,11 @@ import net.i2p.data.DataHelper;
 public class FileUtil {
     /**
      * Delete the path as well as any files or directories underneath it.
-     * 
+     *
      * @param path path to the directory being deleted
      * @param failIfNotEmpty if true, do not delete anything if the directory
      *                       is not empty (and return false)
-     * @return true if the path no longer exists (aka was removed), 
+     * @return true if the path no longer exists (aka was removed),
      *         false if it remains
      */
     public static final boolean rmdir(String path, boolean failIfNotEmpty) {
@@ -58,11 +58,11 @@ public class FileUtil {
     }
     /**
      * Delete the path as well as any files or directories underneath it.
-     * 
+     *
      * @param target the file or directory being deleted
      * @param failIfNotEmpty if true, do not delete anything if the directory
      *                       is not empty (and return false)
-     * @return true if the path no longer exists (aka was removed), 
+     * @return true if the path no longer exists (aka was removed),
      *         false if it remains
      */
     public static final boolean rmdir(File target, boolean failIfNotEmpty) {
@@ -86,13 +86,13 @@ public class FileUtil {
             for (int i = 0; i < children.length; i++) {
                 if (!rmdir(children[i], failIfNotEmpty))
                     return false;
-                
+
                 //System.out.println("info: target removed recursively [" + children[i].getPath() + "]");
             }
             return target.delete();
         }
     }
-    
+
     /**
      *  As of release 0.7.12, any files inside the zip that have a .jar.pack or .war.pack suffix
      *  are transparently unpacked to a .jar or .war file using unpack200.
@@ -167,8 +167,8 @@ public class FileUtil {
                             //DataHelper.copy(in, fos);
                             int read;
                             while ((read = in.read(buf)) != -1) {
-                                   fos.write(buf, 0, read);
-                            }   
+                                fos.write(buf, 0, read);
+                            }
                             if (logLevel <= Log.INFO)
                                 System.err.println("INFO: File [" + entry.getName() + "] extracted");
                         }
@@ -192,9 +192,18 @@ public class FileUtil {
                         }
                         return false;
                     } finally {
-                        try { if (in != null) in.close(); } catch (IOException ioe) {}
-                        try { if (fos != null) fos.close(); } catch (IOException ioe) {}
-                        try { if (jos != null) jos.close(); } catch (IOException ioe) {}
+                        try {
+                            if (in != null) in.close();
+                        }
+                        catch (IOException ioe) {}
+                        try {
+                            if (fos != null) fos.close();
+                        }
+                        catch (IOException ioe) {}
+                        try {
+                            if (jos != null) jos.close();
+                        }
+                        catch (IOException ioe) {}
                     }
                 }
             }
@@ -207,13 +216,16 @@ public class FileUtil {
             return false;
         } finally {
             if (zip != null) {
-                try { zip.close(); } catch (IOException ioe) {}
+                try {
+                    zip.close();
+                }
+                catch (IOException ioe) {}
             }
             if (files > 0 && logLevel <= Log.WARN)
                 System.err.println("INFO: " + files + " files extracted to " + targetDir);
         }
     }
-    
+
     /**
      * Verify the integrity of a zipfile.
      * There doesn't seem to be any library function to do this,
@@ -244,7 +256,7 @@ public class FileUtil {
                     // noop
                 } else {
                     if (p200TestRequired &&
-                        (entry.getName().endsWith(".jar.pack") || entry.getName().endsWith(".war.pack"))) {
+                            (entry.getName().endsWith(".jar.pack") || entry.getName().endsWith(".war.pack"))) {
                         if (!isPack200Supported()) {
                             System.err.println("ERROR: Zip verify failed, your JVM does not support unpack200");
                             return false;
@@ -272,11 +284,14 @@ public class FileUtil {
             return false;
         } finally {
             if (zip != null) {
-                try { zip.close(); } catch (IOException ioe) {}
+                try {
+                    zip.close();
+                }
+                catch (IOException ioe) {}
             }
         }
     }
-    
+
     /**
      * Public since 0.8.3
      * @since 0.8.1
@@ -356,7 +371,7 @@ public class FileUtil {
 
     /**
      * Read in the last few lines of a (newline delimited) textfile, or null if
-     * the file doesn't exist.  
+     * the file doesn't exist.
      *
      * Warning - this inefficiently allocates a StringBuilder of size maxNumLines*80,
      *           so don't make it too big.
@@ -396,12 +411,15 @@ public class FileUtil {
         } catch (IOException ioe) {
             return null;
         } finally {
-            if (in != null) try { in.close(); } catch (IOException ioe) {}
+            if (in != null) try {
+                    in.close();
+                }
+                catch (IOException ioe) {}
         }
     }
-    
+
     /**
-     * Dump the contents of the given path (relative to the root) to the output 
+     * Dump the contents of the given path (relative to the root) to the output
      * stream.  The path must not go above the root, either - if it does, it will
      * throw a FileNotFoundException
      *
@@ -423,10 +441,16 @@ public class FileUtil {
         try {
             in = new FileInputStream(target);
             DataHelper.copy(in, out);
-            try { out.close(); } catch (IOException ioe) {}
+            try {
+                out.close();
+            }
+            catch (IOException ioe) {}
         } finally {
-            if (in != null) 
-                try { in.close(); } catch (IOException ioe) {}
+            if (in != null)
+                try {
+                    in.close();
+                }
+                catch (IOException ioe) {}
         }
     }
 
@@ -453,12 +477,12 @@ public class FileUtil {
       * @since 0.8.8
       */
     public static boolean copy(File src, File dst, boolean overwriteExisting, boolean quiet) {
-	if (dst.exists() && dst.isDirectory())
+        if (dst.exists() && dst.isDirectory())
             dst = new File(dst, src.getName());
-        
+
         if (!src.exists()) return false;
         if (dst.exists() && !overwriteExisting) return false;
-        
+
         InputStream in = null;
         OutputStream out = null;
         try {
@@ -478,11 +502,17 @@ public class FileUtil {
                 ioe.printStackTrace();
             return false;
         } finally {
-            try { if (in != null) in.close(); } catch (IOException ioe) {}
-            try { if (out != null) out.close(); } catch (IOException ioe) {}
+            try {
+                if (in != null) in.close();
+            }
+            catch (IOException ioe) {}
+            try {
+                if (out != null) out.close();
+            }
+            catch (IOException ioe) {}
         }
     }
-    
+
     /**
      * Try to rename, if it doesn't work then copy and delete the old.
      * Always overwrites any existing "to" file.
@@ -527,39 +557,39 @@ public class FileUtil {
                 System.err.println("Error deleting [" + args[1] + "]");
         } else if ("copy".equals(args[0])) {
             boolean copied = FileUtil.copy(args[1], args[2], false);
-            if (!copied) 
+            if (!copied)
                 System.err.println("Error copying [" + args[1] + "] to [" + args[2] + "]");
         } else if ("unzip".equals(args[0])) {
             File f = new File(args[1]);
             File to = new File("tmp");
             to.mkdir();
             boolean copied = verifyZip(f);
-            if (!copied) 
+            if (!copied)
                 System.err.println("Error verifying " + args[1]);
             copied = extractZip(f,  to);
-            if (copied) 
+            if (copied)
                 System.err.println("Unzipped [" + args[1] + "] to [" + to + "]");
             else
                 System.err.println("Error unzipping [" + args[1] + "] to [" + to + "]");
         } else if ("rename".equals(args[0])) {
             boolean success = rename(new File(args[1]), new File(args[2]));
-            if (!success) 
+            if (!success)
                 System.err.println("Error renaming [" + args[1] + "] to [" + args[2] + "]");
         } else {
             System.err.println("Usage: delete path | copy source dest | rename from to | unzip path.zip");
         }
     }
-    
-  /*****
-    private static void testRmdir() {
-        File t = new File("rmdirTest/test/subdir/blah");
-        boolean created = t.mkdirs();
-        if (!t.exists()) throw new RuntimeException("Unable to create test");
-        boolean deleted = FileUtil.rmdir("rmdirTest", false);
-        if (!deleted) 
-            System.err.println("FAIL: unable to delete rmdirTest");
-        else
-            System.out.println("PASS: rmdirTest deleted");
-    }
-   *****/
+
+    /*****
+      private static void testRmdir() {
+          File t = new File("rmdirTest/test/subdir/blah");
+          boolean created = t.mkdirs();
+          if (!t.exists()) throw new RuntimeException("Unable to create test");
+          boolean deleted = FileUtil.rmdir("rmdirTest", false);
+          if (!deleted)
+              System.err.println("FAIL: unable to delete rmdirTest");
+          else
+              System.out.println("PASS: rmdirTest deleted");
+      }
+     *****/
 }

@@ -25,13 +25,13 @@ public class NSEC3PARAM extends Data {
 
     /**
      * The cryptographic hash algorithm used.
-     * 
+     *
      */
     public final HashAlgorithm hashAlgorithm;
 
     /**
      * The cryptographic hash algorithm used.
-     * 
+     *
      */
     public final byte hashAlgorithmByte;
 
@@ -88,10 +88,10 @@ public class NSEC3PARAM extends Data {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder()
-                .append(hashAlgorithm).append(' ')
-                .append(flags).append(' ')
-                .append(iterations).append(' ')
-                .append(salt.length == 0 ? "-" : new BigInteger(1, salt).toString(16).toUpperCase());
+        .append(hashAlgorithm).append(' ')
+        .append(flags).append(' ')
+        .append(iterations).append(' ')
+        .append(salt.length == 0 ? "-" : new BigInteger(1, salt).toString(16).toUpperCase());
         return sb.toString();
     }
 

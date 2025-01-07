@@ -17,7 +17,7 @@ import static net.i2p.update.UpdateType.*;
  *  @since 0.8.2
  */
 public class NewsHelper extends ContentHelper {
-    
+
     public static final String PROP_LAST_UPDATE_TIME = "router.updateLastDownloaded";
     /** @since 0.8.12 */
     private static final String PROP_LAST_HIDDEN = "routerconsole.newsLastHidden";
@@ -297,54 +297,54 @@ public class NewsHelper extends ContentHelper {
      *  @since 0.9.4 moved from NewsFetcher
      */
     public static String status(RouterContext ctx) {
-         StringBuilder buf = new StringBuilder(128);
-         long now = ctx.clock().now();
-         buf.append("<span id=\"newsStatus\"><i>");
-         long lastUpdated = lastUpdated(ctx);
-         long lastFetch = lastChecked(ctx);
-         if (lastUpdated > 0) {
-             buf.append(Messages.getString("News last updated {0} ago.",
-                                           DataHelper.formatDuration2(now - lastUpdated),
-                                           ctx))
-                .append('\n');
-         }
-         if (lastFetch > lastUpdated) {
-             buf.append(Messages.getString("News last checked {0} ago.",
-                                           DataHelper.formatDuration2(now - lastFetch),
-                                           ctx));
-         }
-         buf.append("</i></span><span id=\"newsDisplay\">");
-         String consoleNonce = CSSHelper.getNonce();
-         if (lastUpdated > 0 && consoleNonce != null) {
-             if (shouldShowNews(ctx)) {
-                 buf.append(" <a href=\"/?news=0&amp;consoleNonce=").append(consoleNonce).append("\">")
-                    .append(Messages.getString("Hide news", ctx));
-             } else {
-                 buf.append(" <a href=\"/?news=1&amp;consoleNonce=").append(consoleNonce).append("\">")
-                    .append(Messages.getString("Show news", ctx));
-             }
-             buf.append("</a>" +
-                        " | <a href=\"/news\">")
-                .append(Messages.getString("Show all news", ctx))
-                .append("</a></span>");
-         }
-         return buf.toString();
+        StringBuilder buf = new StringBuilder(128);
+        long now = ctx.clock().now();
+        buf.append("<span id=\"newsStatus\"><i>");
+        long lastUpdated = lastUpdated(ctx);
+        long lastFetch = lastChecked(ctx);
+        if (lastUpdated > 0) {
+            buf.append(Messages.getString("News last updated {0} ago.",
+                                          DataHelper.formatDuration2(now - lastUpdated),
+                                          ctx))
+            .append('\n');
+        }
+        if (lastFetch > lastUpdated) {
+            buf.append(Messages.getString("News last checked {0} ago.",
+                                          DataHelper.formatDuration2(now - lastFetch),
+                                          ctx));
+        }
+        buf.append("</i></span><span id=\"newsDisplay\">");
+        String consoleNonce = CSSHelper.getNonce();
+        if (lastUpdated > 0 && consoleNonce != null) {
+            if (shouldShowNews(ctx)) {
+                buf.append(" <a href=\"/?news=0&amp;consoleNonce=").append(consoleNonce).append("\">")
+                .append(Messages.getString("Hide news", ctx));
+            } else {
+                buf.append(" <a href=\"/?news=1&amp;consoleNonce=").append(consoleNonce).append("\">")
+                .append(Messages.getString("Show news", ctx));
+            }
+            buf.append("</a>" +
+                       " | <a href=\"/news\">")
+            .append(Messages.getString("Show all news", ctx))
+            .append("</a></span>");
+        }
+        return buf.toString();
     }
-    
+
     /**
      *  @since 0.9.4 moved from NewsFetcher
      */
     public static boolean dontInstall(RouterContext ctx) {
         return isUpdateDisabled(ctx) || isBaseReadonly(ctx);
     }
-    
+
     /**
      *  @since 0.9.9
      */
     public static boolean isUpdateDisabled(RouterContext ctx) {
         return ctx.getBooleanProperty(ConfigUpdateHandler.PROP_UPDATE_DISABLED);
     }
-    
+
     /**
      *  @since 0.9.9
      */

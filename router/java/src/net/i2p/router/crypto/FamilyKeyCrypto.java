@@ -77,7 +77,7 @@ public class FamilyKeyCrypto {
     public static final String OPT_KEY = "family.key";
 
 
-    /** 
+    /**
      *  For signing and verification.
      *
      *  If the context property netdb.family.name is set, this can be used for signing,
@@ -89,8 +89,8 @@ public class FamilyKeyCrypto {
         _fname = _context.getProperty(PROP_FAMILY_NAME);
         if (_fname != null) {
             if (_fname.contains("/") || _fname.contains("\\") ||
-                _fname.contains("..") || (new File(_fname)).isAbsolute() ||
-                _fname.length() <= 0)
+                    _fname.contains("..") || (new File(_fname)).isAbsolute() ||
+                    _fname.length() <= 0)
                 throw new GeneralSecurityException("Illegal family name: " + _fname);
         }
         _privkey = (_fname != null) ? initialize() : null;
@@ -101,8 +101,8 @@ public class FamilyKeyCrypto {
         _knownKeys = new HashMap<String, SigningPublicKey>(8);
         loadCerts();
     }
-    
-    /** 
+
+    /**
      * Create (if necessary) and load the key store, then run.
      */
     private SigningPrivateKey initialize() throws GeneralSecurityException {
@@ -111,8 +111,8 @@ public class FamilyKeyCrypto {
         verifyKeyStore(keyStore);
         return getPrivKey(keyStore);
     }
-    
-    /** 
+
+    /**
      * Clears the caches
      */
     public void shutdown() {
@@ -120,7 +120,7 @@ public class FamilyKeyCrypto {
         _negativeCache.clear();
     }
 
-    /** 
+    /**
      *  Caller must add family to RI also.
      *  throws on all errors
      *
@@ -155,7 +155,7 @@ public class FamilyKeyCrypto {
         return rv;
     }
 
-    /** 
+    /**
      *  Do we have a valid family?
      *  @since 0.9.28
      */
@@ -163,7 +163,7 @@ public class FamilyKeyCrypto {
         return _pubkey != null;
     }
 
-    /** 
+    /**
      *  Get verified members of our family.
      *  Will not contain ourselves.
      *
@@ -174,7 +174,7 @@ public class FamilyKeyCrypto {
         return _ourFamily;
     }
 
-    /** 
+    /**
      *  Get our family name.
      *
      *  @return name or null
@@ -192,7 +192,8 @@ public class FamilyKeyCrypto {
      *  @since 0.9.54
      */
     public enum Result { NO_FAMILY, NO_KEY, NO_SIG, NAME_CHANGED, SIG_CHANGED, INVALID_SIG,
-                         UNSUPPORTED_SIG, BAD_KEY, BAD_SIG, RI_KEY, STORED_KEY }
+                         UNSUPPORTED_SIG, BAD_KEY, BAD_SIG, RI_KEY, STORED_KEY
+                       }
 
     /**
      *  Cached name/sig/result.
@@ -203,11 +204,13 @@ public class FamilyKeyCrypto {
         public final String name, sig;
         public final Result result;
         public Verified(String n, String s, Result r) {
-            name = n; sig = s; result = r;
+            name = n;
+            sig = s;
+            result = r;
         }
     }
 
-    /** 
+    /**
      *  Verify the family signature in a RouterInfo.
      *  This requires a family key in the RI,
      *  or a certificate file for the family
@@ -225,7 +228,7 @@ public class FamilyKeyCrypto {
         return rv;
     }
 
-    /** 
+    /**
      *  Verify the family in a RouterInfo matches ours and the signature is good.
      *  Returns false if we don't have a family and sig, or they don't.
      *  Returns false for ourselves.
@@ -255,7 +258,7 @@ public class FamilyKeyCrypto {
         return rv;
     }
 
-    /** 
+    /**
      *  Verify the family in a RouterInfo, name already retrieved
      *  @since 0.9.28
      */
@@ -314,18 +317,18 @@ public class FamilyKeyCrypto {
                         } catch (NumberFormatException e) {
                             if (_log.shouldInfo())
                                 _log.info("Bad b64 family key: " + ri, e);
-                             _negativeCache.put(h, Result.BAD_KEY);
-                             return Result.BAD_KEY;
+                            _negativeCache.put(h, Result.BAD_KEY);
+                            return Result.BAD_KEY;
                         } catch (IllegalArgumentException e) {
                             if (_log.shouldInfo())
                                 _log.info("Bad b64 family key: " + ri, e);
-                             _negativeCache.put(h, Result.BAD_KEY);
-                             return Result.BAD_KEY;
+                            _negativeCache.put(h, Result.BAD_KEY);
+                            return Result.BAD_KEY;
                         } catch (ArrayIndexOutOfBoundsException e) {
                             if (_log.shouldInfo())
                                 _log.info("Bad b64 family key: " + ri, e);
-                             _negativeCache.put(h, Result.BAD_KEY);
-                             return Result.BAD_KEY;
+                            _negativeCache.put(h, Result.BAD_KEY);
+                            return Result.BAD_KEY;
                         }
                     }
                 }
@@ -416,22 +419,22 @@ public class FamilyKeyCrypto {
         String cname = _fname + CN_SUFFIX;
 
         Object[] rv = KeyStoreUtil.createKeysAndCRL(ks, KeyStoreUtil.DEFAULT_KEYSTORE_PASSWORD, _fname, cname, "family",
-                                                  DEFAULT_KEY_VALID_DAYS, DEFAULT_KEY_ALGORITHM,
-                                                  DEFAULT_KEY_SIZE, keyPassword);
+                      DEFAULT_KEY_VALID_DAYS, DEFAULT_KEY_ALGORITHM,
+                      DEFAULT_KEY_SIZE, keyPassword);
 
-                Map<String, String> changes = new HashMap<String, String>();
-                changes.put(PROP_KEYSTORE_PASSWORD, KeyStoreUtil.DEFAULT_KEYSTORE_PASSWORD);
-                changes.put(PROP_KEY_PASSWORD, keyPassword);
-                changes.put(PROP_FAMILY_NAME, _fname);
-                _context.router().saveConfig(changes, null);
+        Map<String, String> changes = new HashMap<String, String>();
+        changes.put(PROP_KEYSTORE_PASSWORD, KeyStoreUtil.DEFAULT_KEYSTORE_PASSWORD);
+        changes.put(PROP_KEY_PASSWORD, keyPassword);
+        changes.put(PROP_FAMILY_NAME, _fname);
+        _context.router().saveConfig(changes, null);
 
-            _log.logAlways(Log.INFO, "Created new private key for netdb family \"" + _fname +
-                           "\" in keystore: " + ks.getAbsolutePath() + "\n" +
-                           "Copy the keystore to the other routers in the family,\n" +
-                           "and add the following entries to their router.config file:\n" +
-                           PROP_FAMILY_NAME + '=' + _fname + '\n' +
-                           PROP_KEYSTORE_PASSWORD + '=' + KeyStoreUtil.DEFAULT_KEYSTORE_PASSWORD + '\n' +
-                           PROP_KEY_PASSWORD + '=' + keyPassword);
+        _log.logAlways(Log.INFO, "Created new private key for netdb family \"" + _fname +
+                       "\" in keystore: " + ks.getAbsolutePath() + "\n" +
+                       "Copy the keystore to the other routers in the family,\n" +
+                       "and add the following entries to their router.config file:\n" +
+                       PROP_FAMILY_NAME + '=' + _fname + '\n' +
+                       PROP_KEYSTORE_PASSWORD + '=' + KeyStoreUtil.DEFAULT_KEYSTORE_PASSWORD + '\n' +
+                       PROP_KEY_PASSWORD + '=' + keyPassword);
 
         X509Certificate cert = (X509Certificate) rv[2];
         exportCert(cert);
@@ -439,7 +442,7 @@ public class FamilyKeyCrypto {
         exportCRL(ks.getParentFile(), crl);
     }
 
-    /** 
+    /**
      * Save the public key certificate
      * so the clients can get to it.
      */
@@ -451,10 +454,10 @@ public class FamilyKeyCrypto {
             boolean success = CertUtil.saveCert(cert, out);
             if (success) {
                 _log.logAlways(Log.INFO, "Created new public key certificate for netdb family \"" + _fname +
-                           "\" in file: " + out.getAbsolutePath() + "\n" +
-                           "The certificate will be associated with your router identity.\n" +
-                           "Copy the certificate to the directory $I2P/" + CERT_DIR + " for each of the other routers in the family.\n" +
-                           "Give this certificate to an I2P developer for inclusion in the next I2P release.");
+                               "\" in file: " + out.getAbsolutePath() + "\n" +
+                               "The certificate will be associated with your router identity.\n" +
+                               "Copy the certificate to the directory $I2P/" + CERT_DIR + " for each of the other routers in the family.\n" +
+                               "Give this certificate to an I2P developer for inclusion in the next I2P release.");
             } else {
                 _log.error("Error saving family key certificate");
             }
@@ -463,7 +466,7 @@ public class FamilyKeyCrypto {
         }
     }
 
-    /** 
+    /**
      * Save the CRL just in case.
      * @param ksdir parent of directory to save in
      * @since 0.9.25
@@ -476,9 +479,9 @@ public class FamilyKeyCrypto {
             boolean success = CertUtil.saveCRL(crl, out);
             if (success) {
                 _log.logAlways(Log.INFO, "Created certificate revocation list (CRL) for netdb family \"" + _fname +
-                           "\" in file: " + out.getAbsolutePath() + "\n" +
-                           "Back up the keystore and CRL files and keep them secure.\n" +
-                           "If your private key is ever compromised, give the CRL to an I2P developer for publication.");
+                               "\" in file: " + out.getAbsolutePath() + "\n" +
+                               "Back up the keystore and CRL files and keep them secure.\n" +
+                               "If your private key is ever compromised, give the CRL to an I2P developer for publication.");
             } else {
                 _log.error("Error saving family key CRL");
             }
@@ -487,7 +490,7 @@ public class FamilyKeyCrypto {
         }
     }
 
-    /** 
+    /**
      * Load all the certs.
      *
      * @since 0.9.54
@@ -514,7 +517,7 @@ public class FamilyKeyCrypto {
         }
     }
 
-    /** 
+    /**
      * Load a public key from a cert.
      *
      * @return null on all errors
@@ -531,7 +534,7 @@ public class FamilyKeyCrypto {
         return null;
     }
 
-    /** 
+    /**
      * Get the private key from the keystore
      * @return non-null, throws on all errors
      */
@@ -540,7 +543,7 @@ public class FamilyKeyCrypto {
         String keyPass = _context.getProperty(PROP_KEY_PASSWORD);
         if (keyPass == null)
             throw new GeneralSecurityException("No key password, set " + PROP_KEY_PASSWORD +
-                       " in " + (new File(_context.getConfigDir(), "router.config")).getAbsolutePath());
+                                               " in " + (new File(_context.getConfigDir(), "router.config")).getAbsolutePath());
         try {
             PrivateKey pk = KeyStoreUtil.getPrivateKey(ks, ksPass, _fname, keyPass);
             if (pk == null)

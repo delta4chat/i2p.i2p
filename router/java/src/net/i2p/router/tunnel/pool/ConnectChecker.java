@@ -187,50 +187,50 @@ public class ConnectChecker {
         int ct = 0;
         Status status = ctx.commSystem().getStatus();
         switch (status) {
-            case OK:
-            case IPV4_UNKNOWN_IPV6_OK:
-            case IPV4_FIREWALLED_IPV6_OK:
-            case IPV4_SNAT_IPV6_OK:
-            case IPV4_SNAT_IPV6_UNKNOWN:
-            case IPV4_FIREWALLED_IPV6_UNKNOWN:
-            case IPV4_UNKNOWN_IPV6_FIREWALLED:
-            case IPV4_OK_IPV6_FIREWALLED:
-            case DIFFERENT:
-            case REJECT_UNSOLICITED:
-                // use what we published
-                Collection<RouterAddress> at = us.getAddresses();
-                if (at.isEmpty())
-                    return 0;
-                ct = getConnectMask(at);
-                break;
+        case OK:
+        case IPV4_UNKNOWN_IPV6_OK:
+        case IPV4_FIREWALLED_IPV6_OK:
+        case IPV4_SNAT_IPV6_OK:
+        case IPV4_SNAT_IPV6_UNKNOWN:
+        case IPV4_FIREWALLED_IPV6_UNKNOWN:
+        case IPV4_UNKNOWN_IPV6_FIREWALLED:
+        case IPV4_OK_IPV6_FIREWALLED:
+        case DIFFERENT:
+        case REJECT_UNSOLICITED:
+            // use what we published
+            Collection<RouterAddress> at = us.getAddresses();
+            if (at.isEmpty())
+                return 0;
+            ct = getConnectMask(at);
+            break;
 
-            case IPV4_DISABLED_IPV6_OK:
-            case IPV4_DISABLED_IPV6_UNKNOWN:
-            // maybe should return zero for this one?
-            case IPV4_DISABLED_IPV6_FIREWALLED:
-                // TODO look at force-firewalled settings per-transport
-                if (!isNTCPDisabled())
-                    ct |= NTCP_V6;
-                if (!isSSUDisabled()) {
-                    ct |= SSU_V6;
-                    if (isSSU2Enabled())
-                        ct |= SSU2_V6;
-                }
-                break;
+        case IPV4_DISABLED_IPV6_OK:
+        case IPV4_DISABLED_IPV6_UNKNOWN:
+        // maybe should return zero for this one?
+        case IPV4_DISABLED_IPV6_FIREWALLED:
+            // TODO look at force-firewalled settings per-transport
+            if (!isNTCPDisabled())
+                ct |= NTCP_V6;
+            if (!isSSUDisabled()) {
+                ct |= SSU_V6;
+                if (isSSU2Enabled())
+                    ct |= SSU2_V6;
+            }
+            break;
 
-            case IPV4_OK_IPV6_UNKNOWN:
-            case DISCONNECTED:
-            case HOSED:
-            case UNKNOWN:
-            default:
-                if (!isNTCPDisabled())
-                    ct |= NTCP_V4;
-                if (!isSSUDisabled()) {
-                    ct |= SSU_V4;
-                    if (isSSU2Enabled())
-                        ct |= SSU2_V4;
-                }
-                break;
+        case IPV4_OK_IPV6_UNKNOWN:
+        case DISCONNECTED:
+        case HOSED:
+        case UNKNOWN:
+        default:
+            if (!isNTCPDisabled())
+                ct |= NTCP_V4;
+            if (!isSSUDisabled()) {
+                ct |= SSU_V4;
+                if (isSSU2Enabled())
+                    ct |= SSU2_V4;
+            }
+            break;
         }
         return ct;
     }
@@ -247,60 +247,13 @@ public class ConnectChecker {
         int cf = 0;
         Status status = ctx.commSystem().getStatus();
         switch (status) {
-            case OK:
-                // use what we published, as the OK state doesn't tell us about IPv6
-                // Addresses.isConnectedIPv6() is too slow
-                Collection<RouterAddress> a = us.getAddresses();
-                if (a.isEmpty()) {
-                    // we are hidden
-                    // TODO ipv6
-                    if (!isNTCPDisabled())
-                        cf |= NTCP_V4;
-                    if (!isSSUDisabled()) {
-                        cf |= SSU_V4;
-                        if (isSSU2Enabled())
-                            cf |= SSU2_V4;
-                    }
-                } else {
-                    cf = getConnectMask(a);
-                }
-                break;
-
-            case IPV4_OK_IPV6_FIREWALLED:
-            case IPV4_UNKNOWN_IPV6_OK:
-            case IPV4_FIREWALLED_IPV6_OK:
-            case IPV4_SNAT_IPV6_OK:
-            case IPV4_UNKNOWN_IPV6_FIREWALLED:
-                if (!isNTCPDisabled())
-                    cf |= NTCP_V4 | NTCP_V6;
-                if (!isSSUDisabled()) {
-                    cf |= SSU_V4 | SSU_V6;
-                    if (isSSU2Enabled())
-                        cf |= SSU2_V4 | SSU2_V6;
-                }
-                break;
-
-            case IPV4_DISABLED_IPV6_OK:
-            case IPV4_DISABLED_IPV6_UNKNOWN:
-            case IPV4_DISABLED_IPV6_FIREWALLED:
-                if (!isNTCPDisabled())
-                    cf |= NTCP_V6;
-                if (!isSSUDisabled()) {
-                    cf |= SSU_V6;
-                    if (isSSU2Enabled())
-                        cf |= SSU2_V6;
-                }
-                break;
-
-            case DIFFERENT:
-            case IPV4_SNAT_IPV6_UNKNOWN:
-            case IPV4_FIREWALLED_IPV6_UNKNOWN:
-            case REJECT_UNSOLICITED:
-            case IPV4_OK_IPV6_UNKNOWN:
-            case DISCONNECTED:
-            case HOSED:
-            case UNKNOWN:
-            default:
+        case OK:
+            // use what we published, as the OK state doesn't tell us about IPv6
+            // Addresses.isConnectedIPv6() is too slow
+            Collection<RouterAddress> a = us.getAddresses();
+            if (a.isEmpty()) {
+                // we are hidden
+                // TODO ipv6
                 if (!isNTCPDisabled())
                     cf |= NTCP_V4;
                 if (!isSSUDisabled()) {
@@ -308,7 +261,54 @@ public class ConnectChecker {
                     if (isSSU2Enabled())
                         cf |= SSU2_V4;
                 }
-                break;
+            } else {
+                cf = getConnectMask(a);
+            }
+            break;
+
+        case IPV4_OK_IPV6_FIREWALLED:
+        case IPV4_UNKNOWN_IPV6_OK:
+        case IPV4_FIREWALLED_IPV6_OK:
+        case IPV4_SNAT_IPV6_OK:
+        case IPV4_UNKNOWN_IPV6_FIREWALLED:
+            if (!isNTCPDisabled())
+                cf |= NTCP_V4 | NTCP_V6;
+            if (!isSSUDisabled()) {
+                cf |= SSU_V4 | SSU_V6;
+                if (isSSU2Enabled())
+                    cf |= SSU2_V4 | SSU2_V6;
+            }
+            break;
+
+        case IPV4_DISABLED_IPV6_OK:
+        case IPV4_DISABLED_IPV6_UNKNOWN:
+        case IPV4_DISABLED_IPV6_FIREWALLED:
+            if (!isNTCPDisabled())
+                cf |= NTCP_V6;
+            if (!isSSUDisabled()) {
+                cf |= SSU_V6;
+                if (isSSU2Enabled())
+                    cf |= SSU2_V6;
+            }
+            break;
+
+        case DIFFERENT:
+        case IPV4_SNAT_IPV6_UNKNOWN:
+        case IPV4_FIREWALLED_IPV6_UNKNOWN:
+        case REJECT_UNSOLICITED:
+        case IPV4_OK_IPV6_UNKNOWN:
+        case DISCONNECTED:
+        case HOSED:
+        case UNKNOWN:
+        default:
+            if (!isNTCPDisabled())
+                cf |= NTCP_V4;
+            if (!isSSUDisabled()) {
+                cf |= SSU_V4;
+                if (isSSU2Enabled())
+                    cf |= SSU2_V4;
+            }
+            break;
         }
         return cf;
     }
@@ -401,29 +401,29 @@ public class ConnectChecker {
         return rv;
     }
 
-/*
-    public static void main(String[] args) throws Exception {
-        if (args.length != 2) {
-            System.err.println("Usage: ConnectChecker from-ri.dat to-ri.dat");
-            System.exit(1);
+    /*
+        public static void main(String[] args) throws Exception {
+            if (args.length != 2) {
+                System.err.println("Usage: ConnectChecker from-ri.dat to-ri.dat");
+                System.exit(1);
+            }
+            RouterInfo from = new RouterInfo();
+            RouterInfo to = new RouterInfo();
+            java.io.FileInputStream is = new java.io.FileInputStream(args[0]);
+            from.readBytes(is);
+            is.close();
+            is = new java.io.FileInputStream(args[1]);
+            to.readBytes(is);
+            is.close();
+            Collection<RouterAddress> fa = from.getAddresses();
+            Collection<RouterAddress> ta = to.getAddresses();
+            int fm = getConnectMask(fa);
+            int tm = getConnectMask(ta);
+            System.out.println("From:\n" + from);
+            System.out.println("To:\n" + to);
+            System.out.println("From mask: " + fm);
+            System.out.println("To mask: " + tm);
+            System.out.println("Can connect? " + ((fm & tm) != 0));
         }
-        RouterInfo from = new RouterInfo();
-        RouterInfo to = new RouterInfo();
-        java.io.FileInputStream is = new java.io.FileInputStream(args[0]);
-        from.readBytes(is);
-        is.close();
-        is = new java.io.FileInputStream(args[1]);
-        to.readBytes(is);
-        is.close();
-        Collection<RouterAddress> fa = from.getAddresses();
-        Collection<RouterAddress> ta = to.getAddresses();
-        int fm = getConnectMask(fa);
-        int tm = getConnectMask(ta);
-        System.out.println("From:\n" + from);
-        System.out.println("To:\n" + to);
-        System.out.println("From mask: " + fm);
-        System.out.println("To mask: " + tm);
-        System.out.println("Can connect? " + ((fm & tm) != 0));
-    }
-*/
+    */
 }

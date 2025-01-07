@@ -90,7 +90,7 @@ public class WorkingDir {
                 String appdata = System.getenv("APPDATA");
                 if (appdata != null) {
                     File checkOld = new File(appdata, WORKING_DIR_DEFAULT_WINDOWS);
-                    if (checkOld.exists() && checkOld.isDirectory()){
+                    if (checkOld.exists() && checkOld.isDirectory()) {
                         File routerConfig = new File(checkOld.getAbsolutePath(), "router.config");
                         // The Firefox profile installer was mistakenly using the Roaming application data
                         // which is synced between devices on some Windows machines using MS cloud services,
@@ -122,7 +122,7 @@ public class WorkingDir {
             } else {
                 if (SystemVersion.isLinuxService()) {
                     if (SystemVersion.isGentoo() &&
-                        SystemVersion.GENTOO_USER.equals(System.getProperty("user.name"))) {
+                            SystemVersion.GENTOO_USER.equals(System.getProperty("user.name"))) {
                         // whoops, we didn't recognize Gentoo as a service until 0.9.29,
                         // so the config dir was /var/lib/i2p/.i2p through 0.9.28
                         // and changed to /var/lib/i2p/i2p-config in 0.9.29.
@@ -179,7 +179,7 @@ public class WorkingDir {
         if (!test.exists()) {
             setupSystemOut(cwd);
             System.err.println("ERROR - Cannot find I2P installation in " + cwd +
-                  " - Will probably be just a router with no apps or console at all!");
+                               " - Will probably be just a router with no apps or console at all!");
             // we are probably doomed...
             return cwd;
         }
@@ -384,8 +384,8 @@ public class WorkingDir {
                     s = s.substring(0, s.length() - 1);
                 if (s.endsWith("=\"eepsite/jetty.xml\"")) {
                     s = s.replace("=\"eepsite/jetty.xml\"", "=\"" + todir.getAbsolutePath() +
-                                                            File.separatorChar + "eepsite" +
-                                                            File.separatorChar + "jetty.xml\"");
+                                  File.separatorChar + "eepsite" +
+                                  File.separatorChar + "jetty.xml\"");
                 } else if (isDaemon && s.equals("clientApp.4.startOnLoad=true")) {
                     // disable browser launch for daemon
                     s = "clientApp.4.startOnLoad=false";
@@ -400,7 +400,10 @@ public class WorkingDir {
             System.err.println("FAILED copy " + oldFile + ": " + ioe);
             return false;
         } finally {
-            if (in != null) try { in.close(); } catch (IOException ioe) {}
+            if (in != null) try {
+                    in.close();
+                }
+                catch (IOException ioe) {}
             if (out != null) out.close();
         }
     }
@@ -437,7 +440,10 @@ public class WorkingDir {
             System.err.println("FAILED copy " + oldFile + ": " + ioe);
             return false;
         } finally {
-            if (in != null) try { in.close(); } catch (IOException ioe) {}
+            if (in != null) try {
+                    in.close();
+                }
+                catch (IOException ioe) {}
             if (out != null) out.close();
         }
     }
@@ -503,8 +509,14 @@ public class WorkingDir {
             System.err.println("FAILED copy " + src.getPath() + ": " + ioe);
             rv = false;
         } finally {
-            if (in != null) try { in.close(); } catch (IOException ioe) {}
-            if (out != null) try { out.close(); } catch (IOException ioe) {}
+            if (in != null) try {
+                    in.close();
+                }
+                catch (IOException ioe) {}
+            if (out != null) try {
+                    out.close();
+                }
+                catch (IOException ioe) {}
         }
         if (rv)
             dst.setLastModified(src.lastModified());

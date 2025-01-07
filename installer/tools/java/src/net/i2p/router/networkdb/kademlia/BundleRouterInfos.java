@@ -62,7 +62,7 @@ public class BundleRouterInfos {
         boolean error = false;
         int c;
         while ((c = g.getopt()) != -1) {
-          switch (c) {
+            switch (c) {
             case 'i':
                 in = g.getOptarg();
                 break;
@@ -84,7 +84,7 @@ public class BundleRouterInfos {
             case ':':
             default:
                 error = true;
-          }
+            }
         }
         if (error) {
             usage();
@@ -116,7 +116,10 @@ public class BundleRouterInfos {
         } catch (DataFormatException e) {
             //System.out.println("Can't determine our identity");
         } finally {
-            if (fis != null) try { fis.close(); } catch (IOException ioe) {}
+            if (fis != null) try {
+                    fis.close();
+                }
+                catch (IOException ioe) {}
         }
 
         int routerCount = 0;
@@ -156,7 +159,10 @@ public class BundleRouterInfos {
                 fis = new BufferedInputStream(new FileInputStream(file));
                 RouterInfo ri = new RouterInfo();
                 ri.readBytes(fis, true);  // true = verify sig on read
-                try { fis.close(); } catch (IOException ioe) {}
+                try {
+                    fis.close();
+                }
+                catch (IOException ioe) {}
                 fis = null;
                 if (ri.getPublished() < tooOld) {
                     System.out.println("Skipping too old " + key);
@@ -218,7 +224,10 @@ public class BundleRouterInfos {
             } catch (DataFormatException e) {
                 System.out.println("Skipping bad " + file);
             } finally {
-                if (fis != null) try { fis.close(); } catch (IOException ioe) {}
+                if (fis != null) try {
+                        fis.close();
+                    }
+                    catch (IOException ioe) {}
             }
         }
         if (copied > 0) {

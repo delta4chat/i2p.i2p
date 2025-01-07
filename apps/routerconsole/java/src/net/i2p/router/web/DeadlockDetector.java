@@ -106,7 +106,7 @@ public class DeadlockDetector extends SimpleTimer2.TimedEvent {
             if (cmgr != null) {
                 NotificationService ns = (NotificationService) cmgr.getRegisteredApp("desktopgui");
                 if (ns != null) {
-                    ns.notify("Router", null, Log.CRIT, Messages.getString("Router", ctx), 
+                    ns.notify("Router", null, Log.CRIT, Messages.getString("Router", ctx),
                               msg1 + '\n' + msg2, null);
                 }
             }
@@ -128,41 +128,41 @@ public class DeadlockDetector extends SimpleTimer2.TimedEvent {
         return _isDeadlocked.get();
     }
 
-/*
-    public static void main(String[] args) {
-        final Object o1 = new Object();
-        final Object o2 = new Object();
-        Thread t1 = new Thread(new Runnable() {
-            public void run() {
-                synchronized(o1) {
-                    try { Thread.sleep(1000); } catch (InterruptedException ie) {}
-                    // should hang here
-                    synchronized(o2) {
-                        System.out.println("Test fail");
-                    }
-                }
-            }
-        });
-        t1.start();
-        Thread t2 = new Thread(new Runnable() {
-            public void run() {
-                synchronized(o2) {
-                    // should hang here
+    /*
+        public static void main(String[] args) {
+            final Object o1 = new Object();
+            final Object o2 = new Object();
+            Thread t1 = new Thread(new Runnable() {
+                public void run() {
                     synchronized(o1) {
-                        System.out.println("Test fail");
+                        try { Thread.sleep(1000); } catch (InterruptedException ie) {}
+                        // should hang here
+                        synchronized(o2) {
+                            System.out.println("Test fail");
+                        }
                     }
                 }
-            }
-        });
-        t2.start();
-        try { Thread.sleep(1000); } catch (InterruptedException ie) {}
-        long start = System.currentTimeMillis();
-        boolean yes = detect(I2PAppContext.getGlobalContext());
-        if (!yes)
-            System.out.println("Test fail");
-        long time = System.currentTimeMillis() - start;
-        System.out.println("Test took " + time + "ms");
-    }
-*/
+            });
+            t1.start();
+            Thread t2 = new Thread(new Runnable() {
+                public void run() {
+                    synchronized(o2) {
+                        // should hang here
+                        synchronized(o1) {
+                            System.out.println("Test fail");
+                        }
+                    }
+                }
+            });
+            t2.start();
+            try { Thread.sleep(1000); } catch (InterruptedException ie) {}
+            long start = System.currentTimeMillis();
+            boolean yes = detect(I2PAppContext.getGlobalContext());
+            if (!yes)
+                System.out.println("Test fail");
+            long time = System.currentTimeMillis() - start;
+            System.out.println("Test took " + time + "ms");
+        }
+    */
 }
 

@@ -26,7 +26,7 @@ class UnsignedUpdateChecker extends UpdateRunner {
     private boolean _unsignedUpdateAvailable;
 
     public UnsignedUpdateChecker(RouterContext ctx, ConsoleUpdateManager mgr,
-                                 List<URI> uris, long lastUpdateTime) { 
+                                 List<URI> uris, long lastUpdateTime) {
         super(ctx, mgr, UpdateType.ROUTER_UNSIGNED, uris);
         _ms = lastUpdateTime;
     }
@@ -61,8 +61,8 @@ class UnsignedUpdateChecker extends UpdateRunner {
         String proxyHost = _context.getProperty(ConfigUpdateHandler.PROP_PROXY_HOST, ConfigUpdateHandler.DEFAULT_PROXY_HOST);
         int proxyPort = _context.getProperty(ConfigUpdateHandler.PROP_PROXY_PORT, ConfigUpdateHandler.DEFAULT_PROXY_PORT_INT);
         if (proxyPort == ConfigUpdateHandler.DEFAULT_PROXY_PORT_INT &&
-            proxyHost.equals(ConfigUpdateHandler.DEFAULT_PROXY_HOST) &&
-            _context.portMapper().getPort(PortMapper.SVC_HTTP_PROXY) < 0) {
+                proxyHost.equals(ConfigUpdateHandler.DEFAULT_PROXY_HOST) &&
+                _context.portMapper().getPort(PortMapper.SVC_HTTP_PROXY) < 0) {
             String msg = _t("HTTP client proxy tunnel must be running");
             if (_log.shouldWarn())
                 _log.warn(msg);
@@ -72,41 +72,41 @@ class UnsignedUpdateChecker extends UpdateRunner {
 
         //updateStatus("<b>" + _t("Checking for development build update") + "</b>");
         //try {
-            EepHead get = new EepHead(_context, proxyHost, proxyPort, 0, url);
-            if (get.fetch()) {
-                String lastmod = get.getLastModified();
-                if (lastmod != null) {
-                    long modtime = RFC822Date.parse822Date(lastmod);
-                    if (modtime <= 0) return false;
-                    if (_ms <= 0) return false;
-                    if (modtime > _ms) {
-                        String newVersion = Long.toString(modtime);
-                        if (SystemVersion.isJava7()) {
-                            _unsignedUpdateAvailable = true;
-                            _mgr.notifyVersionAvailable(this, _urls.get(0), getType(), "", getMethod(), _urls,
-                                                        newVersion, "");
-                        } else {
-                            String ourJava = System.getProperty("java.version");
-                            String msg = _mgr._t("Requires Java version {0} but installed Java version is {1}", "1.7", ourJava);
-                            _log.logAlways(Log.WARN, "Cannot update to version " + newVersion + ": " + msg);
-                            _mgr.notifyVersionConstraint(this, _urls.get(0), getType(), "", newVersion, msg);
-                        }
+        EepHead get = new EepHead(_context, proxyHost, proxyPort, 0, url);
+        if (get.fetch()) {
+            String lastmod = get.getLastModified();
+            if (lastmod != null) {
+                long modtime = RFC822Date.parse822Date(lastmod);
+                if (modtime <= 0) return false;
+                if (_ms <= 0) return false;
+                if (modtime > _ms) {
+                    String newVersion = Long.toString(modtime);
+                    if (SystemVersion.isJava7()) {
+                        _unsignedUpdateAvailable = true;
+                        _mgr.notifyVersionAvailable(this, _urls.get(0), getType(), "", getMethod(), _urls,
+                                                    newVersion, "");
+                    } else {
+                        String ourJava = System.getProperty("java.version");
+                        String msg = _mgr._t("Requires Java version {0} but installed Java version is {1}", "1.7", ourJava);
+                        _log.logAlways(Log.WARN, "Cannot update to version " + newVersion + ": " + msg);
+                        _mgr.notifyVersionConstraint(this, _urls.get(0), getType(), "", newVersion, msg);
                     }
                 }
-                return true;
-            } else {
-                int status = get.getStatusCode();
-                String msg;
-                if (status == 504 || status <= 0)
-                    msg = "Unable to connect to development update server " + _currentURI.getHost();
-                else if (status == 500)
-                    msg = "Development update server " + _currentURI.getHost() + " not found in address book";
-                else if (status == 404)
-                    msg = "Update file not found on development update server at " + url;
-                else
-                    msg = status + " " + DataHelper.stripHTML(get.getStatusText());
-                updateStatus("<b>" + msg + "</b>");
             }
+            return true;
+        } else {
+            int status = get.getStatusCode();
+            String msg;
+            if (status == 504 || status <= 0)
+                msg = "Unable to connect to development update server " + _currentURI.getHost();
+            else if (status == 500)
+                msg = "Development update server " + _currentURI.getHost() + " not found in address book";
+            else if (status == 404)
+                msg = "Update file not found on development update server at " + url;
+            else
+                msg = status + " " + DataHelper.stripHTML(get.getStatusText());
+            updateStatus("<b>" + msg + "</b>");
+        }
         //} catch (Throwable t) {
         //    _log.error("Error fetching the update", t);
         //}

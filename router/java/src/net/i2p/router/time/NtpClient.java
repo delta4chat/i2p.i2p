@@ -2,29 +2,29 @@ package net.i2p.router.time;
 /*
  * Copyright (c) 2004, Adam Buckley
  * All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without 
+ *
+ * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
- * - Redistributions of source code must retain the above copyright notice, 
+ *
+ * - Redistributions of source code must retain the above copyright notice,
  *   this list of conditions and the following disclaimer.
- * - Redistributions in binary form must reproduce the above copyright notice, 
+ * - Redistributions in binary form must reproduce the above copyright notice,
  *   this list of conditions and the following disclaimer in the documentation
  *   and/or other materials provided with the distribution.
- * - Neither the name of Adam Buckley nor the names of its contributors may be 
- *   used to endorse or promote products derived from this software without 
+ * - Neither the name of Adam Buckley nor the names of its contributors may be
+ *   used to endorse or promote products derived from this software without
  *   specific prior written permission.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
  */
@@ -85,23 +85,23 @@ public class NtpClient {
      * @return milliseconds since january 1, 1970 (UTC)
      * @throws IllegalArgumentException if none of the servers are reachable
      */
-/****
-    public static long currentTime(String serverNames[]) {
-        if (serverNames == null) 
-            throw new IllegalArgumentException("No NTP servers specified");
-        ArrayList<String> names = new ArrayList<String>(serverNames.length);
-        for (int i = 0; i < serverNames.length; i++)
-            names.add(serverNames[i]);
-        Collections.shuffle(names);
-        for (int i = 0; i < names.size(); i++) {
-            long now = currentTime(names.get(i));
-            if (now > 0)
-                return now;
+    /****
+        public static long currentTime(String serverNames[]) {
+            if (serverNames == null)
+                throw new IllegalArgumentException("No NTP servers specified");
+            ArrayList<String> names = new ArrayList<String>(serverNames.length);
+            for (int i = 0; i < serverNames.length; i++)
+                names.add(serverNames[i]);
+            Collections.shuffle(names);
+            for (int i = 0; i < names.size(); i++) {
+                long now = currentTime(names.get(i));
+                if (now > 0)
+                    return now;
+            }
+            throw new IllegalArgumentException("No reachable NTP servers specified");
         }
-        throw new IllegalArgumentException("No reachable NTP servers specified");
-    }
-****/
-    
+    ****/
+
     /**
      * Query the ntp servers, returning the current time from first one we find
      * Hack to return time and stratum
@@ -112,7 +112,7 @@ public class NtpClient {
      * @since 0.7.12
      */
     static long[] currentTimeAndStratum(String serverNames[], int perServerTimeout, boolean preferIPv6, Log log) {
-        if (serverNames == null) 
+        if (serverNames == null)
             throw new IllegalArgumentException("No NTP servers specified");
         ArrayList<String> names = new ArrayList<String>(serverNames.length);
         for (int i = 0; i < serverNames.length; i++)
@@ -125,20 +125,20 @@ public class NtpClient {
         }
         throw new IllegalArgumentException("No reachable NTP servers specified");
     }
-    
+
     /**
      * Query the given NTP server, returning the current internet time
      *
      * @return milliseconds since january 1, 1970 (UTC), or -1 on error
      */
-/****
-    public static long currentTime(String serverName) {
-         long[] la = currentTimeAndStratum(serverName, DEFAULT_TIMEOUT);
-         if (la != null)
-             return la[0];
-         return -1;
-    }
-****/
+    /****
+        public static long currentTime(String serverName) {
+             long[] la = currentTimeAndStratum(serverName, DEFAULT_TIMEOUT);
+             if (la != null)
+                 return la[0];
+             return -1;
+        }
+    ****/
 
     /**
      * Hack to return time and stratum
@@ -202,7 +202,7 @@ public class NtpClient {
             // Set the transmit timestamp *just* before sending the packet
             // ToDo: Does this actually improve performance or not?
             NtpMessage.encodeTimestamp(packet.getData(), OFF_TXTIME,
-                                       (System.currentTimeMillis()/1000.0) 
+                                       (System.currentTimeMillis()/1000.0)
                                        + SECONDS_1900_TO_EPOCH);
 
             socket.send(packet);
@@ -262,13 +262,13 @@ public class NtpClient {
             // See http://doolittle.icarus.com/ntpclient/README
             // See RFC 4330 Sec. 5
             if (msg.leapIndicator == 3 ||
-                msg.version < 3 ||
-                // 4 for server. Above reference is wrong, it says 3 which is client.
-                msg.mode != 4 ||
-                msg.transmitTimestamp <= 0 ||
-                // following values are in seconds, vs. 1/65536 seconds in above reference
-                Math.abs(msg.rootDelay) > 1.0d ||
-                Math.abs(msg.rootDispersion) > 1.0d) {
+                    msg.version < 3 ||
+                    // 4 for server. Above reference is wrong, it says 3 which is client.
+                    msg.mode != 4 ||
+                    msg.transmitTimestamp <= 0 ||
+                    // following values are in seconds, vs. 1/65536 seconds in above reference
+                    Math.abs(msg.rootDelay) > 1.0d ||
+                    Math.abs(msg.rootDispersion) > 1.0d) {
                 if (log != null && log.shouldWarn())
                     log.warn("Failed sanity checks:\n" + msg);
                 return null;
@@ -288,7 +288,7 @@ public class NtpClient {
 
             double localClockOffset = ((msg.receiveTimestamp - msg.originateTimestamp) +
                                        (msg.transmitTimestamp - destinationTimestamp)) / 2;
-            
+
             long[] rv = new long[2];
             rv[0] = (long)(System.currentTimeMillis() + localClockOffset*1000);
             rv[1] = msg.stratum;
@@ -308,7 +308,7 @@ public class NtpClient {
                 socket.close();
         }
     }
-    
+
     /**
      * Usage: NtpClient [-6] [servers...]
      * default pool.ntp.org
@@ -323,8 +323,8 @@ public class NtpClient {
                 args = Arrays.copyOfRange(args, 1, args.length);
         }
         if (args.length <= 0) {
-           args = new String[] { "pool.ntp.org" };
-        } 
+            args = new String[] { "pool.ntp.org" };
+        }
         System.out.println("Querying " + Arrays.toString(args));
 
         Log log = new Log(NtpClient.class);
@@ -336,25 +336,25 @@ public class NtpClient {
             System.out.println("Failed: " + iae.getMessage());
         }
     }
-    
-/****
-    private static void printUsage() {
-        System.out.println(
-        "NtpClient - an NTP client for Java.\n" +
-        "\n" +
-        "This program connects to an NTP server and prints the current time to the console.\n" +
-        "\n" +
-        "\n" +
-        "Usage: java NtpClient server[ server]*\n" +
-        "\n" +
-        "\n" +
-        "This program is copyright (c) Adam Buckley 2004 and distributed under the terms\n" +
-        "of the GNU General Public License.  This program is distributed in the hope\n" +
-        "that it will be useful, but WITHOUT ANY WARRANTY; without even the implied\n" +
-        "warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU\n" +
-        "General Public License available at http://www.gnu.org/licenses/gpl.html for\n" +
-        "more details.");
-        
-    }
-****/
+
+    /****
+        private static void printUsage() {
+            System.out.println(
+            "NtpClient - an NTP client for Java.\n" +
+            "\n" +
+            "This program connects to an NTP server and prints the current time to the console.\n" +
+            "\n" +
+            "\n" +
+            "Usage: java NtpClient server[ server]*\n" +
+            "\n" +
+            "\n" +
+            "This program is copyright (c) Adam Buckley 2004 and distributed under the terms\n" +
+            "of the GNU General Public License.  This program is distributed in the hope\n" +
+            "that it will be useful, but WITHOUT ANY WARRANTY; without even the implied\n" +
+            "warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU\n" +
+            "General Public License available at http://www.gnu.org/licenses/gpl.html for\n" +
+            "more details.");
+
+        }
+    ****/
 }

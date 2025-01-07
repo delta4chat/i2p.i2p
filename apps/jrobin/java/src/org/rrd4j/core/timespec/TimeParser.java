@@ -42,7 +42,7 @@ public class TimeParser {
         if (doop >= 0) {
             op = doop;
             expectToken(TimeToken.NUMBER, "There should be number after " +
-                    (op == TimeToken.PLUS ? '+' : '-'));
+                        (op == TimeToken.PLUS ? '+' : '-'));
             prev_multiplier = -1; /* reset months-minutes guessing mechanics */
         }
         int delta = Integer.parseInt(token.value);
@@ -81,7 +81,7 @@ public class TimeParser {
             return;
         case TimeToken.WEEKS:
             delta *= 7;
-            /* FALLTHRU */
+        /* FALLTHRU */
         case TimeToken.DAYS:
             spec.dday += delta;
             return;
@@ -125,7 +125,7 @@ public class TimeParser {
             minute = Integer.parseInt(token.value);
             if (minute > 59) {
                 throw new IllegalArgumentException("Parsing HH:MM or HH.MM syntax, got MM = " +
-                        minute + " (>59!)");
+                                                   minute + " (>59!)");
             }
             token = scanner.nextToken();
             if(token.token_id == TimeToken.DOT) {
@@ -189,7 +189,7 @@ public class TimeParser {
         switch (token.token_id) {
         case TimeToken.YESTERDAY:
             spec.day--;
-            /* FALLTRHU */
+        /* FALLTRHU */
         case TimeToken.TODAY:    /* force ourselves to stay in today - no further processing */
             token = scanner.nextToken();
             break;
@@ -254,14 +254,14 @@ public class TimeParser {
                 if (mon <= 31 && (token.token_id == TimeToken.SLASH || token.token_id == TimeToken.DOT)) {
                     int sep = token.token_id;
                     expectToken(TimeToken.NUMBER, "there should be " +
-                            (sep == TimeToken.DOT ? "month" : "day") +
-                            " number after " +
-                            (sep == TimeToken.DOT ? '.' : '/'));
+                                (sep == TimeToken.DOT ? "month" : "day") +
+                                " number after " +
+                                (sep == TimeToken.DOT ? '.' : '/'));
                     mday = Long.parseLong(token.value);
                     token = scanner.nextToken();
                     if (token.token_id == sep) {
                         expectToken(TimeToken.NUMBER, "there should be year number after " +
-                                (sep == TimeToken.DOT ? '.' : '/'));
+                                    (sep == TimeToken.DOT ? '.' : '/'));
                         year = Long.parseLong(token.value);
                         token = scanner.nextToken();
                     }
@@ -303,13 +303,13 @@ public class TimeParser {
             break; /* jump to OFFSET-SPEC part */
         case TimeToken.START:
             spec.type = TimeSpec.TYPE_START;
-            /* FALLTHRU */
+        /* FALLTHRU */
         case TimeToken.END:
             if (spec.type != TimeSpec.TYPE_START) {
                 spec.type = TimeSpec.TYPE_END;
             }
             spec.year = spec.month = spec.day = spec.hour = spec.min = spec.sec = 0;
-            /* FALLTHRU */
+        /* FALLTHRU */
         case TimeToken.NOW:
             int time_reference = token.token_id;
             token = scanner.nextToken();
@@ -323,10 +323,10 @@ public class TimeParser {
                 throw new IllegalArgumentException("If 'now' is followed by a token it must be +|- offset");
             }
             break;
-            /* Only absolute time specifications below */
+        /* Only absolute time specifications below */
         case TimeToken.NUMBER:
             timeOfDay();
-            /* fix month parsing */
+        /* fix month parsing */
         case TimeToken.JAN:
         case TimeToken.FEB:
         case TimeToken.MAR:
@@ -350,19 +350,19 @@ public class TimeParser {
             timeOfDay();
             break;
 
-            /* evil coding for TEATIME|NOON|MIDNIGHT - we've initialized
-             * hr to zero up above, then fall into this case in such a
-             * way so we add +12 +4 hours to it for teatime, +12 hours
-             * to it for noon, and nothing at all for midnight, then
-             * set our rettime to that hour before leaping into the
-             * month scanner
-             */
+        /* evil coding for TEATIME|NOON|MIDNIGHT - we've initialized
+         * hr to zero up above, then fall into this case in such a
+         * way so we add +12 +4 hours to it for teatime, +12 hours
+         * to it for noon, and nothing at all for midnight, then
+         * set our rettime to that hour before leaping into the
+         * month scanner
+         */
         case TimeToken.TEATIME:
             hr += 4;
-            /* FALLTHRU */
+        /* FALLTHRU */
         case TimeToken.NOON:
             hr += 12;
-            /* FALLTHRU */
+        /* FALLTHRU */
         case TimeToken.MIDNIGHT:
             spec.hour = hr;
             spec.min = 0;

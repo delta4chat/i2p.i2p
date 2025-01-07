@@ -130,7 +130,7 @@ public class LeaseSet2 extends LeaseSet {
             throw new IllegalStateException();
         _flags |= FLAG_BLINDED;
     }
-    
+
     /**
      * If true, we received this LeaseSet by a remote peer publishing it to
      * us, AND the unpublished flag is not set.
@@ -422,7 +422,7 @@ public class LeaseSet2 extends LeaseSet {
             _byteified = rv;
         return rv;
     }
-    
+
     /**
      *  This does NOT validate the signature
      *
@@ -526,7 +526,7 @@ public class LeaseSet2 extends LeaseSet {
             lease.writeBytes(out);
         }
     }
-    
+
     protected void readHeader(InputStream in) throws DataFormatException, IOException {
         _destination = Destination.create(in);
         _published = DataHelper.readLong(in, 4) * 1000;
@@ -576,15 +576,15 @@ public class LeaseSet2 extends LeaseSet {
         _transientSigningPublicKey.writeBytes(out);
         _offlineSignature.writeBytes(out);
     }
-    
+
     /**
      *  Number of bytes, NOT including signature
      */
     @Override
     public int size() {
         int rv = _destination.size()
-             + 10
-             + (_leases.size() * Lease2.LENGTH);
+                 + 10
+                 + (_leases.size() * Lease2.LENGTH);
         for (PublicKey key : getEncryptionKeys()) {
             rv += 4;
             rv += key.length();
@@ -636,7 +636,7 @@ public class LeaseSet2 extends LeaseSet {
         } catch (IOException ioe) {
             throw new DataFormatException("Signature failed", ioe);
         }
-        // now sign with the key 
+        // now sign with the key
         _signature = out.sign(key);
         if (_signature == null)
             throw new DataFormatException("Signature failed with " + key.getType() + " key");
@@ -683,19 +683,19 @@ public class LeaseSet2 extends LeaseSet {
         }
         return out.verifySignature(_signature, spk);
     }
-    
+
     @Override
     public boolean equals(Object object) {
         if (object == this) return true;
         if ((object == null) || !(object instanceof LeaseSet2)) return false;
         LeaseSet2 ls = (LeaseSet2) object;
         return
-               DataHelper.eq(_signature, ls.getSignature())
-               && DataHelper.eq(_leases, ls._leases)
-               && DataHelper.eq(getEncryptionKey(), ls.getEncryptionKey())
-               && DataHelper.eq(_destination, ls.getDestination());
+            DataHelper.eq(_signature, ls.getSignature())
+            && DataHelper.eq(_leases, ls._leases)
+            && DataHelper.eq(getEncryptionKey(), ls.getEncryptionKey())
+            && DataHelper.eq(_destination, ls.getDestination());
     }
-    
+
     /** the destination has enough randomness in it to use it by itself for speed */
     @Override
     public int hashCode() {
@@ -703,7 +703,7 @@ public class LeaseSet2 extends LeaseSet {
             return 0;
         return _destination.hashCode();
     }
-    
+
     @Override
     public String toString() {
         StringBuilder buf = new StringBuilder(128);
@@ -749,85 +749,85 @@ public class LeaseSet2 extends LeaseSet {
         throw new UnsupportedOperationException();
     }
 
-/****
-    public static void main(String args[]) throws Exception {
-        if (args.length != 1) {
-            System.out.println("Usage: LeaseSet2 privatekeyfile.dat");
-            System.exit(1);
+    /****
+        public static void main(String args[]) throws Exception {
+            if (args.length != 1) {
+                System.out.println("Usage: LeaseSet2 privatekeyfile.dat");
+                System.exit(1);
+            }
+            java.io.File f = new java.io.File(args[0]);
+            PrivateKeyFile pkf = new PrivateKeyFile(f);
+            pkf.createIfAbsent(SigType.EdDSA_SHA512_Ed25519);
+            System.out.println("Online test");
+            java.io.File f2 = new java.io.File("online-ls2.dat");
+            test(pkf, f2, false);
+            System.out.println("Offline test");
+            f2 = new java.io.File("offline-ls2.dat");
+            test(pkf, f2, true);
         }
-        java.io.File f = new java.io.File(args[0]);
-        PrivateKeyFile pkf = new PrivateKeyFile(f);
-        pkf.createIfAbsent(SigType.EdDSA_SHA512_Ed25519);
-        System.out.println("Online test");
-        java.io.File f2 = new java.io.File("online-ls2.dat");
-        test(pkf, f2, false);
-        System.out.println("Offline test");
-        f2 = new java.io.File("offline-ls2.dat");
-        test(pkf, f2, true);
-    }
 
-    private static void test(PrivateKeyFile pkf, java.io.File outfile, boolean offline) throws Exception {
-        net.i2p.util.RandomSource rand = net.i2p.util.RandomSource.getInstance();
-        long now = System.currentTimeMillis() + 5*60*1000;
-        LeaseSet2 ls2 = new LeaseSet2();
-        for (int i = 0; i < 3; i++) {
-            Lease2 l2 = new Lease2();
-            now += 10000;
-            l2.setEndDate(new java.util.Date(now));
-            byte[] gw = new byte[32];
-            rand.nextBytes(gw);
-            l2.setGateway(new Hash(gw));
-            TunnelId id = new TunnelId(1 + rand.nextLong(TunnelId.MAX_ID_VALUE));
-            l2.setTunnelId(id);
-            ls2.addLease(l2);
+        private static void test(PrivateKeyFile pkf, java.io.File outfile, boolean offline) throws Exception {
+            net.i2p.util.RandomSource rand = net.i2p.util.RandomSource.getInstance();
+            long now = System.currentTimeMillis() + 5*60*1000;
+            LeaseSet2 ls2 = new LeaseSet2();
+            for (int i = 0; i < 3; i++) {
+                Lease2 l2 = new Lease2();
+                now += 10000;
+                l2.setEndDate(new java.util.Date(now));
+                byte[] gw = new byte[32];
+                rand.nextBytes(gw);
+                l2.setGateway(new Hash(gw));
+                TunnelId id = new TunnelId(1 + rand.nextLong(TunnelId.MAX_ID_VALUE));
+                l2.setTunnelId(id);
+                ls2.addLease(l2);
+            }
+            Properties opts = new Properties();
+            opts.setProperty("foo", "bar");
+            opts.setProperty("test", "bazzle");
+            ls2.setOptions(opts);
+            ls2.setDestination(pkf.getDestination());
+            SimpleDataStructure encKeys[] = net.i2p.crypto.KeyGenerator.getInstance().generatePKIKeys();
+            PublicKey pubKey = (PublicKey) encKeys[0];
+            ls2.addEncryptionKey(pubKey);
+            net.i2p.crypto.KeyPair encKeys2 = net.i2p.crypto.KeyGenerator.getInstance().generatePKIKeys(net.i2p.crypto.EncType.ECIES_X25519);
+            pubKey = encKeys2.getPublic();
+            ls2.addEncryptionKey(pubKey);
+            byte[] b = new byte[99];
+            rand.nextBytes(b);
+            pubKey = new PublicKey(77, b);
+            ls2.addEncryptionKey(pubKey);
+            b = new byte[55];
+            rand.nextBytes(b);
+            pubKey = new PublicKey(177, b);
+            ls2.addEncryptionKey(pubKey);
+            SigningPrivateKey spk = pkf.getSigningPrivKey();
+            if (offline) {
+                now += 365*24*60*60*1000L;
+                SimpleDataStructure transKeys[] = net.i2p.crypto.KeyGenerator.getInstance().generateSigningKeys(SigType.EdDSA_SHA512_Ed25519);
+                SigningPublicKey transientPub = (SigningPublicKey) transKeys[0];
+                SigningPrivateKey transientPriv = (SigningPrivateKey) transKeys[1];
+                Signature sig = offlineSign(now, transientPub, spk);
+                ls2.setOfflineSignature(now, transientPub, sig);
+                ls2.sign(transientPriv);
+            } else {
+                ls2.sign(spk);
+            }
+            System.out.println("Created: " + ls2);
+            if (!ls2.verifySignature())
+                System.out.println("Verify FAILED");
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            ls2.writeBytes(out);
+            java.io.OutputStream out2 = new java.io.FileOutputStream(outfile);
+            ls2.writeBytes(out2);
+            out2.close();
+            java.io.ByteArrayInputStream in = new java.io.ByteArrayInputStream(out.toByteArray());
+            System.out.println("Size calculated: " + (ls2.size() + ls2.getSignature().length()));
+            System.out.println("Size to read in: " + in.available());
+            LeaseSet2 ls3 = new LeaseSet2();
+            ls3.readBytes(in);
+            System.out.println("Read back: " + ls3);
+            if (!ls3.verifySignature())
+                System.out.println("Verify FAILED");
         }
-        Properties opts = new Properties();
-        opts.setProperty("foo", "bar");
-        opts.setProperty("test", "bazzle");
-        ls2.setOptions(opts);
-        ls2.setDestination(pkf.getDestination());
-        SimpleDataStructure encKeys[] = net.i2p.crypto.KeyGenerator.getInstance().generatePKIKeys();
-        PublicKey pubKey = (PublicKey) encKeys[0];
-        ls2.addEncryptionKey(pubKey);
-        net.i2p.crypto.KeyPair encKeys2 = net.i2p.crypto.KeyGenerator.getInstance().generatePKIKeys(net.i2p.crypto.EncType.ECIES_X25519);
-        pubKey = encKeys2.getPublic();
-        ls2.addEncryptionKey(pubKey);
-        byte[] b = new byte[99];
-        rand.nextBytes(b);
-        pubKey = new PublicKey(77, b);
-        ls2.addEncryptionKey(pubKey);
-        b = new byte[55];
-        rand.nextBytes(b);
-        pubKey = new PublicKey(177, b);
-        ls2.addEncryptionKey(pubKey);
-        SigningPrivateKey spk = pkf.getSigningPrivKey();
-        if (offline) {
-            now += 365*24*60*60*1000L;
-            SimpleDataStructure transKeys[] = net.i2p.crypto.KeyGenerator.getInstance().generateSigningKeys(SigType.EdDSA_SHA512_Ed25519);
-            SigningPublicKey transientPub = (SigningPublicKey) transKeys[0];
-            SigningPrivateKey transientPriv = (SigningPrivateKey) transKeys[1];
-            Signature sig = offlineSign(now, transientPub, spk);
-            ls2.setOfflineSignature(now, transientPub, sig);
-            ls2.sign(transientPriv);
-        } else {
-            ls2.sign(spk);
-        }
-        System.out.println("Created: " + ls2);
-        if (!ls2.verifySignature())
-            System.out.println("Verify FAILED");
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ls2.writeBytes(out);
-        java.io.OutputStream out2 = new java.io.FileOutputStream(outfile);
-        ls2.writeBytes(out2);
-        out2.close();
-        java.io.ByteArrayInputStream in = new java.io.ByteArrayInputStream(out.toByteArray());
-        System.out.println("Size calculated: " + (ls2.size() + ls2.getSignature().length()));
-        System.out.println("Size to read in: " + in.available());
-        LeaseSet2 ls3 = new LeaseSet2();
-        ls3.readBytes(in);
-        System.out.println("Read back: " + ls3);
-        if (!ls3.verifySignature())
-            System.out.println("Verify FAILED");
-    }
-****/
+    ****/
 }

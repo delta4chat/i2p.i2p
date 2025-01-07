@@ -37,7 +37,7 @@ public class Header implements RrdUpdater<Header> {
 
         String initSignature;
         if(rrdDef != null) {
-            version = rrdDef.getVersion(); 
+            version = rrdDef.getVersion();
             initSignature = SIGNATURE + ", " + VERSIONS[version - 1];
         }
         else {
@@ -161,11 +161,11 @@ public class Header implements RrdUpdater<Header> {
 
     String dump() throws IOException {
         return "== HEADER ==\n" +
-                "signature:" + getSignature() +
-                " lastUpdateTime:" + getLastUpdateTime() +
-                " step:" + getStep() +
-                " dsCount:" + getDsCount() +
-                " arcCount:" + getArcCount() + "\n";
+               "signature:" + getSignature() +
+               " lastUpdateTime:" + getLastUpdateTime() +
+               " step:" + getStep() +
+               " dsCount:" + getDsCount() +
+               " arcCount:" + getArcCount() + "\n";
     }
 
     void appendXml(XmlWriter writer) throws IOException {

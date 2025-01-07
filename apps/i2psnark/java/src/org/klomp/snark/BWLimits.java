@@ -1,6 +1,6 @@
 /*
- * Released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
+ * Released into the public domain
+ * with no warranty of any kind, either expressed or implied.
  */
 package org.klomp.snark;
 
@@ -39,9 +39,9 @@ class BWLimits {
         return rv;
     }
 
-/****
-    public static void main(String args[]) {
-        System.out.println(Arrays.toString(getBWLimits("127.0.0.1", 7654)));
-    }
-****/
+    /****
+        public static void main(String args[]) {
+            System.out.println(Arrays.toString(getBWLimits("127.0.0.1", 7654)));
+        }
+    ****/
 }

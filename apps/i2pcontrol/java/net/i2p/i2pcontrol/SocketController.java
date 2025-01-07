@@ -179,7 +179,10 @@ public class SocketController implements RouterApp {
             } finally {
                 synchronized (SocketController.this) {
                     if (_server != null) {
-                        try { _server.close(); } catch (IOException ioe) {}
+                        try {
+                            _server.close();
+                        }
+                        catch (IOException ioe) {}
                     }
                 }
             }
@@ -189,7 +192,9 @@ public class SocketController implements RouterApp {
     private class Handler implements Runnable {
         private final Socket s;
 
-        public Handler(Socket skt) { s = skt; }
+        public Handler(Socket skt) {
+            s = skt;
+        }
 
         public void run() {
             try {
@@ -209,7 +214,10 @@ public class SocketController implements RouterApp {
                 synchronized (SocketController.this) {
                     _listeners.remove(s);
                 }
-                try { s.close(); } catch (IOException ioe) {}
+                try {
+                    s.close();
+                }
+                catch (IOException ioe) {}
             }
         }
     }

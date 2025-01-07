@@ -25,9 +25,9 @@ import net.i2p.router.tunnel.TunnelCreatorConfig;
  *  @since 0.9.51 moved to tunnel.pool package
  */
 abstract class BuildMessageGenerator {
-    
+
     /**
-     * Place the asymmetrically encrypted record in the specified record slot, 
+     * Place the asymmetrically encrypted record in the specified record slot,
      * containing the hop's configuration (as well as the reply info, if it is an outbound endpoint)
      *
      * @param msg out parameter
@@ -82,7 +82,7 @@ abstract class BuildMessageGenerator {
         }
         msg.setRecord(recordNum, erec);
     }
-    
+
     /**
      *  Returns null if hop >= cfg.length
      *
@@ -92,8 +92,8 @@ abstract class BuildMessageGenerator {
      *  @param isShort short EC record
      */
     private static BuildRequestRecord createUnencryptedRecord(I2PAppContext ctx, TunnelCreatorConfig cfg, int hop,
-                                                              Hash replyRouter, long replyTunnel, boolean isEC,
-                                                              boolean isShort) {
+            Hash replyRouter, long replyTunnel, boolean isEC,
+            boolean isShort) {
         if (isShort && !isEC)
             throw new IllegalArgumentException();
         if (hop < cfg.getLength()) {
@@ -122,7 +122,7 @@ abstract class BuildMessageGenerator {
             }
             boolean isInGW = (cfg.isInbound() && (hop == 0));
             boolean isOutEnd = (!cfg.isInbound() && (hop + 1 >= cfg.getLength()));
-            
+
             long nextMsgId = -1;
             if (isOutEnd || (cfg.isInbound() && (hop + 2 >= cfg.getLength())) ) {
                 nextMsgId = cfg.getReplyMessageId();
@@ -145,7 +145,7 @@ abstract class BuildMessageGenerator {
                     if (iv == null)
                         throw new IllegalStateException();
                     rec = new BuildRequestRecord(ctx, recvTunnelId, nextTunnelId, nextPeer,
-                                                 nextMsgId, layerKey, ivKey, replyKey, 
+                                                 nextMsgId, layerKey, ivKey, replyKey,
                                                  iv, isInGW, isOutEnd, EmptyProperties.INSTANCE);
                 }
             } else {
@@ -156,7 +156,7 @@ abstract class BuildMessageGenerator {
                 if (iv == null)
                     throw new IllegalStateException();
                 rec = new BuildRequestRecord(ctx, recvTunnelId, peer, nextTunnelId, nextPeer,
-                                             nextMsgId, layerKey, ivKey, replyKey, 
+                                             nextMsgId, layerKey, ivKey, replyKey,
                                              iv, isInGW, isOutEnd);
             }
             return rec;
@@ -164,7 +164,7 @@ abstract class BuildMessageGenerator {
             return null;
         }
     }
-    
+
     /**
      * Encrypt the records so their hop ident is visible at the appropriate times.
      *
@@ -185,7 +185,7 @@ abstract class BuildMessageGenerator {
             Integer hopNum = order.get(i);
             int hop = hopNum.intValue();
             if ((isBlank(cfg, hop) && !(cfg.isInbound() && hop + 1 == cfg.getLength())) ||
-                (!cfg.isInbound() && hop == 1)) {
+                    (!cfg.isInbound() && hop == 1)) {
                 continue;
             }
             // ok, now decrypt the record with all of the reply keys from cfg.getConfig(0) through hop-1
@@ -210,7 +210,7 @@ abstract class BuildMessageGenerator {
             }
         }
     }
-    
+
     public static boolean isBlank(TunnelCreatorConfig cfg, int hop) {
         if (cfg.isInbound()) {
             if (hop + 1 >= cfg.getLength())

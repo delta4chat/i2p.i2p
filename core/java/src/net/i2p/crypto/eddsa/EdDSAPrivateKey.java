@@ -225,24 +225,24 @@ public class EdDSAPrivateKey implements EdDSAKey, PrivateKey {
             //
             int idx = 0;
             if (d[idx++] != 0x30 ||
-                d[idx++] != (totlen - 2) ||
-                d[idx++] != 0x02 ||
-                d[idx++] != 1 ||
-                d[idx++] != 0 ||
-                d[idx++] != 0x30 ||
-                d[idx++] != idlen ||
-                d[idx++] != 0x06 ||
-                d[idx++] != 3 ||
-                d[idx++] != (1 * 40) + 3 ||
-                d[idx++] != 101) {
+                    d[idx++] != (totlen - 2) ||
+                    d[idx++] != 0x02 ||
+                    d[idx++] != 1 ||
+                    d[idx++] != 0 ||
+                    d[idx++] != 0x30 ||
+                    d[idx++] != idlen ||
+                    d[idx++] != 0x06 ||
+                    d[idx++] != 3 ||
+                    d[idx++] != (1 * 40) + 3 ||
+                    d[idx++] != 101) {
                 throw new InvalidKeySpecException("unsupported key spec");
             }
             idx++; // OID, checked above
             // parameters only with old OID
             if (doid == OID_OLD) {
                 if (d[idx++] != 0x0a ||
-                    d[idx++] != 1 ||
-                    d[idx++] != 1) {
+                        d[idx++] != 1 ||
+                        d[idx++] != 1) {
                     throw new InvalidKeySpecException("unsupported key spec");
                 }
             } else {
@@ -262,18 +262,18 @@ public class EdDSAPrivateKey implements EdDSAKey, PrivateKey {
                 // re-encoding to pass on), so we must accept it.
                 if (idlen == 7) {
                     if (d[idx++] != 0x05 ||
-                        d[idx++] != 0) {
+                            d[idx++] != 0) {
                         throw new InvalidKeySpecException("unsupported key spec");
                     }
                 }
                 // PrivateKey wrapping the CurvePrivateKey
                 if (d[idx++] != 0x04 ||
-                    d[idx++] != 34) {
+                        d[idx++] != 34) {
                     throw new InvalidKeySpecException("unsupported key spec");
                 }
             }
             if (d[idx++] != 0x04 ||
-                d[idx++] != 32) {
+                    d[idx++] != 32) {
                 throw new InvalidKeySpecException("unsupported key spec");
             }
             byte[] rv = new byte[32];

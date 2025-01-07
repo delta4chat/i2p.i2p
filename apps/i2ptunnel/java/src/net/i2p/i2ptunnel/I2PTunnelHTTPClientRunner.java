@@ -17,7 +17,7 @@ import net.i2p.util.I2PAppThread;
  * Override the response with a stream filtering the HTTP headers
  * received.  Specifically, this makes sure we get Connection: close,
  * so the browser knows they really shouldn't try to use persistent
- * connections.  The HTTP server *should* already be setting this, 
+ * connections.  The HTTP server *should* already be setting this,
  * since the HTTP headers sent by the browser specify Connection: close,
  * and the server should echo it.  However, both broken and malicious
  * servers could ignore that, potentially confusing the user.
@@ -68,7 +68,7 @@ public class I2PTunnelHTTPClientRunner extends I2PTunnelRunner {
      *  @throws IllegalStateException if called again
      */
     @Override
-    protected OutputStream getSocketOut() throws IOException { 
+    protected OutputStream getSocketOut() throws IOException {
         if (_hout != null)
             throw new IllegalStateException("already called");
         OutputStream raw = super.getSocketOut();
@@ -84,7 +84,7 @@ public class I2PTunnelHTTPClientRunner extends I2PTunnelRunner {
     boolean getKeepAliveSocket() {
         return _hout != null && _hout.getKeepAliveOut() && super.getKeepAliveSocket();
     }
-        
+
     /**
      * Should we keep the I2P socket open when done?
      * @since 0.9.62
@@ -93,7 +93,7 @@ public class I2PTunnelHTTPClientRunner extends I2PTunnelRunner {
     boolean getKeepAliveI2P() {
         return _hout != null && _hout.getKeepAliveIn() && super.getKeepAliveI2P();
     }
-        
+
     /**
      *  May not actually close either socket, depending on keepalive settings.
      *
@@ -129,39 +129,47 @@ public class I2PTunnelHTTPClientRunner extends I2PTunnelRunner {
             }
         } else {
             if (!keepaliveI2P) {
-                if (i2pin != null) { try { 
-                    i2pin.close();
-                } catch (IOException ioe) {} }
+                if (i2pin != null) {
+                    try {
+                        i2pin.close();
+                    } catch (IOException ioe) {}
+                }
             }
-            if (i2pout != null) { try { 
-                if (keepaliveI2P)
-                    i2pout.flush(); 
-                else
-                    i2pout.close(); 
-            } catch (IOException ioe) {} }
+            if (i2pout != null) {
+                try {
+                    if (keepaliveI2P)
+                        i2pout.flush();
+                    else
+                        i2pout.close();
+                } catch (IOException ioe) {}
+            }
         }
 
         if (!keepaliveSocket) {
-            if (in != null) { try { 
-                in.close();
-            } catch (IOException ioe) {} }
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException ioe) {}
+            }
         }
 
-        if (out != null) { try { 
-            if (keepaliveSocket)
-                out.flush(); 
-            else
-                out.close(); 
-        } catch (IOException ioe) {} }
+        if (out != null) {
+            try {
+                if (keepaliveSocket)
+                    out.flush();
+                else
+                    out.close();
+            } catch (IOException ioe) {}
+        }
 
         if (!threadI2PClose && !keepaliveI2P) {
-            try { 
+            try {
                 i2ps.close();
             } catch (IOException ioe) {}
         }
 
         if (!keepaliveSocket) {
-            try { 
+            try {
                 s.close();
             } catch (IOException ioe) {}
         }
@@ -194,14 +202,14 @@ public class I2PTunnelHTTPClientRunner extends I2PTunnelRunner {
         @Override
         public void run() {
             if (in != null) {
-                try { 
+                try {
                     in.close();
                 } catch (IOException ioe) {}
             }
-            try { 
-                out.close(); 
+            try {
+                out.close();
             } catch (IOException ioe) {}
-            try { 
+            try {
                 s.close();
             } catch (IOException ioe) {}
             //_log.info("(threaded) i2p socket closed");

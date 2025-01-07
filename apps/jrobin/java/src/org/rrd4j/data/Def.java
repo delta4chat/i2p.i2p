@@ -20,10 +20,10 @@ class Def extends Source {
 
     Def(String name, String dsName, FetchData fetchData) {
         this(name,
-                fetchData.getRequest().getParentDb().getCanonicalUri(),
-                dsName, fetchData.getRequest().getConsolFun(),
-                fetchData.getRequest().getParentDb().getRrdBackend().getFactory()
-                );
+             fetchData.getRequest().getParentDb().getCanonicalUri(),
+             dsName, fetchData.getRequest().getConsolFun(),
+             fetchData.getRequest().getParentDb().getRrdBackend().getFactory()
+            );
         this.fetchData = fetchData;
     }
 
@@ -36,10 +36,10 @@ class Def extends Source {
     }
 
     URI getCanonicalUri() {
-       return rrdUri;
+        return rrdUri;
     }
 
-     String getDsName() {
+    String getDsName() {
         return dsName;
     }
 
@@ -53,9 +53,9 @@ class Def extends Source {
 
     boolean isCompatibleWith(Def def) {
         return getCanonicalUri().equals(def.getCanonicalUri()) &&
-                getConsolFun() == def.consolFun &&
-                ((backend == null && def.backend == null) ||
-                        (backend != null && def.backend != null && backend.equals(def.backend)));
+               getConsolFun() == def.consolFun &&
+               ((backend == null && def.backend == null) ||
+                (backend != null && def.backend != null && backend.equals(def.backend)));
     }
 
     RrdDb getRrdDb() {

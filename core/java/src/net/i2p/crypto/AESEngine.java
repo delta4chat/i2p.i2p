@@ -2,9 +2,9 @@ package net.i2p.crypto;
 
 /*
  * free (adj.): unencumbered; not under the control of others
- * Written by jrandom in 2003 and released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
- * It probably won't  make your computer catch on fire, or eat 
+ * Written by jrandom in 2003 and released into the public domain
+ * with no warranty of any kind, either expressed or implied.
+ * It probably won't  make your computer catch on fire, or eat
  * your children, but it might.  Use at your own risk.
  *
  */
@@ -16,7 +16,7 @@ import net.i2p.data.SessionKey;
 import net.i2p.util.Log;
 import net.i2p.util.SimpleByteCache;
 
-/** 
+/**
  * Dummy wrapper for AES cipher operation.
  * Warning - most methods UNUSED.
  * See CryptixAESEngine overrides for the real thing.
@@ -31,7 +31,7 @@ public class AESEngine {
         if (getClass().equals(AESEngine.class))
             _log.logAlways(Log.WARN, "AES is disabled");
     }
-    
+
     /** Encrypt the payload with the session key
      * @param payload data to be encrypted
      * @param payloadIndex index into the payload to start encrypting
@@ -44,7 +44,7 @@ public class AESEngine {
     public void encrypt(byte payload[], int payloadIndex, byte out[], int outIndex, SessionKey sessionKey, byte iv[], int length) {
         encrypt(payload, payloadIndex, out, outIndex, sessionKey, iv, 0, length);
     }
-    
+
     /**
      * Encrypt the payload with the session key.
      * This just copies payload to out, see extension for the real thing.
@@ -75,22 +75,22 @@ public class AESEngine {
     public byte[] safeEncrypt(byte payload[], SessionKey sessionKey, byte iv[], int paddedSize) {
         if ((iv == null) || (payload == null) || (sessionKey == null) || (iv.length != 16)) return null;
 
-        int size = Hash.HASH_LENGTH 
-                 + 4 // sizeof(payload)
-                 + payload.length;
+        int size = Hash.HASH_LENGTH
+                   + 4 // sizeof(payload)
+                   + payload.length;
         int padding = getPaddingSize(size, paddedSize);
-        
+
         byte data[] = new byte[size + padding];
         _context.sha().calculateHash(iv, 0, 16, data, 0);
         int cur = Hash.HASH_LENGTH;
-        
+
         DataHelper.toLong(data, cur, 4, payload.length);
         cur += 4;
         System.arraycopy(payload, 0, data, cur, payload.length);
         cur += payload.length;
         byte paddingData[] = getPadding(_context, size, paddedSize);
         System.arraycopy(paddingData, 0, data, cur, paddingData.length);
-        
+
         encrypt(data, 0, data, 0, sessionKey, iv, data.length);
         return data;
     }
@@ -115,20 +115,20 @@ public class AESEngine {
         boolean eq = DataHelper.eq(decr, 0, h, 0, Hash.HASH_LENGTH);
         SimpleByteCache.release(h);
         if (!eq) {
-                _log.error("Hash does not match [key=" + sessionKey + " / iv =" + DataHelper.toString(iv, iv.length)
-                           + "]", new Exception("Hash error"));
-                return null;
+            _log.error("Hash does not match [key=" + sessionKey + " / iv =" + DataHelper.toString(iv, iv.length)
+                       + "]", new Exception("Hash error"));
+            return null;
         }
         int cur = Hash.HASH_LENGTH;
-        
+
         long len = DataHelper.fromLong(decr, cur, 4);
         cur += 4;
-        
+
         if (cur + len > decr.length) {
             _log.error("Not enough to read");
             return null;
         }
-        
+
         byte data[] = new byte[(int)len];
         System.arraycopy(decr, cur, data, 0, (int)len);
         return data;
@@ -146,7 +146,7 @@ public class AESEngine {
     public void decrypt(byte payload[], int payloadIndex, byte out[], int outIndex, SessionKey sessionKey, byte iv[], int length) {
         decrypt(payload, payloadIndex, out, outIndex, sessionKey, iv, 0, length);
     }
-    
+
     /**
      * Decrypt the data with the session key.
      * This just copies payload to out, see extension for the real thing.
@@ -218,27 +218,27 @@ public class AESEngine {
         return numPadding;
     }
 
- 
-/******
-    public static void main(String args[]) {
-        I2PAppContext ctx = new I2PAppContext();
-        SessionKey key = ctx.keyGenerator().generateSessionKey();
-        byte iv[] = new byte[16];
-        RandomSource.getInstance().nextBytes(iv);
 
-        byte sbuf[] = new byte[16];
-        RandomSource.getInstance().nextBytes(sbuf);
-        byte se[] = new byte[16];
-        ctx.aes().encrypt(sbuf, 0, se, 0, key, iv, sbuf.length);
-        byte sd[] = new byte[16];
-        ctx.aes().decrypt(se, 0, sd, 0, key, iv, se.length);
-        ctx.logManager().getLog(AESEngine.class).debug("Short test: " + DataHelper.eq(sd, sbuf));
+    /******
+        public static void main(String args[]) {
+            I2PAppContext ctx = new I2PAppContext();
+            SessionKey key = ctx.keyGenerator().generateSessionKey();
+            byte iv[] = new byte[16];
+            RandomSource.getInstance().nextBytes(iv);
 
-        byte lbuf[] = new byte[1024];
-        RandomSource.getInstance().nextBytes(sbuf);
-        byte le[] = ctx.aes().safeEncrypt(lbuf, key, iv, 2048);
-        byte ld[] = ctx.aes().safeDecrypt(le, key, iv);
-        ctx.logManager().getLog(AESEngine.class).debug("Long test: " + DataHelper.eq(ld, lbuf));
-    }
-******/
+            byte sbuf[] = new byte[16];
+            RandomSource.getInstance().nextBytes(sbuf);
+            byte se[] = new byte[16];
+            ctx.aes().encrypt(sbuf, 0, se, 0, key, iv, sbuf.length);
+            byte sd[] = new byte[16];
+            ctx.aes().decrypt(se, 0, sd, 0, key, iv, se.length);
+            ctx.logManager().getLog(AESEngine.class).debug("Short test: " + DataHelper.eq(sd, sbuf));
+
+            byte lbuf[] = new byte[1024];
+            RandomSource.getInstance().nextBytes(sbuf);
+            byte le[] = ctx.aes().safeEncrypt(lbuf, key, iv, 2048);
+            byte ld[] = ctx.aes().safeDecrypt(le, key, iv);
+            ctx.logManager().getLog(AESEngine.class).debug("Long test: " + DataHelper.eq(ld, lbuf));
+        }
+    ******/
 }

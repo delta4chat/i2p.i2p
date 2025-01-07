@@ -10,7 +10,7 @@ import net.i2p.util.Log;
 import net.i2p.util.SimpleTimer2;
 
 /**
- * Gather fragments of I2NPMessages at a tunnel endpoint, making them available 
+ * Gather fragments of I2NPMessages at a tunnel endpoint, making them available
  * for reading when complete.
  *
  * Warning - this is all unsynchronized here - receivers must implement synchronization
@@ -29,12 +29,12 @@ class FragmentedMessage {
     private boolean _completed;
     private long _releasedAfter;
     private SimpleTimer2.TimedEvent _expireEvent;
-    
+
     private static final ByteCache _cache = ByteCache.getInstance(512, TrivialPreprocessor.PREPROCESSED_SIZE);
     // 64 is pretty absurd, 32 is too, most likely
     private static final int MAX_FRAGMENTS = 64;
     private static final int MAX_FRAGMENT_SIZE = 996;
-    
+
     public FragmentedMessage(I2PAppContext ctx, long messageId) {
         _context = ctx;
         _log = ctx.logManager().getLog(FragmentedMessage.class);
@@ -44,7 +44,7 @@ class FragmentedMessage {
         _releasedAfter = -1;
         _createdOn = ctx.clock().now();
     }
-    
+
     /**
      * Receive a followup fragment, though one of these may arrive at the endpoint
      * prior to the fragment # 0.
@@ -80,7 +80,7 @@ class FragmentedMessage {
         ba.setOffset(0);
         //System.arraycopy(payload, offset, ba.getData(), 0, length);
         //if (_log.shouldLog(Log.DEBUG))
-        //    _log.debug("fragment[" + fragmentNum + "/" + offset + "/" + length + "]: " 
+        //    _log.debug("fragment[" + fragmentNum + "/" + offset + "/" + length + "]: "
         //               + Base64.encode(ba.getData(), ba.getOffset(), ba.getValid()));
 
         _fragments[fragmentNum] = ba;
@@ -89,7 +89,7 @@ class FragmentedMessage {
             _highFragmentNum = fragmentNum;
         return true;
     }
-    
+
     /**
      * Receive the first fragment (#0) and related metadata.  This may not be the first
      * one to arrive at the endpoint however.
@@ -120,7 +120,7 @@ class FragmentedMessage {
         ba.setOffset(0);
         //System.arraycopy(payload, offset, ba.getData(), 0, length);
         //if (_log.shouldLog(Log.DEBUG))
-        //    _log.debug("fragment[0/" + offset + "/" + length + "]: " 
+        //    _log.debug("fragment[0/" + offset + "/" + length + "]: "
         //               + Base64.encode(ba.getData(), ba.getOffset(), ba.getValid()));
         _fragments[0] = ba;
         _lastReceived = _lastReceived || isLast;
@@ -130,12 +130,18 @@ class FragmentedMessage {
             _highFragmentNum = 0;
         return true;
     }
-    
-    public long getMessageId() { return _messageId; }
-    public Hash getTargetRouter() { return _toRouter; }
-    public TunnelId getTargetTunnel() { return _toTunnel; }
 
-    public int getFragmentCount() { 
+    public long getMessageId() {
+        return _messageId;
+    }
+    public Hash getTargetRouter() {
+        return _toRouter;
+    }
+    public TunnelId getTargetTunnel() {
+        return _toTunnel;
+    }
+
+    public int getFragmentCount() {
         int found = 0;
         for (int i = 0; i < _fragments.length; i++)
             if (_fragments[i] != null)
@@ -144,10 +150,14 @@ class FragmentedMessage {
     }
 
     /** used in the fragment handler so we can cancel the expire event on success */
-    public SimpleTimer2.TimedEvent getExpireEvent() { return _expireEvent; }
+    public SimpleTimer2.TimedEvent getExpireEvent() {
+        return _expireEvent;
+    }
 
-    public void setExpireEvent(SimpleTimer2.TimedEvent evt) { _expireEvent = evt; }
-    
+    public void setExpireEvent(SimpleTimer2.TimedEvent evt) {
+        _expireEvent = evt;
+    }
+
     /** have we received all of the fragments? */
     public boolean isComplete() {
         if (!_lastReceived)
@@ -158,50 +168,54 @@ class FragmentedMessage {
         return true;
     }
     public int getCompleteSize() {
-        if (!_lastReceived) 
+        if (!_lastReceived)
             throw new IllegalStateException("don't get the completed size when we're not complete!");
         if (_releasedAfter > 0) {
-             RuntimeException e = new RuntimeException("use after free in FragmentedMessage");
-             _log.error("FM completeSize()", e);
-             throw e;
+            RuntimeException e = new RuntimeException("use after free in FragmentedMessage");
+            _log.error("FM completeSize()", e);
+            throw e;
         }
         int size = 0;
         for (int i = 0; i <= _highFragmentNum; i++) {
             ByteArray ba = _fragments[i];
             // NPE seen here, root cause unknown
-            if (ba == null) 
+            if (ba == null)
                 throw new IllegalStateException("don't get the completed size when we're not complete! - null fragment i=" + i + " of " + _highFragmentNum);
             size += ba.getValid();
         }
         return size;
     }
-    
+
     /** how long has this fragmented message been alive?  */
-    public long getLifetime() { return _context.clock().now() - _createdOn; }
-    public boolean getReleased() { return _completed; }
-    
-    
-/****
-    public void writeComplete(OutputStream out) throws IOException {
-        if (_releasedAfter > 0) {
-             RuntimeException e = new RuntimeException("use after free in FragmentedMessage");
-             _log.error("FM writeComplete()", e);
-             throw e;
-        }
-        for (int i = 0; i <= _highFragmentNum; i++) {
-            ByteArray ba = _fragments[i];
-            out.write(ba.getData(), ba.getOffset(), ba.getValid());
-        }
-        _completed = true;
+    public long getLifetime() {
+        return _context.clock().now() - _createdOn;
     }
-****/
+    public boolean getReleased() {
+        return _completed;
+    }
+
+
+    /****
+        public void writeComplete(OutputStream out) throws IOException {
+            if (_releasedAfter > 0) {
+                 RuntimeException e = new RuntimeException("use after free in FragmentedMessage");
+                 _log.error("FM writeComplete()", e);
+                 throw e;
+            }
+            for (int i = 0; i <= _highFragmentNum; i++) {
+                ByteArray ba = _fragments[i];
+                out.write(ba.getData(), ba.getOffset(), ba.getValid());
+            }
+            _completed = true;
+        }
+    ****/
 
     /** */
     private void writeComplete(byte target[], int offset) {
         if (_releasedAfter > 0) {
-             RuntimeException e = new RuntimeException("use after free in FragmentedMessage");
-             _log.error("FM writeComplete() 2", e);
-             throw e;
+            RuntimeException e = new RuntimeException("use after free in FragmentedMessage");
+            _log.error("FM writeComplete() 2", e);
+            throw e;
         }
         for (int i = 0; i <= _highFragmentNum; i++) {
             ByteArray ba = _fragments[i];
@@ -220,8 +234,10 @@ class FragmentedMessage {
             return rv;
         }
     }
-    
-    public long getReleasedAfter() { return _releasedAfter; }
+
+    public long getReleasedAfter() {
+        return _releasedAfter;
+    }
     public void failed() {
         synchronized (this) {
             releaseFragments();
@@ -234,9 +250,9 @@ class FragmentedMessage {
      */
     private void releaseFragments() {
         if (_releasedAfter > 0) {
-             RuntimeException e = new RuntimeException("double free in FragmentedMessage");
-             _log.error("FM releaseFragments()", e);
-             throw e;
+            RuntimeException e = new RuntimeException("double free in FragmentedMessage");
+            _log.error("FM releaseFragments()", e);
+            throw e;
         }
         _releasedAfter = getLifetime();
         for (int i = 0; i <= _highFragmentNum; i++) {
@@ -247,33 +263,33 @@ class FragmentedMessage {
             }
         }
     }
-    
-/****
-    public InputStream getInputStream() { return new FragmentInputStream(); }
-    private class FragmentInputStream extends InputStream {
-        private int _fragment;
-        private int _offset;
-        public FragmentInputStream() {
-            _fragment = 0;
-            _offset = 0;
-        }
-        public int read() throws IOException {
-            while (true) {
-                ByteArray ba = _fragments[_fragment];
-                if (ba == null) return -1;
-                if (_offset >= ba.getValid()) {
-                    _fragment++;
-                    _offset = 0;
-                } else {
-                    byte rv = ba.getData()[ba.getOffset()+_offset];
-                    _offset++;
-                    return rv;
+
+    /****
+        public InputStream getInputStream() { return new FragmentInputStream(); }
+        private class FragmentInputStream extends InputStream {
+            private int _fragment;
+            private int _offset;
+            public FragmentInputStream() {
+                _fragment = 0;
+                _offset = 0;
+            }
+            public int read() throws IOException {
+                while (true) {
+                    ByteArray ba = _fragments[_fragment];
+                    if (ba == null) return -1;
+                    if (_offset >= ba.getValid()) {
+                        _fragment++;
+                        _offset = 0;
+                    } else {
+                        byte rv = ba.getData()[ba.getOffset()+_offset];
+                        _offset++;
+                        return rv;
+                    }
                 }
             }
         }
-    }
-****/
-    
+    ****/
+
     /** toString */
     @Override
     public String toString() {
@@ -300,33 +316,33 @@ class FragmentedMessage {
             buf.append(" released after " + DataHelper.formatDuration(_releasedAfter));
         return buf.toString();
     }
-    
-/*****
-    public static void main(String args[]) {
-        try {
-            I2PAppContext ctx = I2PAppContext.getGlobalContext();
-            DataMessage m = new DataMessage(ctx);
-            m.setData(new byte[1024]);
-            java.util.Arrays.fill(m.getData(), (byte)0xFF);
-            m.setMessageExpiration(ctx.clock().now() + 60*1000);
-            m.setUniqueId(ctx.random().nextLong(I2NPMessage.MAX_ID_VALUE));
-            byte data[] = m.toByteArray();
-            
-            I2NPMessage r0 = new I2NPMessageHandler(ctx).readMessage(data);
-            System.out.println("peq? " + r0.equals(m));
-            
-            FragmentedMessage msg = new FragmentedMessage(ctx);
-            msg.receive(m.getUniqueId(), data, 0, 500, false, null, null);
-            msg.receive(m.getUniqueId(), 1, data, 500, 500, false);
-            msg.receive(m.getUniqueId(), 2, data, 1000, data.length-1000, true);
-            if (!msg.isComplete()) throw new RuntimeException("Not complete?");
-            
-            byte recv[] = msg.toByteArray();
-            I2NPMessage r = new I2NPMessageHandler(ctx).readMessage(recv);
-            System.out.println("eq? " + m.equals(r));
-        } catch (Exception e) {
-            e.printStackTrace();
+
+    /*****
+        public static void main(String args[]) {
+            try {
+                I2PAppContext ctx = I2PAppContext.getGlobalContext();
+                DataMessage m = new DataMessage(ctx);
+                m.setData(new byte[1024]);
+                java.util.Arrays.fill(m.getData(), (byte)0xFF);
+                m.setMessageExpiration(ctx.clock().now() + 60*1000);
+                m.setUniqueId(ctx.random().nextLong(I2NPMessage.MAX_ID_VALUE));
+                byte data[] = m.toByteArray();
+
+                I2NPMessage r0 = new I2NPMessageHandler(ctx).readMessage(data);
+                System.out.println("peq? " + r0.equals(m));
+
+                FragmentedMessage msg = new FragmentedMessage(ctx);
+                msg.receive(m.getUniqueId(), data, 0, 500, false, null, null);
+                msg.receive(m.getUniqueId(), 1, data, 500, 500, false);
+                msg.receive(m.getUniqueId(), 2, data, 1000, data.length-1000, true);
+                if (!msg.isComplete()) throw new RuntimeException("Not complete?");
+
+                byte recv[] = msg.toByteArray();
+                I2NPMessage r = new I2NPMessageHandler(ctx).readMessage(recv);
+                System.out.println("eq? " + m.equals(r));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-    }
-******/
+    ******/
 }

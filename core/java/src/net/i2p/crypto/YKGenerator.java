@@ -2,9 +2,9 @@ package net.i2p.crypto;
 
 /*
  * free (adj.): unencumbered; not under the control of others
- * Written by jrandom in 2003 and released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
- * It probably won't  make your computer catch on fire, or eat 
+ * Written by jrandom in 2003 and released into the public domain
+ * with no warranty of any kind, either expressed or implied.
+ * It probably won't  make your computer catch on fire, or eat
  * your children, but it might.  Use at your own risk.
  *
  */
@@ -21,11 +21,11 @@ import net.i2p.util.SystemVersion;
  * Precalculate the Y and K for ElGamal encryption operations.
  *
  * This class precalcs a set of values on its own thread, using those transparently
- * when a new instance is created.  By default, the minimum threshold for creating 
+ * when a new instance is created.  By default, the minimum threshold for creating
  * new values for the pool is 20, and the max pool size is 50.  Whenever the pool has
- * less than the minimum, it fills it up again to the max.  There is a delay after 
+ * less than the minimum, it fills it up again to the max.  There is a delay after
  * each precalculation so that the CPU isn't hosed during startup.
- * These three parameters are controlled by java environmental variables and 
+ * These three parameters are controlled by java environmental variables and
  * can be adjusted via:
  *  -Dcrypto.yk.precalc.min=40 -Dcrypto.yk.precalc.max=100 -Dcrypto.yk.precalc.delay=60000
  *
@@ -166,23 +166,23 @@ final class YKGenerator {
         return yk;
     }
 
-/****
-    private static final int RUNS = 500;
+    /****
+        private static final int RUNS = 500;
 
-    public static void main(String args[]) {
-        // warmup crypto
-        ctx.random().nextInt();
-        System.out.println("Begin YK generator speed test");
-        long startNeg = Clock.getInstance().now();
-        for (int i = 0; i < RUNS; i++) {
-            getNextYK();
+        public static void main(String args[]) {
+            // warmup crypto
+            ctx.random().nextInt();
+            System.out.println("Begin YK generator speed test");
+            long startNeg = Clock.getInstance().now();
+            for (int i = 0; i < RUNS; i++) {
+                getNextYK();
+            }
+            long endNeg = Clock.getInstance().now();
+            long  negTime = endNeg - startNeg;
+            // 14 ms each on a 2008 netbook (with jbigi)
+            System.out.println("YK fetch time for " + RUNS + " runs: " + negTime + " @ " + (negTime / RUNS) + "ms each");
         }
-        long endNeg = Clock.getInstance().now();
-        long  negTime = endNeg - startNeg;
-        // 14 ms each on a 2008 netbook (with jbigi)
-        System.out.println("YK fetch time for " + RUNS + " runs: " + negTime + " @ " + (negTime / RUNS) + "ms each");
-    }
-****/
+    ****/
 
     /** the thread */
     private class YKPrecalcRunner implements Runnable {

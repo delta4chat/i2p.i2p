@@ -82,9 +82,9 @@ public class EdDSAPrivateKeySpec implements KeySpec {
             throw new IllegalArgumentException("hash length is wrong");
         int bd8 = bd4 / 2;
 
-	this.seed = null;
-	this.h = h;
-	this.spec = spec;
+        this.seed = null;
+        this.h = h;
+        this.spec = spec;
 
         h[0] &= 248;
         h[bd8 - 1] &= 63;
@@ -117,14 +117,14 @@ public class EdDSAPrivateKeySpec implements KeySpec {
      *  @throws IllegalArgumentException if a not clamped or reduced
      */
     public EdDSAPrivateKeySpec(byte[] seed, byte[] h, byte[] a, GroupElement A, EdDSAParameterSpec spec) {
-/**
-        // TODO if we move RedDSA to a different spec
-        int bd8m1 = (spec.getCurve().getField().getb() / 8) - 1;
-        if ((a[0] & 0x07) != 0 ||
-            (a[bd8m1] & 0xc0) != 0x40)
-            throw new IllegalArgumentException("a not clamped: a[0]=0x" + Integer.toString(a[0] & 0xff, 16) +
-                                                             " a[31]=0x" + Integer.toString(a[31] & 0xff, 16));
-**/
+        /**
+                // TODO if we move RedDSA to a different spec
+                int bd8m1 = (spec.getCurve().getField().getb() / 8) - 1;
+                if ((a[0] & 0x07) != 0 ||
+                    (a[bd8m1] & 0xc0) != 0x40)
+                    throw new IllegalArgumentException("a not clamped: a[0]=0x" + Integer.toString(a[0] & 0xff, 16) +
+                                                                     " a[31]=0x" + Integer.toString(a[31] & 0xff, 16));
+        **/
         this.seed = seed;
         this.h = h;
         this.a = a;

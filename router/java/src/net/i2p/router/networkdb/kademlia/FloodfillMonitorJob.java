@@ -34,7 +34,7 @@ class FloodfillMonitorJob extends JobImpl {
     private final FloodfillNetworkDatabaseFacade _facade;
     private long _lastChanged;
     private boolean _deferredFlood;
-    
+
     private static final int REQUEUE_DELAY = 60*60*1000;
     private static final long MIN_UPTIME = 2*60*60*1000;
     private static final long MIN_CHANGE_DELAY = 6*60*60*1000;
@@ -42,14 +42,16 @@ class FloodfillMonitorJob extends JobImpl {
     private static final int MIN_FF = 5000;
     private static final int MAX_FF = 999999;
     static final String PROP_FLOODFILL_PARTICIPANT = "router.floodfillParticipant";
-    
+
     public FloodfillMonitorJob(RouterContext context, FloodfillNetworkDatabaseFacade facade) {
         super(context);
         _facade = facade;
         _log = context.logManager().getLog(FloodfillMonitorJob.class);
     }
-    
-    public String getName() { return "Monitor the floodfill pool"; }
+
+    public String getName() {
+        return "Monitor the floodfill pool";
+    }
 
     public synchronized void runJob() {
         if (!getContext().commSystem().isRunning()) {
@@ -65,7 +67,7 @@ class FloodfillMonitorJob extends JobImpl {
         if (ff != wasFF) {
             if (ff) {
                 if (!(getContext().getBooleanProperty(PROP_FLOODFILL_PARTICIPANT) &&
-                      getContext().router().getUptime() < 3*60*1000)) {
+                        getContext().router().getUptime() < 3*60*1000)) {
                     getContext().router().eventLog().addEvent(EventLog.BECAME_FLOODFILL);
                 }
             } else {
@@ -159,7 +161,7 @@ class FloodfillMonitorJob extends JobImpl {
         char bw = ri.getBandwidthTier().charAt(0);
         // Only if class N, O, P, X
         if (bw != Router.CAPABILITY_BW128 && bw != Router.CAPABILITY_BW256 &&
-            bw != Router.CAPABILITY_BW512 && bw != Router.CAPABILITY_BW_UNLIMITED)
+                bw != Router.CAPABILITY_BW512 && bw != Router.CAPABILITY_BW_UNLIMITED)
             return false;
 
         // This list will not include ourselves...
@@ -194,8 +196,8 @@ class FloodfillMonitorJob extends JobImpl {
         for (Hash peer : floodfillPeers) {
             PeerProfile profile = getContext().profileOrganizer().getProfile(peer);
             if (profile == null || profile.getLastHeardFrom() < before ||
-                getContext().banlist().isBanlisted(peer) ||
-                getContext().commSystem().wasUnreachable(peer))
+                    getContext().banlist().isBanlisted(peer) ||
+                    getContext().commSystem().wasUnreachable(peer))
                 failcount++;
         }
 
@@ -230,7 +232,7 @@ class FloodfillMonitorJob extends JobImpl {
                 happy = false;
             else {
                 if (ra.getOption("itag0") != null)
-                   happy = false;
+                    happy = false;
             }
         }
 
@@ -247,18 +249,18 @@ class FloodfillMonitorJob extends JobImpl {
         if (_log.shouldLog(Log.DEBUG)) {
             final RouterContext rc = getContext();
             final String log = String.format(
-                    "FF criteria breakdown: happy=%b, capabilities=%s, maxLag=%d, known=%d, " +
-                    "active=%d, participating=%d, offset=%d, ssuAddr=%s ElG=%f",
-                    happy, 
-                    rc.router().getRouterInfo().getCapabilities(),
-                    rc.jobQueue().getMaxLag(),
-                    _facade.getKnownRouters(),
-                    rc.commSystem().countActivePeers(),
-                    rc.tunnelManager().getParticipatingCount(),
-                    Math.abs(rc.clock().getOffset()),
-                    rc.router().getRouterInfo().getTargetAddress("SSU").toString(),
-                    elG
-                    );
+                                   "FF criteria breakdown: happy=%b, capabilities=%s, maxLag=%d, known=%d, " +
+                                   "active=%d, participating=%d, offset=%d, ssuAddr=%s ElG=%f",
+                                   happy,
+                                   rc.router().getRouterInfo().getCapabilities(),
+                                   rc.jobQueue().getMaxLag(),
+                                   _facade.getKnownRouters(),
+                                   rc.commSystem().countActivePeers(),
+                                   rc.tunnelManager().getParticipatingCount(),
+                                   Math.abs(rc.clock().getOffset()),
+                                   rc.router().getRouterInfo().getTargetAddress("SSU").toString(),
+                                   elG
+                               );
             _log.debug(log);
         }
 
@@ -286,5 +288,5 @@ class FloodfillMonitorJob extends JobImpl {
             _log.info("Have " + good + " ff peers, not changing, enabled? " + wasFF + "; reachable? " + happy);
         return wasFF;
     }
-    
+
 }

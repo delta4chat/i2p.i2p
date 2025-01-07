@@ -26,14 +26,30 @@ class NTCP2Options {
         _recvDelay = recvDelay;
     }
 
-    public float getSendMin() { return _sendMin; }
-    public float getSendMax() { return _sendMax; }
-    public float getRecvMin() { return _recvMin; }
-    public float getRecvMax() { return _recvMax; }
-    public int getSendDummy() { return _sendDummy; }
-    public int getRecvDummy() { return _recvDummy; }
-    public int getSendDelay() { return _sendDelay; }
-    public int getRecvDelay() { return _recvDelay; }
+    public float getSendMin() {
+        return _sendMin;
+    }
+    public float getSendMax() {
+        return _sendMax;
+    }
+    public float getRecvMin() {
+        return _recvMin;
+    }
+    public float getRecvMax() {
+        return _recvMax;
+    }
+    public int getSendDummy() {
+        return _sendDummy;
+    }
+    public int getRecvDummy() {
+        return _recvDummy;
+    }
+    public int getSendDelay() {
+        return _sendDelay;
+    }
+    public int getRecvDelay() {
+        return _recvDelay;
+    }
 
     /**
      *  Get a combined config for this connection.

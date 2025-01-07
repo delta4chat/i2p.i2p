@@ -76,7 +76,9 @@ public class I2PDefaultServlet extends DefaultServlet
         String rb=getInitParameter("resourceBase");
         if (rb!=null)
         {
-            try{_resourceBase=_contextHandler.newResource(rb);}
+            try {
+                _resourceBase=_contextHandler.newResource(rb);
+            }
             catch (Exception e)
             {
                 throw new UnavailableException(e.toString());
@@ -137,9 +139,9 @@ public class I2PDefaultServlet extends DefaultServlet
      */
     @Override
     protected void sendDirectory(HttpServletRequest request,
-            HttpServletResponse response,
-            Resource resource,
-            String pathInContext)
+                                 HttpServletResponse response,
+                                 Resource resource,
+                                 String pathInContext)
     throws IOException
     {
         if (!_dirAllowed)
@@ -166,7 +168,7 @@ public class I2PDefaultServlet extends DefaultServlet
         if (dir==null)
         {
             response.sendError(HttpServletResponse.SC_FORBIDDEN,
-            "No directory");
+                               "No directory");
             return;
         }
 
@@ -186,17 +188,17 @@ public class I2PDefaultServlet extends DefaultServlet
      * @return String of HTML
      */
     private static String getListHTML(Resource res, String base, boolean parent)
-        throws IOException
+    throws IOException
     {
         base=URIUtil.canonicalPath(base);
         if (base==null || !res.isDirectory())
             return null;
-        
+
         String[] ls = res.list();
         if (ls==null)
             return null;
         DataHelper.sort(ls, new FileComparator(res));
-        
+
         String decodedBase = URIUtil.decodePath(base);
         String title = "Directory: "+deTag(decodedBase);
 
@@ -207,16 +209,16 @@ public class I2PDefaultServlet extends DefaultServlet
         buf.append("</TITLE></HEAD><BODY>\n<H1>");
         buf.append(title);
         buf.append("</H1>\n<TABLE BORDER=0>\n");
-        
+
         if (parent)
         {
             buf.append("<TR><TD><A HREF=\"");
             buf.append(URIUtil.addPaths(base,"../"));
             buf.append("\">Parent Directory</A></TD><TD></TD><TD></TD></TR>\n");
         }
-        
+
         String encodedBase = hrefEncodeURI(base);
-        
+
         DateFormat dfmt = new SimpleDateFormat(FORMAT, Locale.UK);
         TimeZone utc = TimeZone.getTimeZone("GMT");
         dfmt.setTimeZone(utc);
@@ -225,10 +227,10 @@ public class I2PDefaultServlet extends DefaultServlet
             Resource item;
             try {
                 item = res.addPath(ls[i]);
-            } catch (IOException ioe) { 
+            } catch (IOException ioe) {
                 System.out.println("Skipping file in directory listing: " + ioe.getMessage());
                 continue;
-            } catch (RuntimeException re) { 
+            } catch (RuntimeException re) {
                 // Jetty bug, addPath() argument must be unencoded,
                 // but does not escape [],so it throws an unchecked exception:
                 //
@@ -243,16 +245,16 @@ public class I2PDefaultServlet extends DefaultServlet
                 System.out.println("Skipping file in directory listing: " + re.getMessage());
                 continue;
             }
-            
+
             buf.append("\n<TR><TD><A HREF=\"");
             String path=URIUtil.addPaths(encodedBase,URIUtil.encodePath(ls[i]));
-            
+
             buf.append(path);
-            
+
             boolean isDir = item.isDirectory();
             if (isDir && !path.endsWith("/"))
                 buf.append(URIUtil.SLASH);
-            
+
             buf.append("\">");
             buf.append(deTag(ls[i]));
             buf.append("</A></TD><TD ALIGN=right>");
@@ -269,10 +271,10 @@ public class I2PDefaultServlet extends DefaultServlet
         }
         buf.append("</TABLE>\n");
         buf.append("</BODY></HTML>\n");
-        
+
         return buf.toString();
     }
-    
+
     /**
      *  I2P
      *
@@ -307,64 +309,64 @@ public class I2PDefaultServlet extends DefaultServlet
      *
      * Encode any characters that could break the URI string in an HREF.
      * Such as &lt;a href="/path/to;&lt;script&gt;Window.alert("XSS"+'%20'+"here");&lt;/script&gt;"&gt;Link&lt;/a&gt;
-     * 
+     *
      * The above example would parse incorrectly on various browsers as the "&lt;" or '"' characters
      * would end the href attribute value string prematurely.
-     * 
+     *
      * @param raw the raw text to encode.
      * @return the defanged text.
      */
-    private static String hrefEncodeURI(String raw) 
+    private static String hrefEncodeURI(String raw)
     {
         StringBuffer buf = null;
 
         loop:
-        for (int i=0;i<raw.length();i++)
+        for (int i=0; i<raw.length(); i++)
         {
             char c=raw.charAt(i);
             switch(c)
             {
-                case '\'':
-                case '"':
-                case '<':
-                case '>':
-                    buf=new StringBuffer(raw.length()<<1);
-                    break loop;
+            case '\'':
+            case '"':
+            case '<':
+            case '>':
+                buf=new StringBuffer(raw.length()<<1);
+                break loop;
             }
         }
         if (buf==null)
             return raw;
 
-        for (int i=0;i<raw.length();i++)
+        for (int i=0; i<raw.length(); i++)
         {
-            char c=raw.charAt(i);       
+            char c=raw.charAt(i);
             switch(c)
             {
-              case '"':
-                  buf.append("%22");
-                  continue;
-              case '\'':
-                  buf.append("%27");
-                  continue;
-              case '<':
-                  buf.append("%3C");
-                  continue;
-              case '>':
-                  buf.append("%3E");
-                  continue;
-              default:
-                  buf.append(c);
-                  continue;
+            case '"':
+                buf.append("%22");
+                continue;
+            case '\'':
+                buf.append("%27");
+                continue;
+            case '<':
+                buf.append("%3C");
+                continue;
+            case '>':
+                buf.append("%3E");
+                continue;
+            default:
+                buf.append(c);
+                continue;
             }
         }
 
         return buf.toString();
     }
-    
+
     /**
      * Copied unchanged from Resource.java
      */
-    private static String deTag(String raw) 
+    private static String deTag(String raw)
     {
         return StringUtil.sanitizeXmlString(raw);
     }

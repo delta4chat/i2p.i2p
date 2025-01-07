@@ -46,13 +46,13 @@ public class DatabaseLookupMessage extends FastI2NPMessageImpl {
     private RatchetSessionTag _ratchetReplyTag;
     private PublicKey _ratchetPubKey;
     private Type _type;
-    
+
     public static final boolean USE_ECIES_FF = true;
 
     /** Insanely big. Not much more than 1500 will fit in a message.
         Have to prevent a huge alloc on rcv of a malicious msg though */
     private static final int MAX_NUM_PEERS = 512;
-    
+
     private static final byte FLAG_TUNNEL = 0x01;
     // any flags below here will confuse routers 0.9.5 or lower
     private static final byte FLAG_ENCRYPT = 0x02;
@@ -94,11 +94,13 @@ public class DatabaseLookupMessage extends FastI2NPMessageImpl {
         super(context);
         _type = Type.ANY;
     }
-    
+
     /**
      * Defines the key being searched for
      */
-    public Hash getSearchKey() { return _key; }
+    public Hash getSearchKey() {
+        return _key;
+    }
 
     /**
      * @throws IllegalStateException if key previously set, to protect saved checksum
@@ -108,7 +110,7 @@ public class DatabaseLookupMessage extends FastI2NPMessageImpl {
             throw new IllegalStateException();
         _key = key;
     }
-    
+
     /**
      *  Defines the type of data being searched for.
      *  Default ANY.
@@ -116,7 +118,9 @@ public class DatabaseLookupMessage extends FastI2NPMessageImpl {
      *  @return non-null
      *  @since 0.9.16
      */
-    public Type getSearchType() { return _type; }
+    public Type getSearchType() {
+        return _type;
+    }
 
     /**
      *  Defines the type of data being searched for.
@@ -132,13 +136,15 @@ public class DatabaseLookupMessage extends FastI2NPMessageImpl {
             throw new IllegalArgumentException();
         _type = type;
     }
-    
+
     /**
      * Contains the router who requested this lookup
      *
      */
-    public Hash getFrom() { return _fromHash; }
-    
+    public Hash getFrom() {
+        return _fromHash;
+    }
+
     /**
      * @throws IllegalStateException if from previously set, to protect saved checksum
      */
@@ -147,12 +153,14 @@ public class DatabaseLookupMessage extends FastI2NPMessageImpl {
             throw new IllegalStateException();
         _fromHash = from;
     }
-    
+
     /**
      * Contains the tunnel ID a reply should be sent to
      *
      */
-    public TunnelId getReplyTunnel() { return _replyTunnel; }
+    public TunnelId getReplyTunnel() {
+        return _replyTunnel;
+    }
 
     /**
      * @throws IllegalStateException if tunnel previously set, to protect saved checksum
@@ -162,7 +170,7 @@ public class DatabaseLookupMessage extends FastI2NPMessageImpl {
             throw new IllegalStateException();
         _replyTunnel = replyTunnel;
     }
-    
+
     /**
      *  Does this router support encrypted replies?
      *
@@ -181,7 +189,7 @@ public class DatabaseLookupMessage extends FastI2NPMessageImpl {
             return LeaseSetKeys.SET_BOTH.contains(type);
         return type == EncType.ELGAMAL_2048;
     }
-    
+
     /**
      *  Does this router support ratchet replies?
      *
@@ -200,21 +208,25 @@ public class DatabaseLookupMessage extends FastI2NPMessageImpl {
             return LeaseSetKeys.SET_BOTH.contains(type);
         return type == EncType.ELGAMAL_2048;
     }
-    
+
     /**
      *  The included session key or null if unset.
      *  If non-null, either getReplyTag() or getRatchetReplyTag() is non-null.
      *
      *  @since 0.9.7
      */
-    public SessionKey getReplyKey() { return _replyKey; }
-    
+    public SessionKey getReplyKey() {
+        return _replyKey;
+    }
+
     /**
      *  The included session tag or null if unset
      *
      *  @since 0.9.7
      */
-    public SessionTag getReplyTag() { return _replyTag; }
+    public SessionTag getReplyTag() {
+        return _replyTag;
+    }
 
     /**
      *  Only worthwhile if sending reply via tunnel
@@ -226,18 +238,20 @@ public class DatabaseLookupMessage extends FastI2NPMessageImpl {
      */
     public void setReplySession(SessionKey encryptKey, SessionTag encryptTag) {
         if (_replyKey != null || _replyTag != null ||
-            _ratchetReplyTag != null || _ratchetPubKey != null)
+                _ratchetReplyTag != null || _ratchetPubKey != null)
             throw new IllegalStateException();
         _replyKey = encryptKey;
         _replyTag = encryptTag;
     }
-    
+
     /**
      *  The included session tag or null if unset
      *
      *  @since 0.9.46
      */
-    public RatchetSessionTag getRatchetReplyTag() { return _ratchetReplyTag; }
+    public RatchetSessionTag getRatchetReplyTag() {
+        return _ratchetReplyTag;
+    }
 
     /**
      *  Ratchet
@@ -249,19 +263,21 @@ public class DatabaseLookupMessage extends FastI2NPMessageImpl {
      */
     public void setReplySession(SessionKey encryptKey, RatchetSessionTag encryptTag) {
         if (_replyKey != null || _replyTag != null ||
-            _ratchetReplyTag != null || _ratchetPubKey != null)
+                _ratchetReplyTag != null || _ratchetPubKey != null)
             throw new IllegalStateException();
         _replyKey = encryptKey;
         _ratchetReplyTag = encryptTag;
     }
-    
+
     /**
      *  The included session key or null if unset.
      *  Preliminary, not fully supported, see proposal 154.
      *
      *  @since 0.9.46
      */
-    public PublicKey getRatchetPublicKey() { return _ratchetPubKey; }
+    public PublicKey getRatchetPublicKey() {
+        return _ratchetPubKey;
+    }
 
     /**
      *  Ratchet.
@@ -274,7 +290,7 @@ public class DatabaseLookupMessage extends FastI2NPMessageImpl {
     public void setReplySession(PublicKey pubKey) {
         _ratchetPubKey = pubKey;
     }
-    
+
     /**
      * Set of peers that a lookup reply should NOT include.
      * WARNING - returns a copy.
@@ -336,53 +352,53 @@ public class DatabaseLookupMessage extends FastI2NPMessageImpl {
             }
         }
     }
-    
+
     public void readMessage(byte data[], int offset, int dataSize, int type) throws I2NPMessageException {
         if (type != MESSAGE_TYPE) throw new I2NPMessageException("Message type is incorrect for this message");
         int curIndex = offset;
-        
+
         //byte keyData[] = new byte[Hash.HASH_LENGTH];
         //System.arraycopy(data, curIndex, keyData, 0, Hash.HASH_LENGTH);
         _key = Hash.create(data, curIndex);
         curIndex += Hash.HASH_LENGTH;
         //_key = new Hash(keyData);
-        
+
         //byte fromData[] = new byte[Hash.HASH_LENGTH];
         //System.arraycopy(data, curIndex, fromData, 0, Hash.HASH_LENGTH);
         _fromHash = Hash.create(data, curIndex);
         curIndex += Hash.HASH_LENGTH;
         //_fromHash = new Hash(fromData);
-        
+
         // as of 0.9.6, ignore other 7 bits of the flag byte
         // TODO store the whole flag byte
         boolean tunnelSpecified = (data[curIndex] & FLAG_TUNNEL) != 0;
         boolean replyKeySpecified = (data[curIndex] & FLAG_ENCRYPT) != 0;
         boolean ratchetSpecified = (data[curIndex] & FLAG_RATCHET) != 0;
         switch (data[curIndex] & FLAG_TYPE_MASK) {
-            case FLAG_TYPE_LS:
-                _type = Type.LS;
-                break;
-            case FLAG_TYPE_RI:
-                _type = Type.RI;
-                break;
-            case FLAG_TYPE_EXPL:
-                _type = Type.EXPL;
-                break;
-            case FLAG_TYPE_ANY:
-            default:
-                _type = Type.ANY;
-                break;
+        case FLAG_TYPE_LS:
+            _type = Type.LS;
+            break;
+        case FLAG_TYPE_RI:
+            _type = Type.RI;
+            break;
+        case FLAG_TYPE_EXPL:
+            _type = Type.EXPL;
+            break;
+        case FLAG_TYPE_ANY:
+        default:
+            _type = Type.ANY;
+            break;
         }
         curIndex++;
-        
+
         if (tunnelSpecified) {
             _replyTunnel = new TunnelId(DataHelper.fromLong(data, curIndex, 4));
             curIndex += 4;
         }
-        
+
         int numPeers = (int)DataHelper.fromLong(data, curIndex, 2);
         curIndex += 2;
-        
+
         if ( (numPeers < 0) || (numPeers > MAX_NUM_PEERS) )
             throw new I2NPMessageException("Invalid number of peers - " + numPeers);
         List<Hash> peers = numPeers > 0 ? new ArrayList<Hash>(numPeers) : null;
@@ -426,7 +442,7 @@ public class DatabaseLookupMessage extends FastI2NPMessageImpl {
         if (_replyTunnel != null)
             totalLength += 4;
         totalLength += 2; // numPeers
-        if (_dontIncludePeers != null) 
+        if (_dontIncludePeers != null)
             totalLength += Hash.HASH_LENGTH * _dontIncludePeers.size();
         if (_replyKey != null) {
             // number of tags, assume always 1 for now
@@ -441,7 +457,7 @@ public class DatabaseLookupMessage extends FastI2NPMessageImpl {
         }
         return totalLength;
     }
-    
+
     protected int writeMessageBody(byte out[], int curIndex) throws I2NPMessageException {
         if (_key == null) throw new I2NPMessageException("Key being searched for not specified");
         if (_fromHash == null) throw new I2NPMessageException("From address not specified");
@@ -461,19 +477,19 @@ public class DatabaseLookupMessage extends FastI2NPMessageImpl {
         else
             flag = 0;
         switch (_type) {
-            case LS:
-                flag |= FLAG_TYPE_LS;
-                break;
-            case RI:
-                flag |= FLAG_TYPE_RI;
-                break;
-            case EXPL:
-                flag |= FLAG_TYPE_EXPL;
-                break;
-            case ANY:
-            default:
-                // lookup type bits are 0
-                break;
+        case LS:
+            flag |= FLAG_TYPE_LS;
+            break;
+        case RI:
+            flag |= FLAG_TYPE_RI;
+            break;
+        case EXPL:
+            flag |= FLAG_TYPE_EXPL;
+            break;
+        case ANY:
+        default:
+            // lookup type bits are 0
+            break;
         }
         if (_replyTunnel != null) {
             flag |= FLAG_TUNNEL;
@@ -516,9 +532,11 @@ public class DatabaseLookupMessage extends FastI2NPMessageImpl {
         }
         return curIndex;
     }
-    
-    public int getType() { return MESSAGE_TYPE; }
-    
+
+    public int getType() {
+        return MESSAGE_TYPE;
+    }
+
     @Override
     public int hashCode() {
         return DataHelper.hashCode(_key) +
@@ -526,7 +544,7 @@ public class DatabaseLookupMessage extends FastI2NPMessageImpl {
                DataHelper.hashCode(_replyTunnel) +
                DataHelper.hashCode(_dontIncludePeers);
     }
-    
+
     @Override
     public boolean equals(Object object) {
         if ( (object != null) && (object instanceof DatabaseLookupMessage) ) {
@@ -539,7 +557,7 @@ public class DatabaseLookupMessage extends FastI2NPMessageImpl {
             return false;
         }
     }
-    
+
     @Override
     public String toString() {
         StringBuilder buf = new StringBuilder(256);

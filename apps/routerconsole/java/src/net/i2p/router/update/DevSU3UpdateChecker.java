@@ -28,7 +28,7 @@ import net.i2p.util.VersionComparator;
 class DevSU3UpdateChecker extends UpdateRunner {
 
     public DevSU3UpdateChecker(RouterContext ctx, ConsoleUpdateManager mgr,
-                               List<URI> uris) { 
+                               List<URI> uris) {
         super(ctx, mgr, UpdateType.ROUTER_DEV_SU3, uris, RouterVersion.FULL_VERSION);
         if (!uris.isEmpty())
             _currentURI = uris.get(0);
@@ -44,8 +44,8 @@ class DevSU3UpdateChecker extends UpdateRunner {
         String proxyHost = _context.getProperty(ConfigUpdateHandler.PROP_PROXY_HOST, ConfigUpdateHandler.DEFAULT_PROXY_HOST);
         int proxyPort = ConfigUpdateHandler.proxyPort(_context);
         if (proxyPort == ConfigUpdateHandler.DEFAULT_PROXY_PORT_INT &&
-            proxyHost.equals(ConfigUpdateHandler.DEFAULT_PROXY_HOST) &&
-            _context.portMapper().getPort(PortMapper.SVC_HTTP_PROXY) < 0) {
+                proxyHost.equals(ConfigUpdateHandler.DEFAULT_PROXY_HOST) &&
+                _context.portMapper().getPort(PortMapper.SVC_HTTP_PROXY) < 0) {
             String msg = _t("HTTP client proxy tunnel must be running");
             if (_log.shouldWarn())
                 _log.warn(msg);
@@ -63,7 +63,7 @@ class DevSU3UpdateChecker extends UpdateRunner {
             _log.error("Error fetching the update", t);
         }
     }
-        
+
     @Override
     public void bytesTransferred(long alreadyTransferred, int currentWrite, long bytesTransferred,
                                  long bytesRemaining, String url) {
@@ -77,7 +77,7 @@ class DevSU3UpdateChecker extends UpdateRunner {
         if (newer) {
             if (SystemVersion.isJava7()) {
                 _mgr.notifyVersionAvailable(this, _currentURI, UpdateType.ROUTER_DEV_SU3, "", UpdateMethod.HTTP,
-                                        _urls, newVersion, RouterVersion.FULL_VERSION);
+                                            _urls, newVersion, RouterVersion.FULL_VERSION);
             } else {
                 String ourJava = System.getProperty("java.version");
                 String msg = _mgr._t("Requires Java version {0} but installed Java version is {1}", "1.7", ourJava);
@@ -99,4 +99,4 @@ class DevSU3UpdateChecker extends UpdateRunner {
         _mgr.notifyCheckComplete(this, false, false);
     }
 }
-    
+

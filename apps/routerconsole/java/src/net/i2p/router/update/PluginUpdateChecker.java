@@ -29,7 +29,7 @@ class PluginUpdateChecker extends UpdateRunner {
     private final String _oldVersion;
 
     public PluginUpdateChecker(RouterContext ctx, ConsoleUpdateManager mgr,
-                               List<URI> uris, String appName, String oldVersion ) { 
+                               List<URI> uris, String appName, String oldVersion ) {
         super(ctx, mgr, UpdateType.PLUGIN, uris, oldVersion);
         if (!uris.isEmpty())
             _currentURI = uris.get(0);
@@ -38,61 +38,63 @@ class PluginUpdateChecker extends UpdateRunner {
     }
 
     @Override
-    public String getID() { return _appName; }
-    
-        @Override
-        protected void update() {
-            // must be set for super
-            _isPartial = true;
-            // use the same settings as for updater
-            // always proxy, or else FIXME
-            //boolean shouldProxy = Boolean.valueOf(_context.getProperty(ConfigUpdateHandler.PROP_SHOULD_PROXY, ConfigUpdateHandler.DEFAULT_SHOULD_PROXY)).booleanValue();
-            String proxyHost = _context.getProperty(ConfigUpdateHandler.PROP_PROXY_HOST, ConfigUpdateHandler.DEFAULT_PROXY_HOST);
-            int proxyPort = ConfigUpdateHandler.proxyPort(_context);
-            if (proxyPort == ConfigUpdateHandler.DEFAULT_PROXY_PORT_INT &&
+    public String getID() {
+        return _appName;
+    }
+
+    @Override
+    protected void update() {
+        // must be set for super
+        _isPartial = true;
+        // use the same settings as for updater
+        // always proxy, or else FIXME
+        //boolean shouldProxy = Boolean.valueOf(_context.getProperty(ConfigUpdateHandler.PROP_SHOULD_PROXY, ConfigUpdateHandler.DEFAULT_SHOULD_PROXY)).booleanValue();
+        String proxyHost = _context.getProperty(ConfigUpdateHandler.PROP_PROXY_HOST, ConfigUpdateHandler.DEFAULT_PROXY_HOST);
+        int proxyPort = ConfigUpdateHandler.proxyPort(_context);
+        if (proxyPort == ConfigUpdateHandler.DEFAULT_PROXY_PORT_INT &&
                 proxyHost.equals(ConfigUpdateHandler.DEFAULT_PROXY_HOST) &&
                 _context.portMapper().getPort(PortMapper.SVC_HTTP_PROXY) < 0) {
-                String msg = _t("HTTP client proxy tunnel must be running");
-                if (_log.shouldWarn())
-                    _log.warn(msg);
-                updateStatus("<b>" + msg + "</b>");
-                _mgr.notifyCheckComplete(this, false, false);
-                return;
-            }
-            updateStatus("<b>" + _t("Checking for update of plugin {0}", _appName) + "</b>");
-            _baos.reset();
-            try {
-                _get = new PartialEepGet(_context, proxyHost, proxyPort, _baos, _currentURI.toString(), TrustedUpdate.HEADER_BYTES);
-                _get.addStatusListener(this);
-                _get.fetch(CONNECT_TIMEOUT);
-            } catch (Throwable t) {
-                _log.error("Error checking update for plugin", t);
-            }
-        }
-        
-        @Override
-        public void bytesTransferred(long alreadyTransferred, int currentWrite, long bytesTransferred, long bytesRemaining, String url) {
-        }
-
-        @Override
-        public void transferComplete(long alreadyTransferred, long bytesTransferred, long bytesRemaining,
-                                     String url, String outputFile, boolean notModified) {
-            super.transferComplete(alreadyTransferred, bytesTransferred, bytesRemaining,
-                                   url, outputFile, notModified);
-            // super sets _newVersion if newer
-            boolean newer = _newVersion != null;
-            if (newer) {
-                _mgr.notifyVersionAvailable(this, _currentURI, UpdateType.PLUGIN, _appName, UpdateMethod.HTTP,
-                                            _urls, _newVersion, _oldVersion);
-            }
-            _mgr.notifyCheckComplete(this, newer, true);
-        }
-
-        @Override
-        public void transferFailed(String url, long bytesTransferred, long bytesRemaining, int currentAttempt) {
-            File f = new File(_updateFile);
-            f.delete();
+            String msg = _t("HTTP client proxy tunnel must be running");
+            if (_log.shouldWarn())
+                _log.warn(msg);
+            updateStatus("<b>" + msg + "</b>");
             _mgr.notifyCheckComplete(this, false, false);
+            return;
         }
+        updateStatus("<b>" + _t("Checking for update of plugin {0}", _appName) + "</b>");
+        _baos.reset();
+        try {
+            _get = new PartialEepGet(_context, proxyHost, proxyPort, _baos, _currentURI.toString(), TrustedUpdate.HEADER_BYTES);
+            _get.addStatusListener(this);
+            _get.fetch(CONNECT_TIMEOUT);
+        } catch (Throwable t) {
+            _log.error("Error checking update for plugin", t);
+        }
+    }
+
+    @Override
+    public void bytesTransferred(long alreadyTransferred, int currentWrite, long bytesTransferred, long bytesRemaining, String url) {
+    }
+
+    @Override
+    public void transferComplete(long alreadyTransferred, long bytesTransferred, long bytesRemaining,
+                                 String url, String outputFile, boolean notModified) {
+        super.transferComplete(alreadyTransferred, bytesTransferred, bytesRemaining,
+                               url, outputFile, notModified);
+        // super sets _newVersion if newer
+        boolean newer = _newVersion != null;
+        if (newer) {
+            _mgr.notifyVersionAvailable(this, _currentURI, UpdateType.PLUGIN, _appName, UpdateMethod.HTTP,
+                                        _urls, _newVersion, _oldVersion);
+        }
+        _mgr.notifyCheckComplete(this, newer, true);
+    }
+
+    @Override
+    public void transferFailed(String url, long bytesTransferred, long bytesRemaining, int currentAttempt) {
+        File f = new File(_updateFile);
+        f.delete();
+        _mgr.notifyCheckComplete(this, false, false);
+    }
 }
-    
+

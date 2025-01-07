@@ -6,7 +6,7 @@ import java.util.Properties;
 import net.i2p.data.DataHelper;
 
 /**
- * Simple rate calculator for periodically sampled data points - determining an 
+ * Simple rate calculator for periodically sampled data points - determining an
  * average value over a period, the number of events in that period, the maximum number
  * of events (using the interval between events), and lifetime data.
  *
@@ -117,9 +117,13 @@ public class Rate {
     public synchronized long getPeriod() {
         return _period;
     }
-    
-    public RateStat getRateStat() { return _stat; }
-    public void setRateStat(RateStat rs) { _stat = rs; }
+
+    public RateStat getRateStat() {
+        return _stat;
+    }
+    public void setRateStat(RateStat rs) {
+        _stat = rs;
+    }
 
     /**
      * A rate with period shorter than Router.COALESCE_TIME = 50*1000 has to
@@ -137,7 +141,7 @@ public class Rate {
     }
 
     /**
-     * Create a new rate and load its state from the properties, taking data 
+     * Create a new rate and load its state from the properties, taking data
      * from the data points underneath the given prefix.  <p>
      * (e.g. prefix = "profile.dbIntroduction.60m", this will load the associated data points such
      * as "profile.dbIntroduction.60m.lifetimeEventCount").  The data can be exported
@@ -223,7 +227,7 @@ public class Rate {
                 //    _log.debug("not coalescing, measuredPeriod = " + measuredPeriod + " period = " + _period);
                 return;
             }
-    
+
             // ok ok, lets coalesce
 
             // how much were we off by?  (so that we can sample down the measured values)
@@ -252,9 +256,13 @@ public class Rate {
             _summaryListener.add(correctedTotalValue, _lastEventCount, _lastTotalEventTime, _period);
     }
 
-    public void setSummaryListener(RateSummaryListener listener) { _summaryListener = listener; }
-    public RateSummaryListener getSummaryListener() { return _summaryListener; }
-    
+    public void setSummaryListener(RateSummaryListener listener) {
+        _summaryListener = listener;
+    }
+    public RateSummaryListener getSummaryListener() {
+        return _summaryListener;
+    }
+
     /**
      * What was the average value across the events in the last period?
      */
@@ -262,7 +270,7 @@ public class Rate {
         int lec = _lastEventCount;  // avoid race NPE
         if ((_lastTotalValue != 0) && (lec > 0))
             return _lastTotalValue / lec;
-            
+
         return 0.0D;
     }
 
@@ -283,7 +291,7 @@ public class Rate {
     public synchronized double getLifetimeAverageValue() {
         if ((_lifetimeTotalValue != 0) && (_lifetimeEventCount > 0))
             return _lifetimeTotalValue / _lifetimeEventCount;
-       
+
         return 0.0D;
     }
 
@@ -296,9 +304,9 @@ public class Rate {
             return getAverageValue();
         return getLifetimeAverageValue();
     }
-    
-    /** 
-     * During the last period, how much of the time was spent actually processing events in proportion 
+
+    /**
+     * During the last period, how much of the time was spent actually processing events in proportion
      * to how many events could have occurred if there were no intervals?
      *
      * @return ratio, or 0 if event times aren't used
@@ -312,14 +320,14 @@ public class Rate {
              */
             return ((double)_lastTotalEventTime) / (double)_period;
         }
-        
+
         return 0.0D;
     }
 
-    /** 
+    /**
      * During the extreme period (i.e. the period with the highest total value),
      * how much of the time was spent actually processing events
-     * in proportion to how many events could have occurred if there were no intervals? 
+     * in proportion to how many events could have occurred if there were no intervals?
      *
      * @return ratio, or 0 if the statistic doesn't use event times
      */
@@ -332,9 +340,9 @@ public class Rate {
         return 0.0D;
     }
 
-    /** 
-     * During the lifetime of this stat, how much of the time was spent actually processing events in proportion 
-     * to how many events could have occurred if there were no intervals? 
+    /**
+     * During the lifetime of this stat, how much of the time was spent actually processing events in proportion
+     * to how many events could have occurred if there were no intervals?
      *
      * @return ratio, or 0 if event times aren't used
      */
@@ -356,8 +364,8 @@ public class Rate {
         return (long) Math.floor(periods);
     }
 
-    /** 
-     * using the last period's rate, what is the total value that could have been sent 
+    /**
+     * using the last period's rate, what is the total value that could have been sent
      * if events were constant?
      *
      * @return max total value, or 0 if event times aren't used
@@ -366,15 +374,15 @@ public class Rate {
         if ((_lastTotalValue != 0) && (_lastEventCount > 0) && (_lastTotalEventTime > 0)) {
             double saturation = getLastEventSaturation();
             if (saturation != 0.0D) return _lastTotalValue / saturation;
-                
+
             return 0.0D;
         }
         return 0.0D;
     }
 
-    /** 
+    /**
      * During the extreme period (i.e. the period with the highest total value),
-     * what is the total value that could have been 
+     * what is the total value that could have been
      * sent if events were constant?
      *
      * @return event total at saturation, or 0 if no event times are measured
@@ -383,10 +391,10 @@ public class Rate {
         if ((_extremeTotalValue != 0) && (_extremeEventCount > 0) && (_extremeTotalEventTime > 0)) {
             double saturation = getExtremeEventSaturation();
             if (saturation != 0.0d) return _extremeTotalValue / saturation;
-            
+
             return 0.0D;
-        } 
-        
+        }
+
         return 0.0D;
     }
 
@@ -398,7 +406,7 @@ public class Rate {
     public synchronized double getPercentageOfExtremeValue() {
         if ((_lastTotalValue != 0) && (_extremeTotalValue != 0))
             return _lastTotalValue / _extremeTotalValue;
-        
+
         return 0.0D;
     }
 
@@ -411,10 +419,10 @@ public class Rate {
             double lifetimePeriodValue = _period * (_lifetimeTotalValue / (now() - _creationDate));
             return _lastTotalValue / lifetimePeriodValue;
         }
-  
+
         return 0.0D;
     }
-    
+
     /**
      * @return a thread-local temp object containing computed averages.
      * @since 0.9.4
@@ -422,9 +430,9 @@ public class Rate {
     public RateAverages computeAverages() {
         return computeAverages(RateAverages.getTemp(),false);
     }
-    
+
     /**
-     * @param out where to store the computed averages.  
+     * @param out where to store the computed averages.
      * @param useLifetime whether the lifetime average should be used if
      * there are no events.
      * @return the same RateAverages object for chaining
@@ -432,10 +440,10 @@ public class Rate {
      */
     public synchronized RateAverages computeAverages(RateAverages out, boolean useLifetime) {
         out.reset();
-        
+
         final long total = _currentEventCount + _lastEventCount;
         out.setTotalEventCount(total);
-        
+
         if (total <= 0) {
             final double avg = useLifetime ? getLifetimeAverageValue() : getAverageValue();
             out.setAverage(avg);
@@ -466,44 +474,44 @@ public class Rate {
     public synchronized void store(String prefix, StringBuilder buf, boolean addComments) throws IOException {
         PersistenceHelper.addTime(buf, addComments, prefix, ".period", "Length of the period:", _period);
         PersistenceHelper.addDate(buf, addComments, prefix, ".creationDate",
-                              "When was this rate created?", _creationDate);
+                                  "When was this rate created?", _creationDate);
         PersistenceHelper.addDate(buf, addComments, prefix, ".lastCoalesceDate",
-                              "When did we last coalesce this rate?",
-                              _lastCoalesceDate);
+                                  "When did we last coalesce this rate?",
+                                  _lastCoalesceDate);
         PersistenceHelper.addDate(buf, addComments, prefix, ".currentDate",
-                              "When was this data written?", now());
+                                  "When was this data written?", now());
         PersistenceHelper.add(buf, addComments, prefix, ".currentTotalValue",
                               "Total value of data points in the current (uncoalesced) period", _currentTotalValue);
         PersistenceHelper.add(buf, addComments, prefix, ".currentEventCount",
                               "How many events have occurred in the current (uncoalesced) period?", _currentEventCount);
         PersistenceHelper.addTime(buf, addComments, prefix, ".currentTotalEventTime",
-                              "How much time have the events in the current (uncoalesced) period consumed?",
-                              _currentTotalEventTime);
+                                  "How much time have the events in the current (uncoalesced) period consumed?",
+                                  _currentTotalEventTime);
         PersistenceHelper.add(buf, addComments, prefix, ".lastTotalValue",
                               "Total value of data points in the most recent (coalesced) period", _lastTotalValue);
         PersistenceHelper.add(buf, addComments, prefix, ".lastEventCount",
                               "How many events have occurred in the most recent (coalesced) period?", _lastEventCount);
         PersistenceHelper.addTime(buf, addComments, prefix, ".lastTotalEventTime",
-                              "How much time have the events in the most recent (coalesced) period consumed?",
-                              _lastTotalEventTime);
+                                  "How much time have the events in the most recent (coalesced) period consumed?",
+                                  _lastTotalEventTime);
         PersistenceHelper.add(buf, addComments, prefix, ".extremeTotalValue",
                               "Total value of data points in the most extreme period", _extremeTotalValue);
         PersistenceHelper.add(buf, addComments, prefix, ".extremeEventCount",
                               "How many events have occurred in the most extreme period?", _extremeEventCount);
         PersistenceHelper.addTime(buf, addComments, prefix, ".extremeTotalEventTime",
-                              "How much time have the events in the most extreme period consumed?",
-                              _extremeTotalEventTime);
+                                  "How much time have the events in the most extreme period consumed?",
+                                  _extremeTotalEventTime);
         PersistenceHelper.add(buf, addComments, prefix, ".lifetimeTotalValue",
                               "Total value of data points since this stat was created", _lifetimeTotalValue);
         PersistenceHelper.add(buf, addComments, prefix, ".lifetimeEventCount",
                               "How many events have occurred since this stat was created?", _lifetimeEventCount);
         PersistenceHelper.addTime(buf, addComments, prefix, ".lifetimeTotalEventTime",
-                              "How much total time was consumed by the events since this stat was created?",
-                              _lifetimeTotalEventTime);
+                                  "How much total time was consumed by the events since this stat was created?",
+                                  _lifetimeTotalEventTime);
     }
 
     /**
-     * Load this rate from the properties, taking data from the data points 
+     * Load this rate from the properties, taking data from the data points
      * underneath the given prefix.
      *
      * @param prefix prefix to the property entries (should NOT end with a period)
@@ -548,7 +556,7 @@ public class Rate {
             return false;
         if (_stat == null && r._stat == null)
             return true;
-        if (_stat != null && r._stat != null) 
+        if (_stat != null && r._stat != null)
             return _stat.nameGroupDescEquals(r._stat);
         return false;
     }
@@ -584,7 +592,7 @@ public class Rate {
             buf.append("\n\t total value if we were always processing events: ").append(getLastSaturationLimit());
             buf.append("\n\t max % of time spent processing events: ").append(100.0d * getExtremeEventSaturation());
             buf.append("\n\t max total value if we were always processing events: ")
-               .append(getExtremeSaturationLimit());
+            .append(getExtremeSaturationLimit());
         }
         return buf.toString();
     }

@@ -11,7 +11,7 @@ import java.security.Security;
 public final class I2PProvider extends Provider {
     public static final String PROVIDER_NAME = "I2P";
     private static final String INFO = "I2P Security Provider v0.1, implementing" +
-            "several algorithms used by I2P.";
+                                       "several algorithms used by I2P.";
     private static boolean _installed;
 
     /**
@@ -24,17 +24,17 @@ public final class I2PProvider extends Provider {
         // replaced by (String,String,String) added in Java 9
         super(PROVIDER_NAME, 0.1, INFO);
 
-/*
-        AccessController.doPrivileged(new PrivilegedAction<Void>() {
-            @Override
-            public Void run() {
-*/
-                setup();
-/*
-                return null;
-            }
-        });
-*/
+        /*
+                AccessController.doPrivileged(new PrivilegedAction<Void>() {
+                    @Override
+                    public Void run() {
+        */
+        setup();
+        /*
+                        return null;
+                    }
+                });
+        */
     }
 
     private void setup() {

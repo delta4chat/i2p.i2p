@@ -2,9 +2,9 @@ package net.i2p.crypto;
 
 /*
  * free (adj.): unencumbered; not under the control of others
- * Written by jrandom in 2003 and released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
- * It probably won't  make your computer catch on fire, or eat 
+ * Written by jrandom in 2003 and released into the public domain
+ * with no warranty of any kind, either expressed or implied.
+ * It probably won't  make your computer catch on fire, or eat
  * your children, but it might.  Use at your own risk.
  *
  */
@@ -85,7 +85,7 @@ public final class KeyGenerator {
         key.setData(data);
         return key;
     }
-    
+
     private static final int PBE_ROUNDS = 1000;
 
     /**
@@ -101,15 +101,15 @@ public final class KeyGenerator {
             _context.sha().calculateHash(h, 0, Hash.HASH_LENGTH, h, 0);
         return new SessionKey(h);
     }
-    
+
     /** standard exponent size */
     private static final int PUBKEY_EXPONENT_SIZE_FULL = 2048;
 
-    /** 
+    /**
      * short exponent size, which should be safe for use with the Oakley primes,
      * per "On Diffie-Hellman Key Agreement with Short Exponents" - van Oorschot, Weiner
      * at EuroCrypt 96, and crypto++'s benchmarks at http://www.eskimo.com/~weidai/benchmarks.html
-     * Also, "Koshiba & Kurosawa: Short Exponent Diffie-Hellman Problems" (PKC 2004, LNCS 2947, pp. 173-186) 
+     * Also, "Koshiba & Kurosawa: Short Exponent Diffie-Hellman Problems" (PKC 2004, LNCS 2947, pp. 173-186)
      * aparently supports this, according to
      * http://groups.google.com/group/sci.crypt/browse_thread/thread/1855a5efa7416677/339fa2f945cc9ba0#339fa2f945cc9ba0
      * (damn commercial access to http://www.springerlink.com/(xrkdvv45w0cmnur4aimsxx55)/app/home/contribution.asp?referrer=parent&backto=issue,13,31;journal,893,3280;linkingpublicationresults,1:105633,1 )
@@ -118,15 +118,15 @@ public final class KeyGenerator {
 
     /** @since 0.9.8 */
     private static final boolean DEFAULT_USE_LONG_EXPONENT =
-                                                   !SystemVersion.isSlow();
+        !SystemVersion.isSlow();
 
     /**
      *  @deprecated use getElGamalExponentSize() which allows override in the properties
      */
     @Deprecated
     public static final int PUBKEY_EXPONENT_SIZE = DEFAULT_USE_LONG_EXPONENT ?
-                                                   PUBKEY_EXPONENT_SIZE_FULL :
-                                                   PUBKEY_EXPONENT_SIZE_SHORT;
+            PUBKEY_EXPONENT_SIZE_FULL :
+            PUBKEY_EXPONENT_SIZE_SHORT;
 
     private static final String PROP_LONG_EXPONENT = "crypto.elGamal.useLongKey";
 
@@ -189,13 +189,13 @@ public final class KeyGenerator {
         PublicKey pub;
         PrivateKey priv;
         switch (type) {
-          case ELGAMAL_2048:
+        case ELGAMAL_2048:
             SimpleDataStructure[] keys = generatePKIKeys();
             pub = (PublicKey) keys[0];
             priv = (PrivateKey) keys[1];
             break;
 
-          case ECIES_X25519:
+        case ECIES_X25519:
             byte[] bpriv = new byte[32];
             do {
                 _context.random().nextBytes(bpriv);
@@ -208,7 +208,7 @@ public final class KeyGenerator {
             priv = new PrivateKey(type, bpriv, pub);
             break;
 
-          default:
+        default:
             throw new IllegalArgumentException("Unsupported algorithm");
 
         }
@@ -227,7 +227,7 @@ public final class KeyGenerator {
         EncType type = priv.getType();
         byte[] data;
         switch (type) {
-          case ELGAMAL_2048:
+        case ELGAMAL_2048:
             BigInteger a = new NativeBigInteger(1, priv.toByteArray());
             BigInteger aalpha = CryptoConstants.elgg.modPow(a, CryptoConstants.elgp);
             try {
@@ -237,12 +237,12 @@ public final class KeyGenerator {
             }
             break;
 
-          case ECIES_X25519:
+        case ECIES_X25519:
             data = new byte[32];
             Curve25519.eval(data, 0, priv.getData(), null);
             break;
 
-          default:
+        default:
             throw new IllegalArgumentException("Unsupported algorithm");
 
         }
@@ -361,14 +361,14 @@ public final class KeyGenerator {
             throw new IllegalArgumentException("Unknown type");
         try {
             switch (type.getBaseAlgorithm()) {
-              case DSA:
+            case DSA:
                 BigInteger x = new NativeBigInteger(1, priv.toByteArray());
                 BigInteger y = CryptoConstants.dsag.modPow(x, CryptoConstants.dsap);
                 SigningPublicKey pub = new SigningPublicKey();
                 pub.setData(SigUtil.rectify(y, SigningPublicKey.KEYSIZE_BYTES));
                 return pub;
 
-              case EC:
+            case EC:
                 ECPrivateKey ecpriv = SigUtil.toJavaECKey(priv);
                 BigInteger s = ecpriv.getS();
                 ECParameterSpec spec = (ECParameterSpec) type.getParams();
@@ -380,7 +380,7 @@ public final class KeyGenerator {
                 ECPublicKey ecpub = (ECPublicKey) eckf.generatePublic(ecks);
                 return SigUtil.fromJavaKey(ecpub, type);
 
-              case RSA:
+            case RSA:
                 RSAPrivateKey rsapriv = SigUtil.toJavaRSAKey(priv);
                 BigInteger exp = ((RSAKeyGenParameterSpec)type.getParams()).getPublicExponent();
                 RSAPublicKeySpec rsaks = new RSAPublicKeySpec(rsapriv.getModulus(), exp);
@@ -388,12 +388,12 @@ public final class KeyGenerator {
                 RSAPublicKey rsapub = (RSAPublicKey) rsakf.generatePublic(rsaks);
                 return SigUtil.fromJavaKey(rsapub, type);
 
-              case EdDSA:
+            case EdDSA:
                 EdDSAPrivateKey epriv = SigUtil.toJavaEdDSAKey(priv);
                 EdDSAPublicKey epub = new EdDSAPublicKey(new EdDSAPublicKeySpec(epriv.getA(), epriv.getParams()));
                 return SigUtil.fromJavaKey(epub, type);
 
-              default:
+            default:
                 throw new IllegalArgumentException("Unsupported algorithm");
             }
         } catch (GeneralSecurityException gse) {
@@ -406,9 +406,9 @@ public final class KeyGenerator {
      */
     public static void main(String args[]) {
         try {
-             main2(args);
+            main2(args);
         } catch (RuntimeException e) {
-             e.printStackTrace();
+            e.printStackTrace();
         }
     }
 
@@ -417,7 +417,10 @@ public final class KeyGenerator {
      */
     private static void main2(String args[]) {
         RandomSource.getInstance().nextBoolean();
-        try { Thread.sleep(1000); } catch (InterruptedException ie) {}
+        try {
+            Thread.sleep(1000);
+        }
+        catch (InterruptedException ie) {}
         int runs = 200; // warmup
         Collection<SigType> toTest;
         if (args.length > 0) {
@@ -512,57 +515,57 @@ public final class KeyGenerator {
                            (((double) (stime + vtime)) / runs2) + " s+v");
     }
 
-/******
-    public static void main(String args[]) {
-        Log log = new Log("keygenTest");
-        RandomSource.getInstance().nextBoolean();
-        byte src[] = new byte[200];
-        RandomSource.getInstance().nextBytes(src);
+    /******
+        public static void main(String args[]) {
+            Log log = new Log("keygenTest");
+            RandomSource.getInstance().nextBoolean();
+            byte src[] = new byte[200];
+            RandomSource.getInstance().nextBytes(src);
 
-        I2PAppContext ctx = new I2PAppContext();
-        long time = 0;
-        for (int i = 0; i < 10; i++) {
-            long start = Clock.getInstance().now();
-            Object keys[] = KeyGenerator.getInstance().generatePKIKeypair();
-            long end = Clock.getInstance().now();
-            byte ctext[] = ctx.elGamalEngine().encrypt(src, (PublicKey) keys[0]);
-            byte ptext[] = ctx.elGamalEngine().decrypt(ctext, (PrivateKey) keys[1]);
-            time += end - start;
-            if (DataHelper.eq(ptext, src))
-                log.debug("D(E(data)) == data");
-            else
-                log.error("D(E(data)) != data!!!!!!");
-        }
-        log.info("Keygen 10 times: " + time + "ms");
+            I2PAppContext ctx = new I2PAppContext();
+            long time = 0;
+            for (int i = 0; i < 10; i++) {
+                long start = Clock.getInstance().now();
+                Object keys[] = KeyGenerator.getInstance().generatePKIKeypair();
+                long end = Clock.getInstance().now();
+                byte ctext[] = ctx.elGamalEngine().encrypt(src, (PublicKey) keys[0]);
+                byte ptext[] = ctx.elGamalEngine().decrypt(ctext, (PrivateKey) keys[1]);
+                time += end - start;
+                if (DataHelper.eq(ptext, src))
+                    log.debug("D(E(data)) == data");
+                else
+                    log.error("D(E(data)) != data!!!!!!");
+            }
+            log.info("Keygen 10 times: " + time + "ms");
 
-        Object obj[] = KeyGenerator.getInstance().generateSigningKeypair();
-        SigningPublicKey fake = (SigningPublicKey) obj[0];
-        time = 0;
-        for (int i = 0; i < 10; i++) {
-            long start = Clock.getInstance().now();
-            Object keys[] = KeyGenerator.getInstance().generateSigningKeypair();
-            long end = Clock.getInstance().now();
-            Signature sig = DSAEngine.getInstance().sign(src, (SigningPrivateKey) keys[1]);
-            boolean ok = DSAEngine.getInstance().verifySignature(sig, src, (SigningPublicKey) keys[0]);
-            boolean fakeOk = DSAEngine.getInstance().verifySignature(sig, src, fake);
-            time += end - start;
-            log.debug("V(S(data)) == " + ok + " fake verify correctly failed? " + (fakeOk == false));
-        }
-        log.info("Signing Keygen 10 times: " + time + "ms");
+            Object obj[] = KeyGenerator.getInstance().generateSigningKeypair();
+            SigningPublicKey fake = (SigningPublicKey) obj[0];
+            time = 0;
+            for (int i = 0; i < 10; i++) {
+                long start = Clock.getInstance().now();
+                Object keys[] = KeyGenerator.getInstance().generateSigningKeypair();
+                long end = Clock.getInstance().now();
+                Signature sig = DSAEngine.getInstance().sign(src, (SigningPrivateKey) keys[1]);
+                boolean ok = DSAEngine.getInstance().verifySignature(sig, src, (SigningPublicKey) keys[0]);
+                boolean fakeOk = DSAEngine.getInstance().verifySignature(sig, src, fake);
+                time += end - start;
+                log.debug("V(S(data)) == " + ok + " fake verify correctly failed? " + (fakeOk == false));
+            }
+            log.info("Signing Keygen 10 times: " + time + "ms");
 
-        time = 0;
-        for (int i = 0; i < 1000; i++) {
-            long start = Clock.getInstance().now();
-            KeyGenerator.getInstance().generateSessionKey();
-            long end = Clock.getInstance().now();
-            time += end - start;
-        }
-        log.info("Session keygen 1000 times: " + time + "ms");
+            time = 0;
+            for (int i = 0; i < 1000; i++) {
+                long start = Clock.getInstance().now();
+                KeyGenerator.getInstance().generateSessionKey();
+                long end = Clock.getInstance().now();
+                time += end - start;
+            }
+            log.info("Session keygen 1000 times: " + time + "ms");
 
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException ie) { // nop
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException ie) { // nop
+            }
         }
-    }
-******/
+    ******/
 }

@@ -24,7 +24,7 @@ class Sorters {
      * See below
      */
     private static final Pattern PATTERN_DE, PATTERN_EN, PATTERN_ES, PATTERN_FR,
-                                 PATTERN_IT, PATTERN_NL, PATTERN_PT;
+            PATTERN_IT, PATTERN_NL, PATTERN_PT;
 
     /**
      *  Negative is reverse
@@ -51,69 +51,69 @@ class Sorters {
         Comparator<Snark> rv;
         switch (type) {
 
-          case -1:
-          case 0:
-          case 1:
-          default:
-              rv = new TorrentNameComparator(lang);
-              if (rev)
-                  rv = Collections.reverseOrder(rv);
-              break;
+        case -1:
+        case 0:
+        case 1:
+        default:
+            rv = new TorrentNameComparator(lang);
+            if (rev)
+                rv = Collections.reverseOrder(rv);
+            break;
 
-          case -2:
-          case 2:
-              rv = new StatusComparator(rev, lang);
-              break;
+        case -2:
+        case 2:
+            rv = new StatusComparator(rev, lang);
+            break;
 
-          case -3:
-          case 3:
-              rv = new PeersComparator(rev, lang);
-              break;
+        case -3:
+        case 3:
+            rv = new PeersComparator(rev, lang);
+            break;
 
-          case -4:
-          case 4:
-              rv = new ETAComparator(rev, lang);
-              break;
+        case -4:
+        case 4:
+            rv = new ETAComparator(rev, lang);
+            break;
 
-          case -5:
-          case 5:
-              rv = new SizeComparator(rev, lang);
-              break;
+        case -5:
+        case 5:
+            rv = new SizeComparator(rev, lang);
+            break;
 
-          case -6:
-          case 6:
-              rv = new DownloadedComparator(rev, lang);
-              break;
+        case -6:
+        case 6:
+            rv = new DownloadedComparator(rev, lang);
+            break;
 
-          case -7:
-          case 7:
-              rv = new UploadedComparator(rev, lang);
-              break;
+        case -7:
+        case 7:
+            rv = new UploadedComparator(rev, lang);
+            break;
 
-          case -8:
-          case 8:
-              rv = new DownRateComparator(rev, lang);
-              break;
+        case -8:
+        case 8:
+            rv = new DownRateComparator(rev, lang);
+            break;
 
-          case -9:
-          case 9:
-              rv = new UpRateComparator(rev, lang);
-              break;
+        case -9:
+        case 9:
+            rv = new UpRateComparator(rev, lang);
+            break;
 
-          case -10:
-          case 10:
-              rv = new RemainingComparator(rev, lang);
-              break;
+        case -10:
+        case 10:
+            rv = new RemainingComparator(rev, lang);
+            break;
 
-          case -11:
-          case 11:
-              rv = new RatioComparator(rev, lang);
-              break;
+        case -11:
+        case 11:
+            rv = new RatioComparator(rev, lang);
+            break;
 
-          case -12:
-          case 12:
-              rv = new FileTypeComparator(rev, lang, servlet);
-              break;
+        case -12:
+        case 12:
+            rv = new FileTypeComparator(rev, lang, servlet);
+            break;
 
         }
         return rv;
@@ -194,7 +194,9 @@ class Sorters {
 
     private static class StatusComparator extends Sort {
 
-        private StatusComparator(boolean rev, String lang) { super(rev, lang); }
+        private StatusComparator(boolean rev, String lang) {
+            super(rev, lang);
+        }
 
         public int compareIt(Snark l, Snark r) {
             int rv = getStatus(l) - getStatus(r);
@@ -205,7 +207,7 @@ class Sorters {
         }
 
         private static int getStatus(Snark snark) {
-            long remaining = snark.getRemainingLength(); 
+            long remaining = snark.getRemainingLength();
             if (snark.isStopped()) {
                 if (remaining < 0)
                     return 10;
@@ -235,7 +237,9 @@ class Sorters {
 
     private static class PeersComparator extends Sort {
 
-        public PeersComparator(boolean rev, String lang) { super(rev, lang); }
+        public PeersComparator(boolean rev, String lang) {
+            super(rev, lang);
+        }
 
         public int compareIt(Snark l, Snark r) {
             return l.getPeerCount() - r.getPeerCount();
@@ -244,7 +248,9 @@ class Sorters {
 
     private static class RemainingComparator extends Sort {
 
-        public RemainingComparator(boolean rev, String lang) { super(rev, lang); }
+        public RemainingComparator(boolean rev, String lang) {
+            super(rev, lang);
+        }
 
         public int compareIt(Snark l, Snark r) {
             return compLong(l.getNeededLength(), r.getNeededLength());
@@ -253,14 +259,16 @@ class Sorters {
 
     private static class ETAComparator extends Sort {
 
-        public ETAComparator(boolean rev, String lang) { super(rev, lang); }
+        public ETAComparator(boolean rev, String lang) {
+            super(rev, lang);
+        }
 
         public int compareIt(Snark l, Snark r) {
             return compLong(eta(l), eta(r));
         }
 
         private static long eta(Snark snark) {
-            long needed = snark.getNeededLength(); 
+            long needed = snark.getNeededLength();
             if (needed <= 0)
                 return 0;
             long total = snark.getTotalLength();
@@ -275,7 +283,9 @@ class Sorters {
 
     private static class SizeComparator extends Sort {
 
-        public SizeComparator(boolean rev, String lang) { super(rev, lang); }
+        public SizeComparator(boolean rev, String lang) {
+            super(rev, lang);
+        }
 
         public int compareIt(Snark l, Snark r) {
             return compLong(l.getTotalLength(), r.getTotalLength());
@@ -284,7 +294,9 @@ class Sorters {
 
     private static class DownloadedComparator extends Sort {
 
-        public DownloadedComparator(boolean rev, String lang) { super(rev, lang); }
+        public DownloadedComparator(boolean rev, String lang) {
+            super(rev, lang);
+        }
 
         public int compareIt(Snark l, Snark r) {
             long ld = l.getTotalLength() - l.getRemainingLength();
@@ -295,7 +307,9 @@ class Sorters {
 
     private static class UploadedComparator extends Sort {
 
-        public UploadedComparator(boolean rev, String lang) { super(rev, lang); }
+        public UploadedComparator(boolean rev, String lang) {
+            super(rev, lang);
+        }
 
         public int compareIt(Snark l, Snark r) {
             return compLong(l.getUploaded(), r.getUploaded());
@@ -304,7 +318,9 @@ class Sorters {
 
     private static class DownRateComparator extends Sort {
 
-        public DownRateComparator(boolean rev, String lang) { super(rev, lang); }
+        public DownRateComparator(boolean rev, String lang) {
+            super(rev, lang);
+        }
 
         public int compareIt(Snark l, Snark r) {
             return compLong(l.getDownloadRate(), r.getDownloadRate());
@@ -313,7 +329,9 @@ class Sorters {
 
     private static class UpRateComparator extends Sort {
 
-        public UpRateComparator(boolean rev, String lang) { super(rev, lang); }
+        public UpRateComparator(boolean rev, String lang) {
+            super(rev, lang);
+        }
 
         public int compareIt(Snark l, Snark r) {
             return compLong(l.getUploadRate(), r.getUploadRate());
@@ -322,7 +340,9 @@ class Sorters {
 
     private static class RatioComparator extends Sort {
 
-        public RatioComparator(boolean rev, String lang) { super(rev, lang); }
+        public RatioComparator(boolean rev, String lang) {
+            super(rev, lang);
+        }
 
         public int compareIt(Snark l, Snark r) {
             double lt = l.getTotalLength();
@@ -428,34 +448,34 @@ class Sorters {
 
         switch (type) {
 
-          case -1:
-          case 0:
-          case 1:
-          default:
-              rv = new FileNameComparator();
-              if (rev)
-                  rv = Collections.reverseOrder(rv);
-              break;
+        case -1:
+        case 0:
+        case 1:
+        default:
+            rv = new FileNameComparator();
+            if (rev)
+                rv = Collections.reverseOrder(rv);
+            break;
 
-          case -5:
-          case 5:
-              rv = new FAISizeComparator(rev);
-              break;
+        case -5:
+        case 5:
+            rv = new FAISizeComparator(rev);
+            break;
 
-          case -10:
-          case 10:
-              rv = new FAIRemainingComparator(rev);
-              break;
+        case -10:
+        case 10:
+            rv = new FAIRemainingComparator(rev);
+            break;
 
-          case -12:
-          case 12:
-              rv = new FAITypeComparator(rev, servlet);
-              break;
+        case -12:
+        case 12:
+            rv = new FAITypeComparator(rev, servlet);
+            break;
 
-          case -13:
-          case 13:
-              rv = new FAIPriorityComparator(rev);
-              break;
+        case -13:
+        case 13:
+            rv = new FAIPriorityComparator(rev);
+            break;
 
         }
         return rv;
@@ -514,7 +534,9 @@ class Sorters {
 
     private static class FAIRemainingComparator extends FAISort {
 
-        public FAIRemainingComparator(boolean rev) { super(rev); }
+        public FAIRemainingComparator(boolean rev) {
+            super(rev);
+        }
 
         public int compareIt(FileAndIndex l, FileAndIndex r) {
             return compLong(l.remaining, r.remaining);
@@ -523,7 +545,9 @@ class Sorters {
 
     private static class FAISizeComparator extends FAISort {
 
-        public FAISizeComparator(boolean rev) { super(rev); }
+        public FAISizeComparator(boolean rev) {
+            super(rev);
+        }
 
         public int compareIt(FileAndIndex l, FileAndIndex r) {
             return compLong(l.length, r.length);
@@ -555,7 +579,9 @@ class Sorters {
 
     private static class FAIPriorityComparator extends FAISort {
 
-        public FAIPriorityComparator(boolean rev) { super(rev); }
+        public FAIPriorityComparator(boolean rev) {
+            super(rev);
+        }
 
         /** highest first */
         public int compareIt(FileAndIndex l, FileAndIndex r) {
@@ -573,44 +599,44 @@ class Sorters {
      */
     static {
         PATTERN_DE = Pattern.compile(
-            // can't make the non-capturing innner group work
-            //"^((?:" +
-            "^((" +
-            "der|die|das|des|dem|den|ein|eine|einer|eines|einem|einen" +
-            ")[\\s\\._]+).*",
-            Pattern.CASE_INSENSITIVE);
+                         // can't make the non-capturing innner group work
+                         //"^((?:" +
+                         "^((" +
+                         "der|die|das|des|dem|den|ein|eine|einer|eines|einem|einen" +
+                         ")[\\s\\._]+).*",
+                         Pattern.CASE_INSENSITIVE);
         PATTERN_EN = Pattern.compile(
-            "^((" +
-            "a|an|the" +
-            ")[\\s\\._]+).*",
-            Pattern.CASE_INSENSITIVE);
+                         "^((" +
+                         "a|an|the" +
+                         ")[\\s\\._]+).*",
+                         Pattern.CASE_INSENSITIVE);
         PATTERN_ES = Pattern.compile(
-            "^((" +
-            "el|la|lo|los|las|un|una|unos|unas" +
-            ")[\\s\\._]+).*",
-            Pattern.CASE_INSENSITIVE);
+                         "^((" +
+                         "el|la|lo|los|las|un|una|unos|unas" +
+                         ")[\\s\\._]+).*",
+                         Pattern.CASE_INSENSITIVE);
         PATTERN_FR = Pattern.compile(
-            // note l' doesn't require whitespace after
-            "^(l'|((" +
-            "le|la|les|un|une|des" +
-            ")[\\s\\._]+)).*",
-            Pattern.CASE_INSENSITIVE);
+                         // note l' doesn't require whitespace after
+                         "^(l'|((" +
+                         "le|la|les|un|une|des" +
+                         ")[\\s\\._]+)).*",
+                         Pattern.CASE_INSENSITIVE);
         PATTERN_IT = Pattern.compile(
-            // note l' and un' don't require whitespace after
-            "^(l'|un'|((" +
-            "il|lo|la|i|gli|le|uno|una|un" +
-            ")[\\s\\._]+)).*",
-            Pattern.CASE_INSENSITIVE);
+                         // note l' and un' don't require whitespace after
+                         "^(l'|un'|((" +
+                         "il|lo|la|i|gli|le|uno|una|un" +
+                         ")[\\s\\._]+)).*",
+                         Pattern.CASE_INSENSITIVE);
         PATTERN_NL = Pattern.compile(
-            "^((" +
-            "de|het|het'n|een|een'n" +
-            ")[\\s\\._]+).*",
-            Pattern.CASE_INSENSITIVE);
+                         "^((" +
+                         "de|het|het'n|een|een'n" +
+                         ")[\\s\\._]+).*",
+                         Pattern.CASE_INSENSITIVE);
         PATTERN_PT = Pattern.compile(
-            "^((" +
-            "o|a|os|as|um|uma|uns|umas" +
-            ")[\\s\\._]+).*",
-            Pattern.CASE_INSENSITIVE);
+                         "^((" +
+                         "o|a|os|as|um|uma|uns|umas" +
+                         ")[\\s\\._]+).*",
+                         Pattern.CASE_INSENSITIVE);
     }
 
     /**
@@ -641,25 +667,25 @@ class Sorters {
         return p;
     }
 
-/****
-    public static final void main(String[] args) {
-        if (args.length != 2) {
-            System.out.println("Usage: Sorters lang 'string'");
-            System.exit(1);
+    /****
+        public static final void main(String[] args) {
+            if (args.length != 2) {
+                System.out.println("Usage: Sorters lang 'string'");
+                System.exit(1);
+            }
+            String lang = args[0];
+            setPattern(lang);
+            if (_pattern == null) {
+                System.out.println("Unsupported " + lang);
+                System.exit(1);
+            }
+            String s = args[1];
+            Matcher m = _pattern.matcher(s);
+            if (m.matches()) {
+                System.out.println("Match is \"" + m.group(1) + '"');
+            } else {
+                System.out.println("No match for \"" + s + '"');
+            }
         }
-        String lang = args[0];
-        setPattern(lang);
-        if (_pattern == null) {
-            System.out.println("Unsupported " + lang);
-            System.exit(1);
-        }
-        String s = args[1];
-        Matcher m = _pattern.matcher(s);
-        if (m.matches()) {
-            System.out.println("Match is \"" + m.group(1) + '"');
-        } else {
-            System.out.println("No match for \"" + s + '"');
-        }
-    }
-****/
+    ****/
 }

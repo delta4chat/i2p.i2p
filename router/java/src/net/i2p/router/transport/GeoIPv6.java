@@ -119,7 +119,10 @@ public class GeoIPv6 {
             if (log.shouldLog(Log.ERROR))
                 log.error("Error reading the geoFile", ioe);
         } finally {
-            if (in != null) try { in.close(); } catch (IOException ioe) {}
+            if (in != null) try {
+                    in.close();
+                }
+                catch (IOException ioe) {}
         }
 
         if (log.shouldLog(Log.INFO))
@@ -128,44 +131,44 @@ public class GeoIPv6 {
     }
 
 
-   /**
-    * Read in and parse multiple IPv6 geoip CSV files,
-    * merge them, and write out a gzipped binary IPv6 geoip file.
-    *
-    * Acceptable input formats (IPv6 only):
-    *<pre>
-    *   #comment (# must be in column 1)
-    *   "text IP", "text IP", "bigint IP", "bigint IP", "country code", "country name"
-    *</pre>
-    * Quotes and spaces optional. Sorting not required.
-    * Country code case-insensitive.
-    * Fields 1, 2, and 5 are used; fields 3, 4, and 6 are ignored.
-    * This is identical to the format of the MaxMind GeoLite IPv6 file.
-    *
-    * Example:
-    *<pre>
-    *   "2001:200::", "2001:200:ffff:ffff:ffff:ffff:ffff:ffff", "42540528726795050063891204319802818560", "42540528806023212578155541913346768895", "JP", "Japan"
-    *</pre>
-    *
-    *<pre>
-    * Output format:
-    *   Bytes 0-9: Magic number "I2PGeoIPv6"
-    *   Bytes 10-11: version (0x0001)
-    *   Bytes 12-15 flags (0)
-    *   Bytes 16-23: Date (long)
-    *   Bytes 24-xx: Comment (UTF-8)
-    *   Bytes xx-255: null padding
-    *   Bytes 256-: 18 byte records:
-    *       8 byte from (/64)
-    *       8 byte to (/64)
-    *       2 byte country code LOWER case (ASCII)
-    *   Data must be sorted (SIGNED twos complement), no overlap
-    *</pre>
-    *
-    * SLOW. For preprocessing only!
-    *
-    * @return success
-    */
+    /**
+     * Read in and parse multiple IPv6 geoip CSV files,
+     * merge them, and write out a gzipped binary IPv6 geoip file.
+     *
+     * Acceptable input formats (IPv6 only):
+     *<pre>
+     *   #comment (# must be in column 1)
+     *   "text IP", "text IP", "bigint IP", "bigint IP", "country code", "country name"
+     *</pre>
+     * Quotes and spaces optional. Sorting not required.
+     * Country code case-insensitive.
+     * Fields 1, 2, and 5 are used; fields 3, 4, and 6 are ignored.
+     * This is identical to the format of the MaxMind GeoLite IPv6 file.
+     *
+     * Example:
+     *<pre>
+     *   "2001:200::", "2001:200:ffff:ffff:ffff:ffff:ffff:ffff", "42540528726795050063891204319802818560", "42540528806023212578155541913346768895", "JP", "Japan"
+     *</pre>
+     *
+     *<pre>
+     * Output format:
+     *   Bytes 0-9: Magic number "I2PGeoIPv6"
+     *   Bytes 10-11: version (0x0001)
+     *   Bytes 12-15 flags (0)
+     *   Bytes 16-23: Date (long)
+     *   Bytes 24-xx: Comment (UTF-8)
+     *   Bytes xx-255: null padding
+     *   Bytes 256-: 18 byte records:
+     *       8 byte from (/64)
+     *       8 byte to (/64)
+     *       2 byte country code LOWER case (ASCII)
+     *   Data must be sorted (SIGNED twos complement), no overlap
+     *</pre>
+     *
+     * SLOW. For preprocessing only!
+     *
+     * @return success
+     */
     private static boolean compressGeoIPv6CSVFiles(List<File> inFiles, File outFile) {
         boolean DEBUG = false;
         List<V6Entry> entries = new ArrayList<V6Entry>(20000);
@@ -205,8 +208,14 @@ public class GeoIPv6 {
                 //    _log.error("Error reading the geoFile", ioe);
                 return false;
             } finally {
-                if (in != null) try { in.close(); } catch (IOException ioe) {}
-                if (br != null) try { br.close(); } catch (IOException ioe) {}
+                if (in != null) try {
+                        in.close();
+                    }
+                    catch (IOException ioe) {}
+                if (br != null) try {
+                        br.close();
+                    }
+                    catch (IOException ioe) {}
             }
         }
         Collections.sort(entries);
@@ -269,7 +278,10 @@ public class GeoIPv6 {
             //    _log.error("Error reading the geoFile", ioe);
             return false;
         } finally {
-            if (out != null) try { out.close(); } catch (IOException ioe) {}
+            if (out != null) try {
+                    out.close();
+                }
+                catch (IOException ioe) {}
         }
         return true;
     }
@@ -309,14 +321,18 @@ public class GeoIPv6 {
         }
 
         @Override
-        public int hashCode() { return (((int) from) ^ ((int) to)); }
+        public int hashCode() {
+            return (((int) from) ^ ((int) to));
+        }
 
         @Override
-        public boolean equals(Object o) { return (o instanceof V6Entry) && compareTo((V6Entry)o) == 0; }
+        public boolean equals(Object o) {
+            return (o instanceof V6Entry) && compareTo((V6Entry)o) == 0;
+        }
 
         @Override
         public String toString() {
-                return "0x" + Long.toHexString(from) + " -> 0x" + Long.toHexString(to) + " : " + cc;
+            return "0x" + Long.toHexString(from) + " -> 0x" + Long.toHexString(to) + " : " + cc;
         }
     }
 

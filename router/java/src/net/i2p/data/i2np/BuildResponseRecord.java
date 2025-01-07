@@ -35,7 +35,7 @@ public class BuildResponseRecord {
      * @return a 528-byte response record
      */
     public static EncryptedBuildRecord create(I2PAppContext ctx, int status, SessionKey replyKey,
-                                              byte replyIV[], long responseMessageId) {
+            byte replyIV[], long responseMessageId) {
         byte rv[] = new byte[TunnelBuildReplyMessage.RECORD_SIZE];
         ctx.random().nextBytes(rv, Hash.HASH_LENGTH, TunnelBuildReplyMessage.RECORD_SIZE - Hash.HASH_LENGTH - 1);
         rv[TunnelBuildMessage.RECORD_SIZE-1] = (byte) status;
@@ -57,7 +57,7 @@ public class BuildResponseRecord {
      * @since 0.9.48
      */
     public static EncryptedBuildRecord create(I2PAppContext ctx, int status, SessionKey replyKey,
-                                              byte replyAD[], Properties options) {
+            byte replyAD[], Properties options) {
         byte rv[] = new byte[TunnelBuildReplyMessage.RECORD_SIZE];
         int off;
         try {
@@ -90,7 +90,7 @@ public class BuildResponseRecord {
      * @since 0.9.51
      */
     public static ShortEncryptedBuildRecord createShort(I2PAppContext ctx, int status, SessionKey replyKey,
-                                                        byte replyAD[], Properties options, int slot) {
+            byte replyAD[], Properties options, int slot) {
         byte rv[] = new byte[ShortTunnelBuildMessage.SHORT_RECORD_SIZE];
         int off;
         try {

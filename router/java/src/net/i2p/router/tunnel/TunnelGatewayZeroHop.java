@@ -18,7 +18,7 @@ class TunnelGatewayZeroHop extends TunnelGateway {
     private final TunnelCreatorConfig _config;
     private OutboundMessageDistributor _outDistributor;
     private InboundMessageDistributor _inDistributor;
-    
+
     /**
      *
      */
@@ -30,7 +30,7 @@ class TunnelGatewayZeroHop extends TunnelGateway {
         else
             _outDistributor = new OutboundMessageDistributor(context, OutNetMessage.PRIORITY_MY_DATA);
     }
-    
+
     /**
      * Add a message to be sent down the tunnel, where we are the inbound gateway.
      * This requires converting the message included in the TGM from an
@@ -57,7 +57,7 @@ class TunnelGatewayZeroHop extends TunnelGateway {
         }
         add(imsg, null, null);
     }
-    
+
     /**
      * Add a message to be sent down the tunnel (immediately forwarding it to the
      * {@link InboundMessageDistributor} or {@link OutboundMessageDistributor}, as
@@ -79,6 +79,6 @@ class TunnelGatewayZeroHop extends TunnelGateway {
         } else {
             _outDistributor.distribute(msg, toRouter, toTunnel);
         }
-       _config.incrementProcessedMessages();
+        _config.incrementProcessedMessages();
     }
 }

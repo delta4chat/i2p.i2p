@@ -48,13 +48,13 @@ class FloodfillVerifyStoreJob extends JobImpl {
     private MessageWrapper.WrappedMessage _wrappedMessage;
     private final Set<Hash> _ignore;
     private final MaskedIPSet _ipSet;
-    
+
     private static final int START_DELAY = 18*1000;
     private static final int START_DELAY_RAND = 9*1000;
     private static final int VERIFY_TIMEOUT = 20*1000;
     private static final int MAX_PEERS_TO_TRY = 4;
     private static final int IP_CLOSE_BYTES = 3;
-    
+
     /**
      *  Delay a few seconds, then start the verify
      *  @param client generally the same as key, unless encrypted LS2; non-null
@@ -95,7 +95,9 @@ class FloodfillVerifyStoreJob extends JobImpl {
         getContext().statManager().createRateStat("netDb.floodfillVerifyTimeout", "How long a floodfill verify takes when it times out", "NetworkDatabase", new long[] { 60*60*1000 });
     }
 
-    public String getName() { return "Verify netdb store"; }
+    public String getName() {
+        return "Verify netdb store";
+    }
 
     /**
      *  Query a random floodfill for the leaseset or routerinfo
@@ -104,18 +106,18 @@ class FloodfillVerifyStoreJob extends JobImpl {
      *  If it fails (after a timeout period), resend the data.
      *  If the queried data is older than what we stored, that counts as a fail.
      **/
-    public void runJob() { 
+    public void runJob() {
         _target = pickTarget();
         if (_target == null) {
             _facade.verifyFinished(_key);
             return;
-        }        
+        }
 
         final RouterContext ctx = getContext();
         boolean isInboundExploratory;
         TunnelInfo replyTunnelInfo;
         if (_isRouterInfo || ctx.keyRing().get(_key) != null ||
-            _type == DatabaseEntry.KEY_TYPE_META_LS2) {
+                _type == DatabaseEntry.KEY_TYPE_META_LS2) {
             replyTunnelInfo = ctx.tunnelManager().selectInboundExploratoryTunnel(_target);
             isInboundExploratory = true;
         } else {
@@ -135,7 +137,7 @@ class FloodfillVerifyStoreJob extends JobImpl {
         // Unless it is an encrypted leaseset.
         TunnelInfo outTunnel;
         if (_isRouterInfo || ctx.keyRing().get(_key) != null ||
-            _type == DatabaseEntry.KEY_TYPE_META_LS2) {
+                _type == DatabaseEntry.KEY_TYPE_META_LS2) {
             outTunnel = ctx.tunnelManager().selectOutboundExploratoryTunnel(_target);
         } else {
             outTunnel = ctx.tunnelManager().selectOutboundTunnel(_client, _target);
@@ -146,14 +148,14 @@ class FloodfillVerifyStoreJob extends JobImpl {
             _facade.verifyFinished(_key);
             return;
         }
-        
+
         // garlic encrypt to hide contents from the OBEP
         RouterInfo peer = ctx.netDb().lookupRouterInfoLocally(_target);
         if (peer == null) {
-             if (_log.shouldLog(Log.WARN))
-                 _log.warn("(JobId: " + getJobId()
-                           + "; db: " + _facade
-                           + ") Fail looking up RI locally for target " + _target);
+            if (_log.shouldLog(Log.WARN))
+                _log.warn("(JobId: " + getJobId()
+                          + "; db: " + _facade
+                          + ") Fail looking up RI locally for target " + _target);
             _facade.verifyFinished(_key);
             return;
         }
@@ -174,8 +176,8 @@ class FloodfillVerifyStoreJob extends JobImpl {
                 } else {
                     // We don't have a compatible way to get a reply,
                     // skip it for now.
-                     if (_log.shouldWarn())
-                         _log.warn("Skipping store verify for incompatible router " + peer);
+                    if (_log.shouldWarn())
+                        _log.warn("Skipping store verify for incompatible router " + peer);
                     _facade.verifyFinished(_key);
                     return;
                 }
@@ -193,16 +195,16 @@ class FloodfillVerifyStoreJob extends JobImpl {
                     // garlic encrypt
                     sess = MessageWrapper.generateSession(ctx, _client, VERIFY_TIMEOUT, !supportsRatchet);
                     if (sess == null) {
-                         if (_log.shouldLog(Log.WARN))
-                             _log.warn("No SKM to reply to");
+                        if (_log.shouldLog(Log.WARN))
+                            _log.warn("No SKM to reply to");
                         _facade.verifyFinished(_key);
                         return;
                     }
                 } else {
                     // We don't have a compatible way to get a reply,
                     // skip it for now.
-                     if (_log.shouldWarn())
-                         _log.warn("Skipping store verify to " + _target + " for ECIES- or ElG-only client " + _client.toBase32());
+                    if (_log.shouldWarn())
+                        _log.warn("Skipping store verify to " + _target + " for ECIES- or ElG-only client " + _client.toBase32());
                     _facade.verifyFinished(_key);
                     return;
                 }
@@ -226,7 +228,7 @@ class FloodfillVerifyStoreJob extends JobImpl {
                 fromKey = _client;
             _wrappedMessage = MessageWrapper.wrap(ctx, lookup, fromKey, peer);
             if (_wrappedMessage == null) {
-                 if (_log.shouldLog(Log.WARN))
+                if (_log.shouldLog(Log.WARN))
                     _log.warn("Fail Garlic encrypting");
                 _facade.verifyFinished(_key);
                 return;
@@ -237,7 +239,7 @@ class FloodfillVerifyStoreJob extends JobImpl {
             // or forces ECIES for ECIES peer
             sent = MessageWrapper.wrap(ctx, lookup, peer);
             if (sent == null) {
-                 if (_log.shouldLog(Log.WARN))
+                if (_log.shouldLog(Log.WARN))
                     _log.warn("Fail Garlic encrypting");
                 _facade.verifyFinished(_key);
                 return;
@@ -250,12 +252,12 @@ class FloodfillVerifyStoreJob extends JobImpl {
         _sendTime = ctx.clock().now();
         _expiration = _sendTime + VERIFY_TIMEOUT;
         ctx.messageRegistry().registerPending(new VerifyReplySelector(),
-                                                       new VerifyReplyJob(getContext()),
-                                                       new VerifyTimeoutJob(getContext()));
+                                              new VerifyReplyJob(getContext()),
+                                              new VerifyTimeoutJob(getContext()));
         ctx.tunnelDispatcher().dispatchOutbound(sent, outTunnel.getSendTunnelId(0), _target);
         _attempted++;
     }
-    
+
     /**
      *  Pick a responsive floodfill close to the key, but not the one we sent to
      */
@@ -280,8 +282,8 @@ class FloodfillVerifyStoreJob extends JobImpl {
                 RouterInfo ri = getContext().netDb().lookupRouterInfoLocally(peer);
                 //if (ri != null && StoreJob.supportsCert(ri, keyCert)) {
                 if (ri != null && StoreJob.shouldStoreTo(ri) &&
-                    //(!_isLS2 || (StoreJob.shouldStoreLS2To(ri) &&
-                                 (_type != DatabaseEntry.KEY_TYPE_ENCRYPTED_LS2 || StoreJob.shouldStoreEncLS2To(ri))) {
+                        //(!_isLS2 || (StoreJob.shouldStoreLS2To(ri) &&
+                        (_type != DatabaseEntry.KEY_TYPE_ENCRYPTED_LS2 || StoreJob.shouldStoreEncLS2To(ri))) {
                     Set<String> peerIPs = new MaskedIPSet(getContext(), ri, IP_CLOSE_BYTES);
                     if (!_ipSet.containsAny(peerIPs)) {
                         _ipSet.addAll(peerIPs);
@@ -301,12 +303,12 @@ class FloodfillVerifyStoreJob extends JobImpl {
             if (!peers.isEmpty())
                 return peers.get(0);
         }
-        
+
         if (_log.shouldLog(Log.WARN))
             _log.warn(getJobId() + ": No other peers to verify floodfill with, using the one we sent to");
         return _sentTo;
     }
-    
+
     /** @return non-null */
     private DatabaseLookupMessage buildLookup(TunnelInfo replyTunnelInfo) {
         // If we are verifying a leaseset, use the destination's own tunnels,
@@ -320,13 +322,15 @@ class FloodfillVerifyStoreJob extends JobImpl {
         m.setSearchType(_isRouterInfo ? DatabaseLookupMessage.Type.RI : DatabaseLookupMessage.Type.LS);
         return m;
     }
-    
+
     private class VerifyReplySelector implements MessageSelector {
-        public boolean continueMatching() { 
+        public boolean continueMatching() {
             return false; // only want one match
         }
-        
-        public long getExpiration() { return _expiration; }
+
+        public long getExpiration() {
+            return _expiration;
+        }
         public boolean isMatch(I2NPMessage message) {
             int type = message.getType();
             if (type == DatabaseStoreMessage.MESSAGE_TYPE) {
@@ -339,7 +343,7 @@ class FloodfillVerifyStoreJob extends JobImpl {
             return false;
         }
     }
-    
+
     private class VerifyReplyJob extends JobImpl implements ReplyJob {
         private I2NPMessage _message;
 
@@ -347,7 +351,9 @@ class FloodfillVerifyStoreJob extends JobImpl {
             super(ctx);
         }
 
-        public String getName() { return "Handle floodfill verification reply"; }
+        public String getName() {
+            return "Handle floodfill verification reply";
+        }
 
         public void runJob() {
             final RouterContext ctx = getContext();
@@ -373,8 +379,8 @@ class FloodfillVerifyStoreJob extends JobImpl {
                 long newDate;
                 boolean success;
                 if (_isLS2 &&
-                    entry.getType() != DatabaseEntry.KEY_TYPE_ROUTERINFO &&
-                    entry.getType() != DatabaseEntry.KEY_TYPE_LEASESET) {
+                        entry.getType() != DatabaseEntry.KEY_TYPE_ROUTERINFO &&
+                        entry.getType() != DatabaseEntry.KEY_TYPE_LEASESET) {
                     LeaseSet2 ls2 = (LeaseSet2) entry;
                     success = ls2.getPublished() >= _published;
                 } else {
@@ -401,7 +407,7 @@ class FloodfillVerifyStoreJob extends JobImpl {
                 DatabaseSearchReplyMessage dsrm = (DatabaseSearchReplyMessage) _message;
                 // assume 0 old, all new, 0 invalid, 0 dup
                 pm.dbLookupReply(_target,  0,
-                                dsrm.getNumReplies(), 0, 0, delay);
+                                 dsrm.getNumReplies(), 0, 0, delay);
                 // The peer we asked did not have the key, so _sentTo failed to flood it
                 if (_log.shouldLog(Log.WARN))
                     _log.warn(getJobId() + ": DSRM verify failed (db: "
@@ -428,11 +434,13 @@ class FloodfillVerifyStoreJob extends JobImpl {
                 pm.dbLookupFailed(_target);
             ctx.statManager().addRateData("netDb.floodfillVerifyFail", delay);
             resend();
-        }        
+        }
 
-        public void setMessage(I2NPMessage message) { _message = message; }
+        public void setMessage(I2NPMessage message) {
+            _message = message;
+        }
     }
-    
+
     /**
      *  the netDb store failed to verify, so resend it to a random floodfill peer
      *  Fixme - since we now store closest-to-the-key, this is likely to store to the
@@ -444,13 +452,13 @@ class FloodfillVerifyStoreJob extends JobImpl {
     private void resend() {
         DatabaseEntry ds = _facade.lookupLocally(_key);
         if (ds != null) {
-            // By the time we get here, a minute or more after the store started, 
+            // By the time we get here, a minute or more after the store started,
             // we may have already started a new store
             // (probably, for LS, and we don't verify by default for RI)
             long newDate;
             if (_isLS2 &&
-                ds.getType() != DatabaseEntry.KEY_TYPE_ROUTERINFO &&
-                ds.getType() != DatabaseEntry.KEY_TYPE_LEASESET) {
+                    ds.getType() != DatabaseEntry.KEY_TYPE_ROUTERINFO &&
+                    ds.getType() != DatabaseEntry.KEY_TYPE_LEASESET) {
                 LeaseSet2 ls2 = (LeaseSet2) ds;
                 newDate = ls2.getPublished();
             } else {
@@ -474,13 +482,15 @@ class FloodfillVerifyStoreJob extends JobImpl {
             _facade.sendStore(_key, ds, null, null, FloodfillNetworkDatabaseFacade.PUBLISH_TIMEOUT, toSkip);
         }
     }
-    
+
     private class VerifyTimeoutJob extends JobImpl {
         public VerifyTimeoutJob(RouterContext ctx) {
             super(ctx);
         }
-        public String getName() { return "Floodfill verification timeout"; }
-        public void runJob() { 
+        public String getName() {
+            return "Floodfill verification timeout";
+        }
+        public void runJob() {
             if (_wrappedMessage != null)
                 _wrappedMessage.fail();
             // Only blame the verify peer
@@ -497,7 +507,7 @@ class FloodfillVerifyStoreJob extends JobImpl {
                 FloodfillVerifyStoreJob.this.runJob();
             } else {
                 _facade.verifyFinished(_key);
-                resend(); 
+                resend();
             }
         }
     }

@@ -44,7 +44,7 @@ import net.i2p.util.SystemVersion;
  * Build off the core I2P context to provide a root for a router instance to
  * coordinate its resources.  Router instances themselves should be sure to have
  * their own RouterContext, and rooting off of it will allow multiple routers to
- * operate in the same JVM without conflict (e.g. sessionTags wont get 
+ * operate in the same JVM without conflict (e.g. sessionTags wont get
  * intermingled, nor will their netDbs, jobQueues, or bandwidth limiters).
  *
  */
@@ -84,20 +84,22 @@ public class RouterContext extends I2PAppContext {
     private final Object _lock1 = new Object(), _lock2 = new Object(), _lock3 = new Object();
 
     private static final List<RouterContext> _contexts = new CopyOnWriteArrayList<RouterContext>();
-    
-    /**
-     *  Caller MUST call initAll() after instantiation.
-     *
-     *  @param router may be null for unit tests if you are careful
-     */
-    public RouterContext(Router router) { this(router, null); }
 
     /**
      *  Caller MUST call initAll() after instantiation.
      *
      *  @param router may be null for unit tests if you are careful
      */
-    public RouterContext(Router router, Properties envProps) { 
+    public RouterContext(Router router) {
+        this(router, null);
+    }
+
+    /**
+     *  Caller MUST call initAll() after instantiation.
+     *
+     *  @param router may be null for unit tests if you are careful
+     */
+    public RouterContext(Router router, Properties envProps) {
         this(router, envProps, true);
     }
 
@@ -111,7 +113,7 @@ public class RouterContext extends I2PAppContext {
      *                If false, caller should call setGlobalContext() afterwards.
      *  @since 0.9.33
      */
-    RouterContext(Router router, Properties envProps, boolean doInit) { 
+    RouterContext(Router router, Properties envProps, boolean doInit) {
         super(doInit, filterProps(envProps));
         _router = router;
         if (router == null) {
@@ -133,7 +135,7 @@ public class RouterContext extends I2PAppContext {
             _contexts.add(this);
         }
     }
-    
+
     /**
      * Sets the default context, unless there is one already.
      * NOT a public API, for use by Router only, NOT for external use.
@@ -176,7 +178,7 @@ public class RouterContext extends I2PAppContext {
         }
         return envProps;
     }
-    
+
     /**
      * Modify the configuration attributes of this context, changing
      * one of the properties provided during the context construction.
@@ -188,9 +190,9 @@ public class RouterContext extends I2PAppContext {
      */
     @Deprecated
     public void setProperty(String propName, String value) {
-    		_overrideProps.setProperty(propName, value);
+        _overrideProps.setProperty(propName, value);
     }
-    
+
     /**
      * Remove a property provided during the context construction.
      * Only for use by the router. Others use Router.saveConfig()
@@ -202,9 +204,9 @@ public class RouterContext extends I2PAppContext {
         _overrideProps.remove(propName);
     }
 
-    
+
     public void addPropertyCallback(I2PPropertyCallback callback) {
-    	_overrideProps.addCallBack(callback);
+        _overrideProps.addCallBack(callback);
     }
 
 
@@ -273,9 +275,9 @@ public class RouterContext extends I2PAppContext {
         _appManager = new RouterAppManager(this);
         _initialized = true;
     }
-    
+
     /**
-     * Retrieve the list of router contexts currently instantiated in this JVM.  
+     * Retrieve the list of router contexts currently instantiated in this JVM.
      * This will always contain only one item (except when a simulation per the
      * MultiRouter is going on).
      *
@@ -284,7 +286,7 @@ public class RouterContext extends I2PAppContext {
     public static List<RouterContext> listContexts() {
         return Collections.unmodifiableList(_contexts);
     }
-    
+
     /**
      * Same as listContexts() but package private and modifiable.
      * The list should only be modified when a new
@@ -295,7 +297,7 @@ public class RouterContext extends I2PAppContext {
     static List<RouterContext> getContexts() {
         return _contexts;
     }
-    
+
     /**
      * Kill the global I2PAppContext, so it isn't still around
      * when we restart in the same JVM (Android).
@@ -308,9 +310,11 @@ public class RouterContext extends I2PAppContext {
             _globalAppContext = null;
         }
     }
-    
+
     /** what router is this context working for? */
-    public Router router() { return _router; }
+    public Router router() {
+        return _router;
+    }
 
     /**
      *  Convenience method for getting the router hash.
@@ -332,33 +336,45 @@ public class RouterContext extends I2PAppContext {
     /**
      * How are we coordinating clients for the router?
      */
-    public ClientManagerFacade clientManager() { return _clientManagerFacade; }
+    public ClientManagerFacade clientManager() {
+        return _clientManagerFacade;
+    }
     /**
      * Where do we toss messages for the clients (and where do we get client messages
      * to forward on from)?
      */
-    public ClientMessagePool clientMessagePool() { return _clientMessagePool; }
+    public ClientMessagePool clientMessagePool() {
+        return _clientMessagePool;
+    }
     /**
      * Where do we get network messages from (aka where does the comm system dump what
      * it reads)?
      */
-    public InNetMessagePool inNetMessagePool() { return _inNetMessagePool; }
+    public InNetMessagePool inNetMessagePool() {
+        return _inNetMessagePool;
+    }
     /**
      * Where do we put messages that the router wants to forwards onto the network?
      */
-    public OutNetMessagePool outNetMessagePool() { return _outNetMessagePool; }
+    public OutNetMessagePool outNetMessagePool() {
+        return _outNetMessagePool;
+    }
     /**
      * Tracker component for monitoring what messages are wrapped in what containers
      * and how they proceed through the network.  This is fully for debugging, as when
      * a large portion of the network tracks their messages through this messageHistory
-     * and submits their logs, we can correlate them and watch as messages flow from 
+     * and submits their logs, we can correlate them and watch as messages flow from
      * hop to hop.
      */
-    public MessageHistory messageHistory() { return _messageHistory; }
+    public MessageHistory messageHistory() {
+        return _messageHistory;
+    }
     /**
      * The registry is used by outbound messages to wait for replies.
      */
-    public OutboundMessageRegistry messageRegistry() { return _messageRegistry; }
+    public OutboundMessageRegistry messageRegistry() {
+        return _messageRegistry;
+    }
 
     /**
      * The monitor keeps track of inbound and outbound messages currently held in
@@ -372,85 +388,119 @@ public class RouterContext extends I2PAppContext {
      * Our db cache
      * @since 0.9.61
      */
-    public SegmentedNetworkDatabaseFacade netDbSegmentor() { return _netDb; }
+    public SegmentedNetworkDatabaseFacade netDbSegmentor() {
+        return _netDb;
+    }
 
-    public NetworkDatabaseFacade netDb() { return _netDb.mainNetDB(); }
+    public NetworkDatabaseFacade netDb() {
+        return _netDb.mainNetDB();
+    }
 
     /**
      * Get the client netDb for the given id.
      * Will return the main netDb if
      * the dbid is null or the client db is not found.
-     * 
+     *
      * @since 0.9.61
      * @param id may be null
      * @return non-null
      */
-    public NetworkDatabaseFacade clientNetDb(Hash id) { return _netDb.clientNetDB(id); }
+    public NetworkDatabaseFacade clientNetDb(Hash id) {
+        return _netDb.clientNetDB(id);
+    }
 
     /**
      * The actual driver of the router, where all jobs are enqueued and processed.
      */
-    public JobQueue jobQueue() { return _jobQueue; }
+    public JobQueue jobQueue() {
+        return _jobQueue;
+    }
     /**
      * Coordinates the router's ElGamal and DSA keys, as well as any keys given
      * to it by clients as part of a LeaseSet.
      */
-    public KeyManager keyManager() { return _keyManager; }
+    public KeyManager keyManager() {
+        return _keyManager;
+    }
     /**
      * How do we pass messages from our outNetMessagePool to another router
      */
-    public CommSystemFacade commSystem() { return _commSystem; }
+    public CommSystemFacade commSystem() {
+        return _commSystem;
+    }
     /**
      * Organize the peers we know about into various tiers, profiling their
      * performance and sorting them accordingly.
      */
-    public ProfileOrganizer profileOrganizer() { return _profileOrganizer; }
+    public ProfileOrganizer profileOrganizer() {
+        return _profileOrganizer;
+    }
     /**
      * Minimal interface for selecting peers for various tasks based on given
-     * criteria.  This is kept seperate from the profile organizer since this 
+     * criteria.  This is kept seperate from the profile organizer since this
      * logic is independent of how the peers are organized (or profiled even).
      */
-    public PeerManagerFacade peerManager() { return _peerManagerFacade; }
+    public PeerManagerFacade peerManager() {
+        return _peerManagerFacade;
+    }
     /**
-     * Expose a simple API for various router components to take note of 
-     * particular events that a peer enacts (sends us a message, agrees to 
+     * Expose a simple API for various router components to take note of
+     * particular events that a peer enacts (sends us a message, agrees to
      * participate in a tunnel, etc).
      */
-    public ProfileManager profileManager() { return _profileManager; }
+    public ProfileManager profileManager() {
+        return _profileManager;
+    }
     /**
      * Coordinate this router's bandwidth limits
      */
-    public FIFOBandwidthLimiter bandwidthLimiter() { return _bandwidthLimiter; }
+    public FIFOBandwidthLimiter bandwidthLimiter() {
+        return _bandwidthLimiter;
+    }
     /**
      * Coordinate this router's tunnels (its pools, participation, backup, etc).
      * Any configuration for the tunnels is rooted from the context's properties
      */
-    public TunnelManagerFacade tunnelManager() { return _tunnelManager; }
+    public TunnelManagerFacade tunnelManager() {
+        return _tunnelManager;
+    }
     /**
      * Handle tunnel messages, as well as coordinate the gateways
      */
-    public TunnelDispatcher tunnelDispatcher() { return _tunnelDispatcher; }
+    public TunnelDispatcher tunnelDispatcher() {
+        return _tunnelDispatcher;
+    }
     /**
      * If the router is configured to, gather up some particularly tasty morsels
      * regarding the stats managed and offer to publish them into the routerInfo.
      */
-    public StatisticsManager statPublisher() { return _statPublisher; }
-    /** 
+    public StatisticsManager statPublisher() {
+        return _statPublisher;
+    }
+    /**
      * who does this peer hate?
      */
-    public Banlist banlist() { return _banlist; }
-    public Blocklist blocklist() { return _blocklist; }
+    public Banlist banlist() {
+        return _banlist;
+    }
+    public Blocklist blocklist() {
+        return _blocklist;
+    }
     /**
      * The router keeps track of messages it receives to prevent duplicates, as
      * well as other criteria for "validity".
      */
-    public MessageValidator messageValidator() { return _messageValidator; }
+    public MessageValidator messageValidator() {
+        return _messageValidator;
+    }
     /**
      * Component to coordinate our accepting/rejecting of requests under load
      *
      */
-    public RouterThrottle throttle() { return _throttle; }
-    
+    public RouterThrottle throttle() {
+        return _throttle;
+    }
+
     @Override
     public String toString() {
         StringBuilder buf = new StringBuilder(512);
@@ -476,9 +526,9 @@ public class RouterContext extends I2PAppContext {
         buf.append(_messageValidator).append('\n');
         return buf.toString();
     }
-    
+
     /**
-     * Tie in the router's config as properties, as well as whatever the 
+     * Tie in the router's config as properties, as well as whatever the
      * I2PAppContext says.
      *
      */
@@ -491,7 +541,7 @@ public class RouterContext extends I2PAppContext {
         return super.getProperty(propName);
     }
     /**
-     * Tie in the router's config as properties, as well as whatever the 
+     * Tie in the router's config as properties, as well as whatever the
      * I2PAppContext says.
      *
      */
@@ -546,13 +596,13 @@ public class RouterContext extends I2PAppContext {
      * @since 0.8.4
      */
     @Override
-    public Properties getProperties() { 
+    public Properties getProperties() {
         Properties rv = super.getProperties();
         if (_router != null)
             rv.putAll(_router.getConfigMap());
         return rv;
     }
-    
+
     @Override
     protected void initializeClock() {
         synchronized (_lock1) {
@@ -581,14 +631,14 @@ public class RouterContext extends I2PAppContext {
             _keyRingInitialized = true;
         }
     }
-    
+
     /**
      *  @since 0.8.8
      */
     void removeShutdownTasks() {
         _shutdownTasks.clear();
     }
-    
+
     /**
      *  The last thing to be called before router shutdown.
      *  No context resources, including logging, will be available.
@@ -599,7 +649,7 @@ public class RouterContext extends I2PAppContext {
     public void addFinalShutdownTask(Runnable task) {
         _finalShutdownTasks.add(task);
     }
-    
+
     /**
      *  @return the Set
      *  @since 0.8.8
@@ -607,7 +657,7 @@ public class RouterContext extends I2PAppContext {
     Set<Runnable> getFinalShutdownTasks() {
         return _finalShutdownTasks;
     }
-    
+
     /**
      *  Use this instead of context instanceof RouterContext
      *  @return true
@@ -672,11 +722,11 @@ public class RouterContext extends I2PAppContext {
             _sessionKeyManagerInitialized = true;
         }
     }
-    
+
     /**
-     * Determine how much do we want to mess with the keys to turn them 
-     * into something we can route.  This is context specific because we 
-     * may want to test out how things react when peers don't agree on 
+     * Determine how much do we want to mess with the keys to turn them
+     * into something we can route.  This is context specific because we
+     * may want to test out how things react when peers don't agree on
      * how to skew.
      *
      * Returns same thing as routerKeyGenerator()
@@ -690,9 +740,9 @@ public class RouterContext extends I2PAppContext {
     }
 
     /**
-     * Determine how much do we want to mess with the keys to turn them 
-     * into something we can route.  This is context specific because we 
-     * may want to test out how things react when peers don't agree on 
+     * Determine how much do we want to mess with the keys to turn them
+     * into something we can route.  This is context specific because we
+     * may want to test out how things react when peers don't agree on
      * how to skew.
      *
      * Returns same thing as routingKeyGenerator()
@@ -737,7 +787,7 @@ public class RouterContext extends I2PAppContext {
         return _eciesEngine;
     }
 
-    /** 
+    /**
      *  How long this router was down before it started, or 0 if unknown.
      *
      *  This may be used for a determination of whether to regenerate keys, for example.

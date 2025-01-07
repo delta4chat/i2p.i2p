@@ -38,7 +38,7 @@ public class ConfigUIHelper {
         //{ "et", "ee", "Eesti", null },
         { "en", "us", "English", null },
         { "es", "es", "Español", null },
-        { "es_AR", "ar", "Español" ,"Argentina" },
+        { "es_AR", "ar", "Español","Argentina" },
         { "fa", "ir", "Persian فارسی", null },
         { "fr", "fr", "Français", null },
         //{ "gl", "lang_gl", "Galego", null },
@@ -114,8 +114,8 @@ public class ConfigUIHelper {
             String name = langs[i][3];
             if (name != null) {
                 buf.append(" (")
-                   .append(name)
-                   .append(')');
+                .append(name)
+                .append(')');
             }
             buf.append("</option>\n");
         }
@@ -124,5 +124,7 @@ public class ConfigUIHelper {
     }
 
     /** if necessary */
-    private static boolean isAdvanced() { return false; }
+    private static boolean isAdvanced() {
+        return false;
+    }
 }

@@ -5,7 +5,7 @@ import java.util.List;
 import net.i2p.router.RouterContext;
 import net.i2p.util.I2PThread;
 import net.i2p.util.Log;
-   
+
 /**
  * Blocking thread to grab new packets off the outbound fragment
  * pool and toss 'em onto the outbound packet queues.
@@ -18,29 +18,31 @@ class PacketPusher implements Runnable {
     private final OutboundMessageFragments _fragments;
     private final List<UDPEndpoint> _endpoints;
     private volatile boolean _alive;
-    
+
     public PacketPusher(RouterContext ctx, OutboundMessageFragments fragments, List<UDPEndpoint> endpoints) {
         // _context = ctx;
         _log = ctx.logManager().getLog(PacketPusher.class);
         _fragments = fragments;
         _endpoints = endpoints;
     }
-    
+
     public synchronized void startup() {
         _alive = true;
         I2PThread t = new I2PThread(this, "UDP packet pusher", true);
         t.start();
     }
-    
-    public synchronized void shutdown() { _alive = false; }
-     
+
+    public synchronized void shutdown() {
+        _alive = false;
+    }
+
     public void run() {
         while (_alive) {
             try {
                 List<UDPPacket> packets = _fragments.getNextVolley();
                 if (packets != null) {
                     for (int i = 0; i < packets.size(); i++) {
-                         send(packets.get(i));
+                        send(packets.get(i));
                     }
                 }
             } catch (RuntimeException e) {
@@ -72,7 +74,7 @@ class PacketPusher implements Runnable {
                 break;
             }
             if ((isIPv4 && ep.isIPv4()) ||
-                ((!isIPv4) && ep.isIPv6())) {
+                    ((!isIPv4) && ep.isIPv6())) {
                 // BLOCKING if queue is full
                 ep.getSender().add(packet);
                 return;

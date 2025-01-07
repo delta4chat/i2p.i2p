@@ -22,11 +22,13 @@ class FloodOnlyLookupSelector implements MessageSelector {
         _log = ctx.logManager().getLog(getClass());
     }
 
-    public boolean continueMatching() { 
-        return _search.getLookupsRemaining() > 0 && !_matchFound && _context.clock().now() < getExpiration(); 
+    public boolean continueMatching() {
+        return _search.getLookupsRemaining() > 0 && !_matchFound && _context.clock().now() < getExpiration();
     }
 
-    public long getExpiration() { return (_matchFound ? -1 : _search.getExpiration()); }
+    public long getExpiration() {
+        return (_matchFound ? -1 : _search.getExpiration());
+    }
 
     public boolean isMatch(I2NPMessage message) {
         if (message == null) return false;
@@ -61,7 +63,7 @@ class FloodOnlyLookupSelector implements MessageSelector {
                     _context.jobQueue().addJob(new SingleLookupJob(_context, dsrm));
                 } else if (_log.shouldLog(Log.INFO)) {
                     int remaining = _search.getLookupsRemaining();
-                    _log.info(_search.getJobId() + ": got a DSRM apparently from " + dsrm.getFromHash() + " when we were looking for " 
+                    _log.info(_search.getJobId() + ": got a DSRM apparently from " + dsrm.getFromHash() + " when we were looking for "
                               + _search.getKey() + ", with " + remaining + " outstanding searches");
                 }
 
@@ -71,7 +73,7 @@ class FloodOnlyLookupSelector implements MessageSelector {
             }
         }
         return false;
-    }   
+    }
 
     /** @since 0.9.12 */
     public String toString() {

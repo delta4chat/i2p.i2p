@@ -2,9 +2,9 @@ package net.i2p.data;
 
 /*
  * free (adj.): unencumbered; not under the control of others
- * Written by jrandom in 2003 and released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
- * It probably won't make your computer catch on fire, or eat 
+ * Written by jrandom in 2003 and released into the public domain
+ * with no warranty of any kind, either expressed or implied.
+ * It probably won't make your computer catch on fire, or eat
  * your children, but it might.  Use at your own risk.
  *
  */
@@ -141,8 +141,8 @@ public class DataHelper {
      * @throws IOException if there is a problem reading the data
      * @return an OrderedProperties
      */
-    public static Properties readProperties(InputStream rawStream) 
-        throws DataFormatException, IOException {
+    public static Properties readProperties(InputStream rawStream)
+    throws DataFormatException, IOException {
         Properties props = new OrderedProperties();
         readProperties(rawStream, props);
         return props;
@@ -162,8 +162,8 @@ public class DataHelper {
      *                               and an immutable EmptyProperties if empty.
      *  @since 0.8.13
      */
-    public static Properties readProperties(InputStream rawStream, Properties props) 
-        throws DataFormatException, IOException {
+    public static Properties readProperties(InputStream rawStream, Properties props)
+    throws DataFormatException, IOException {
         int size = (int) readLong(rawStream, 2);
         if (size == 0) {
             return (props != null) ? props : EmptyProperties.INSTANCE;
@@ -209,8 +209,8 @@ public class DataHelper {
      *                             or a length limit is exceeded
      * @throws IOException if there is an IO error writing out the data
      */
-    public static void writeProperties(OutputStream rawStream, Properties props) 
-            throws DataFormatException, IOException {
+    public static void writeProperties(OutputStream rawStream, Properties props)
+    throws DataFormatException, IOException {
         writeProperties(rawStream, props, false);
     }
 
@@ -232,8 +232,8 @@ public class DataHelper {
      * @param props source may be null
      * @throws DataFormatException if a length limit is exceeded
      */
-    public static void writeProperties(OutputStream rawStream, Properties props, boolean utf8) 
-            throws DataFormatException, IOException {
+    public static void writeProperties(OutputStream rawStream, Properties props, boolean utf8)
+    throws DataFormatException, IOException {
         writeProperties(rawStream, props, utf8, props != null && props.size() > 1 && !(props instanceof OrderedProperties));
     }
 
@@ -259,8 +259,8 @@ public class DataHelper {
      *                             (not including the two length bytes) is greater than 65535 bytes.
      * @since 0.8.7
      */
-    public static void writeProperties(OutputStream rawStream, Properties props, boolean utf8, boolean sort) 
-            throws DataFormatException, IOException {
+    public static void writeProperties(OutputStream rawStream, Properties props, boolean utf8, boolean sort)
+    throws DataFormatException, IOException {
         if (props != null && !props.isEmpty()) {
             Properties p;
             if (sort && props.size() > 1) {
@@ -292,7 +292,7 @@ public class DataHelper {
             writeLong(rawStream, 2, 0);
         }
     }
-    
+
     /*
      * Writes the props to the byte array, sorted
      * See readProperties() for the format.
@@ -341,7 +341,7 @@ public class DataHelper {
             return offset + 2;
         }
     }
-    
+
     /**
      * Reads the props from the byte array and puts them in the Properties target
      * See readProperties() for the format.
@@ -503,10 +503,13 @@ public class DataHelper {
                     props.setProperty(key, val);
             }
         } finally {
-            if (in != null) try { in.close(); } catch (IOException ioe) {}
+            if (in != null) try {
+                    in.close();
+                }
+                catch (IOException ioe) {}
         }
     }
-    
+
     /**
      * Writes the props to the file, unsorted (unless props is an OrderedProperties)
      * Note that this does not escape the \r or \n that are unescaped in loadProps() above.
@@ -564,12 +567,15 @@ public class DataHelper {
                 throw new IOException("Failed rename from " + tmpFile + " to " + file);
         } finally {
             if (out != null) out.close();
-            if (fos != null) try { fos.close(); } catch (IOException ioe) {}
+            if (fos != null) try {
+                    fos.close();
+                }
+                catch (IOException ioe) {}
         }
         if (iae != null)
             throw iae;
     }
-    
+
     /**
      * Pretty print the collection
      *
@@ -601,7 +607,7 @@ public class DataHelper {
     }
 
     private static final byte[] EMPTY_BUFFER = new byte[0];
-    
+
     /**
      *  Lower-case hex with leading zeros.
      *  Use toHexString(byte[]) to not get leading zeros
@@ -672,8 +678,8 @@ public class DataHelper {
      * @throws IOException if there is an IO error reading the number
      * @return number
      */
-    public static long readLong(InputStream rawStream, int numBytes) 
-        throws DataFormatException, IOException {
+    public static long readLong(InputStream rawStream, int numBytes)
+    throws DataFormatException, IOException {
         if (numBytes > 8)
             throw new DataFormatException("readLong doesn't currently support reading numbers > 8 bytes [as thats bigger than java's long]");
 
@@ -697,12 +703,12 @@ public class DataHelper {
                 break;
             }
         }
-        
+
         if (rv < 0)
             throw new DataFormatException("readLong got a negative? " + rv + " numBytes=" + numBytes);
         return rv;
     }
-    
+
     /** Write an integer as defined by the I2P data structure specification to the stream.
      * Integers are a fixed number of bytes (numBytes), stored as unsigned integers in network byte order.
      * @param value value to write out, non-negative
@@ -711,8 +717,8 @@ public class DataHelper {
      * @throws DataFormatException if value is negative or if numBytes not 1-8
      * @throws IOException if there is an IO error writing to the stream
      */
-    public static void writeLong(OutputStream rawStream, int numBytes, long value) 
-        throws DataFormatException, IOException {
+    public static void writeLong(OutputStream rawStream, int numBytes, long value)
+    throws DataFormatException, IOException {
         if (numBytes <= 0 || numBytes > 8)
             // probably got the args backwards
             throw new DataFormatException("Bad byte count " + numBytes);
@@ -723,7 +729,7 @@ public class DataHelper {
             rawStream.write(cur);
         }
     }
-    
+
     /**
      * Big endian.
      *
@@ -736,7 +742,7 @@ public class DataHelper {
         toLong(val, 0, numBytes, value);
         return val;
     }
-    
+
     /**
      * Big endian.
      *
@@ -752,7 +758,7 @@ public class DataHelper {
             value >>= 8;
         }
     }
-    
+
     /**
      * Little endian, i.e. backwards. Not for use in I2P protocols.
      *
@@ -769,7 +775,7 @@ public class DataHelper {
             value >>= 8;
         }
     }
-    
+
     /**
      * Big endian.
      *
@@ -783,7 +789,7 @@ public class DataHelper {
         if (numBytes <= 0 || numBytes > 8) throw new IllegalArgumentException("Invalid number of bytes");
         if ( (src == null) || (src.length == 0) )
             return 0;
-        
+
         long rv = 0;
         int limit = offset + numBytes;
         for (int i = offset; i < limit; i++) {
@@ -794,7 +800,7 @@ public class DataHelper {
             throw new IllegalArgumentException("fromLong got a negative? " + rv + ": offset="+ offset +" numBytes="+numBytes);
         return rv;
     }
-    
+
     /**
      * Little endian, i.e. backwards. Not for use in I2P protocols.
      *
@@ -832,7 +838,7 @@ public class DataHelper {
         }
         return rv;
     }
-    
+
     /**
      * Big endian.
      * Same as toLong(target, offset, 8, value) but allows negative value
@@ -846,7 +852,7 @@ public class DataHelper {
             value >>= 8;
         }
     }
-    
+
     /** Read in a date from the stream as specified by the I2P data structure spec.
      * A date is an 8 byte unsigned integer in network byte order specifying the number of
      * milliseconds since midnight on January 1, 1970 in the GMT timezone. If the number is
@@ -862,15 +868,15 @@ public class DataHelper {
 
         return new Date(date);
     }
-    
+
     /** Write out a date to the stream as specified by the I2P data structure spec.
      * @param out stream to write to
      * @param date date to write (can be null)
      * @throws DataFormatException if the date is not valid
      * @throws IOException if there is an IO error writing the date
      */
-    public static void writeDate(OutputStream out, Date date) 
-        throws DataFormatException, IOException {
+    public static void writeDate(OutputStream out, Date date)
+    throws DataFormatException, IOException {
         if (date == null)
             writeLong(out, DATE_LENGTH, 0L);
         else
@@ -895,7 +901,7 @@ public class DataHelper {
             throw new DataFormatException("Not enough data to read a date");
         try {
             long when = fromLong(src, offset, DATE_LENGTH);
-            if (when <= 0) 
+            if (when <= 0)
                 return null;
             else
                 return new Date(when);
@@ -903,7 +909,7 @@ public class DataHelper {
             throw new DataFormatException(iae.getMessage());
         }
     }
-    
+
     public static final int DATE_LENGTH = 8;
 
     /** Read in a string from the stream as specified by the I2P data structure spec.
@@ -943,8 +949,8 @@ public class DataHelper {
      * @throws DataFormatException if the string is not valid
      * @throws IOException if there is an IO error writing the string
      */
-    public static void writeString(OutputStream out, String string) 
-        throws DataFormatException, IOException {
+    public static void writeString(OutputStream out, String string)
+    throws DataFormatException, IOException {
         if (string == null) {
             out.write((byte) 0);
         } else {
@@ -970,8 +976,8 @@ public class DataHelper {
      * @throws IOException if there is an IO error writing the string
      * @since public since 0.9.26
      */
-    public static void writeStringUTF8(OutputStream out, String string) 
-        throws DataFormatException, IOException {
+    public static void writeStringUTF8(OutputStream out, String string)
+    throws DataFormatException, IOException {
         if (string == null) {
             out.write((byte) 0);
         } else {
@@ -1008,10 +1014,10 @@ public class DataHelper {
     }
 
     /**
-     * Run a deep comparison across the two collections.  
+     * Run a deep comparison across the two collections.
      * <p>
      *
-     * This treats (null == null) as true, (null == (!null)) as false, and then 
+     * This treats (null == null) as true, (null == (!null)) as false, and then
      * comparing each element via eq(object, object). <p>
      *
      * If the size of the collections are not equal, the comparison returns false.
@@ -1033,7 +1039,7 @@ public class DataHelper {
     /**
      * Run a comparison on the byte arrays, byte by byte.  <p>
      *
-     * This treats (null == null) as true, (null == (!null)) as false, 
+     * This treats (null == null) as true, (null == (!null)) as false,
      * and unequal length arrays as false.
      *
      * Variable time.
@@ -1080,7 +1086,7 @@ public class DataHelper {
     public final static boolean eq(byte lhs[], int offsetLeft, byte rhs[], int offsetRight, int length) {
         if ( (lhs == null) || (rhs == null) ) return false;
         for (int i = 0; i < length; i++) {
-            if (lhs[offsetLeft + i] != rhs[offsetRight + i]) 
+            if (lhs[offsetLeft + i] != rhs[offsetRight + i])
                 return false;
         }
         return true;
@@ -1101,7 +1107,7 @@ public class DataHelper {
         }
         return r == 0;
     }
-    
+
     /**
      *  Big endian compare, treats bytes as unsigned.
      *  Shorter arg is lesser.
@@ -1133,7 +1139,7 @@ public class DataHelper {
     }
 
     /**
-     * xor the lhs with the rhs, storing the result in out.  
+     * xor the lhs with the rhs, storing the result in out.
      *
      * @param lhs one of the source arrays
      * @param startLeft starting index in the lhs array to begin the xor
@@ -1152,7 +1158,7 @@ public class DataHelper {
             throw new IllegalArgumentException("Right hand side is too short");
         if (out.length < startOut + len)
             throw new IllegalArgumentException("Result is too short");
-        
+
         for (int i = 0; i < len; i++)
             out[startOut + i] = (byte) (lhs[startLeft + i] ^ rhs[startRight + i]);
     }
@@ -1164,7 +1170,7 @@ public class DataHelper {
 
     /**
      * Calculate the hashcode of the object, using 0 for null
-     * 
+     *
      */
     public static int hashCode(Object obj) {
         if (obj == null) return 0;
@@ -1174,7 +1180,7 @@ public class DataHelper {
 
     /**
      * Calculate the hashcode of the date, using 0 for null
-     * 
+     *
      */
     public static int hashCode(Date obj) {
         if (obj == null) return 0;
@@ -1184,7 +1190,7 @@ public class DataHelper {
 
     /**
      * Calculate the hashcode of the byte array, using 0 for null
-     * 
+     *
      */
     public static int hashCode(byte b[]) {
         // Java 5 now has its own method, and the old way
@@ -1205,7 +1211,7 @@ public class DataHelper {
 
     /**
      * Calculate the hashcode of the collection, using 0 for null
-     * 
+     *
      */
     public static int hashCode(Collection<?> col) {
         if (col == null) return 0;
@@ -1291,8 +1297,8 @@ public class DataHelper {
         }
         return offset + cur;
     }
-    
-    
+
+
     /**
      * Read a newline delimited line from the stream, returning the line (without
      * the newline), or null if EOF reached on an empty line
@@ -1302,7 +1308,9 @@ public class DataHelper {
      *
      * @return null on EOF
      */
-    public static String readLine(InputStream in) throws IOException { return readLine(in, (MessageDigest) null); }
+    public static String readLine(InputStream in) throws IOException {
+        return readLine(in, (MessageDigest) null);
+    }
 
     /**
      * update the hash along the way
@@ -1338,7 +1346,7 @@ public class DataHelper {
     public static boolean readLine(InputStream in, StringBuilder buf) throws IOException {
         return readLine(in, buf, (MessageDigest) null);
     }
-    
+
     /**
      * update the hash along the way
      * Warning - strips \n but not \r
@@ -1363,7 +1371,7 @@ public class DataHelper {
         }
         return c != -1 || i > 0;
     }
-    
+
     /**
      *  update the hash along the way
      *  @since 0.8.8
@@ -1393,7 +1401,7 @@ public class DataHelper {
             return "n/a";
         }
     }
-    
+
     /**
      * Like formatDuration but with a non-breaking space after the number,
      * 0 is unitless, and the unit is translated.
@@ -1453,7 +1461,7 @@ public class DataHelper {
         // do it here to keep &nbsp; out of the tags for translator sanity
         return t.replace(" ", "&nbsp;");
     }
-    
+
     /**
      * Like formatDuration2(long) but with microsec and nanosec also.
      *
@@ -1493,7 +1501,7 @@ public class DataHelper {
             t = t.replace("-", "&minus;");
         return t.replace(" ", "&nbsp;");
     }
-    
+
     private static final String BUNDLE_NAME = "net.i2p.util.messages";
 
     private static String _t(String key) {
@@ -1519,23 +1527,32 @@ public class DataHelper {
         float val = bytes;
         int scale = 0;
         while (val >= 1024.0f) {
-            scale++; 
+            scale++;
             val /= 1024.0f;
         }
-        
+
         DecimalFormat fmt = new DecimalFormat("##0.00");
 
         String str = fmt.format(val);
         switch (scale) {
-            case 1: return str + "Ki";
-            case 2: return str + "Mi";
-            case 3: return str + "Gi";
-            case 4: return str + "Ti";
-            case 5: return str + "Pi";
-            case 6: return str + "Ei";
-            case 7: return str + "Zi";
-            case 8: return str + "Yi";
-            default: return Long.toString(bytes);
+        case 1:
+            return str + "Ki";
+        case 2:
+            return str + "Mi";
+        case 3:
+            return str + "Gi";
+        case 4:
+            return str + "Ti";
+        case 5:
+            return str + "Pi";
+        case 6:
+            return str + "Ei";
+        case 7:
+            return str + "Zi";
+        case 8:
+            return str + "Yi";
+        default:
+            return Long.toString(bytes);
         }
     }
 
@@ -1575,10 +1592,10 @@ public class DataHelper {
         double val = bytes;
         int scale = 0;
         while (val >= 1024) {
-            scale++; 
+            scale++;
             val /= 1024;
         }
-        
+
         DecimalFormat fmt = new DecimalFormat("##0.##");
         if (val >= 200) {
             fmt.setMaximumFractionDigits(0);
@@ -1590,15 +1607,24 @@ public class DataHelper {
 
         String str = fmt.format(val) + space;
         switch (scale) {
-            case 1: return str + "Ki";
-            case 2: return str + "Mi";
-            case 3: return str + "Gi";
-            case 4: return str + "Ti";
-            case 5: return str + "Pi";
-            case 6: return str + "Ei";
-            case 7: return str + "Zi";
-            case 8: return str + "Yi";
-            default: return bytes + space;
+        case 1:
+            return str + "Ki";
+        case 2:
+            return str + "Mi";
+        case 3:
+            return str + "Gi";
+        case 4:
+            return str + "Ti";
+        case 5:
+            return str + "Pi";
+        case 6:
+            return str + "Ei";
+        case 7:
+            return str + "Zi";
+        case 8:
+            return str + "Yi";
+        default:
+            return bytes + space;
         }
     }
 
@@ -1636,7 +1662,7 @@ public class DataHelper {
         double val = bytes;
         int scale = 0;
         while (val >= 1000) {
-            scale++; 
+            scale++;
             val /= 1000;
         }
         DecimalFormat fmt = new DecimalFormat("##0.##");
@@ -1647,15 +1673,24 @@ public class DataHelper {
         }
         String str = fmt.format(val) + space;
         switch (scale) {
-            case 1: return str + "K";
-            case 2: return str + "M";
-            case 3: return str + "G";
-            case 4: return str + "T";
-            case 5: return str + "P";
-            case 6: return str + "E";
-            case 7: return str + "Z";
-            case 8: return str + "Y";
-            default: return bytes + space;
+        case 1:
+            return str + "K";
+        case 2:
+            return str + "M";
+        case 3:
+            return str + "G";
+        case 4:
+            return str + "T";
+        case 5:
+            return str + "P";
+        case 6:
+            return str + "E";
+        case 7:
+            return str + "Z";
+        case 8:
+            return str + "Y";
+        default:
+            return bytes + space;
         }
     }
 
@@ -1698,7 +1733,7 @@ public class DataHelper {
             return TIME_FORMAT.format(new Date(now));
         }
     }
-    
+
     /**
      * Strip out any HTML (simply removing any less than / greater than symbols)
      * @param orig may be null, returns empty string if null
@@ -1734,16 +1769,16 @@ public class DataHelper {
      * @param escaped the escaped string, may be null
      * @return the unescaped string, or null if null is passed in
      */
-/**** unused, uncomment if you need it
-    public static String unescapeHTML(String escaped) {
-        if (escaped == null) return null;
-        String unescaped = escaped;
-        for (int i = 0; i < escapeChars.length; i++) {
-            unescaped = unescaped.replace(escapeCodes[i], escapeChars[i]);
+    /**** unused, uncomment if you need it
+        public static String unescapeHTML(String escaped) {
+            if (escaped == null) return null;
+            String unescaped = escaped;
+            for (int i = 0; i < escapeChars.length; i++) {
+                unescaped = unescaped.replace(escapeCodes[i], escapeChars[i]);
+            }
+            return unescaped;
         }
-        return unescaped;
-    }
-****/
+    ****/
 
     /** */
     public static final int MAX_UNCOMPRESSED = 40*1024;
@@ -1823,7 +1858,7 @@ public class DataHelper {
         if (orig == null) return orig;
         if (level == NO_COMPRESSION && size <= 32767)
             return zeroCompress(orig, offset, size);
-        if (size > MAX_UNCOMPRESSED) 
+        if (size > MAX_UNCOMPRESSED)
             throw new IllegalArgumentException("tell jrandom size=" + size);
         ReusableGZIPOutputStream out = ReusableGZIPOutputStream.acquire();
         out.setLevel(level);
@@ -1855,7 +1890,7 @@ public class DataHelper {
         } finally {
             ReusableGZIPOutputStream.release(out);
         }
-        
+
     }
 
     /**
@@ -1917,10 +1952,10 @@ public class DataHelper {
             return zeroDecompress(orig, offset, length);
         if (offset + length > orig.length)
             throw new IOException("Bad params arrlen " + orig.length + " off " + offset + " len " + length);
-        
+
         ReusableGZIPInputStream in = ReusableGZIPInputStream.acquire();
         in.initialize(new ByteArrayInputStream(orig, offset, length));
-        
+
         // don't make this a static field, or else I2PAppContext gets initialized too early
         ByteCache cache = ByteCache.getInstance(8, MAX_UNCOMPRESSED);
         ByteArray outBuf = cache.acquire();
@@ -1964,16 +1999,16 @@ public class DataHelper {
         try {
             final int olen = len - 23;
             if (in[off++] != 0x1F ||
-                in[off++] != (byte) 0x8B ||
-                in[off] != 0x08)
+                    in[off++] != (byte) 0x8B ||
+                    in[off] != 0x08)
                 throw new IOException("header");
             off += 8;
             if (in[off++] != 0x01 ||
-                fromLongLE(in, off, 2) != olen)
+                    fromLongLE(in, off, 2) != olen)
                 throw new IOException("header");
             off += 2;
             if (in[off] != (byte) ~ in[off - 2] ||
-                in[off + 1] != (byte) ~ in[off - 1])
+                    in[off + 1] != (byte) ~ in[off - 1])
                 throw new IOException("header");
             off += 2;
             final int trailer = off + olen;
@@ -2133,7 +2168,7 @@ public class DataHelper {
             int read;
             while ((read = in.read(buf)) != -1) {
                 out.write(buf, 0, read);
-            }   
+            }
         } finally {
             cache.release(ba);
         }

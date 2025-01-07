@@ -21,7 +21,7 @@ public class MultiSource implements Source, Sink {
     public MultiSource() {
         this.sinks = new CopyOnWriteArrayList<MSink>();
     }
-    
+
     public void setSink(Sink sink) {
         this.sink = sink;
     }
@@ -50,14 +50,14 @@ public class MultiSource implements Source, Sink {
             this.sink.send(ms.dest, ms.fromPort, ms.toPort, data);
         }
     }
-    
+
     /**
      *  @since 0.9.53 changed to MSink parameter
      */
     public void add(MSink ms) {
         sinks.add(ms);
     }
-    
+
     /**
      *  @since 0.9.53 changed to MSink parameter
      */
@@ -73,7 +73,9 @@ public class MultiSource implements Source, Sink {
         public final int fromPort, toPort;
 
         public MSink(Destination dest, int fromPort, int toPort) {
-            this.dest = dest; this.fromPort = fromPort; this.toPort = toPort;
+            this.dest = dest;
+            this.fromPort = fromPort;
+            this.toPort = toPort;
         }
 
         @Override

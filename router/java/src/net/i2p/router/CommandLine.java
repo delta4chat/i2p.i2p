@@ -14,24 +14,24 @@ import java.util.List;
 public class CommandLine extends net.i2p.util.CommandLine {
 
     protected static final List<String> RCLASSES = Arrays.asList(new String[] {
-        "com.maxmind.geoip2.DatabaseReader",
-        "net.i2p.data.router.RouterInfo",
-        "net.i2p.data.router.RouterKeyGenerator",
-        "net.i2p.router.MultiRouter",
-        "net.i2p.router.Router",
-        "net.i2p.router.RouterLaunch",
-        "net.i2p.router.RouterVersion",
-        "net.i2p.router.crypto.FamilyKeyCrypto",
-        "net.i2p.router.naming.BlockfileNamingService",
-        "net.i2p.router.networkdb.reseed.Reseeder",
-        "net.i2p.router.peermanager.ProfileOrganizer",
-        "net.i2p.router.tasks.CryptoChecker",
-        "net.i2p.router.time.NtpClient",
-        "net.i2p.router.transport.GeoIP",
-        "net.i2p.router.transport.GeoIPv6",
-        "net.i2p.router.transport.udp.MTU",
-        "net.i2p.router.transport.UPnP"
-    });
+                "com.maxmind.geoip2.DatabaseReader",
+                "net.i2p.data.router.RouterInfo",
+                "net.i2p.data.router.RouterKeyGenerator",
+                "net.i2p.router.MultiRouter",
+                "net.i2p.router.Router",
+                "net.i2p.router.RouterLaunch",
+                "net.i2p.router.RouterVersion",
+                "net.i2p.router.crypto.FamilyKeyCrypto",
+                "net.i2p.router.naming.BlockfileNamingService",
+                "net.i2p.router.networkdb.reseed.Reseeder",
+                "net.i2p.router.peermanager.ProfileOrganizer",
+                "net.i2p.router.tasks.CryptoChecker",
+                "net.i2p.router.time.NtpClient",
+                "net.i2p.router.transport.GeoIP",
+                "net.i2p.router.transport.GeoIPv6",
+                "net.i2p.router.transport.udp.MTU",
+                "net.i2p.router.transport.UPnP"
+            });
 
     protected CommandLine() {}
 

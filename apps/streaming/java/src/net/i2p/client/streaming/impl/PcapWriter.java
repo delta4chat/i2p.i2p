@@ -48,12 +48,14 @@ public class PcapWriter implements Closeable, Flushable {
     /** big-endian, see file format ref - 24 bytes */
     private static final byte[] FILE_HEADER = { (byte) 0xa1, (byte) 0xb2, (byte) 0xc3, (byte) 0xd4,
                                                 0, 2, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0,
-                                                0, 0, (byte) 0xff, (byte) 0xff, 0, 0, 0, 1 };
+                                                0, 0, (byte) 0xff, (byte) 0xff, 0, 0, 0, 1
+                                              };
 
     /** dummy macs, IPv4 ethertype */
     private static final byte[] MAC_HEADER = { 1, 2, 3, 4, 5, 6,
                                                1, 2, 3, 4, 5, 6,
-                                               (byte) 0x08, 0 };
+                                               (byte) 0x08, 0
+                                             };
     private static final byte[] IP_HEADER_1 = { 0x45, 0 };  // the length goes after this
     private static final byte[] IP_HEADER_2 = { 0x12, 0x34, 0x40, 0, 64, 6 };  // ID, flags, TTL and TCP
     private static final byte[] UNK_IP = { (byte) 0xff, 0, 0, 0};
@@ -84,21 +86,21 @@ public class PcapWriter implements Closeable, Flushable {
         //if (f.exists()) {
         //    _fos = new FileOutputStream(f, true);
         //} else {
-            _fos = new BufferedOutputStream(new FileOutputStream(f), 64*1024);
-            _fos.write(FILE_HEADER);
+        _fos = new BufferedOutputStream(new FileOutputStream(f), 64*1024);
+        _fos.write(FILE_HEADER);
         //}
     }
 
     public void close() {
-            try {
-                _fos.close();
-            } catch (IOException ioe) {}
+        try {
+            _fos.close();
+        } catch (IOException ioe) {}
     }
 
     public void flush() {
-            try {
-                _fos.flush();
-            } catch (IOException ioe) {}
+        try {
+            _fos.flush();
+        } catch (IOException ioe) {}
     }
 
     /**
@@ -341,13 +343,17 @@ public class PcapWriter implements Closeable, Flushable {
         }
 
         /** 40 bytes long, caller must use size() to get actual size */
-        public byte[] getData() { return _b; }
+        public byte[] getData() {
+            return _b;
+        }
 
         /** rounded to next 4 bytes */
-        public int size() { return ((_len + 3) / 4) * 4; }
+        public int size() {
+            return ((_len + 3) / 4) * 4;
+        }
 
         public void add(byte type) {
-             add(type, 0, 0);
+            add(type, 0, 0);
         }
 
         public void add(byte type, int datalen, int data) {
@@ -367,7 +373,7 @@ public class PcapWriter implements Closeable, Flushable {
     }
 
     /** one's complement 2-byte checksum update */
-    private static int update(int checksum, byte[] b) {   
+    private static int update(int checksum, byte[] b) {
         return update(checksum, b, b.length);
     }
 

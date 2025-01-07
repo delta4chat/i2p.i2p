@@ -43,7 +43,7 @@ class PacketBuilder2 {
     private final RouterContext _context;
     private final Log _log;
     private final UDPTransport _transport;
-    
+
     /**
      *  For debugging and stats only - does not go out on the wire.
      *  These are chosen to be higher than the highest I2NP message type,
@@ -83,7 +83,7 @@ class PacketBuilder2 {
      */
     static final int PRIORITY_HIGH = 550;
     private static final int PRIORITY_LOW = OutNetMessage.PRIORITY_LOWEST;
-    
+
     // every this many packets
     private static final int DATETIME_SEND_FREQUENCY = 256;
 
@@ -221,7 +221,7 @@ class PacketBuilder2 {
         } else if (_log.shouldDebug()) {
             _log.debug("No room for acks, MTU: " + currentMTU + " data: " + dataSize + " available: " + availableForAcks);
         }
-        
+
         // now write each fragment
         for (int i = 0; i < numFragments; i++) {
             Fragment frag = fragments.get(i);
@@ -259,8 +259,8 @@ class PacketBuilder2 {
         // DateTime block every so often, if room
         // not allowed after termination
         if (!hasTermination &&
-            (pktNum & (DATETIME_SEND_FREQUENCY - 1)) == DATETIME_SEND_FREQUENCY - 1 &&
-            ipHeaderSize + SHORT_HEADER_SIZE + sizeWritten + 7 + MAC_LEN <= currentMTU) {
+                (pktNum & (DATETIME_SEND_FREQUENCY - 1)) == DATETIME_SEND_FREQUENCY - 1 &&
+                ipHeaderSize + SHORT_HEADER_SIZE + sizeWritten + 7 + MAC_LEN <= currentMTU) {
             Block block = new SSU2Payload.DateTimeBlock(_context);
             blocks.add(block);
             off += 7;
@@ -289,7 +289,7 @@ class PacketBuilder2 {
         setTo(packet, peer.getRemoteIPAddress(), peer.getRemotePort());
         //if (_log.shouldDebug())
         //    _log.debug("Packet " + pktNum + " after encryption:\n" + HexDump.dump(data, 0, pkt.getLength()));
-        
+
         // FIXME ticket #2675
         // the packet could have been built before the current mtu got lowered, so
         // compare to LARGE_MTU
@@ -299,13 +299,13 @@ class PacketBuilder2 {
             off += MAC_LEN;
             if (off + ipHeaderSize > currentMTU) {
                 _log.warn("Size is " + off + " for " + packet +
-                       " data size " + dataSize +
-                       " pkt size " + (off + ipHeaderSize) +
-                       " MTU " + currentMTU +
-                       " Fragments: " + DataHelper.toString(fragments) /* , new Exception() */ );
+                          " data size " + dataSize +
+                          " pkt size " + (off + ipHeaderSize) +
+                          " MTU " + currentMTU +
+                          " Fragments: " + DataHelper.toString(fragments) /* , new Exception() */ );
             }
         }
-        
+
         packet.setPriority(priority);
         if (fragments.isEmpty()) {
             SSU2Bitfield acked = peer.getAckedMessages();
@@ -329,7 +329,7 @@ class PacketBuilder2 {
         }
         return packet;
     }
-    
+
     /**
      * A DATA packet with padding only.
      * We use this for keepalive purposes.
@@ -394,9 +394,9 @@ class PacketBuilder2 {
         packet.setMessageType(TYPE_DESTROY);
         return packet;
     }
-    
+
     /**
-     * Build a new SessionRequest packet for the given peer, encrypting it 
+     * Build a new SessionRequest packet for the given peer, encrypting it
      * as necessary.
      *
      * @return ready to send packet, non-null
@@ -404,7 +404,7 @@ class PacketBuilder2 {
     public UDPPacket buildTokenRequestPacket(OutboundEstablishState2 state) {
         long n = _context.random().signedNextInt() & 0xFFFFFFFFL;
         UDPPacket packet = buildLongPacketHeader(state.getSendConnID(), n, TOKEN_REQUEST_FLAG_BYTE,
-                                                 state.getRcvConnID(), 0);
+                           state.getRcvConnID(), 0);
         DatagramPacket pkt = packet.getPacket();
         pkt.setLength(LONG_HEADER_SIZE);
         byte[] introKey = state.getSendHeaderEncryptKey1();
@@ -415,9 +415,9 @@ class PacketBuilder2 {
         state.tokenRequestSent(pkt);
         return packet;
     }
-    
+
     /**
-     * Build a new SessionRequest packet for the given peer, encrypting it 
+     * Build a new SessionRequest packet for the given peer, encrypting it
      * as necessary.
      *
      * @return ready to send packet, non-null
@@ -425,7 +425,7 @@ class PacketBuilder2 {
     public UDPPacket buildSessionRequestPacket(OutboundEstablishState2 state) {
         long n = _context.random().signedNextInt() & 0xFFFFFFFFL;
         UDPPacket packet = buildLongPacketHeader(state.getSendConnID(), n, SESSION_REQUEST_FLAG_BYTE,
-                                                 state.getRcvConnID(), state.getToken());
+                           state.getRcvConnID(), state.getToken());
         DatagramPacket pkt = packet.getPacket();
         pkt.setLength(LONG_HEADER_SIZE);
         byte[] introKey = state.getSendHeaderEncryptKey1();
@@ -436,9 +436,9 @@ class PacketBuilder2 {
         state.requestSent(pkt);
         return packet;
     }
-    
+
     /**
-     * Build a new SessionCreated packet for the given peer, encrypting it 
+     * Build a new SessionCreated packet for the given peer, encrypting it
      * as necessary.
      *
      * @return ready to send packet, non-null
@@ -446,9 +446,9 @@ class PacketBuilder2 {
     public UDPPacket buildSessionCreatedPacket(InboundEstablishState2 state) {
         long n = _context.random().signedNextInt() & 0xFFFFFFFFL;
         UDPPacket packet = buildLongPacketHeader(state.getSendConnID(), n, SESSION_CREATED_FLAG_BYTE,
-                                                 state.getRcvConnID(), 0);
+                           state.getRcvConnID(), 0);
         DatagramPacket pkt = packet.getPacket();
-        
+
         byte sentIP[] = state.getSentIP();
         pkt.setLength(LONG_HEADER_SIZE);
         int port = state.getSentPort();
@@ -464,7 +464,7 @@ class PacketBuilder2 {
     }
 
     /**
-     * Build a new Retry packet for the given peer, encrypting it 
+     * Build a new Retry packet for the given peer, encrypting it
      * as necessary.
      *
      * @param terminationCode 0 normally, nonzero to send termination block
@@ -474,9 +474,9 @@ class PacketBuilder2 {
         long n = _context.random().signedNextInt() & 0xFFFFFFFFL;
         long token = terminationCode == 0 ? state.getToken() : 0;
         UDPPacket packet = buildLongPacketHeader(state.getSendConnID(), n, RETRY_FLAG_BYTE,
-                                                 state.getRcvConnID(), token);
+                           state.getRcvConnID(), token);
         DatagramPacket pkt = packet.getPacket();
-        
+
         byte sentIP[] = state.getSentIP();
         pkt.setLength(LONG_HEADER_SIZE);
         int port = state.getSentPort();
@@ -511,9 +511,9 @@ class PacketBuilder2 {
         packet.setPriority(PRIORITY_LOW);
         return packet;
     }
-    
+
     /**
-     * Build a new series of SessionConfirmed packets for the given peer, 
+     * Build a new series of SessionConfirmed packets for the given peer,
      * encrypting it as necessary.
      *
      * If the RI is large enough that it is fragmented, this will still only return
@@ -567,7 +567,7 @@ class PacketBuilder2 {
 
         // one big block
         SSU2Payload.RIBlock block = new SSU2Payload.RIBlock(info,  0, info.length,
-                                                            false, gzip, 0, 1);
+                false, gzip, 0, 1);
         UDPPacket packets[];
         if (numFragments > 1) {
             packets = buildSessionConfirmedPackets(state, block);
@@ -600,7 +600,7 @@ class PacketBuilder2 {
 
     /**
      * Build all the fragmented SessionConfirmed packets
-     * 
+     *
      */
     private UDPPacket[] buildSessionConfirmedPackets(OutboundEstablishState2 state, SSU2Payload.RIBlock block) {
         UDPPacket packet0 = buildShortPacketHeader(state.getSendConnID(), 0, SESSION_CONFIRMED_FLAG_BYTE);
@@ -815,7 +815,7 @@ class PacketBuilder2 {
         rv.setMessageType(TYPE_TBC);
         return rv;
     }
-    
+
     /**
      * Build a packet as Charlie to Bob verifying that we will help test Alice.
      * In-session, message 3.
@@ -908,7 +908,7 @@ class PacketBuilder2 {
         packet.setPriority(PRIORITY_HIGH);
         return packet;
     }
-    
+
     /**
      *  @param pktNum 0 - 0xFFFFFFFF
      *  @return a packet with the first 32 bytes filled in
@@ -924,7 +924,7 @@ class PacketBuilder2 {
         DataHelper.toLong8(data, 24, token);
         return packet;
     }
-    
+
     /**
      *  @param pktNum 0 - 0xFFFFFFFF
      *  @return a packet with the first 16 bytes filled in
@@ -1228,7 +1228,7 @@ class PacketBuilder2 {
      *                This will extend the length by 16 for the MAC.
      */
     private void encryptDataPacket(UDPPacket packet, CipherState chacha, long n,
-                                    byte[] hdrKey1, byte[] hdrKey2) {
+                                   byte[] hdrKey1, byte[] hdrKey2) {
         DatagramPacket pkt = packet.getPacket();
         byte data[] = pkt.getData();
         int off = pkt.getOffset();

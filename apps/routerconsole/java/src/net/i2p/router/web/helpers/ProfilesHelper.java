@@ -10,16 +10,18 @@ public class ProfilesHelper extends HelperBase {
     private boolean _graphical;
 
     private static final String titles[] =
-                                          {_x("High Capacity"),                 // 0
-                                           _x("Floodfill"),                     // 1
-                                           _x("Banned"),                        // 2
-                                           _x("All"),      };                   // 3
+    {   _x("High Capacity"),                 // 0
+        _x("Floodfill"),                     // 1
+        _x("Banned"),                        // 2
+        _x("All"),
+    };                   // 3
 
     private static final String links[] =
-                                          {"",                                  // 0
-                                           "?f=2",                              // 1
-                                           "?f=3",                              // 2
-                                           "?f=1"          };                   // 3
+    {   "",                                  // 0
+        "?f=2",                              // 1
+        "?f=3",                              // 2
+        "?f=1"
+    };                   // 3
 
     public void setFull(String f) {
         if (f != null) {
@@ -64,7 +66,7 @@ public class ProfilesHelper extends HelperBase {
         }
         return "";
     }
-    
+
     /** @return empty string, writes directly to _out */
     public String getBanlistSummary() {
         try {

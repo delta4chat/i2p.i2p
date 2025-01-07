@@ -2,9 +2,9 @@ package net.i2p.client.impl;
 
 /*
  * free (adj.): unencumbered; not under the control of others
- * Written by jrandom in 2003 and released into the public domain 
- * with no warranty of any kind, either expressed or implied.  
- * It probably won't  make your computer catch on fire, or eat 
+ * Written by jrandom in 2003 and released into the public domain
+ * with no warranty of any kind, either expressed or implied.
+ * It probably won't  make your computer catch on fire, or eat
  * your children, but it might.  Use at your own risk.
  *
  */
@@ -82,8 +82,8 @@ class I2CPMessageProducer {
         context.statManager().createRateStat("client.sendThrottled", "Times waited for bandwidth", "ClientMessages", new long[] { 60*1000 });
         context.statManager().createRateStat("client.sendDropped", "Length of msg dropped waiting for bandwidth", "ClientMessages", new long[] { 60*1000 });
     }
-    
-    /** 
+
+    /**
      * Update the bandwidth setting
      * @since 0.8.4
      */
@@ -103,10 +103,10 @@ class I2CPMessageProducer {
             _log.debug("Setting " + _maxBytesPerSecond + " BPS max");
     }
 
-    /** 
+    /**
      * Strip out the client-side options from the session options.
      * @return a new copy, may be modified
-     * @since 0.9.38 
+     * @since 0.9.38
      */
     private Properties getRouterOptions(I2PSessionImpl session) {
         Properties props = new Properties();
@@ -133,9 +133,9 @@ class I2CPMessageProducer {
         return props;
     }
 
-    /** 
+    /**
      * Send all the messages that a client needs to send to a router to establish
-     * a new session.  
+     * a new session.
      */
     public void connect(I2PSessionImpl session) throws I2PSessionException {
         updateBandwidth(session);
@@ -180,7 +180,7 @@ class I2CPMessageProducer {
             id = I2PSessionImpl.DUMMY_SESSION;
         dmsg.setSessionId(id);
         session.sendMessage_unchecked(dmsg);
-        // use DisconnectMessage only if we fail and drop connection... 
+        // use DisconnectMessage only if we fail and drop connection...
         // todo: update the code to fire off DisconnectMessage on socket error
         //DisconnectMessage msg = new DisconnectMessage();
         //msg.setReason("Destroy called");
@@ -356,7 +356,7 @@ class I2CPMessageProducer {
             _lock.unlock();
         }
     }
-    
+
     /**
      * Create a new payload.
      * No more end-to-end encryption, just set the "encrypted" data to the payload.
@@ -420,7 +420,7 @@ class I2CPMessageProducer {
 
     /**
      * Update number of tunnels
-     * 
+     *
      * @param tunnels 0 for original configured number
      */
     public void updateTunnels(I2PSessionImpl session, int tunnels) throws I2PSessionException {

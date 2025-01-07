@@ -18,15 +18,15 @@ class OutboundGatewayProcessor {
     private final I2PAppContext _context;
     //private final Log _log;
     private final TunnelCreatorConfig _config;
-        
+
     public OutboundGatewayProcessor(I2PAppContext ctx, TunnelCreatorConfig cfg) {
         _context = ctx;
         //_log = ctx.logManager().getLog(OutboundGatewayProcessor.class);
         _config = cfg;
     }
-    
+
     /**
-     * Since we are the outbound gateway, pick a random IV and wrap the preprocessed 
+     * Since we are the outbound gateway, pick a random IV and wrap the preprocessed
      * data so that it will be exposed at the endpoint.
      *
      * @param orig original data with an extra 16 byte IV prepended.
@@ -43,7 +43,7 @@ class OutboundGatewayProcessor {
         //if (_log.shouldLog(Log.DEBUG))
         //    _log.debug("finished processing the preprocessed data");
     }
-    
+
     /**
      * Iteratively undo the crypto that the various layers in the tunnel added.  This is used
      * by the outbound gateway (preemptively undoing the crypto peers will add).
@@ -63,7 +63,7 @@ class OutboundGatewayProcessor {
             //}
         }
     }
-    
+
     /**
      * Undo the crypto for a single hop.  This is used
      * by both the outbound gateway (preemptively undoing the crypto peers will add)
@@ -82,7 +82,7 @@ class OutboundGatewayProcessor {
         //Log log = ctx.logManager().getLog(OutboundGatewayProcessor.class);
         //log.debug("IV at curHop after decrypt: " + Base64.encode(orig, offset, IV_LENGTH));
         aes.decrypt(orig, offset + IV_LENGTH, orig, offset + IV_LENGTH, config.getLayerKey(),
-                          orig, offset, length - IV_LENGTH);
+                    orig, offset, length - IV_LENGTH);
         // double IV encryption
         aes.decryptBlock(orig, offset, ivkey, orig, offset);
         //log.debug("IV at curHop after double decrypt: " + Base64.encode(orig, offset, IV_LENGTH));
