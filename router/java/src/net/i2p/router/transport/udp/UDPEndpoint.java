@@ -1,11 +1,19 @@
 package net.i2p.router.transport.udp;
 
 import java.io.IOException;
+
+// for reuse UDP port, so allows other programs to bind the same port used by SSU.
+// this is useful for some external STUN clients (decentralized or centralized).
+import java.net.MulticastSocket;
 import java.net.DatagramSocket;
+
+import java.net.InetSocketAddress;
 import java.net.InetAddress;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
+
 import java.net.SocketException;
+
 import java.util.concurrent.atomic.AtomicInteger;
 
 import net.i2p.router.RouterContext;
@@ -30,30 +38,36 @@ class UDPEndpoint implements SocketListener {
     private static final AtomicInteger _counter = new AtomicInteger();
 
     private static final int MIN_SOCKET_BUFFER = 256*1024;
-    
+
     /**
      *  @param transport may be null for unit testing ONLY
      *  @param listenPort -1 or the requested port, may not be honored
      *  @param bindAddress null ok
      */
-    public UDPEndpoint(RouterContext ctx, UDPTransport transport, int listenPort, InetAddress bindAddress) {
+    public UDPEndpoint(
+        RouterContext ctx,
+        UDPTransport transport,
+        int listenPort,
+        InetAddress bindAddress
+    ) {
         _context = ctx;
         _log = ctx.logManager().getLog(UDPEndpoint.class);
         _transport = transport;
         _bindAddress = bindAddress;
         _listenPort = listenPort;
-        _isIPv4 = bindAddress == null || bindAddress instanceof Inet4Address;
-        _isIPv6 = bindAddress == null || bindAddress instanceof Inet6Address;
+        _isIPv4 = bindAddress == null || (bindAddress instanceof Inet4Address);
+        _isIPv6 = bindAddress == null || (bindAddress instanceof Inet6Address);
     }
-    
+
     /**
      *  Caller should call getListenPort() after this to get the actual bound port and determine success .
      *
      *  Can be restarted.
      */
     public synchronized void startup() throws SocketException {
-        if (_log.shouldLog(Log.DEBUG))
+        if (_log.shouldLog(Log.DEBUG)) {
             _log.debug("Starting up the UDP endpoint");
+        }
         shutdown();
         _socket = getSocket();
         if (_socket == null) {
@@ -68,7 +82,7 @@ class UDPEndpoint implements SocketListener {
             _receiver.startup();
         }
     }
-    
+
     public synchronized void shutdown() {
         if (_sender != null) {
             _sender.shutdown();
@@ -78,28 +92,30 @@ class UDPEndpoint implements SocketListener {
             _socket.close();
         }
     }
-    
-    public void setListenPort(int newPort) { _listenPort = newPort; }
 
-/*******
-    public void updateListenPort(int newPort) {
-        if (newPort == _listenPort) return;
-        try {
-            if (_bindAddress == null)
-                _socket = new DatagramSocket(_listenPort);
-            else
-                _socket = new DatagramSocket(_listenPort, _bindAddress);
-            _sender.updateListeningPort(_socket, newPort);
-            // note: this closes the old socket, so call this after the sender!
-            _receiver.updateListeningPort(_socket, newPort);
-            _listenPort = newPort;
-        } catch (SocketException se) {
-            if (_log.shouldLog(Log.ERROR))
-                _log.error("Unable to bind on " + _listenPort);
-        }
+    public void setListenPort(int newPort) {
+        _listenPort = newPort;
     }
-********/
-    
+
+    /*******
+        public void updateListenPort(int newPort) {
+            if (newPort == _listenPort) return;
+            try {
+                if (_bindAddress == null)
+                    _socket = new DatagramSocket(_listenPort);
+                else
+                    _socket = new DatagramSocket(_listenPort, _bindAddress);
+                _sender.updateListeningPort(_socket, newPort);
+                // note: this closes the old socket, so call this after the sender!
+                _receiver.updateListeningPort(_socket, newPort);
+                _listenPort = newPort;
+            } catch (SocketException se) {
+                if (_log.shouldLog(Log.ERROR))
+                    _log.error("Unable to bind on " + _listenPort);
+            }
+        }
+    ********/
+
     private static final int MAX_PORT_RETRIES = 20;
 
     /**
@@ -109,7 +125,7 @@ class UDPEndpoint implements SocketListener {
      *  Sets _listenPort to actual port or -1 on failure
      */
     private DatagramSocket getSocket() {
-        DatagramSocket socket = null;
+        MulticastSocket socket = null;
         int port = _listenPort;
         if (port > 0 && !TransportUtil.isValidPort(port)) {
             TransportUtil.logInvalidPort(_log, "UDP", port);
@@ -117,55 +133,82 @@ class UDPEndpoint implements SocketListener {
         }
 
         for (int i = 0; i < MAX_PORT_RETRIES; i++) {
-             if (port <= 0) {
-                 // try random ports rather than just do new DatagramSocket()
-                 // so we stay out of the way of other I2P stuff
-                 port = TransportUtil.selectRandomPort(_context, UDPTransport.STYLE);
-             }
-             try {
-                 if (_bindAddress == null)
-                     socket = new DatagramSocket(port);
-                 else
-                     socket = new DatagramSocket(port, _bindAddress);
-                 if (!SystemVersion.isAndroid()) {
-                     if (socket.getSendBufferSize() < MIN_SOCKET_BUFFER)
-                         socket.setSendBufferSize(MIN_SOCKET_BUFFER);
-                     if (socket.getReceiveBufferSize() < MIN_SOCKET_BUFFER)
-                         socket.setReceiveBufferSize(MIN_SOCKET_BUFFER);
-                 }
-                 break;
-             } catch (SocketException se) {
-                 if (_log.shouldLog(Log.WARN))
-                     _log.warn("Binding to port " + port + " failed", se);
-             }
-             port = -1;
+            if (port <= 0) {
+                // try random ports rather than just do new DatagramSocket()
+                // so we stay out of the way of other I2P stuff
+                port = TransportUtil.selectRandomPort(_context, UDPTransport.STYLE);
+            }
+
+            try {
+                try {
+                    if (_bindAddress == null) {
+                        socket = new MulticastSocket(port);
+                    } else {
+                        socket = new MulticastSocket(new InetSocketAddress(_bindAddress, port));
+                    }
+                } catch (IOException ie) {
+                    if (_log.shouldLog(Log.ERROR)) {
+                        _log.error("Unable create MulticastSocket: port = " + port + " / _bindAddress = " + (_bindAddress != null ? _bindAddress : ""), ie);
+                    }
+
+                    continue;
+                }
+
+                socket.setReuseAddress(true); // often already set by MulticastSocket
+
+                try {
+                    if (socket.getSendBufferSize() < MIN_SOCKET_BUFFER) {
+                        socket.setSendBufferSize(MIN_SOCKET_BUFFER);
+                    }
+                } catch (SocketException se) {}
+
+                try {
+                    if (socket.getReceiveBufferSize() < MIN_SOCKET_BUFFER) {
+                        socket.setReceiveBufferSize(MIN_SOCKET_BUFFER);
+                    }
+                } catch (SocketException se) {}
+
+                break;
+            } catch (SocketException se) {
+                if (_log.shouldLog(Log.WARN)) {
+                    _log.warn("Binding to port " + port + " failed", se);
+                }
+            }
+            port = -1;
         }
+
         if (socket == null) {
             _log.log(Log.CRIT, "SSU Unable to bind to a port on " + _bindAddress);
         } else if (port != _listenPort) {
-            if (_listenPort > 0)
+            if (_listenPort > 0) {
                 _log.error("SSU Unable to bind to requested port " + _listenPort + ", using random port " + port);
-            else
+            } else {
                 _log.logAlways(Log.INFO, "UDP selected random port " + port);
+            }
         }
         _listenPort = port;
+
         return socket;
     }
 
 
     /** call after startup() to get actual port or -1 on startup failure */
-    public int getListenPort() { return _listenPort; }
-    public UDPSender getSender() { return _sender; }
-    
+    public int getListenPort() {
+        return _listenPort;
+    }
+    public UDPSender getSender() {
+        return _sender;
+    }
+
     /**
      * Add the packet to the outobund queue to be sent ASAP (as allowed by
      * the bandwidth limiter)
      * BLOCKING if queue is full.
      */
-    public void send(UDPPacket packet) { 
-        _sender.add(packet); 
+    public void send(UDPPacket packet) {
+        _sender.add(packet);
     }
-     
+
     /**
      * Blocking call to receive the next inbound UDP packet from any peer.
      *
@@ -174,24 +217,25 @@ class UDPEndpoint implements SocketListener {
      *
      * @return null if we have shut down, or on failure
      */
-    public UDPPacket receive() { 
+    public UDPPacket receive() {
         UDPPacket packet = UDPPacket.acquire(_context, true);
         try {
             _socket.receive(packet.getPacket());
-            return packet; 
+            return packet;
         } catch (IOException ioe) {
             packet.release();
             return null;
         }
     }
-    
+
     /**
      *  Clear outbound queue, probably in preparation for sending destroy() to everybody.
      *  @since 0.9.2
      */
     public void clearOutbound() {
-        if (_sender != null)
+        if (_sender != null) {
             _sender.clear();
+        }
     }
 
     /**
@@ -225,8 +269,9 @@ class UDPEndpoint implements SocketListener {
     public String toString() {
         StringBuilder buf = new StringBuilder(64);
         buf.append("UDP Socket ");
-        if (_bindAddress != null)
+        if (_bindAddress != null) {
             buf.append(_bindAddress.toString()).append(' ');
+        }
         buf.append("port ").append(_listenPort);
         return buf.toString();
     }
