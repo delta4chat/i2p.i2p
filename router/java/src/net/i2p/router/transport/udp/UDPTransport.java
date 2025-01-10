@@ -4453,7 +4453,7 @@ public class UDPTransport extends TransportImpl implements TimedWeightedPriority
      */
     public Status getReachabilityStatus() {
         String override = _context.getProperty(PROP_REACHABILITY_STATUS_OVERRIDE);
-        if (override != null) {
+        if (override != null && _context.router().getUptime() < 2*60*1000) {
             override = override.toLowerCase().replace("_", "-").replace(" ", "-");
 
             if (
@@ -4462,15 +4462,27 @@ public class UDPTransport extends TransportImpl implements TimedWeightedPriority
                 override.equals("v4ok-v6ok")
                 ||
                 override.equals("ipv4-ok-ipv6-ok")
-            )
-            {
+            ) {
                 return Status.OK;
+
+            } else if (override.equals("v6ok") || override.equals("ipv6-ok")) {
+                return Status.IPV4_UNKNOWN_IPV6_OK;
+            } else if (override.equals("v4ok") || override.equals("ipv4-ok")) {
+                return Status.IPV4_OK_IPV6_UNKNOWN;
+            } else if (override.equals("v4fw") || override.equals("ipv4-firewalled")) {
+                return Status.IPV4_FIREWALLED_IPV6_UNKNOWN;
+            } else if (override.equals("v4sym") || override.equals("ipv4-symmetric")) {
+                return Status.IPV4_SNAT_IPV6_UNKNOWN;
+            } else if (override.equals("v6fw") || override.equals("ipv6-firewalled")) {
+                return Status.IPV4_UNKNOWN_IPV6_FIREWALLED;
+
             } else if (override.equals("v4fw-v6ok") || override.equals("ipv4-firewalled-ipv6-ok")) {
                 return Status.IPV4_FIREWALLED_IPV6_OK;
             } else if (override.equals("v4sym-v6ok") || override.equals("ipv4-symmetric-ipv6-ok")) {
                 return Status.IPV4_SNAT_IPV6_OK;
             } else if (override.equals("v4ok-v6fw") || override.equals("ipv4-ok-ipv6-firewalled")) {
                 return Status.IPV4_OK_IPV6_FIREWALLED;
+
             } else if (override.equals("err-reject") || override.equals("reject-unsolicited")) {
                 return Status.REJECT_UNSOLICITED;
             } else if (override.equals("err-different") || override.equals("different")) {
