@@ -2788,15 +2788,24 @@ public class UDPTransport extends TransportImpl implements TimedWeightedPriority
     }
 
     private boolean preferUDP() {
-        String pref = _context.getProperty(PROP_PREFER_UDP, DEFAULT_PREFER_UDP);
-        return ! pref.equals("false");
+        String pref = _context.getProperty(PROP_PREFER_UDP, DEFAULT_PREFER_UDP).toLowerCase();
+
+        if (pref.contains("true") || pref.contains("y") || pref.equals("1")) {
+            return true;
+        }
+        if (pref.contains("false") || pref.contains("n") || pref.equals("0")) {
+            return false;
+        }
+
+        return false;
     }
 
     private boolean alwaysPreferUDP() {
+        String ourCountry = _context.commSystem().getOurCountry();
         return (
-                   _context.getProperty(PROP_PREFER_UDP).toLowerCase().equals("always")
+                   preferUDP()
                    ||
-                   _context.commSystem().getOurCountry().toLowerCase().equals("cn")
+                   (ourCountry != null && ourCountry.toLowerCase().equals("cn"))
                );
     }
 
