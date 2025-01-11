@@ -113,6 +113,25 @@ public class ChaChaPolyCipherState implements CipherState {
     }
 
     /**
+     * Puts a 64-bit integer into a buffer in little-endian order.
+     *
+     * @param output The output buffer.
+     * @param offset The offset into the output buffer.
+     * @param value The 64-bit integer value.
+     */
+    private static void putLittleEndian64(byte[] output, int offset, long value)
+    {
+        output[offset++] = (byte)value;
+        output[offset++] = (byte)(value >> 8);
+        output[offset++] = (byte)(value >> 16);
+        output[offset++] = (byte)(value >> 24);
+        output[offset++] = (byte)(value >> 32);
+        output[offset++] = (byte)(value >> 40);
+        output[offset++] = (byte)(value >> 48);
+        output[offset] = (byte)(value >> 56);
+    }
+
+    /**
      * Set up to encrypt or decrypt the next packet.
      * I2P add off/len
      *
