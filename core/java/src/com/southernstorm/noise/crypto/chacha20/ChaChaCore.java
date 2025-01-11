@@ -79,10 +79,6 @@ public final class ChaChaCore {
     {
         return (key[offset] & 0xFF) | ((key[offset + 1] & 0xFF) << 8) | ((key[offset + 2] & 0xFF) << 16) | ((key[offset + 3] & 0xFF) << 24);
     }
-    private static int leftRotate16(int v)
-    {
-        return v << 16 | (v >>> 16);
-    }
 
     /**
      * Initializes a ChaCha20 block with a 256-bit key.
