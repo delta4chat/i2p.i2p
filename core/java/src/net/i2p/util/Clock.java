@@ -101,8 +101,9 @@ public class Clock implements Timestamper.UpdateListener {
         if (!force) {
             if (!_isSystemClockBad && (offsetMs > MAX_OFFSET || offsetMs < 0 - MAX_OFFSET)) {
                 Log log = getLog();
-                if (log.shouldLog(Log.WARN))
+                if (log.shouldLog(Log.WARN)) {
                     log.warn("Maximum offset shift exceeded [" + offsetMs + "], NOT HONORING IT");
+                }
                 return;
             }
 
@@ -110,26 +111,29 @@ public class Clock implements Timestamper.UpdateListener {
             if (_alreadyChanged && (System.currentTimeMillis() - _startedOn > 10 * 60 * 1000)) {
                 if ( (delta > MAX_LIVE_OFFSET) || (delta < 0 - MAX_LIVE_OFFSET) ) {
                     Log log = getLog();
-                    if (log.shouldLog(Log.WARN))
+                    if (log.shouldLog(Log.WARN)) {
                         log.warn("The clock has already been updated, but you want to change it by "
                                  + delta + " to " + offsetMs + "?  Did something break?");
+                    }
                     return;
                 }
             }
 
-            if ((delta < MIN_OFFSET_CHANGE) && (delta > 0 - MIN_OFFSET_CHANGE)) {
+            if (delta < MIN_OFFSET_CHANGE && delta > (0 - MIN_OFFSET_CHANGE)) {
                 Log log = getLog();
-                if (log.shouldLog(Log.DEBUG))
+                if (log.shouldLog(Log.DEBUG)) {
                     log.debug("Not changing offset since it is only " + delta + "ms");
+                }
                 _alreadyChanged = true;
                 return;
             }
         }
         if (_alreadyChanged) {
-            if (delta > 15*1000)
+            if (delta > 15*1000) {
                 getLog().log(Log.CRIT, "Updating clock offset to " + offsetMs + "ms from " + _offset + "ms");
-            else if (getLog().shouldLog(Log.INFO))
+            } else if (getLog().shouldLog(Log.INFO)) {
                 getLog().info("Updating clock offset to " + offsetMs + "ms from " + _offset + "ms");
+            }
 
             if (!_statCreated) {
                 _context.statManager().createRateStat("clock.skew", "Clock step adjustment (ms)", "Clock", new long[] { 60*60*1000 });
@@ -138,8 +142,9 @@ public class Clock implements Timestamper.UpdateListener {
             _context.statManager().addRateData("clock.skew", delta, 0);
         } else {
             Log log = getLog();
-            if (log.shouldLog(Log.INFO))
+            if (log.shouldLog(Log.INFO)) {
                 log.info("Initializing clock offset to " + offsetMs + "ms from " + _offset + "ms");
+            }
         }
         _alreadyChanged = true;
         _offset = offsetMs;
@@ -162,10 +167,11 @@ public class Clock implements Timestamper.UpdateListener {
         if (realTime < BuildTime.getEarliestTime() || realTime > BuildTime.getLatestTime()) {
             Log log = getLog();
             String msg = "Invalid time received: " + new Date(realTime);
-            if (log.shouldWarn())
+            if (log.shouldWarn()) {
                 log.warn(msg, new Exception());
-            else
+            } else {
                 log.logAlways(Log.WARN, msg);
+            }
             return;
         }
         long diff = realTime - System.currentTimeMillis();

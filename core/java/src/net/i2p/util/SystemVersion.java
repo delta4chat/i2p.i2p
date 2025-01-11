@@ -366,15 +366,19 @@ public abstract class SystemVersion {
      */
     public static boolean isJava(String minVersion) {
         String version = System.getProperty("java.version");
-        if (!version.startsWith("1."))
+        if (! version.startsWith("1.")) {
             version = "1." + version;
-        if (!minVersion.startsWith("1."))
+        }
+        if (! minVersion.startsWith("1.")) {
             minVersion = "1." + minVersion;
+        }
         if (_isAndroid) {
-            if (minVersion.startsWith("1.6"))
+            if (minVersion.startsWith("1.6")) {
                 return _oneDotSix;
-            if (minVersion.startsWith("1.7"))
+            }
+            if (minVersion.startsWith("1.7")) {
                 return _oneDotSeven;
+            }
             return false;
         }
         return VersionComparator.comp(version, minVersion) >= 0;
@@ -439,8 +443,9 @@ public abstract class SystemVersion {
      */
     public static long getMaxMemory() {
         long maxMemory = Runtime.getRuntime().maxMemory();
-        if (maxMemory >= Long.MAX_VALUE / 2)
-            maxMemory = 96*1024*1024l;
+        if (maxMemory >= (Long.MAX_VALUE / 2) ) {
+            maxMemory = 96*1024*1024L;
+        }
         return maxMemory;
     }
 
@@ -477,8 +482,9 @@ public abstract class SystemVersion {
      */
     public static TimeZone getSystemTimeZone(I2PAppContext ctx) {
         String systemTimeZone = ctx.getProperty("i2p.systemTimeZone");
-        if (systemTimeZone != null)
+        if (systemTimeZone != null) {
             return TimeZone.getTimeZone(systemTimeZone);
+        }
         return TimeZone.getDefault();
     }
 
@@ -497,8 +503,9 @@ public abstract class SystemVersion {
             System.out.println("Java " + i + "  : " + isJava(i));
         }
         System.out.println("Android  : " + isAndroid());
-        if (isAndroid())
+        if (isAndroid()) {
             System.out.println("  Version: " + getAndroidVersion());
+        }
         System.out.println("Apache   : " + isApache());
         System.out.println("ARM      : " + isARM());
         System.out.println("Cores    : " + getCores());
@@ -519,11 +526,9 @@ public abstract class SystemVersion {
         TreeSet<String> keys = new TreeSet<String>(System.getProperties().stringPropertyNames());
         for (String k : keys) {
             String v = System.getProperty(k);
-            if (k.equals("line.separator")) {
-                if ("\n".equals(v))
-                    v = "\\n";
-                else if ("\r\n".equals(v))
-                    v = "\\r\\n";
+            if (k.equals("line.separator") && v != null) {
+                v = v.replace("\r", "\\r");
+                v = v.replace("\n", "\\n");
             }
             System.out.println(k + '=' + v);
         }

@@ -215,8 +215,9 @@ public class Log {
      * @since 0.9.8
      */
     public void logCloseLoop(int level, Object... desc) {
-        if (!shouldLog(level))
+        if (!shouldLog(level)) {
             return;
+        }
 
         // catenate all toString()s
         StringBuilder builder = new StringBuilder();

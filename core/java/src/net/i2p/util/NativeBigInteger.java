@@ -119,9 +119,13 @@ public class NativeBigInteger extends BigInteger {
      * Set to false if not in router context, so scripts using TrustedUpdate
      * don't spew log messages. main() below overrides to true.
      */
-    private static boolean _doLog = System.getProperty("jbigi.dontLog") == null &&
-                                    I2PAppContext.getCurrentContext() != null &&
-                                    I2PAppContext.getCurrentContext().isRouterContext();
+    private static boolean _doLog = (
+                                        System.getProperty("jbigi.dontLog") == null
+                                        &&
+                                        I2PAppContext.getCurrentContext() != null
+                                        &&
+                                        I2PAppContext.getCurrentContext().isRouterContext()
+                                    );
 
     /**
      *  The following libraries are be available in jbigi.jar in all I2P versions
@@ -218,51 +222,116 @@ public class NativeBigInteger extends BigInteger {
      */
 
     // none -> {"none"), since 0.9.30
-    private final static String[] JBIGI_COMPAT_LIST_NONE          = {JBIGI_OPTIMIZATION_X86};
-    private final static String[] JBIGI_COMPAT_LIST_PPC           = {JBIGI_OPTIMIZATION_PPC};
-    private final static String[] JBIGI_COMPAT_LIST_ARM           = {JBIGI_OPTIMIZATION_ARM_CORTEX_A15, JBIGI_OPTIMIZATION_ARM_CORTEX_A9, JBIGI_OPTIMIZATION_ARM_CORTEX_A8,
-                                                                     JBIGI_OPTIMIZATION_ARM_CORTEX_A7, JBIGI_OPTIMIZATION_ARM_CORTEX_A5, JBIGI_OPTIMIZATION_ARM_ARMV7,
-                                                                     JBIGI_OPTIMIZATION_ARM_ARMV6, JBIGI_OPTIMIZATION_ARM_ARMV5
-                                                                    };
-    private final static String[] JBIGI_COMPAT_LIST_ARM_ARMV8     = {JBIGI_OPTIMIZATION_ARM_ARMV8};
-    private final static String[] JBIGI_COMPAT_LIST_VIA           = {JBIGI_OPTIMIZATION_NANO, JBIGI_OPTIMIZATION_VIAC32, JBIGI_OPTIMIZATION_VIAC3,
-                                                                     JBIGI_OPTIMIZATION_PENTIUM, JBIGI_OPTIMIZATION_X86
-                                                                    };
-    private final static String[] JBIGI_COMPAT_LIST_AMD_ATHLON    = {JBIGI_OPTIMIZATION_K10, JBIGI_OPTIMIZATION_ATHLON64, JBIGI_OPTIMIZATION_ATHLON,
-                                                                     JBIGI_OPTIMIZATION_K6_3, JBIGI_OPTIMIZATION_K6_2, JBIGI_OPTIMIZATION_K6, JBIGI_OPTIMIZATION_X86
-                                                                    };
-    private final static String[] JBIGI_COMPAT_LIST_AMD_GEODE     = {JBIGI_OPTIMIZATION_GEODE, JBIGI_OPTIMIZATION_K6_3, JBIGI_OPTIMIZATION_K6_2, JBIGI_OPTIMIZATION_K6,
-                                                                     JBIGI_OPTIMIZATION_X86
-                                                                    };
-    private final static String[] JBIGI_COMPAT_LIST_AMD_APU       = {JBIGI_OPTIMIZATION_JAGUAR, JBIGI_OPTIMIZATION_BOBCAT, JBIGI_OPTIMIZATION_ATHLON64};
+    private final static String[] JBIGI_COMPAT_LIST_NONE =
+    {
+        JBIGI_OPTIMIZATION_X86
+    };
+    private final static String[] JBIGI_COMPAT_LIST_PPC =
+    {
+        JBIGI_OPTIMIZATION_PPC
+    };
+    private final static String[] JBIGI_COMPAT_LIST_ARM =
+    {
+        JBIGI_OPTIMIZATION_ARM_CORTEX_A15,
+        JBIGI_OPTIMIZATION_ARM_CORTEX_A9,
+        JBIGI_OPTIMIZATION_ARM_CORTEX_A8,
+        JBIGI_OPTIMIZATION_ARM_CORTEX_A7,
+        JBIGI_OPTIMIZATION_ARM_CORTEX_A5,
+        JBIGI_OPTIMIZATION_ARM_ARMV7,
+        JBIGI_OPTIMIZATION_ARM_ARMV6,
+        JBIGI_OPTIMIZATION_ARM_ARMV5
+    };
+    private final static String[] JBIGI_COMPAT_LIST_ARM_ARMV8 =
+    {
+        JBIGI_OPTIMIZATION_ARM_ARMV8
+    };
+    private final static String[] JBIGI_COMPAT_LIST_VIA =
+    {
+        JBIGI_OPTIMIZATION_NANO,
+        JBIGI_OPTIMIZATION_VIAC32,
+        JBIGI_OPTIMIZATION_VIAC3,
+        JBIGI_OPTIMIZATION_PENTIUM,
+        JBIGI_OPTIMIZATION_X86
+    };
+    private final static String[] JBIGI_COMPAT_LIST_AMD_ATHLON =
+    {
+        JBIGI_OPTIMIZATION_K10,
+        JBIGI_OPTIMIZATION_ATHLON64,
+        JBIGI_OPTIMIZATION_ATHLON,
+        JBIGI_OPTIMIZATION_K6_3,
+        JBIGI_OPTIMIZATION_K6_2,
+        JBIGI_OPTIMIZATION_K6,
+        JBIGI_OPTIMIZATION_X86
+    };
+    private final static String[] JBIGI_COMPAT_LIST_AMD_GEODE =
+    {
+        JBIGI_OPTIMIZATION_GEODE,
+        JBIGI_OPTIMIZATION_K6_3,
+        JBIGI_OPTIMIZATION_K6_2,
+        JBIGI_OPTIMIZATION_K6,
+        JBIGI_OPTIMIZATION_X86
+    };
+    private final static String[] JBIGI_COMPAT_LIST_AMD_APU =
+    {
+        JBIGI_OPTIMIZATION_JAGUAR,
+        JBIGI_OPTIMIZATION_BOBCAT,
+        JBIGI_OPTIMIZATION_ATHLON64
+    };
     /** the main AMD product line */
-    private final static String[] JBIGI_COMPAT_LIST_AMD_MAIN      = {JBIGI_OPTIMIZATION_ZEN2, JBIGI_OPTIMIZATION_ZEN,
-                                                                     JBIGI_OPTIMIZATION_EXCAVATOR, JBIGI_OPTIMIZATION_STEAMROLLER, JBIGI_OPTIMIZATION_PILEDRIVER,
-                                                                     JBIGI_OPTIMIZATION_BULLDOZER, JBIGI_OPTIMIZATION_ATHLON64, JBIGI_OPTIMIZATION_X86
-                                                                    };
-    private final static String[] JBIGI_COMPAT_LIST_INTEL_ATOM    = {JBIGI_OPTIMIZATION_ATOM, JBIGI_OPTIMIZATION_PENTIUM3, JBIGI_OPTIMIZATION_PENTIUM2,
-                                                                     JBIGI_OPTIMIZATION_PENTIUMMMX, JBIGI_OPTIMIZATION_PENTIUM, JBIGI_OPTIMIZATION_X86,
-                                                                     JBIGI_OPTIMIZATION_PENTIUM4
-                                                                    };
-    private final static String[] JBIGI_COMPAT_LIST_INTEL_PENTIUM = {JBIGI_OPTIMIZATION_PENTIUM4, JBIGI_OPTIMIZATION_PENTIUMM, JBIGI_OPTIMIZATION_PENTIUM3,
-                                                                     JBIGI_OPTIMIZATION_PENTIUM2, JBIGI_OPTIMIZATION_PENTIUMMMX, JBIGI_OPTIMIZATION_PENTIUM,
-                                                                     JBIGI_OPTIMIZATION_X86
-                                                                    };
-    private final static String[] JBIGI_COMPAT_LIST_INTEL_CORE    = {JBIGI_OPTIMIZATION_SKYLAKE,
-                                                                     JBIGI_OPTIMIZATION_COREI_BWL, JBIGI_OPTIMIZATION_COREI_HWL, JBIGI_OPTIMIZATION_COREI_SBR,
-                                                                     JBIGI_OPTIMIZATION_COREI, JBIGI_OPTIMIZATION_CORE2, JBIGI_OPTIMIZATION_PENTIUMM,
-                                                                     JBIGI_OPTIMIZATION_PENTIUM3, JBIGI_OPTIMIZATION_X86
-                                                                    };
+    private final static String[] JBIGI_COMPAT_LIST_AMD_MAIN =
+    {
+        JBIGI_OPTIMIZATION_ZEN2,
+        JBIGI_OPTIMIZATION_ZEN,
+        JBIGI_OPTIMIZATION_EXCAVATOR,
+        JBIGI_OPTIMIZATION_STEAMROLLER,
+        JBIGI_OPTIMIZATION_PILEDRIVER,
+        JBIGI_OPTIMIZATION_BULLDOZER,
+        JBIGI_OPTIMIZATION_ATHLON64,
+        JBIGI_OPTIMIZATION_X86
+    };
+    private final static String[] JBIGI_COMPAT_LIST_INTEL_ATOM =
+    {
+        JBIGI_OPTIMIZATION_ATOM,
+        JBIGI_OPTIMIZATION_PENTIUM3,
+        JBIGI_OPTIMIZATION_PENTIUM2,
+        JBIGI_OPTIMIZATION_PENTIUMMMX,
+        JBIGI_OPTIMIZATION_PENTIUM,
+        JBIGI_OPTIMIZATION_X86,
+        JBIGI_OPTIMIZATION_PENTIUM4
+    };
+    private final static String[] JBIGI_COMPAT_LIST_INTEL_PENTIUM =
+    {
+        JBIGI_OPTIMIZATION_PENTIUM4,
+        JBIGI_OPTIMIZATION_PENTIUMM,
+        JBIGI_OPTIMIZATION_PENTIUM3,
+        JBIGI_OPTIMIZATION_PENTIUM2,
+        JBIGI_OPTIMIZATION_PENTIUMMMX,
+        JBIGI_OPTIMIZATION_PENTIUM,
+        JBIGI_OPTIMIZATION_X86
+    };
+    private final static String[] JBIGI_COMPAT_LIST_INTEL_CORE =
+    {
+        JBIGI_OPTIMIZATION_SKYLAKE,
+        JBIGI_OPTIMIZATION_COREI_BWL,
+        JBIGI_OPTIMIZATION_COREI_HWL,
+        JBIGI_OPTIMIZATION_COREI_SBR,
+        JBIGI_OPTIMIZATION_COREI,
+        JBIGI_OPTIMIZATION_CORE2,
+        JBIGI_OPTIMIZATION_PENTIUMM,
+        JBIGI_OPTIMIZATION_PENTIUM3,
+        JBIGI_OPTIMIZATION_X86
+    };
 
     /**
      * The mapping between CPU architecture and its compatibility list.
      */
     @SuppressWarnings("serial")
-    private final static HashMap<String, String[]> JBIGI_COMPAT_MAP = new HashMap<String, String[]>() {
+    private final static HashMap<String, String[]> JBIGI_COMPAT_MAP =
+    new HashMap<String, String[]>() {
         {
-            // none -> {"none"), since 0.9.30
-            put(JBIGI_OPTIMIZATION_X86, JBIGI_COMPAT_LIST_NONE);
-            put(JBIGI_OPTIMIZATION_PPC, JBIGI_COMPAT_LIST_PPC);
+            // none -> {"none"}, since 0.9.30
+            put(JBIGI_OPTIMIZATION_X86,            JBIGI_COMPAT_LIST_NONE);
+            put(JBIGI_OPTIMIZATION_PPC,            JBIGI_COMPAT_LIST_PPC);
 
             put(JBIGI_OPTIMIZATION_ARM_ARMV5,      JBIGI_COMPAT_LIST_ARM);
             put(JBIGI_OPTIMIZATION_ARM_ARMV6,      JBIGI_COMPAT_LIST_ARM);
@@ -274,46 +343,46 @@ public class NativeBigInteger extends BigInteger {
             put(JBIGI_OPTIMIZATION_ARM_CORTEX_A9,  JBIGI_COMPAT_LIST_ARM);
             put(JBIGI_OPTIMIZATION_ARM_CORTEX_A15, JBIGI_COMPAT_LIST_ARM);
 
-            put(JBIGI_OPTIMIZATION_VIAC3,  JBIGI_COMPAT_LIST_VIA);
-            put(JBIGI_OPTIMIZATION_VIAC32, JBIGI_COMPAT_LIST_VIA);
-            put(JBIGI_OPTIMIZATION_NANO,   JBIGI_COMPAT_LIST_VIA);
+            put(JBIGI_OPTIMIZATION_VIAC3,          JBIGI_COMPAT_LIST_VIA);
+            put(JBIGI_OPTIMIZATION_VIAC32,         JBIGI_COMPAT_LIST_VIA);
+            put(JBIGI_OPTIMIZATION_NANO,           JBIGI_COMPAT_LIST_VIA);
 
-            put(JBIGI_OPTIMIZATION_K6,       JBIGI_COMPAT_LIST_AMD_ATHLON);
-            put(JBIGI_OPTIMIZATION_K6_2,     JBIGI_COMPAT_LIST_AMD_ATHLON);
-            put(JBIGI_OPTIMIZATION_K6_3,     JBIGI_COMPAT_LIST_AMD_ATHLON);
-            put(JBIGI_OPTIMIZATION_ATHLON,   JBIGI_COMPAT_LIST_AMD_ATHLON);
-            put(JBIGI_OPTIMIZATION_ATHLON64, JBIGI_COMPAT_LIST_AMD_ATHLON);
-            put(JBIGI_OPTIMIZATION_K10, JBIGI_COMPAT_LIST_AMD_ATHLON);
+            put(JBIGI_OPTIMIZATION_K6,             JBIGI_COMPAT_LIST_AMD_ATHLON);
+            put(JBIGI_OPTIMIZATION_K6_2,           JBIGI_COMPAT_LIST_AMD_ATHLON);
+            put(JBIGI_OPTIMIZATION_K6_3,           JBIGI_COMPAT_LIST_AMD_ATHLON);
+            put(JBIGI_OPTIMIZATION_ATHLON,         JBIGI_COMPAT_LIST_AMD_ATHLON);
+            put(JBIGI_OPTIMIZATION_ATHLON64,       JBIGI_COMPAT_LIST_AMD_ATHLON);
+            put(JBIGI_OPTIMIZATION_K10,            JBIGI_COMPAT_LIST_AMD_ATHLON);
 
-            put(JBIGI_OPTIMIZATION_GEODE, JBIGI_COMPAT_LIST_AMD_GEODE);
+            put(JBIGI_OPTIMIZATION_GEODE,          JBIGI_COMPAT_LIST_AMD_GEODE);
 
-            put(JBIGI_OPTIMIZATION_BOBCAT, JBIGI_COMPAT_LIST_AMD_APU);
-            put(JBIGI_OPTIMIZATION_JAGUAR, JBIGI_COMPAT_LIST_AMD_APU);
+            put(JBIGI_OPTIMIZATION_BOBCAT,         JBIGI_COMPAT_LIST_AMD_APU);
+            put(JBIGI_OPTIMIZATION_JAGUAR,         JBIGI_COMPAT_LIST_AMD_APU);
 
-            put(JBIGI_OPTIMIZATION_BULLDOZER,   JBIGI_COMPAT_LIST_AMD_MAIN);
-            put(JBIGI_OPTIMIZATION_PILEDRIVER,  JBIGI_COMPAT_LIST_AMD_MAIN);
-            put(JBIGI_OPTIMIZATION_STEAMROLLER, JBIGI_COMPAT_LIST_AMD_MAIN);
-            put(JBIGI_OPTIMIZATION_EXCAVATOR,   JBIGI_COMPAT_LIST_AMD_MAIN);
-            put(JBIGI_OPTIMIZATION_ZEN,         JBIGI_COMPAT_LIST_AMD_MAIN);
-            put(JBIGI_OPTIMIZATION_ZEN2,        JBIGI_COMPAT_LIST_AMD_MAIN);
+            put(JBIGI_OPTIMIZATION_BULLDOZER,      JBIGI_COMPAT_LIST_AMD_MAIN);
+            put(JBIGI_OPTIMIZATION_PILEDRIVER,     JBIGI_COMPAT_LIST_AMD_MAIN);
+            put(JBIGI_OPTIMIZATION_STEAMROLLER,    JBIGI_COMPAT_LIST_AMD_MAIN);
+            put(JBIGI_OPTIMIZATION_EXCAVATOR,      JBIGI_COMPAT_LIST_AMD_MAIN);
+            put(JBIGI_OPTIMIZATION_ZEN,            JBIGI_COMPAT_LIST_AMD_MAIN);
+            put(JBIGI_OPTIMIZATION_ZEN2,           JBIGI_COMPAT_LIST_AMD_MAIN);
 
-            put(JBIGI_OPTIMIZATION_ATOM, JBIGI_COMPAT_LIST_INTEL_ATOM);
+            put(JBIGI_OPTIMIZATION_ATOM,           JBIGI_COMPAT_LIST_INTEL_ATOM);
 
-            put(JBIGI_OPTIMIZATION_PENTIUM,    JBIGI_COMPAT_LIST_INTEL_PENTIUM);
-            put(JBIGI_OPTIMIZATION_PENTIUMMMX, JBIGI_COMPAT_LIST_INTEL_PENTIUM);
-            put(JBIGI_OPTIMIZATION_PENTIUM2,   JBIGI_COMPAT_LIST_INTEL_PENTIUM);
-            put(JBIGI_OPTIMIZATION_PENTIUM3,   JBIGI_COMPAT_LIST_INTEL_PENTIUM);
-            put(JBIGI_OPTIMIZATION_PENTIUMM,   JBIGI_COMPAT_LIST_INTEL_PENTIUM);
-            put(JBIGI_OPTIMIZATION_PENTIUM4,   JBIGI_COMPAT_LIST_INTEL_PENTIUM);
+            put(JBIGI_OPTIMIZATION_PENTIUM,        JBIGI_COMPAT_LIST_INTEL_PENTIUM);
+            put(JBIGI_OPTIMIZATION_PENTIUMMMX,     JBIGI_COMPAT_LIST_INTEL_PENTIUM);
+            put(JBIGI_OPTIMIZATION_PENTIUM2,       JBIGI_COMPAT_LIST_INTEL_PENTIUM);
+            put(JBIGI_OPTIMIZATION_PENTIUM3,       JBIGI_COMPAT_LIST_INTEL_PENTIUM);
+            put(JBIGI_OPTIMIZATION_PENTIUMM,       JBIGI_COMPAT_LIST_INTEL_PENTIUM);
+            put(JBIGI_OPTIMIZATION_PENTIUM4,       JBIGI_COMPAT_LIST_INTEL_PENTIUM);
 
-            put(JBIGI_OPTIMIZATION_PENTIUM3,  JBIGI_COMPAT_LIST_INTEL_CORE);
-            put(JBIGI_OPTIMIZATION_PENTIUMM,  JBIGI_COMPAT_LIST_INTEL_CORE);
-            put(JBIGI_OPTIMIZATION_CORE2,     JBIGI_COMPAT_LIST_INTEL_CORE);
-            put(JBIGI_OPTIMIZATION_COREI,     JBIGI_COMPAT_LIST_INTEL_CORE);
-            put(JBIGI_OPTIMIZATION_COREI_SBR, JBIGI_COMPAT_LIST_INTEL_CORE);
-            put(JBIGI_OPTIMIZATION_COREI_HWL, JBIGI_COMPAT_LIST_INTEL_CORE);
-            put(JBIGI_OPTIMIZATION_COREI_BWL, JBIGI_COMPAT_LIST_INTEL_CORE);
-            put(JBIGI_OPTIMIZATION_SKYLAKE,   JBIGI_COMPAT_LIST_INTEL_CORE);
+            put(JBIGI_OPTIMIZATION_PENTIUM3,       JBIGI_COMPAT_LIST_INTEL_CORE);
+            put(JBIGI_OPTIMIZATION_PENTIUMM,       JBIGI_COMPAT_LIST_INTEL_CORE);
+            put(JBIGI_OPTIMIZATION_CORE2,          JBIGI_COMPAT_LIST_INTEL_CORE);
+            put(JBIGI_OPTIMIZATION_COREI,          JBIGI_COMPAT_LIST_INTEL_CORE);
+            put(JBIGI_OPTIMIZATION_COREI_SBR,      JBIGI_COMPAT_LIST_INTEL_CORE);
+            put(JBIGI_OPTIMIZATION_COREI_HWL,      JBIGI_COMPAT_LIST_INTEL_CORE);
+            put(JBIGI_OPTIMIZATION_COREI_BWL,      JBIGI_COMPAT_LIST_INTEL_CORE);
+            put(JBIGI_OPTIMIZATION_SKYLAKE,        JBIGI_COMPAT_LIST_INTEL_CORE);
         }
     };
 
@@ -321,15 +390,18 @@ public class NativeBigInteger extends BigInteger {
      * Operating systems
      */
     private static final boolean _isWin = SystemVersion.isWindows();
-    private static final boolean _isOS2 = System.getProperty("os.name").startsWith("OS/2");
     private static final boolean _isMac = SystemVersion.isMac();
-    private static final boolean _isLinux = System.getProperty("os.name").toLowerCase(Locale.US).contains("linux");
-    private static final boolean _isKFreebsd = System.getProperty("os.name").toLowerCase(Locale.US).contains("kfreebsd");
-    private static final boolean _isFreebsd = (!_isKFreebsd) && System.getProperty("os.name").toLowerCase(Locale.US).contains("freebsd");
-    private static final boolean _isNetbsd = System.getProperty("os.name").toLowerCase(Locale.US).contains("netbsd");
-    private static final boolean _isOpenbsd = System.getProperty("os.name").toLowerCase(Locale.US).contains("openbsd");
-    private static final boolean _isSunos = System.getProperty("os.name").toLowerCase(Locale.US).contains("sunos");
     private static final boolean _isAndroid = SystemVersion.isAndroid();
+
+    private static final String _osName = System.getProperty("os.name").toLowerCase();
+
+    private static final boolean _isOS2 = _osName.contains("os/2");
+    private static final boolean _isLinux = _osName.contains("linux");
+    private static final boolean _isKFreebsd = _osName.contains("kfreebsd");
+    private static final boolean _isFreebsd = (!_isKFreebsd) && _osName.contains("freebsd");
+    private static final boolean _isNetbsd = _osName.contains("netbsd");
+    private static final boolean _isOpenbsd = _osName.contains("openbsd");
+    private static final boolean _isSunos = _osName.contains("sunos");
 
     /*
      * This isn't always correct.
@@ -366,7 +438,7 @@ public class NativeBigInteger extends BigInteger {
       * @return A string containing the CPU-type or null if CPU type is unknown
       */
     private static String resolveCPUType() {
-        if(_isX86) {
+        if (_isX86) {
             try {
                 //System.out.println("resolveType() x86");
                 CPUInfo c = CPUID.getInfo();
@@ -376,72 +448,101 @@ public class NativeBigInteger extends BigInteger {
                 } catch (UnknownCPUException e) {}
                 if (c instanceof VIACPUInfo) {
                     VIACPUInfo viacpu = (VIACPUInfo) c;
-                    if (viacpu.IsNanoCompatible())
+                    if (viacpu.IsNanoCompatible()) {
                         return JBIGI_OPTIMIZATION_NANO;
+                    }
                     return JBIGI_OPTIMIZATION_VIAC3;
                 } else if (c instanceof AMDCPUInfo) {
                     AMDCPUInfo amdcpu = (AMDCPUInfo) c;
-                    if (amdcpu.IsZen2Compatible())
+                    if (amdcpu.IsZen2Compatible()) {
                         return JBIGI_OPTIMIZATION_ZEN2;
-                    if (amdcpu.IsZenCompatible())
+                    }
+                    if (amdcpu.IsZenCompatible()) {
                         return JBIGI_OPTIMIZATION_ZEN;
-                    if (amdcpu.IsExcavatorCompatible())
+                    }
+                    if (amdcpu.IsExcavatorCompatible()) {
                         return JBIGI_OPTIMIZATION_EXCAVATOR;
-                    if (amdcpu.IsSteamrollerCompatible())
+                    }
+                    if (amdcpu.IsSteamrollerCompatible()) {
                         return JBIGI_OPTIMIZATION_STEAMROLLER;
-                    if (amdcpu.IsPiledriverCompatible())
+                    }
+                    if (amdcpu.IsPiledriverCompatible()) {
                         return JBIGI_OPTIMIZATION_PILEDRIVER;
-                    if (amdcpu.IsBulldozerCompatible())
+                    }
+                    if (amdcpu.IsBulldozerCompatible()) {
                         return JBIGI_OPTIMIZATION_BULLDOZER;
-                    if (amdcpu.IsJaguarCompatible())
+                    }
+                    if (amdcpu.IsJaguarCompatible()) {
                         return JBIGI_OPTIMIZATION_JAGUAR;
-                    if (amdcpu.IsBobcatCompatible())
+                    }
+                    if (amdcpu.IsBobcatCompatible()) {
                         return JBIGI_OPTIMIZATION_BOBCAT;
-                    if (amdcpu.IsK10Compatible())
+                    }
+                    if (amdcpu.IsK10Compatible()) {
                         return JBIGI_OPTIMIZATION_K10;
-                    if (amdcpu.IsAthlon64Compatible())
+                    }
+                    if (amdcpu.IsAthlon64Compatible()) {
                         return JBIGI_OPTIMIZATION_ATHLON64;
-                    if (amdcpu.IsAthlonCompatible())
+                    }
+                    if (amdcpu.IsAthlonCompatible()) {
                         return JBIGI_OPTIMIZATION_ATHLON;
-                    if (amdcpu.IsGeodeCompatible())
+                    }
+                    if (amdcpu.IsGeodeCompatible()) {
                         return JBIGI_OPTIMIZATION_GEODE;
-                    if (amdcpu.IsK6_3_Compatible())
+                    }
+                    if (amdcpu.IsK6_3_Compatible()) {
                         return JBIGI_OPTIMIZATION_K6_3;
-                    if (amdcpu.IsK6_2_Compatible())
+                    }
+                    if (amdcpu.IsK6_2_Compatible()) {
                         return JBIGI_OPTIMIZATION_K6_2;
-                    if (amdcpu.IsK6Compatible())
+                    }
+                    if (amdcpu.IsK6Compatible()) {
                         return JBIGI_OPTIMIZATION_K6;
+                    }
                 } else if (c instanceof IntelCPUInfo) {
                     IntelCPUInfo intelcpu = (IntelCPUInfo) c;
-                    if (intelcpu.IsSkylakeCompatible())
+                    if (intelcpu.IsSkylakeCompatible()) {
                         return JBIGI_OPTIMIZATION_SKYLAKE;
-                    if (intelcpu.IsBroadwellCompatible())
+                    }
+                    if (intelcpu.IsBroadwellCompatible()) {
                         return JBIGI_OPTIMIZATION_COREI_BWL;
-                    if (intelcpu.IsHaswellCompatible())
+                    }
+                    if (intelcpu.IsHaswellCompatible()) {
                         return JBIGI_OPTIMIZATION_COREI_HWL;
-                    if (intelcpu.IsSandyCompatible())
+                    }
+                    if (intelcpu.IsSandyCompatible()) {
                         return JBIGI_OPTIMIZATION_COREI_SBR;
-                    if (intelcpu.IsCoreiCompatible())
+                    }
+                    if (intelcpu.IsCoreiCompatible()) {
                         return JBIGI_OPTIMIZATION_COREI;
-                    if (intelcpu.IsCore2Compatible())
+                    }
+                    if (intelcpu.IsCore2Compatible()) {
                         return JBIGI_OPTIMIZATION_CORE2;
+                    }
                     // The isAtomCompatible check should be done before the Pentium4
                     // check since they are compatible, but Atom performs better with
                     // the JBIGI_OPTIMIZATION_ATOM compability list.
-                    if (intelcpu.IsAtomCompatible())
+                    if (intelcpu.IsAtomCompatible()) {
                         return JBIGI_OPTIMIZATION_ATOM;
-                    if (intelcpu.IsPentium4Compatible())
+                    }
+                    if (intelcpu.IsPentium4Compatible()) {
                         return JBIGI_OPTIMIZATION_PENTIUM4;
-                    if (intelcpu.IsPentiumMCompatible())
+                    }
+                    if (intelcpu.IsPentiumMCompatible()) {
                         return JBIGI_OPTIMIZATION_PENTIUMM;
-                    if (intelcpu.IsPentium3Compatible())
+                    }
+                    if (intelcpu.IsPentium3Compatible()) {
                         return JBIGI_OPTIMIZATION_PENTIUM3;
-                    if (intelcpu.IsPentium2Compatible())
+                    }
+                    if (intelcpu.IsPentium2Compatible()) {
                         return JBIGI_OPTIMIZATION_PENTIUM2;
-                    if (intelcpu.IsPentiumMMXCompatible())
+                    }
+                    if (intelcpu.IsPentiumMMXCompatible()) {
                         return JBIGI_OPTIMIZATION_PENTIUMMMX;
-                    if (intelcpu.IsPentiumCompatible())
+                    }
+                    if (intelcpu.IsPentiumCompatible()) {
                         return JBIGI_OPTIMIZATION_PENTIUM;
+                    }
                 }
             } catch (UnknownCPUException e) {
             }
@@ -449,8 +550,9 @@ public class NativeBigInteger extends BigInteger {
             // in case of CPUID fail or not finding compatibility above
             return JBIGI_OPTIMIZATION_X86;
         } else if (_isArm) {
-            if (_isWin)
+            if (_isWin) {
                 return null;
+            }
             Map<String, String> cpuinfo = getCPUInfo();
             String implementer = cpuinfo.get("cpu implementer");
             String part = cpuinfo.get("cpu part");
@@ -485,37 +587,46 @@ public class NativeBigInteger extends BigInteger {
             if (arch != null) {
                 //CPU architecture: 5TEJ
                 //CPU architecture: 7
-                if (arch.startsWith("8"))
+                if (arch.startsWith("8")) {
                     return JBIGI_OPTIMIZATION_ARM_ARMV8;
+                }
                 if (arch.startsWith("7")) {
                     // Raspberry Pi workaround
                     // Processor       : ARMv6-compatible processor rev 7 (v6l)
                     // CPU architecture: 7
-                    if (model != null && model.contains("ARMv6"))
+                    if (model != null && model.contains("ARMv6")) {
                         return JBIGI_OPTIMIZATION_ARM_ARMV6;
+                    }
                     return JBIGI_OPTIMIZATION_ARM_ARMV7;
                 }
-                if (arch.startsWith("6"))
+                if (arch.startsWith("6")) {
                     return JBIGI_OPTIMIZATION_ARM_ARMV6;
-                if (arch.startsWith("5"))
+                }
+                if (arch.startsWith("5")) {
                     return JBIGI_OPTIMIZATION_ARM_ARMV5;
+                }
             }
 
             // We couldn't identify the architecture
             // Let's try by looking at model name
             if (model != null) {
-                if (model.contains("ARMv8"))
+                if (model.contains("ARMv8")) {
                     return JBIGI_OPTIMIZATION_ARM_ARMV8;
-                if (model.contains("ARMv7"))
+                }
+                if (model.contains("ARMv7")) {
                     return JBIGI_OPTIMIZATION_ARM_ARMV7;
-                if (model.contains("ARMv6"))
+                }
+                if (model.contains("ARMv6")) {
                     return JBIGI_OPTIMIZATION_ARM_ARMV6;
-                if (model.contains("ARMv5"))
+                }
+                if (model.contains("ARMv5")) {
                     return JBIGI_OPTIMIZATION_ARM_ARMV5;
+                }
             }
 
-            if (_is64)
+            if (_is64) {
                 return JBIGI_OPTIMIZATION_ARM_ARMV8;
+            }
 
             // If we didn't find a match, return null
             return null;
@@ -599,8 +710,9 @@ public class NativeBigInteger extends BigInteger {
      *  @since 0.9.26
      */
     private static int fetchJbigiVersion() {
-        if (!_nativeOk)
+        if (!_nativeOk) {
             return 0;
+        }
         try {
             return nativeJbigiVersion();
         } catch (Throwable t) {
@@ -694,10 +806,30 @@ public class NativeBigInteger extends BigInteger {
         // Where negative or zero values aren't legal in modPow() anyway, avoid native,
         // as the Java code will throw an exception rather than silently fail or crash the JVM
         // Negative values supported as of version 3
-        if (_nativeOk3 || (_nativeOk && signum() >= 0 && exponent.signum() >= 0 && m.signum() > 0))
-            return new NativeBigInteger(nativeModPow(toByteArray(), exponent.toByteArray(), m.toByteArray()));
-        else
+        if (
+            _nativeOk3
+            ||
+            (
+                _nativeOk
+                &&
+                signum() >= 0
+                &&
+                exponent.signum() >= 0
+                &&
+                m.signum() > 0
+            )
+        )
+        {
+            return new NativeBigInteger(
+                       nativeModPow(
+                           toByteArray(),
+                           exponent.toByteArray(),
+                           m.toByteArray()
+                       )
+                   );
+        } else {
             return super.modPow(exponent, m);
+        }
     }
 
     /**
@@ -707,10 +839,17 @@ public class NativeBigInteger extends BigInteger {
      *  @since 0.9.26 and libjbigi version 3 and GMP version 5
      */
     public BigInteger modPowCT(BigInteger exponent, BigInteger m) {
-        if (_nativeCTOk)
-            return new NativeBigInteger(nativeModPowCT(toByteArray(), exponent.toByteArray(), m.toByteArray()));
-        else
+        if (_nativeCTOk) {
+            return new NativeBigInteger(
+                       nativeModPowCT(
+                           toByteArray(),
+                           exponent.toByteArray(),
+                           m.toByteArray()
+                       )
+                   );
+        } else {
             return modPow(exponent, m);
+        }
     }
 
     /**
@@ -724,23 +863,25 @@ public class NativeBigInteger extends BigInteger {
         // Note that 'this' can be negative
         // If this and m are not coprime, gmp will do a divide by zero exception and crash the JVM.
         // super will throw an ArithmeticException
-        if (_nativeOk3)
+        if (_nativeOk3) {
             return new NativeBigInteger(nativeModInverse(toByteArray(), m.toByteArray()));
-        else
+        } else {
             return super.modInverse(m);
+        }
     }
 
     /** caches */
     @Override
     public byte[] toByteArray() {
-        if(cachedBa == null) //Since we are immutable it is safe to never update the cached ba after it has initially been generated
+        if(cachedBa == null) { //Since we are immutable it is safe to never update the cached ba after it has initially been generated
             cachedBa = super.toByteArray();
+        }
         return cachedBa;
     }
 
     /**
      *
-     * @return True iff native methods will be used by this class
+     * @return True if native methods will be used by this class
      */
     public static boolean isNative() {
         return _nativeOk;
@@ -765,8 +906,9 @@ public class NativeBigInteger extends BigInteger {
     }
 
     public static String cpuType() {
-        if (sCPUType != null)
+        if (sCPUType != null) {
             return sCPUType;
+        }
         return "unrecognized";
     }
 
@@ -807,8 +949,9 @@ public class NativeBigInteger extends BigInteger {
         }
         if (_nativeOk) {
             System.out.println("JBigi Version: " + _jbigiVersion + " GMP Version: " + _libGMPVersion);
-            if (_extractedResource != null)
+            if (_extractedResource != null) {
                 System.out.println("Using native resource: " + _extractedResource);
+            }
         }
         System.out.println("DEBUG: Warming up the random number generator...");
         SecureRandom rand = RandomSource.getInstance();
@@ -887,15 +1030,18 @@ public class NativeBigInteger extends BigInteger {
         for (int i = 0; i < 1000; i++) {
             // JIT warmup
             BigInteger bi;
+
             do {
                 bi = new BigInteger(16, rand);
             } while (bi.signum() == 0);
-            if (mode == 1)
+
+            if (mode == 1) {
                 jg.modPow(bi, jp);
-            else if (mode == 2)
+            } else if (mode == 2) {
                 ng.modPowCT(bi, jp);
-            else
+            } else {
                 bi.modInverse(jp);
+            }
         }
         BigInteger myValue = null, jval;
         final NativeBigInteger g = CryptoConstants.elgg;
@@ -907,28 +1053,32 @@ public class NativeBigInteger extends BigInteger {
         for (runsProcessed = 0; runsProcessed < numRuns; runsProcessed++) {
             // 0 is not coprime with anything
             BigInteger bi;
+
             do {
                 bi = new BigInteger(numBits, rand);
             } while (bi.signum() == 0);
+
             NativeBigInteger k = new NativeBigInteger(1, bi.toByteArray());
             //// Native
             long beforeModPow = System.nanoTime();
             if (_nativeOk) {
-                if (mode == 1)
+                if (mode == 1) {
                     myValue = g.modPow(k, p);
-                else if (mode == 2)
+                } else if (mode == 2) {
                     myValue = g.modPowCT(bi, jp);
-                else
+                } else {
                     myValue = k.modInverse(p);
+                }
             }
             long afterModPow = System.nanoTime();
             totalTime += (afterModPow - beforeModPow);
             //// Java
             if (!nativeOnly) {
-                if (mode != 3)
+                if (mode != 3) {
                     jval = jg.modPow(bi, jp);
-                else
+                } else {
                     jval = bi.modInverse(jp);
+                }
                 long afterJavaModPow = System.nanoTime();
 
                 javaTime += (afterJavaModPow - afterModPow);
@@ -947,13 +1097,15 @@ public class NativeBigInteger extends BigInteger {
         }
         double dtotal = totalTime / 1000000f;
         double djava = javaTime / 1000000f;
-        if (_nativeOk)
+        if (_nativeOk) {
             System.out.println(String.format("INFO: run time: %.3f ms (%.3f ms each)",
                                              dtotal, dtotal / (runsProcessed + 1)));
-        if (numRuns == runsProcessed)
+        }
+        if (numRuns == runsProcessed) {
             System.out.println("INFO: " + runsProcessed + " runs complete without any errors");
-        else
+        } else {
             System.out.println("ERROR: " + runsProcessed + " runs until we got an error");
+        }
 
         if (_nativeOk) {
             System.out.println(String.format("Native run time: \t%9.3f ms (%7.3f ms each)",
@@ -963,10 +1115,11 @@ public class NativeBigInteger extends BigInteger {
                                                  djava, djava / (runsProcessed + 1)));
                 System.out.println(String.format("Native = %.3f%% of pure Java time",
                                                  dtotal * 100.0d / djava));
-                if (dtotal < djava)
+                if (dtotal < djava) {
                     System.out.println(String.format("Native is BETTER by a factor of %.3f -- YAY!", djava / dtotal));
-                else
+                } else {
                     System.out.println(String.format("Native is WORSE by a factor of %.3f -- BOO!", dtotal / djava));
+                }
             }
         } else {
             System.out.println(String.format("java run time: \t%.3f ms (%.3f ms each)",
@@ -1012,10 +1165,11 @@ public class NativeBigInteger extends BigInteger {
                 if (loaded) {
                     _nativeOk = true;
                     String s = I2PAppContext.getGlobalContext().getProperty("jbigi.loadedResource");
-                    if (s != null)
+                    if (s != null) {
                         info("Locally optimized library " + s + " loaded from file");
-                    else
+                    } else {
                         info("Locally optimized native BigInteger library loaded from file");
+                    }
                 } else {
                     List<String> toTry = getResourceList();
                     debug("loadResource list to try is: " + toTry);
@@ -1030,7 +1184,7 @@ public class NativeBigInteger extends BigInteger {
                     }
                 }
             }
-            if (!_nativeOk) {
+            if (! _nativeOk) {
                 warn("Native BigInteger library jbigi not loaded - using pure Java - " +
                      "poor performance may result - see http://i2p-projekt.i2p/jbigi for help");
             } else {
@@ -1048,8 +1202,9 @@ public class NativeBigInteger extends BigInteger {
 
 
     private static void info(String s) {
-        if(_doLog)
+        if (_doLog) {
             System.err.println("INFO: " + s);
+        }
         I2PAppContext.getGlobalContext().logManager().getLog(NativeBigInteger.class).info(s);
         _loadStatus = s;
     }
@@ -1062,14 +1217,16 @@ public class NativeBigInteger extends BigInteger {
     private static void warn(String s, Throwable t) {
         if(_doLog) {
             System.err.println("WARNING: " + s);
-            if (t != null)
+            if (t != null) {
                 t.printStackTrace();
+            }
         }
         I2PAppContext.getGlobalContext().logManager().getLog(NativeBigInteger.class).warn(s, t);
-        if (t != null)
+        if (t != null) {
             _loadStatus = s + ' ' + t;
-        else
+        } else {
             _loadStatus = s;
+        }
     }
 
     /** @since 0.9.26 */
@@ -1081,14 +1238,16 @@ public class NativeBigInteger extends BigInteger {
     private static void error(String s, Throwable t) {
         if(_doLog) {
             System.err.println("ERROR: " + s);
-            if (t != null)
+            if (t != null) {
                 t.printStackTrace();
+            }
         }
         I2PAppContext.getGlobalContext().logManager().getLog(NativeBigInteger.class).error(s, t);
-        if (t != null)
+        if (t != null) {
             _loadStatus = s + ' ' + t;
-        else
+        } else {
             _loadStatus = s;
+        }
     }
 
     /**
@@ -1106,8 +1265,9 @@ public class NativeBigInteger extends BigInteger {
 
     private static final boolean loadGeneric(String name) {
         try {
-            if(name == null)
+            if (name == null) {
                 return false;
+            }
             System.loadLibrary(name);
             return true;
         } catch (UnsatisfiedLinkError ule) {
@@ -1149,7 +1309,9 @@ public class NativeBigInteger extends BigInteger {
     ****/
 
     private static final boolean loadFromResource(String resourceName) {
-        if (resourceName == null) return false;
+        if (resourceName == null) {
+            return false;
+        }
         //URL resource = NativeBigInteger.class.getClassLoader().getResource(resourceName);
         URL resource = ClassLoader.getSystemResource(resourceName);
         if (resource == null) {
@@ -1173,19 +1335,23 @@ public class NativeBigInteger extends BigInteger {
         } catch (UnsatisfiedLinkError ule) {
             // don't include the exception in the message - too much
             warn("Failed to load the resource " + resourceName + " - not a valid library for this platform");
-            if (outFile != null)
+            if (outFile != null) {
                 outFile.delete();
+            }
             return false;
         } catch (IOException ioe) {
             warn("Problem writing out the temporary native library data: " + ioe);
-            if (outFile != null)
+            if (outFile != null) {
                 outFile.delete();
+            }
             return false;
         } finally {
-            if (libStream != null) try {
+            if (libStream != null) {
+                try {
                     libStream.close();
                 }
                 catch (IOException ioe) {}
+            }
             if (fos != null) {
                 try {
                     fos.close();
@@ -1206,8 +1372,9 @@ public class NativeBigInteger extends BigInteger {
      *  @since 0.8.7
      */
     private static List<String> getResourceList() {
-        if (_isAndroid)
+        if (_isAndroid) {
             return Collections.emptyList();
+        }
         List<String> rv = new ArrayList<String>(20);
         String primary = getMiddleName2(true);
         // primary may be null
@@ -1217,8 +1384,7 @@ public class NativeBigInteger extends BigInteger {
             error("A bug relating to how jbigi is loaded for \"" + primary + "\" has been spotted");
         }
 
-        if (primary != null &&
-                compatList != null) {
+        if (primary != null && compatList != null) {
             // Add all architectural parents of this arch to the resource list
             // Skip architectures that are newer than our target
             int i = 0;
@@ -1263,19 +1429,23 @@ public class NativeBigInteger extends BigInteger {
             String line = null;
             while ( (line = in.readLine()) != null) {
                 String[] parts = DataHelper.split(line, ":", 2);
-                if (parts.length < 2)
+                if (parts.length < 2) {
                     continue;
+                }
                 String key = parts[0].trim().toLowerCase(Locale.US);
-                if (!rv.containsKey(key))
+                if (! rv.containsKey(key)) {
                     rv.put(key, parts[1].trim());
+                }
             }
         } catch (IOException ioe) {
             warn("Unable to read /proc/cpuinfo", ioe);
         } finally {
-            if (in != null) try {
+            if (in != null) {
+                try {
                     in.close();
                 }
                 catch (IOException ioe) {}
+            }
         }
         return rv;
     }
@@ -1311,27 +1481,29 @@ public class NativeBigInteger extends BigInteger {
     private static final String getMiddleName2(boolean optimized) {
         String sAppend;
         if (optimized) {
-            if (sCPUType == null)
+            if (sCPUType == null) {
                 return null;
+            }
             // Add exceptions here if library files are identical,
             // instead of adding duplicates to jbigi.jar
-            if (sCPUType.equals(JBIGI_OPTIMIZATION_K6_3) && !_isWin)
+            if (sCPUType.equals(JBIGI_OPTIMIZATION_K6_3) && !_isWin) {
                 // k62 and k63 identical except on windows
                 sAppend = JBIGI_OPTIMIZATION_K6_2;
-            // core2 is always a fallback for corei in getResourceList()
-            //else if (sCPUType.equals(JBIGI_OPTIMIZATION_COREI) && (!_is64) && ((_isKFreebsd) || (_isNetbsd) || (_isOpenbsd)))
-            // corei and core2 are identical on 32bit kfreebsd, openbsd, and netbsd
-            //sAppend = JBIGI_OPTIMIZATION_CORE2;
-            else if (sCPUType.equals(JBIGI_OPTIMIZATION_PENTIUM2) && _isSunos && _isX86)
+                // core2 is always a fallback for corei in getResourceList()
+                //else if (sCPUType.equals(JBIGI_OPTIMIZATION_COREI) && (!_is64) && ((_isKFreebsd) || (_isNetbsd) || (_isOpenbsd)))
+                // corei and core2 are identical on 32bit kfreebsd, openbsd, and netbsd
+                //sAppend = JBIGI_OPTIMIZATION_CORE2;
+            } else if (sCPUType.equals(JBIGI_OPTIMIZATION_PENTIUM2) && _isSunos && _isX86) {
                 // pentium2 and pentium3 identical on X86 Solaris
                 sAppend = JBIGI_OPTIMIZATION_PENTIUM3;
-            else if (sCPUType.equals(JBIGI_OPTIMIZATION_VIAC32))
+            } else if (sCPUType.equals(JBIGI_OPTIMIZATION_VIAC32)) {
                 // viac32 and pentium3 identical
                 sAppend = JBIGI_OPTIMIZATION_PENTIUM3;
-            //else if (sCPUType.equals(JBIGI_OPTIMIZATION_VIAC3) && _isWin)
-            // FIXME no viac3 available for windows, what to use instead?
-            else
+                //else if (sCPUType.equals(JBIGI_OPTIMIZATION_VIAC3) && _isWin)
+                // FIXME no viac3 available for windows, what to use instead?
+            } else {
                 sAppend = sCPUType;
+            }
         } else {
             sAppend = "none";
         }
@@ -1343,22 +1515,30 @@ public class NativeBigInteger extends BigInteger {
      *  @since 0.8.7
      */
     private static final String getMiddleName1() {
-        if(_isWin)
+        if (_isWin) {
             return "jbigi-windows-";
-        if(_isKFreebsd)
+        }
+        if (_isKFreebsd) {
             return "jbigi-kfreebsd-";
-        if(_isFreebsd)
+        }
+        if (_isFreebsd) {
             return "jbigi-freebsd-";
-        if(_isNetbsd)
+        }
+        if (_isNetbsd) {
             return "jbigi-netbsd-";
-        if(_isOpenbsd)
+        }
+        if (_isOpenbsd) {
             return "jbigi-openbsd-";
-        if(_isMac)
+        }
+        if (_isMac) {
             return "jbigi-osx-";
-        if(_isOS2)
+        }
+        if (_isOS2) {
             return "jbigi-os2-";
-        if(_isSunos)
+        }
+        if (_isSunos) {
             return "jbigi-solaris-";
+        }
         //throw new RuntimeException("Dont know jbigi library name for os type '"+System.getProperty("os.name")+"'");
         // use linux as the default, don't throw exception
         return "jbigi-linux-";

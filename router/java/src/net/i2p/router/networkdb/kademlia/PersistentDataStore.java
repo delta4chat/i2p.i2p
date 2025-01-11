@@ -577,10 +577,10 @@ public class PersistentDataStore extends TransientDataStore {
                 return true;
             }
             if (data.getType() == DatabaseEntry.KEY_TYPE_ROUTERINFO) {
-                _knownDate = ((RouterInfo)data).getPublished();
+                _knownDate = ((RouterInfo) data).getPublished();
                 long fileDate = _routerFile.lastModified();
                 // don't overwrite recent netdb RIs with reseed data
-                return fileDate > _knownDate + (60*60*1000);
+                return fileDate > (_knownDate + (60*60*1000));
             } else {
                 // safety measure - prevent injection from reseeding
                 _log.error("Prevented LS overwrite by RI " + _key + " from " + _routerFile);

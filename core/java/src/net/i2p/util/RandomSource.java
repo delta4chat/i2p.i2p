@@ -25,8 +25,9 @@ import net.i2p.crypto.EntropyHarvester;
  * @author jrandom
  */
 public class RandomSource extends SecureRandom implements EntropyHarvester {
-
     private static final long serialVersionUID = 1L;
+    private static final int SEED_LEN = 64 * 1024;
+
     protected transient final I2PAppContext _context;
 
     /**
@@ -61,10 +62,16 @@ public class RandomSource extends SecureRandom implements EntropyHarvester {
      */
     @Override
     public int nextInt(int n) {
-        if (n == 0) return 0;
+        if (n == 0) {
+            return 0;
+        }
         int val = super.nextInt(n);
-        if (val < 0) val = 0 - val;
-        if (val >= n) val = val % n;
+        if (val < 0) {
+            val = 0 - val;
+        }
+        if (val >= n) {
+            val = val % n;
+        }
         return val;
     }
 
@@ -86,8 +93,12 @@ public class RandomSource extends SecureRandom implements EntropyHarvester {
      */
     public long nextLong(long n) {
         long v = super.nextLong();
-        if (v < 0) v = 0 - v;
-        if (v >= n) v = v % n;
+        if (v < 0) {
+            v = 0 - v;
+        }
+        if (v >= n) {
+            v = v % n;
+        }
         return v;
     }
 
@@ -114,12 +125,13 @@ public class RandomSource extends SecureRandom implements EntropyHarvester {
     }
 
     public void feedEntropy(String source, long data, int bitoffset, int bits) {
-        if (bitoffset == 0)
+        if (bitoffset == 0) {
             setSeed(data);
+        }
     }
 
     public void feedEntropy(String source, byte[] data, int offset, int len) {
-        if ( (offset == 0) && (len == data.length) ) {
+        if (offset == 0 && len == data.length) {
             setSeed(data);
         } else {
             setSeed(_context.sha().calculateHash(data, offset, len).getData());
@@ -130,21 +142,22 @@ public class RandomSource extends SecureRandom implements EntropyHarvester {
      *  May block up to 10 seconds
      */
     public void loadSeed() {
-        byte buf[] = new byte[1024];
-        if (initSeed(buf))
+        byte buf[] = new byte[SEED_LEN];
+        if (initSeed(buf)) {
             setSeed(buf);
+        }
     }
 
     public void saveSeed() {
-        byte buf[] = new byte[1024];
+        byte buf[] = new byte[SEED_LEN];
         nextBytes(buf);
         writeSeed(buf);
     }
 
-    private static final String SEEDFILE = "prngseed.rnd";
+    private static final String SEED_FILE = "prngseed.rnd";
 
     public static final void writeSeed(byte buf[]) {
-        File f = new File(I2PAppContext.getGlobalContext().getConfigDir(), SEEDFILE);
+        File f = new File(I2PAppContext.getGlobalContext().getConfigDir(), SEED_FILE);
         FileOutputStream fos = null;
         try {
             fos = new SecureFileOutputStream(f);
@@ -152,10 +165,12 @@ public class RandomSource extends SecureRandom implements EntropyHarvester {
         } catch (IOException ioe) {
             // ignore
         } finally {
-            if (fos != null) try {
+            if (fos != null) {
+                try {
                     fos.close();
                 }
                 catch (IOException ioe) {}
+            }
         }
     }
 
@@ -177,8 +192,9 @@ public class RandomSource extends SecureRandom implements EntropyHarvester {
                         break;
                     }
                 }
-                if (ok)
+                if (ok) {
                     System.arraycopy(tbuf, 0, buf, 0, buf.length);
+                }
                 // See FortunaRandomSource constructor for fallback
                 //else
                 //    System.out.println("INFO: SecureRandom init failed or took too long");
@@ -186,10 +202,11 @@ public class RandomSource extends SecureRandom implements EntropyHarvester {
         } catch (InterruptedException ie) {}
 
         // why urandom?  because /dev/random blocks
-        if (!SystemVersion.isWindows())
+        if (!SystemVersion.isWindows()) {
             ok = seedFromFile(new File("/dev/urandom"), buf) || ok;
+        }
         // we merge (XOR) in the data from /dev/urandom with our own seedfile
-        File localFile = new File(_context.getConfigDir(), SEEDFILE);
+        File localFile = new File(_context.getConfigDir(), SEED_FILE);
         ok = seedFromFile(localFile, buf) || ok;
         return ok;
     }
@@ -240,20 +257,24 @@ public class RandomSource extends SecureRandom implements EntropyHarvester {
                 byte tbuf[] = new byte[buf.length];
                 while (read < buf.length) {
                     int curRead = fis.read(tbuf, read, tbuf.length - read);
-                    if (curRead < 0)
+                    if (curRead < 0) {
                         break;
+                    }
                     read += curRead;
                 }
-                for (int i = 0; i < read; i++)
+                for (int i = 0; i < read; i++) {
                     buf[i] ^= tbuf[i];
+                }
                 return true;
             } catch (IOException ioe) {
                 // ignore
             } finally {
-                if (fis != null) try {
+                if (fis != null) {
+                    try {
                         fis.close();
                     }
                     catch (IOException ioe) {}
+                }
             }
         }
         return false;
