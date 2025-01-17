@@ -103,38 +103,12 @@ public class SubscriptionsBean extends BaseBean
         }
     }
 
-    private void locked_save()
-    {
-        File file = subsFile();
-        try {
-            // trim and sort
-            List<String> urls = new ArrayList<String>();
-            InputStream in = new ByteArrayInputStream(content.getBytes("UTF-8"));
-            String line;
-            while ((line = DataHelper.readLine(in)) != null) {
-                line = line.trim();
-                if (line.length() > 0)
-                    urls.add(line);
-            }
-            Collections.sort(urls);
-            PrintWriter out = new PrintWriter(new OutputStreamWriter(new SecureFileOutputStream(file), "UTF-8"));
-            for (String url : urls) {
-                out.println(url);
-            }
-            out.close();
-            if (out.checkError())
-                throw new IOException("Failed write to " + file);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
-
     public String getMessages() {
         String message = "";
         if( action != null ) {
-            if (_context.getBooleanProperty(PROP_PW_ENABLE) ||
-                    (serial != null && serial.equals(lastSerial))) {
+            if ("POST".equals(method) &&
+                    (_context.getBooleanProperty(PROP_PW_ENABLE) ||
+                     (serial != null && serial.equals(lastSerial)))) {
                 if (action.equals(_t("Save"))) {
                     save();
                     /*******
@@ -169,6 +143,33 @@ public class SubscriptionsBean extends BaseBean
         if( message.length() > 0 )
             message = "<p class=\"messages\">" + message + "</p>";
         return message;
+    }
+
+    private void locked_save()
+    {
+        File file = subsFile();
+        try {
+            // trim and sort
+            List<String> urls = new ArrayList<String>();
+            InputStream in = new ByteArrayInputStream(content.getBytes("UTF-8"));
+            String line;
+            while ((line = DataHelper.readLine(in)) != null) {
+                line = line.trim();
+                if (line.length() > 0)
+                    urls.add(line);
+            }
+            Collections.sort(urls);
+            PrintWriter out = new PrintWriter(new OutputStreamWriter(new SecureFileOutputStream(file), "UTF-8"));
+            for (String url : urls) {
+                out.println(url);
+            }
+            out.close();
+            if (out.checkError())
+                throw new IOException("Failed write to " + file);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     public void setContent(String content) {

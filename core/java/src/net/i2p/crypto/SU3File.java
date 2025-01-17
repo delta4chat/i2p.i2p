@@ -713,6 +713,7 @@ public class SU3File {
                 buf.append(" DEFAULT");
             buf.append('\n');
         }
+        dumpSigTypes(buf);
         buf.append("Available content types (-c):\n");
         for (ContentType t : EnumSet.allOf(ContentType.class)) {
             buf.append("      ").append(t).append("\t(code: ").append(t.getCode()).append(')');
@@ -730,6 +731,24 @@ public class SU3File {
                    "      EXE\t(code: 6)\n" +
                    "      (user defined)\t(code: 7-255)\n");
         return buf.toString();
+    }
+
+    /**
+     *  @since 0.9.65 split out from above for SelfSignedGenerator.usage()
+     */
+    static void dumpSigTypes(StringBuilder buf) {
+        buf.append("Available signature types (-t):\n");
+        for (SigType t : EnumSet.allOf(SigType.class)) {
+            if (!t.isAvailable())
+                continue;
+            if (t == SigType.EdDSA_SHA512_Ed25519 ||
+                    t == SigType.RedDSA_SHA512_Ed25519)
+                continue; // not supported by keytool, and does double hashing right now
+            buf.append("      ").append(t).append("\t(code: ").append(t.getCode()).append(')');
+            if (t.getCode() == DEFAULT_SIG_CODE)
+                buf.append(" DEFAULT");
+            buf.append('\n');
+        }
     }
 
     /**
