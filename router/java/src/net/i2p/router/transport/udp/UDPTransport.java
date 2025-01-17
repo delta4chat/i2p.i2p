@@ -2755,6 +2755,9 @@ public class UDPTransport extends TransportImpl implements TimedWeightedPriority
         List<RouterAddress> addrs = getTargetAddresses(target);
         for (int i = 0; i < addrs.size(); i++) {
             RouterAddress addr = addrs.get(i);
+            if (addr == null) {
+                continue;
+            }
             if (addr.getTransportStyle().equals("SSU") && ! addr.getOption("v").equals("2")) {
                 continue;
             }
@@ -2771,8 +2774,7 @@ public class UDPTransport extends TransportImpl implements TimedWeightedPriority
                     (!isValid(ip))
                     ||
                     (Arrays.equals(ip, getExternalIP()) && !allowLocal())
-                )
-                {
+                ) {
                     continue;
                 }
             } else {
@@ -4462,7 +4464,7 @@ public class UDPTransport extends TransportImpl implements TimedWeightedPriority
      */
     public Status getReachabilityStatus() {
         String override = _context.getProperty(PROP_REACHABILITY_STATUS_OVERRIDE);
-        if (override != null && _context.router().getUptime() < 2*60*1000) {
+        if (override != null) {
             override = override.toLowerCase().replace("_", "-").replace(" ", "-");
 
             if (
