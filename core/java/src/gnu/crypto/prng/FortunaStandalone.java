@@ -373,20 +373,20 @@ public class FortunaStandalone extends BasePRNGStandalone implements Serializabl
               System.out.println("encrypting 4MB took " + (after-beforeAll));
           } catch (Exception e) { e.printStackTrace(); }
     ****/ /*
-  FortunaStandalone f = new FortunaStandalone();
-  java.util.HashMap props = new java.util.HashMap();
-  byte initSeed[] = new byte[1234];
-  new java.util.Random().nextBytes(initSeed);
-  long before = System.currentTimeMillis();
-  props.put(SEED, (byte[])initSeed);
-  f.init(props);
-  byte buf[] = new byte[8*1024];
-  for (int i = 0; i < 64*1024; i++) {
-    f.nextBytes(buf);
-  }
-  long time = System.currentTimeMillis() - before;
-  System.out.println("512MB took " + time + ", or " + (8*64d)/((double)time/1000d) +"MBps");
-   */
+FortunaStandalone f = new FortunaStandalone();
+java.util.HashMap props = new java.util.HashMap();
+byte initSeed[] = new byte[1234];
+new java.util.Random().nextBytes(initSeed);
+long before = System.currentTimeMillis();
+props.put(SEED, (byte[])initSeed);
+f.init(props);
+byte buf[] = new byte[8*1024];
+for (int i = 0; i < 64*1024; i++) {
+f.nextBytes(buf);
+}
+long time = System.currentTimeMillis() - before;
+System.out.println("512MB took " + time + ", or " + (8*64d)/((double)time/1000d) +"MBps");
+*/
     /*****
       }
     *****/
