@@ -1803,7 +1803,7 @@ public class UDPTransport extends TransportImpl implements TimedWeightedPriority
         String internalPort = _context.getProperty(PROP_INTERNAL_PORT);
         String externalPort = _context.getProperty(PROP_EXTERNAL_PORT);
         if (internalPort != null && externalPort != null) {
-            if (internalPort.length > 0 && externalPort.length > 0) {
+            if (internalPort.length() > 0 && externalPort.length() > 0) {
                 if (! internalPort.equals(externalPort)) {
                     return false;
                 }
