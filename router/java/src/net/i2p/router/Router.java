@@ -2034,8 +2034,9 @@ public class Router implements RouterClock.ClockShiftListener {
      */
     public synchronized void restart() {
         synchronized(_stateLock) {
-            if (gracefulShutdownInProgress() || !isAlive())
+            if (gracefulShutdownInProgress() || !isAlive()) {
                 return;
+            }
             changeState(State.RESTARTING);
         }
         ((RouterClock) _context.clock()).removeShiftListener(this);

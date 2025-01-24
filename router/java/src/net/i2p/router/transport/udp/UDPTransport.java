@@ -1786,6 +1786,7 @@ public class UDPTransport extends TransportImpl implements TimedWeightedPriority
 
     /**
      *  Was true before 0.9.2
+     *  returns false if internal port != external port
      *  Now false if we need introducers (as perhaps that's why we need them,
      *  our firewall is changing our port), unless overridden by the property.
      *  We must have an accurate external port when firewalled, or else
@@ -1798,6 +1799,17 @@ public class UDPTransport extends TransportImpl implements TimedWeightedPriority
         if (prop != null) {
             return Boolean.parseBoolean(prop);
         }
+
+        String internalPort = _context.getProperty(PROP_INTERNAL_PORT);
+        String externalPort = _context.getProperty(PROP_EXTERNAL_PORT);
+        if (internalPort != null && externalPort != null) {
+            if (internalPort.length > 0 && externalPort.length > 0) {
+                if (! internalPort.equals(externalPort)) {
+                    return false;
+                }
+            }
+        }
+
         Status status = getReachabilityStatus();
         if (isIPv6) {
             if (STATUS_IPV6_UNK.contains(status)) {
@@ -2758,9 +2770,21 @@ public class UDPTransport extends TransportImpl implements TimedWeightedPriority
             if (addr == null) {
                 continue;
             }
-            if (addr.getTransportStyle().equals("SSU") && ! addr.getOption("v").equals("2")) {
+
+            String style = addr.getTransportStyle();
+            if (style == null) {
                 continue;
             }
+
+            String v = addr.getOption("v");
+            if (v == null) {
+                continue;
+            }
+
+            if (style.equals("SSU") && (!v.equals("2"))) {
+                continue;
+            }
+
             if (addr.getOption("itag0") == null) {
                 // No introducers
                 // Skip outbound-only or invalid address/port
