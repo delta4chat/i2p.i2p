@@ -1,3 +1,24 @@
+2025-02-04 2.8.0 (API 0.9.65) released
+
+2025-01-31 zzz
+ * Pull translations from Transifex
+
+2025-01-30 zzz
+ * NetDB: Debounce RI publishing at startup
+ * susidns: Dark theme fixes/tweaks
+
+2025-01-29 zzz
+ * NetDB: Reseed update
+
+2025-01-28 zzz
+ * NetDB: More RI publishing improvements
+
+2025-01-27 zzz
+ * NetDB: RI publishing improvements
+
+2025-01-26 zzz
+ * Transport: Increase min peer test version
+
 2025-01-21 zzz
  * Util: Recognize zen5 processors
 
